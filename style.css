@@ -19,3 +19,8 @@
 .portfolio-note{margin:22px 0 0;color:#75808a;font-size:12px;max-width:680px;line-height:1.6}.about-metrics{display:flex;gap:10px;margin-top:28px}.about-metrics span{display:flex;flex-direction:column;min-width:100px;padding:14px;border:1px solid #ffffff14;border-radius:8px}.about-metrics b{color:#d6b16b;font-size:12px}.about-metrics small{color:#89939b;margin-top:5px}
 @media(max-width:850px){.menu-toggle{display:block;margin-left:auto}.nav .small{margin-left:0}.nav nav{display:none;position:absolute;top:64px;left:0;right:0;padding:12px 20px 20px;background:#090d11f5;border-bottom:1px solid #ffffff12;flex-direction:column;gap:0}.nav nav.open{display:flex}.nav nav a{padding:13px 4px;border-bottom:1px solid #ffffff0d}.nav{gap:10px}.project-filters{margin-top:0}}
 @media(max-width:560px){.nav .small{display:none}.about-metrics{flex-wrap:wrap}.about-metrics span{flex:1;min-width:80px}}
+
+/* Owner-approved media lane */
+.media-label{position:absolute;right:5%;top:13%;z-index:2;color:#d6b16b;font-size:10px;font-weight:800;letter-spacing:.18em;opacity:.72}
+.media-approved .hero-art{border-color:#d6b16b66}
+@media(max-width:850px){.media-label{right:20px;top:13%;font-size:9px}}
