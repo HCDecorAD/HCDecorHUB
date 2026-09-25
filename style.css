@@ -73,3 +73,5 @@ a:focus-visible,button:focus-visible{outline:2px solid #d6b16b;outline-offset:3p
  .quick-tiktok{background:#050505}
  .quick-tiktok svg{fill:#fff}
 }
+
+.hub-entry{display:inline-flex;margin-top:10px;color:#d9b56d!important;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none}.hub-entry:hover{text-decoration:underline}
