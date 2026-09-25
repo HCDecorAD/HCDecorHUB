@@ -36,3 +36,6 @@ a:focus-visible,button:focus-visible{outline:2px solid #d6b16b;outline-offset:3p
 
 /* Platform logo badges — inline, zero external requests */
 .social-links a{display:inline-flex;align-items:center;gap:7px}.social-icon{display:inline-grid;place-items:center;width:19px;height:19px;flex:0 0 19px;border-radius:5px;background:#eef1f4;color:#101317;font-size:12px;font-weight:900;line-height:1}.tiktok-icon{font-size:13px}.youtube-icon{font-size:9px}.zalo-icon{font-size:11px}
+
+/* Recognizable platform marks — inline SVG, no external asset requests */
+.platform-logo{width:19px;height:19px;flex:0 0 19px;display:block}.social-links a[aria-label^="Facebook"] .platform-logo{color:#1877f2}.social-links a[aria-label^="TikTok"] .platform-logo{color:#f2f2f2}.social-links a[aria-label^="YouTube"] .platform-logo{color:#ff0033}
