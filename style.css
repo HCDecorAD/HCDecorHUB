@@ -33,3 +33,6 @@ a:focus-visible,button:focus-visible{outline:2px solid #d6b16b;outline-offset:3p
 
 /* Social links — lightweight, no third-party SDK */
 .social-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.social-links a,.zalo-contact{font-size:12px;color:#aeb6bc;border:1px solid #ffffff18;border-radius:999px;padding:7px 10px;line-height:1.2}.social-links a:hover,.social-links a:focus-visible{color:#d6b16b;border-color:#d6b16b66}.zalo-contact{color:#8f99a1}
+
+/* Platform logo badges — inline, zero external requests */
+.social-links a{display:inline-flex;align-items:center;gap:7px}.social-icon{display:inline-grid;place-items:center;width:19px;height:19px;flex:0 0 19px;border-radius:5px;background:#eef1f4;color:#101317;font-size:12px;font-weight:900;line-height:1}.tiktok-icon{font-size:13px}.youtube-icon{font-size:9px}.zalo-icon{font-size:11px}
