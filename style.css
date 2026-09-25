@@ -47,3 +47,6 @@ a:focus-visible,button:focus-visible{outline:2px solid #d6b16b;outline-offset:3p
 
 /* Zalo logo visibility/scale fix */
 .zalo-contact{padding:6px 12px 6px 7px!important;gap:9px!important}.zalo-logo-svg{width:54px!important;height:40px!important;flex:0 0 54px!important;display:block;overflow:visible;border-radius:6px;background:#fff}.zalo-contact span:last-child{font-size:13px;color:#d7dde2;font-weight:650;letter-spacing:.02em}@media(max-width:560px){.zalo-logo-svg{width:48px!important;height:36px!important;flex-basis:48px!important}}
+
+/* Zalo mark: transparent background, no white frame */
+.zalo-logo-svg{background:transparent!important;border-radius:0!important}
