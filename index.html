@@ -75,9 +75,20 @@
  </div><div class="wrap copyright">© 2026 HCDecor Studio.</div>
 </footer>
 <div class="mobile-contact-dock" aria-label="Liên hệ nhanh">
-<a class="quick-tiktok" href="https://www.tiktok.com/@quangcaohocuong" aria-label="TikTok HCDecor"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.2 3c.5 2.7 2 4.3 4.8 4.5v3.1a8.3 8.3 0 0 1-4.7-1.4v6.1a6.3 6.3 0 1 1-5.4-6.2v3.2a3.2 3.2 0 1 0 2.2 3V3h3.1Z"/></svg></a>
-<a class="quick-zalo" href="https://zalo.me/quangcaohocuong" aria-label="Nhắn Zalo HCDecor"><img src="assets/zalo-logo.png" alt=""></a>
-<a class="quick-facebook" href="https://www.facebook.com/hocuong1979/" aria-label="Facebook HCDecor"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.7 22v-9h3l.5-3.5h-3.5V7.3c0-1 .3-1.7 1.8-1.7h1.9V2.5c-.3 0-1.5-.1-2.8-.1-2.8 0-4.7 1.7-4.7 4.8v2.3H6.8V13h3.1v9h3.8Z"/></svg></a>
+<a class="quick-tiktok" href="snssdk1233://user/profile/quangcaohocuong" data-fallback="https://www.tiktok.com/@quangcaohocuong" aria-label="TikTok HCDecor"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.2 3c.5 2.7 2 4.3 4.8 4.5v3.1a8.3 8.3 0 0 1-4.7-1.4v6.1a6.3 6.3 0 1 1-5.4-6.2v3.2a3.2 3.2 0 1 0 2.2 3V3h3.1Z"/></svg></a>
+<a class="quick-zalo" href="zalo://conversation?phone=84888821842" data-fallback="https://zalo.me/quangcaohocuong" aria-label="Nhắn Zalo HCDecor"><img src="assets/zalo-logo.png" alt=""></a>
+<a class="quick-facebook" href="fb://profile/hocuong1979" data-fallback="https://www.facebook.com/hocuong1979/" aria-label="Facebook HCDecor"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.7 22v-9h3l.5-3.5h-3.5V7.3c0-1 .3-1.7 1.8-1.7h1.9V2.5c-.3 0-1.5-.1-2.8-.1-2.8 0-4.7 1.7-4.7 4.8v2.3H6.8V13h3.1v9h3.8Z"/></svg></a>
 </div>
 <script src="app.js"></script>
+<script data-app-link-handler>
+document.querySelectorAll('.mobile-contact-dock a[data-fallback]').forEach(function(a){
+  a.addEventListener('click',function(e){
+    if(!window.matchMedia('(max-width:850px)').matches) return;
+    e.preventDefault();
+    var fallback=a.dataset.fallback, start=Date.now();
+    window.location.href=a.getAttribute('href');
+    setTimeout(function(){if(!document.hidden && Date.now()-start<2200) window.location.href=fallback;},1200);
+  });
+});
+</script>
 </body></html>
