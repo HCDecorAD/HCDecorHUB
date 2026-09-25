@@ -9,7 +9,7 @@
 <body>
 <header class="nav">
   <a class="brand" href="#home"><span>HC</span> HCDecor Studio</a>
-  <nav><a href="#home">Trang chủ</a><a href="#about">Giới thiệu</a><a href="#services">Dịch vụ</a><a href="#projects">Dự án</a><a href="#process">Quy trình</a><a href="#contact">Liên hệ</a></nav>
+  <button class="menu-toggle" aria-label="Mở menu" aria-expanded="false">☰</button><nav><a href="#home">Trang chủ</a><a href="#about">Giới thiệu</a><a href="#services">Dịch vụ</a><a href="#projects">Dự án</a><a href="#process">Quy trình</a><a href="#contact">Liên hệ</a></nav>
   <a class="cta small" href="#contact">Liên hệ ngay</a>
 </header>
 
@@ -36,11 +36,11 @@
 
 <section class="section dark" id="projects"><div class="wrap">
  <div class="section-head"><div><p class="eyebrow">DỰ ÁN</p><h2>Công trình & ý tưởng nổi bật</h2></div><p class="muted">Danh mục giới thiệu năng lực. Dữ liệu và media public chỉ được bổ sung sau khi hoàn tất kiểm duyệt.</p></div>
- <div class="project-grid">
-  <article class="project p1"><span class="project-mark">01</span><div><small>ARCHITECTURE</small><h3>Senior Living & Wellness</h3><p>Kiến trúc · Cảnh quan · Trải nghiệm dự án</p></div></article>
-  <article class="project p2"><span class="project-mark">02</span><div><small>INTERIOR</small><h3>Không gian hiện đại</h3><p>Thiết kế · Phối cảnh · Thi công</p></div></article>
-  <article class="project p3"><span class="project-mark">03</span><div><small>SIGNAGE</small><h3>Signage & Facade</h3><p>Bảng hiệu · Mặt dựng · CNC</p></div></article>
- </div>
+ <div class="project-filters" aria-label="Bộ lọc dự án"><button class="active" data-filter="all">Tất cả</button><button data-filter="architecture">Kiến trúc</button><button data-filter="interior">Nội thất</button><button data-filter="signage">Bảng hiệu</button></div><div class="project-grid">
+  <article class="project p1" data-category="architecture"><span class="project-mark">01</span><div><small>ARCHITECTURE</small><h3>Senior Living & Wellness</h3><p>Kiến trúc · Cảnh quan · Trải nghiệm dự án</p></div></article>
+  <article class="project p2" data-category="interior"><span class="project-mark">02</span><div><small>INTERIOR</small><h3>Không gian hiện đại</h3><p>Thiết kế · Phối cảnh · Thi công</p></div></article>
+  <article class="project p3" data-category="signage"><span class="project-mark">03</span><div><small>SIGNAGE</small><h3>Signage & Facade</h3><p>Bảng hiệu · Mặt dựng · CNC</p></div></article>
+ </div><p class="portfolio-note">Portfolio V3 được thiết kế sẵn để nhận ảnh dự án đã duyệt. Hiện chưa tự động lấy media nội bộ hoặc tài sản chưa xác minh quyền sử dụng.</p>
 </div></section>
 
 <section class="section light" id="process"><div class="wrap">
@@ -55,7 +55,7 @@
 </div></section>
 
 <section class="band"><div class="wrap band-inner"><span>DESIGN</span><i>•</i><span>BUILD</span><i>•</i><span>INTERIOR</span><i>•</i><span>3D</span><i>•</i><span>MEDIA AI</span></div></section><section class="section about" id="about"><div class="wrap split">
- <div><p class="eyebrow">VỀ HCDECOR</p><h2>Sáng tạo từ thực tế.</h2></div>
+ <div><p class="eyebrow">VỀ HCDECOR</p><h2>Sáng tạo từ thực tế.</h2><div class="about-metrics"><span><b>DESIGN</b><small>Ý tưởng</small></span><span><b>BUILD</b><small>Triển khai</small></span><span><b>AI</b><small>Công nghệ</small></span></div></div>
  <div><p>HCDecor Studio phát triển các giải pháp thiết kế và thi công với trọng tâm là tính ứng dụng, thẩm mỹ và khả năng triển khai thực tế.</p><p class="muted">Website public được tách biệt với HCDecor Hub nội bộ. Chỉ dữ liệu đã qua kiểm duyệt mới nên được đưa ra website.</p></div>
 </div></section>
 </main>
@@ -63,7 +63,7 @@
 <footer id="contact"><div class="wrap footer-grid">
  <div><div class="brand"><span>HC</span> HCDecor Studio</div><p>Design · Build · Media · AI</p></div>
  <div><b>Dịch vụ</b><a href="#services">Bảng hiệu</a><a href="#services">Nội thất</a><a href="#services">3D & Phối cảnh</a><a href="#services">Media & AI</a></div>
- <div><b>Liên hệ</b><p>TP. Hồ Chí Minh, Việt Nam</p><p>Thông tin liên hệ sẽ cập nhật sau khi xác minh.</p></div>
+ <div><b>Liên hệ</b><p>231D An Dương Vương, P. An Lạc, Tp.HCM, Việt Nam</p><p><a href="tel:+84888821842">0888 821 842</a> <span class="muted">(Mobi / Zalo)</span></p></div>
  </div><div class="wrap copyright">© 2026 HCDecor Studio.</div>
 </footer>
 <script src="app.js"></script>
