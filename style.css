@@ -30,3 +30,6 @@
 a:focus-visible,button:focus-visible{outline:2px solid #d6b16b;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.cards article,.project{transition:none}}
 @media(max-width:850px){.nav{backdrop-filter:none;-webkit-backdrop-filter:none}}
+
+/* Social links — lightweight, no third-party SDK */
+.social-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.social-links a,.zalo-contact{font-size:12px;color:#aeb6bc;border:1px solid #ffffff18;border-radius:999px;padding:7px 10px;line-height:1.2}.social-links a:hover,.social-links a:focus-visible{color:#d6b16b;border-color:#d6b16b66}.zalo-contact{color:#8f99a1}
