@@ -42,3 +42,5 @@ a:focus-visible,button:focus-visible{outline:2px solid #d6b16b;outline-offset:3p
 
 /* User-provided official Zalo contact mark */
 .zalo-logo{width:28px;height:21px;object-fit:contain;display:block;background:#fff;border-radius:3px}
+
+.zalo-logo-svg{width:31px;height:24px;flex:0 0 31px;display:block;background:#fff;border-radius:4px}
