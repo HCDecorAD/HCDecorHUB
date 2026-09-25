@@ -54,3 +54,17 @@ a:focus-visible,button:focus-visible{outline:2px solid #d6b16b;outline-offset:3p
 /* Final Zalo crop: mark-only transparent canvas */
 .zalo-logo-svg{width:50px!important;height:24px!important;flex:0 0 50px!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible}.zalo-contact{background:transparent!important}
 @media(max-width:560px){.zalo-logo-svg{width:46px!important;height:22px!important;flex-basis:46px!important}}
+
+/* Contact UI refresh */
+.zalo-logo-img{width:40px!important;height:40px!important;object-fit:contain!important;display:block!important;flex:0 0 40px!important;border:0!important;border-radius:9px!important;background:transparent!important;box-shadow:none!important}
+.mobile-contact-dock{display:none}
+@media(max-width:850px){
+ body{padding-bottom:74px}
+ .mobile-contact-dock{position:fixed;z-index:45;right:14px;bottom:18px;display:flex;flex-direction:column;gap:10px}
+ .mobile-contact-dock a{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;box-shadow:0 8px 24px #0007;border:2px solid #ffffffcc}
+ .mobile-contact-dock svg{width:25px;height:25px;fill:#fff}
+ .quick-call{background:#ef4050}
+ .quick-zalo{background:#fff;overflow:hidden}
+ .quick-zalo img{width:48px;height:48px;object-fit:contain;display:block}
+ .quick-facebook{background:#1877f2}
+}
