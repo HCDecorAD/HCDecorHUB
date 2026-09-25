@@ -24,3 +24,9 @@
 .media-label{position:absolute;right:5%;top:13%;z-index:2;color:#d6b16b;font-size:10px;font-weight:800;letter-spacing:.18em;opacity:.72}
 .media-approved .hero-art{border-color:#d6b16b66}
 @media(max-width:850px){.media-label{right:20px;top:13%;font-size:9px}}
+
+/* V3 accessibility + lightweight performance refinement */
+.skip-link{position:fixed;left:16px;top:-60px;z-index:100;background:#f3f2ef;color:#111;padding:10px 14px;border-radius:6px;font-weight:700}.skip-link:focus{top:12px}
+a:focus-visible,button:focus-visible{outline:2px solid #d6b16b;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.cards article,.project{transition:none}}
+@media(max-width:850px){.nav{backdrop-filter:none;-webkit-backdrop-filter:none}}
