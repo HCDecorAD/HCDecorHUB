@@ -39,3 +39,6 @@ a:focus-visible,button:focus-visible{outline:2px solid #d6b16b;outline-offset:3p
 
 /* Recognizable platform marks — inline SVG, no external asset requests */
 .platform-logo{width:19px;height:19px;flex:0 0 19px;display:block}.social-links a[aria-label^="Facebook"] .platform-logo{color:#1877f2}.social-links a[aria-label^="TikTok"] .platform-logo{color:#f2f2f2}.social-links a[aria-label^="YouTube"] .platform-logo{color:#ff0033}
+
+/* User-provided official Zalo contact mark */
+.zalo-logo{width:28px;height:21px;object-fit:contain;display:block;background:#fff;border-radius:3px}
