@@ -68,3 +68,8 @@ a:focus-visible,button:focus-visible{outline:2px solid #d6b16b;outline-offset:3p
  .quick-zalo img{width:48px;height:48px;object-fit:contain;display:block}
  .quick-facebook{background:#1877f2}
 }
+
+@media(max-width:850px){
+ .quick-tiktok{background:#050505}
+ .quick-tiktok svg{fill:#fff}
+}
