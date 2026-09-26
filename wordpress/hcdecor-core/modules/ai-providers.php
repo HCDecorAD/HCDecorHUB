@@ -81,6 +81,8 @@ function hcdecor_ai_prompt($job_id){
         $media_notes[]='#'.$mid.' '.$summary.' | cover_score='.(int)get_post_meta($mid,'hc_ai_cover_score',true).' | tags='.implode(',',(array)get_post_meta($mid,'hc_ai_tags',true));
     }
     if($media_notes) $parts[]='MEDIA ANALYSIS:\n'.implode("\n",$media_notes);
+    $drive_prompt=(string)get_option('hcdecor_drive_active_prompt','');
+    if($drive_prompt!=='') $parts[]='ACTIVE DRIVE PROMPT:\n'.wp_strip_all_tags($drive_prompt);
     if($review_note!=='') $parts[]='REVIEW NOTE: '.$review_note;
     $parts[]='Yêu cầu output: web_title, web_intro, web_body, seo_meta, facebook_caption, tiktok_script, youtube_title, youtube_description.';
     $parts[]='TikTok script nên có Hook → cảnh/shot gợi ý → nội dung chính → CTA. SEO meta ngắn gọn. Không thêm hashtag quá mức.';
@@ -246,6 +248,7 @@ function hcdecor_ai_generate_job($job_id){
         if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($job_id,'review','AI generation completed via '.$result['provider']);
         else update_post_meta($job_id,'hc_agent_status','review');
         delete_post_meta($job_id,'hc_agent_lock_until');
+        do_action('hcdecor_after_ai_content_generated',$job_id,$result['provider'],$result['model']);
         return $result;
     }
     $message=$errors?implode(' | ',array_map(function($k,$v){return $k.': '.$v;},array_keys($errors),$errors)):'Chưa có AI API key.';
