@@ -13,8 +13,8 @@ call wp plugin activate hcdecor-core >nul 2>&1
 call wp plugin is-active hcdecor-core || goto :fail
 echo [PASS] Theme and plugins
 
-call wp rewrite structure "/%postname%/" >nul || goto :fail
-call wp rewrite flush >nul 2>&1 || echo [WARN] Rewrite flush skipped on Local nginx
+call wp option update permalink_structure "/%%postname%%/" >nul || goto :fail
+call wp rewrite flush >nul 2>&1
 call wp option update blogname "HCDecor HUB" >nul || goto :fail
 call wp option update blogdescription "Thiet ke - Thi cong - Noi that - Kien truc - 3D" >nul || goto :fail
 call wp option update elementor_disable_color_schemes yes >nul
