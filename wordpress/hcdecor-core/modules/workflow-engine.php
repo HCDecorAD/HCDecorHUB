@@ -20,6 +20,7 @@ function hcdecor_workflow_set_status($job_id,$status,$note=''){
     if(!in_array($status,$allowed,true)) return false;
     $old=(string)get_post_meta($job_id,'hc_agent_status',true);
     if($old===$status) return true;
+    if($old==='' && $status!=='draft') return false;
     $transitions=[
         ''=>['draft'],
         'draft'=>['processing'],
