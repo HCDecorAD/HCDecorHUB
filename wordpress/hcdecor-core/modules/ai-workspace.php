@@ -193,6 +193,7 @@ function hcdecor_ai_workspace_page(){
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-automation'));?>">Automation HUB</a>
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-ai-providers'));?>">AI Providers</a>
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-system-health'));?>">System Health</a>
+              <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-data-backups'));?>">Data Backups</a>
             </div>
           </section>
 
