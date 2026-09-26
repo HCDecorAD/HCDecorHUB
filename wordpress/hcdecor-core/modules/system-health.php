@@ -231,11 +231,14 @@ function hcdecor_health_snapshot(){
     if($auto['failed']>0) $issues[]='Automation failed: '.$auto['failed'];
     if($actionable_blocked>0) $issues[]='Automation blocked: '.$actionable_blocked;
     $automation_last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
+    $automation_cleanup_mutex=(int)get_option('hcdecor_automation_cleanup_mutex',0);
+    $automation_cleanup_running=$automation_cleanup_mutex>=(time()-120);
+    $automation_cleanup_stale=$automation_cleanup_mutex>0 && !$automation_cleanup_running;
     if(!empty($automation_last_change['cleanup_limited'])){
         $issues[]='Automation settings cleanup backlog exceeds bounded pass';
-        if(!wp_next_scheduled('hcdecor_automation_cleanup_tick') && !wp_next_scheduled('hcdecor_automation_cleanup_watchdog') && !((int)get_option('hcdecor_automation_cleanup_mutex',0)>=(time()-120))) $issues[]='Automation cleanup backlog has no scheduled continuation';
+        if(!wp_next_scheduled('hcdecor_automation_cleanup_tick') && !wp_next_scheduled('hcdecor_automation_cleanup_watchdog') && !$automation_cleanup_running) $issues[]='Automation cleanup backlog has no scheduled continuation';
     }
-    if(get_option('hcdecor_automation_cleanup_mutex',0) && (int)get_option('hcdecor_automation_cleanup_mutex',0)<(time()-120)) $issues[]='Automation cleanup mutex is stale';
+    if($automation_cleanup_stale) $issues[]='Automation cleanup mutex is stale';
     if(empty($automation_last_change['cleanup_limited']) && wp_next_scheduled('hcdecor_automation_cleanup_watchdog')) $issues[]='Automation cleanup watchdog is orphaned';
     if($bridge==='') $issues[]='Agent Bridge token missing';
     if($drive_configured && $backup_ts===0) $issues[]='Backup has never completed';
@@ -337,9 +340,9 @@ function hcdecor_health_snapshot(){
             'settings_cleanup_limited'=>!empty($automation_last_change['cleanup_limited']),
             'cleanup_next'=>wp_next_scheduled('hcdecor_automation_cleanup_tick')?:0,
             'cleanup_watchdog_next'=>wp_next_scheduled('hcdecor_automation_cleanup_watchdog')?:0,
-            'cleanup_running'=>((int)get_option('hcdecor_automation_cleanup_mutex',0))>=(time()-120),
-            'cleanup_lock_age'=>get_option('hcdecor_automation_cleanup_mutex',0)?max(0,time()-(int)get_option('hcdecor_automation_cleanup_mutex',0)):0,
-            'cleanup_mutex_stale'=>get_option('hcdecor_automation_cleanup_mutex',0) && (int)get_option('hcdecor_automation_cleanup_mutex',0)<(time()-120)
+            'cleanup_running'=>$automation_cleanup_running,
+            'cleanup_lock_age'=>$automation_cleanup_mutex?max(0,time()-$automation_cleanup_mutex):0,
+            'cleanup_mutex_stale'=>$automation_cleanup_stale
         ],
         'content_queue'=>$queue,
         'stale_processing'=>$stale_processing,
