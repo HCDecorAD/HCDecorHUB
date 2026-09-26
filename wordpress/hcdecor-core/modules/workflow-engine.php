@@ -88,7 +88,7 @@ add_action('rest_api_init',function(){
             $now=time();
             hcdecor_workflow_recover_orphan_draft_claims(50);
             $jobs=get_posts([
-                'post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>20,
+                'post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,
                 'orderby'=>'date','order'=>'ASC',
                 'meta_query'=>[['key'=>'hc_agent_status','value'=>'draft']]
             ]);
