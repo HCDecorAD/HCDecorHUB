@@ -164,7 +164,7 @@ function hcdecor_health_snapshot(){
         ],
         'content_queue'=>$queue,
         'bridge'=>['ready'=>$bridge!==''],
-        'publisher'=>['ready'=>function_exists('hcdecor_publish_job_to_web')],
+        'publisher'=>['ready'=>function_exists('hcdecor_publish_job_to_web') && post_type_exists('hc_content_job') && post_type_exists('hc_project')],
         'restore'=>[
             'ready'=>function_exists('hcdecor_restore_apply'),
             'last'=>(array)get_option('hcdecor_restore_last_result',[]),
@@ -173,7 +173,7 @@ function hcdecor_health_snapshot(){
         'backup'=>[
             'last_at'=>(string)get_option('hcdecor_backup_last_at',''),
             'error'=>(string)get_option('hcdecor_backup_last_error',''),
-            'ready'=>function_exists('hcdecor_backup_save')
+            'ready'=>function_exists('hcdecor_backup_save') && $drive_configured
         ],
         'issues'=>$issues
     ];
