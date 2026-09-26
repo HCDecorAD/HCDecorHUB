@@ -25,9 +25,9 @@ echo HCDecor AUTO %date% %time% >> "%LOG%"
 echo ================================================== >> "%LOG%"
 call :say "HCDecor AUTO started"
 
-call :run "Preflight WordPress" "wp core is-installed"
-call :run "Check Elementor" "wp plugin is-active elementor"
-call :run "Check Hello Elementor" "wp theme is-active hello-elementor"
+call :run "Preflight WordPress" wp core is-installed
+call :run "Check Elementor" wp plugin is-active elementor
+call :run "Check Hello Elementor" wp theme is-active hello-elementor
 
 if not exist "%PLUGIN%" mkdir "%PLUGIN%"
 if not exist "%ASSETS%" mkdir "%ASSETS%"
@@ -37,22 +37,24 @@ call :download "%BASE%/hcdecor-core/homepage-builder.php?v=%STAMP%" "%PLUGIN%\ho
 call :download "%BASE%/hcdecor-core/assets/hcdecor-elementor.css?v=%STAMP%" "%ASSETS%\hcdecor-elementor.css"
 call :download "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%STAMP%" "%ASSETS%\hcdecor-homepage.css"
 
-call :run "Activate HCDecor Core" "wp plugin activate hcdecor-core"
-call :run "Site name" "wp option update blogname "HCDecor HUB""
-call :run "Permalink" "wp option update permalink_structure "/%%postname%%/""
-call :run "Flush rewrite" "wp rewrite flush"
+call :run "Activate HCDecor Core" wp plugin activate hcdecor-core
+call :run "Site name" wp option update blogname HCDecor-HUB
+call :run "Permalink" wp option update permalink_structure /%%postname%%/
+call :run "Flush rewrite" wp rewrite flush
 
 for /f "delims=" %%I in ('wp eval "$p=get_page_by_path('trang-chu'); echo $p?$p->ID:'';"') do set "HOME_ID=%%I"
 if not defined HOME_ID call :fail "Homepage missing"
 
-call :run "Set static homepage" "wp option update show_on_front page"
-call :run "Assign homepage" "wp option update page_on_front !HOME_ID!"
-call :run "Build Elementor homepage" "wp eval-file %PLUGIN%\homepage-builder.php"
+call :run "Set static homepage" wp option update show_on_front page
+call :run "Assign homepage" wp option update page_on_front !HOME_ID!
+call :run "Build Elementor homepage" wp eval-file %PLUGIN%\homepage-builder.php
 
 wp elementor flush-css >>"%LOG%" 2>&1
 if errorlevel 1 echo [WARN] Elementor CLI CSS flush unavailable >>"%LOG%"
 
-call :run "Validate core/pages/services/REST" "wp eval "$p=get_page_by_path('trang-chu');if(!$p)exit(11);$n=wp_count_posts('hc_service')->publish;if($n<4)exit(12);$r=rest_do_request('/hcdecor/v1/site');if($r->is_error()||$r->get_status()!=200)exit(13);$d=get_post_meta((int)get_option('page_on_front'),'_elementor_data',true);if(!$d||strlen($d)<500)exit(14);echo 'VALID';""
+wp eval "$p=get_page_by_path('trang-chu');if(!$p)exit(11);$n=wp_count_posts('hc_service')->publish;if($n<4)exit(12);$r=rest_do_request('/hcdecor/v1/site');if($r->is_error()||$r->get_status()!=200)exit(13);$d=get_post_meta((int)get_option('page_on_front'),'_elementor_data',true);if(!$d||strlen($d)<500)exit(14);echo 'VALID';" >>"%LOG%" 2>&1
+if errorlevel 1 call :fail "Validate homepage/services/REST"
+echo [PASS] Validate homepage/services/REST
 
 call :say "ALL AUTOMATED CHECKS PASS"
 echo.
@@ -74,10 +76,12 @@ if errorlevel 1 call :fail "Download failed: %~2"
 exit /b 0
 
 :run
-call :say "%~1"
-cmd /d /s /c "%~2" >>"%LOG%" 2>&1
-if errorlevel 1 call :fail "%~1"
-echo [PASS] %~1
+set "STEP=%~1"
+shift
+call :say "%STEP%"
+%* >>"%LOG%" 2>&1
+if errorlevel 1 call :fail "%STEP%"
+echo [PASS] %STEP%
 exit /b 0
 
 :say
