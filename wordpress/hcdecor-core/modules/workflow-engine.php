@@ -102,8 +102,7 @@ function hcdecor_workflow_owned_claim_active($job_id,$claim_token){
 
 function hcdecor_workflow_finish_owned_claim($job_id,$claim_token,$status,$note=''){
     $job_id=(int)$job_id;
-    if($claim_token==='' || (string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token) return false;
-    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='processing') return false;
+    if(!hcdecor_workflow_owned_claim_active($job_id,$claim_token)) return false;
     if(!hcdecor_workflow_set_status($job_id,$status,$note)) return false;
     hcdecor_workflow_clear_owned_claim($job_id,$claim_token,true);
     return true;
