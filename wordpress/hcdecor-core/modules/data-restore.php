@@ -20,6 +20,15 @@ function hcdecor_restore_read_backup($file_id){
     if(!is_array($data) || ($data['schema']??'')!=='hcdecor.system-backup.v1'){
         return new WP_Error('schema','Không phải HCDecor system backup hợp lệ.');
     }
+    $integrity=(array)($data['integrity']??[]);
+    if(($integrity['algorithm']??'')==='sha256' && !empty($integrity['payload_hash'])){
+        $expected=sanitize_text_field((string)$integrity['payload_hash']);
+        $check=$data; unset($check['integrity']);
+        $payload=wp_json_encode($check,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
+        if(!is_string($payload) || !hash_equals($expected,hash('sha256',$payload))){
+            return new WP_Error('integrity','Backup integrity check failed.');
+        }
+    }
     return $data;
 }
 
