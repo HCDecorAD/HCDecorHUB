@@ -243,7 +243,9 @@ function hcdecor_health_snapshot(){
     if($vault_stale>0) $issues[]='Project Vault stale: '.$vault_stale.($vault_synced>$vault_stale_scanned?' (first '.$vault_stale_scanned.' scanned)':'');
     if(!empty($inbox_settings['enabled']) && $inbox_ts===0) $issues[]='Drive Inbox has never completed';
     elseif(!empty($inbox_settings['enabled']) && $inbox_age>1800) $issues[]='Drive Inbox is stale (>30 min)';
-    $recovered_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>100,'fields'=>'ids','meta_query'=>[['key'=>'hc_agent_recovered_at','value'=>wp_date('Y-m-d H:i:s',$now-DAY_IN_SECONDS),'compare'=>'>=','type'=>'DATETIME']]]);
+    $recovered_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>101,'fields'=>'ids','meta_query'=>[['key'=>'hc_agent_recovered_at','value'=>wp_date('Y-m-d H:i:s',$now-DAY_IN_SECONDS),'compare'=>'>=','type'=>'DATETIME']]]);
+    $worker_recovery_scan_limited=count($recovered_ids)>100;
+    if($worker_recovery_scan_limited) $recovered_ids=array_slice($recovered_ids,0,100);
     foreach($recovered_ids as $rid){
         $rt=strtotime((string)get_post_meta($rid,'hc_agent_recovered_at',true))?:0;
         if($rt && $rt>=($now-DAY_IN_SECONDS)){
@@ -338,7 +340,8 @@ function hcdecor_health_snapshot(){
             'draft_orphan_claims'=>$draft_orphan_claims,
             'locks_expiring_2m'=>$processing_lock_expiring,
             'recovered_24h'=>$recovered_24h,
-            'recovery_reasons_24h'=>$recovery_reasons
+            'recovery_reasons_24h'=>$recovery_reasons,
+            'recovery_scan_limited'=>$worker_recovery_scan_limited
         ],
         'review_oldest_age_seconds'=>$oldest_review_age,
         'auto_repair'=>[
