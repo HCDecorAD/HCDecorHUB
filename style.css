@@ -579,3 +579,46 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
  .hero .actions a{min-height:48px!important;font-size:14px!important}
  .hero-points{padding-right:36px!important;margin-top:16px!important}
 }
+
+/* V6.4 Section typography correction */
+#services .eyebrow.dark,
+#projects .eyebrow,
+#process>.wrap>.eyebrow{
+  display:block!important;
+  width:max-content!important;
+  min-height:0!important;
+  padding:0!important;
+  margin:0 0 14px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif!important;
+  font-size:22px!important;
+  line-height:1.15!important;
+  font-weight:800!important;
+  letter-spacing:.18em!important;
+}
+#services .eyebrow.dark,#process>.wrap>.eyebrow{color:#8f5b27!important}
+#projects .eyebrow{color:#e2aa68!important}
+#services .section-head h2,
+#projects .section-head h2,
+#process>.wrap>h2{
+  font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif!important;
+  font-size:clamp(28px,2.7vw,36px)!important;
+  line-height:1.12!important;
+  letter-spacing:-.035em!important;
+  font-weight:750!important;
+}
+#services .section-head h2,#process>.wrap>h2{color:#111!important}
+#projects .section-head h2{color:#fff!important}
+.nav .cta.small,.hero .actions .cta{color:#17110b!important;text-shadow:none!important}
+.hero .ghost{color:#fff!important}
+@media(max-width:850px){
+ #services .eyebrow.dark,#projects .eyebrow,#process>.wrap>.eyebrow{font-size:18px!important;letter-spacing:.16em!important;margin-bottom:11px!important}
+ #services .section-head h2,#projects .section-head h2,#process>.wrap>h2{font-size:28px!important}
+}
+@media(max-width:560px){
+ #services .eyebrow.dark,#projects .eyebrow,#process>.wrap>.eyebrow{font-size:16px!important}
+ #services .section-head h2,#projects .section-head h2,#process>.wrap>h2{font-size:25px!important}
+}
