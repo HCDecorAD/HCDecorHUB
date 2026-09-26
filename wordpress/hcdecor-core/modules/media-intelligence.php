@@ -127,6 +127,35 @@ function hcdecor_media_ai_analyze($attachment_id){
     return new WP_Error('ai_failed',$msg?:'No AI provider available.');
 }
 
+function hcdecor_media_ai_apply_project_recommendations($project_id){
+    $project_id=(int)$project_id;
+    if(!$project_id || get_post_type($project_id)!=='hc_project') return new WP_Error('project','Invalid project.');
+    $media=(array)get_post_meta($project_id,'hc_project_gallery',true);
+    if(!$media) $media=(array)get_post_meta($project_id,'hc_gallery_ids',true);
+    $media=array_values(array_unique(array_filter(array_map('intval',$media))));
+    if(!$media) return new WP_Error('media','Project has no media.');
+
+    $ranked=[];
+    foreach($media as $mid){
+        if(get_post_type($mid)!=='attachment') continue;
+        $ranked[]=['id'=>$mid,'score'=>(int)get_post_meta($mid,'hc_ai_cover_score',true)];
+        $alt=(string)get_post_meta($mid,'hc_ai_alt',true);
+        $caption=(string)get_post_meta($mid,'hc_ai_caption',true);
+        if($alt!=='' && get_post_meta($mid,'_wp_attachment_image_alt',true)==='') update_post_meta($mid,'_wp_attachment_image_alt',$alt);
+        $post=get_post($mid);
+        if($post && $caption!=='' && trim((string)$post->post_excerpt)==='') wp_update_post(['ID'=>$mid,'post_excerpt'=>$caption]);
+    }
+    if(!$ranked) return new WP_Error('media','No valid project media.');
+    usort($ranked,function($a,$b){return $b['score']<=>$a['score'];});
+    $cover=(int)$ranked[0]['id'];
+    update_post_meta($project_id,'hc_ai_recommended_cover_id',$cover);
+    update_post_meta($project_id,'hc_ai_media_rank',array_column($ranked,'id'));
+    update_post_meta($project_id,'hc_ai_media_recommended_at',current_time('mysql'));
+    if(!has_post_thumbnail($project_id) && wp_attachment_is_image($cover)) set_post_thumbnail($project_id,$cover);
+    do_action('hcdecor_project_data_changed',$project_id);
+    return ['cover_id'=>$cover,'media_ids'=>array_column($ranked,'id')];
+}
+
 add_action('admin_post_hcdecor_media_ai_analyze',function(){
     if(!current_user_can('upload_files')) wp_die('Forbidden');
     check_admin_referer('hcdecor_media_ai_analyze');
