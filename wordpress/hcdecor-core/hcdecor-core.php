@@ -476,7 +476,7 @@ function hcdecor_bridge_admin(){
 }
 
 /* HCDECOR_PRODUCTION_MODULES */
-foreach (['background-sync.php','content-operations.php','workflow-engine.php','ai-providers.php','media-intelligence.php','agent-intake.php','ai-workspace.php','web-publisher.php','automation-hub.php','automation-recipes.php','drive-vault.php','system-health.php','project-publishing.php','media-manager.php','admin-cleanup.php'] as $hcdecor_module) {
+foreach (['background-sync.php','content-operations.php','workflow-engine.php','ai-providers.php','media-intelligence.php','agent-intake.php','ai-workspace.php','web-publisher.php','automation-hub.php','automation-recipes.php','drive-vault.php','data-backup.php','system-health.php','project-publishing.php','media-manager.php','admin-cleanup.php'] as $hcdecor_module) {
     $hcdecor_module_path = plugin_dir_path(__FILE__) . 'modules/' . $hcdecor_module;
     if (is_readable($hcdecor_module_path)) require_once $hcdecor_module_path;
 }
