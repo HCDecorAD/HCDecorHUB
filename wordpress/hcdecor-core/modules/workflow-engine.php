@@ -45,6 +45,11 @@ function hcdecor_workflow_sweep_mutex_acquire(){
     $raw=get_option($key,[]);
     $held=is_array($raw)?$raw:[];
     $held_at=is_array($raw)?(int)($raw['at']??0):(int)$raw;
+    $invalid_array=is_array($raw) && $raw && (empty($raw['token']) || !$held_at);
+    if($invalid_array){
+        if(!hcdecor_workflow_claim_mutex_delete_if_same($key,$raw)) return false;
+        $raw=[]; $held=[]; $held_at=0;
+    }
     if($held_at>=($now-30)) return false;
     if($raw!==false && $raw!==[] && $raw!=='' && !hcdecor_workflow_claim_mutex_delete_if_same($key,$raw)) return false;
     $owned=['token'=>wp_generate_uuid4(),'at'=>$now];
