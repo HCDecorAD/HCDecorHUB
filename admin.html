@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HCDecor Admin</title><link rel="stylesheet" href="admin.css"></head>
+<body>
+<header><a href="/" class="brand"><b>HC</b> HCDecor <span>Admin</span></a><a class="view" href="/" target="_blank">Xem website ↗</a></header>
+<main>
+<section class="intro"><p>QUẢN TRỊ WEBSITE</p><h1>Chỉnh giao diện trực quan</h1><small>Kéo thả thứ tự module · sửa tiêu đề · bật/tắt khu vực · xem trước ngay trên thiết bị.</small></section>
+<div class="toolbar"><button id="editMode">✦ Chế độ chỉnh sửa</button><button id="preview">◉ Xem trước</button><button id="publish" class="primary">Publish</button></div>
+<section class="panel"><div class="panel-head"><div><b>Cấu trúc trang chủ</b><small>Kéo ☰ để sắp xếp</small></div><span id="status">Bản nháp cục bộ</span></div>
+<div id="modules">
+<article draggable="true" data-id="hero"><i>☰</i><div><b>Trang mở đầu</b><small>Hero / giới thiệu thương hiệu</small></div><label><input type="checkbox" checked> Hiện</label></article>
+<article draggable="true" data-id="services"><i>☰</i><div><b>Giải pháp toàn diện</b><small>Kiến trúc · Nội thất · 3D · Bảng hiệu</small></div><label><input type="checkbox" checked> Hiện</label></article>
+<article draggable="true" data-id="projects"><i>☰</i><div><b>Công trình & ý tưởng</b><small>Danh mục dự án nổi bật</small></div><label><input type="checkbox" checked> Hiện</label></article>
+<article draggable="true" data-id="process"><i>☰</i><div><b>Quy trình</b><small>5 bước triển khai</small></div><label><input type="checkbox" checked> Hiện</label></article>
+<article draggable="true" data-id="about"><i>☰</i><div><b>Giới thiệu HCDecor</b><small>Thông tin thương hiệu</small></div><label><input type="checkbox" checked> Hiện</label></article>
+</div></section>
+<section class="panel quick"><div class="panel-head"><div><b>Chỉnh nhanh nội dung</b><small>Giai đoạn 1</small></div></div>
+<label>Tiêu đề Giải pháp<input id="serviceTitle" value="Giải pháp toàn diện"></label>
+<label>Tiêu đề Dự án<input id="projectTitle" value="Công trình & ý tưởng nổi bật"></label>
+<p class="note">Thay ảnh, thêm/xóa dự án và Publish trực tiếp lên website sẽ được nối vào lớp dữ liệu quản trị ở bước tiếp theo.</p>
+</section></main>
+<script src="admin.js"></script></body></html>
