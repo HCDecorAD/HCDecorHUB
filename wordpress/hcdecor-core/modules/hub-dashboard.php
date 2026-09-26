@@ -166,6 +166,10 @@ function hcdecor_hub_dashboard_attention($s){
     $total_projects=(int)($c['projects_publish']??0)+(int)($c['projects_draft']??0);
     $pending=max(0,$total_projects-(int)($s['project_vault_synced']??0));
     if($pending>0) $add('warn',$pending.' project(s) pending Project Vault sync',admin_url('admin.php?page=hcdecor-project-vault'));
+    $vault_stale=(int)($h['project_vault']['stale_projects']??0);
+    $vault_errors=(int)($h['project_vault']['error_projects']??0);
+    if($vault_stale>0) $add('warn',$vault_stale.' Project Vault manifest(s) stale',admin_url('admin.php?page=hcdecor-project-vault'));
+    if($vault_errors>0) $add('bad',$vault_errors.' Project Vault sync error(s)',admin_url('admin.php?page=hcdecor-project-vault'));
     usort($items,function($a,$b){
         $priority=['bad'=>0,'warn'=>1];
         return ($priority[$a['level']]??2)<=>($priority[$b['level']]??2);
@@ -182,7 +186,7 @@ function hcdecor_hub_dashboard_readiness($s){
         'AI provider'=>in_array((string)($h['ai']['openai']??'off'),['ok','configured'],true) || in_array((string)($h['ai']['gemini']??'off'),['ok','configured'],true),
         'Web publisher'=>!empty($h['publisher']['ready']),
         'Backup'=>!empty($h['backup']['ready']) && !empty($h['backup']['fresh']),
-        'Project Vault'=>!empty($h['project_vault']['ready']) && (int)($h['project_vault']['pending_projects']??0)===0,
+        'Project Vault'=>!empty($h['project_vault']['ready']) && (int)($h['project_vault']['pending_projects']??0)===0 && (int)($h['project_vault']['stale_projects']??0)===0 && (int)($h['project_vault']['error_projects']??0)===0,
         'Drive Inbox'=>empty($s['inbox']['enabled']) || !empty($h['inbox']['fresh']),
         'Agent Bridge'=>!empty($h['bridge']['ready'])
     ];
