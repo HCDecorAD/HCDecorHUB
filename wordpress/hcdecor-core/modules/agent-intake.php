@@ -29,9 +29,12 @@ function hcdecor_agent_create_job($project_id,$media_ids=[],$brief=''){
         update_post_meta($id,'hc_cover_id',$cover);
     }
     update_post_meta($id,'hc_channels',['web','facebook','tiktok','youtube']);
-    update_post_meta($id,'hc_agent_status','draft');
+    if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($id,'draft','Created from Agent Intake');
+    else{
+        update_post_meta($id,'hc_agent_status','draft');
+        if(function_exists('hcdecor_workflow_log')) hcdecor_workflow_log($id,'draft','Created from Agent Intake');
+    }
     update_post_meta($id,'hc_outbound',false);
-    if(function_exists('hcdecor_workflow_log')) hcdecor_workflow_log($id,'draft','Created from Agent Intake');
     if(function_exists('wp_schedule_single_event')) wp_schedule_single_event(time()+5,'hcdecor_ai_process_job',[$id]);
     return $id;
 }
@@ -43,8 +46,12 @@ add_action('hcdecor_ai_process_job',function($job_id){
     if(!in_array($status,['draft','failed'],true)) return;
     if(!function_exists('hcdecor_ai_generate_job')) return;
     update_post_meta($job_id,'hc_agent_lock_until',time()+180);
-    if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($job_id,'processing','Scheduled AI processing');
-    else update_post_meta($job_id,'hc_agent_status','processing');
+    if(function_exists('hcdecor_workflow_set_status')){
+        if(!hcdecor_workflow_set_status($job_id,'processing','Scheduled AI processing')){
+            delete_post_meta($job_id,'hc_agent_lock_until');
+            return;
+        }
+    }else update_post_meta($job_id,'hc_agent_status','processing');
     hcdecor_ai_generate_job($job_id);
 },10,1);
 
