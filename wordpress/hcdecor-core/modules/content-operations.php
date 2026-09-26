@@ -60,8 +60,10 @@ add_action('admin_post_hcdecor_ops_create', function(){
     ]);
     if(is_wp_error($id)) wp_die($id->get_error_message());
     update_post_meta($id,'hc_project_id',$project);
-    if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($id,'draft','Created from Content Operations');
-    else update_post_meta($id,'hc_agent_status','draft');
+    if(!function_exists('hcdecor_workflow_set_status') || !hcdecor_workflow_set_status($id,'draft','Created from Content Operations')){
+        wp_delete_post($id,true);
+        wp_die('Workflow engine unavailable.');
+    }
     hcdecor_ops_save_fields($id,$_POST);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$id.'&created=1')); exit;
 });
