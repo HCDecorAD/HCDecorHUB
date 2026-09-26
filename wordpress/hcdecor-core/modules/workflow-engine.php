@@ -64,7 +64,8 @@ function hcdecor_workflow_recover_orphan_draft_claims($limit=20){
         $claimed=strtotime((string)get_post_meta($job_id,'hc_agent_claimed_at',true))?:0;
         $modified=strtotime((string)get_post_field('post_modified',$job_id))?:0;
         $age_base=$claimed?:$modified;
-        if(!$age_base || $age_base>=($now-900)) continue;
+        $stale_after=$claimed?120:900;
+        if(!$age_base || $age_base>=($now-$stale_after)) continue;
         hcdecor_workflow_clear_worker_claim($job_id,true);
         update_post_meta($job_id,'hc_agent_recovered_at',current_time('mysql'));
         update_post_meta($job_id,'hc_agent_recovery_reason','orphan_draft_claim');
@@ -109,7 +110,10 @@ add_action('rest_api_init',function(){
                     continue;
                 }
                 update_post_meta($j->ID,'hc_agent_lock_until',$now+600);
-                hcdecor_workflow_set_status($j->ID,'processing','Agent claimed job');
+                if(!hcdecor_workflow_set_status($j->ID,'processing','Agent claimed job')){
+                    hcdecor_workflow_clear_worker_claim($j->ID,true);
+                    continue;
+                }
                 delete_option($mutex);
                 $data=[
                     'id'=>$j->ID,'title'=>$j->post_title,'brief'=>$j->post_content,
