@@ -200,6 +200,8 @@ add_action('init',function(){
 },50);
 
 add_action('hcdecor_automation_tick',function(){
+    $s=hcdecor_auto_settings();
+    if(empty($s['enabled'])) return;
     $tasks=get_posts([
         'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>5,'orderby'=>'date','order'=>'ASC',
         'meta_query'=>[
@@ -213,7 +215,7 @@ add_action('hcdecor_automation_tick',function(){
 
 add_action('hcdecor_evergreen_tick',function(){
     $s=hcdecor_auto_settings();
-    if(empty($s['evergreen_enabled'])) return;
+    if(empty($s['enabled']) || empty($s['evergreen_enabled'])) return;
     $days=max(7,(int)$s['evergreen_days']);
     $before=date('Y-m-d H:i:s',time()-$days*DAY_IN_SECONDS);
     $projects=get_posts([
@@ -253,6 +255,15 @@ add_action('admin_post_hcdecor_automation_settings',function(){
     // Do not allow social outbound without a configured webhook connector.
     if($new['social_enabled'] && (!$new['webhook_enabled'] || !$new['webhook_url'])) $new['social_enabled']=false;
     update_option('hcdecor_automation_settings',$new,false);
+    if(!$new['enabled']){
+        wp_clear_scheduled_hook('hcdecor_automation_tick');
+        wp_clear_scheduled_hook('hcdecor_evergreen_tick');
+    }else{
+        if(!wp_next_scheduled('hcdecor_automation_tick')) wp_schedule_event(time()+20,'hcdecor_1min','hcdecor_automation_tick');
+        if($new['evergreen_enabled']){
+            if(!wp_next_scheduled('hcdecor_evergreen_tick')) wp_schedule_event(time()+300,'hcdecor_daily','hcdecor_evergreen_tick');
+        }else wp_clear_scheduled_hook('hcdecor_evergreen_tick');
+    }
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-automation&saved=1')); exit;
 });
 
