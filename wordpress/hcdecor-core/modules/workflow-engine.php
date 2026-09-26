@@ -29,6 +29,16 @@ function hcdecor_workflow_set_status($job_id,$status,$note=''){
     return true;
 }
 
+add_action('init',function(){
+    global $wpdb;
+    $cutoff=time()-120;
+    $rows=$wpdb->get_col("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE 'hcdecor_claim_mutex_%' LIMIT 100");
+    foreach((array)$rows as $name){
+        $token=(string)get_option($name,'');
+        if($token==='') delete_option($name);
+    }
+},60);
+
 add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/operations/claim',[
         'methods'=>'POST',
