@@ -220,3 +220,63 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
   .steps div{flex-basis:62vw}
   .project-filters button{font-size:13px!important;padding:8px 13px!important}
 }
+
+
+/* V4.3 mobile viewport cleanup — prevent sticky overlap + readable carousels */
+@media(max-width:850px){
+  html{scroll-padding-top:88px}
+  main .section,.about{scroll-margin-top:88px}
+  .section>.wrap{position:relative}
+  .section-head{padding-top:4px}
+  .section-head .eyebrow{position:static!important;display:block;margin:0 0 10px!important;background:transparent!important}
+  .section-head h2,.section h2{margin:0 0 12px!important}
+
+  /* One readable card + a small preview of the next card */
+  #services .cards article{flex:0 0:min(84vw,350px)!important;min-height:215px!important}
+  #services .cards article h3{font-size:21px!important;line-height:1.18!important;overflow-wrap:normal;word-break:normal}
+  #services .cards article p{font-size:14px!important;line-height:1.5!important;overflow-wrap:normal;word-break:normal}
+  .project{flex:0 0:min(84vw,350px)!important;height:292px!important}
+  .project div{left:20px;right:20px;bottom:20px}
+  .project h3{font-size:21px!important;overflow-wrap:normal;word-break:normal}
+  .project p{font-size:14px;line-height:1.45}
+
+  /* Process rail: readable cards, no narrow word wrapping */
+  .steps div{flex:0 0:min(78vw,310px)!important;min-height:132px!important}
+  .steps h4{font-size:18px!important}
+  .steps p{font-size:14px!important}
+
+  /* Floating social dock must not cover the content column */
+  .mobile-contact-dock{right:7px!important;bottom:16px!important;gap:7px!important}
+  .mobile-contact-dock a{width:44px!important;height:44px!important}
+  .mobile-contact-dock svg{width:21px!important;height:21px!important}
+  .quick-zalo img{width:42px!important;height:42px!important}
+
+  /* Keep tabs and capability band on one horizontal line */
+  .project-filters{padding-right:4px!important}
+  .band{overflow:hidden}
+  .band-inner{justify-content:flex-start!important;flex-wrap:nowrap!important;overflow-x:auto;white-space:nowrap;gap:18px!important;scrollbar-width:none}
+  .band-inner::-webkit-scrollbar{display:none}
+  .band-inner>*{flex:0 0 auto}
+
+  /* Compress long modules without sacrificing reading size */
+  .about .section{padding-top:40px!important;padding-bottom:40px!important}
+  footer{padding-top:40px!important}
+}
+@media(max-width:560px){
+  .nav{height:68px!important}
+  html{scroll-padding-top:82px}
+  main .section,.about{scroll-margin-top:82px}
+  .wrap{width:calc(100% - 36px)!important}
+  .hero{min-height:610px!important;padding-top:68px!important}
+  .hero-copy{padding-top:22px!important}
+  .hero h1{font-size:34px!important;line-height:1.07!important}
+  .lead{font-size:15px!important}
+  .section{padding:34px 0!important}
+  .section-head h2,.section h2{font-size:29px!important;line-height:1.08!important}
+  #projects .section-head h2{font-size:30px!important}
+  #projects .eyebrow{font-size:12px!important}
+  #services .cards article{flex-basis:84vw!important}
+  .project{flex-basis:84vw!important}
+  .steps div{flex-basis:78vw!important}
+  .social-links{padding-right:42px!important}
+}
