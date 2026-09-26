@@ -629,3 +629,15 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
 .lang-icon{display:inline-grid;place-items:center;font-size:14px;line-height:1;color:#d9aa6a}
 .lang-code{font-size:11px;font-weight:800;letter-spacing:.08em}
 @media(max-width:560px){.brand{font-size:18px!important}.hub-mark{font-size:9px;padding:3px 5px;margin-left:4px}.lang-toggle{min-width:54px;padding:7px 8px!important}}
+
+/* V6.6 requested mobile header */
+.nav .brand{display:flex;align-items:center;gap:7px;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif!important;font-weight:800!important}
+.lang-toggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;min-width:94px!important;height:48px!important;padding:0 17px!important;border:1px solid #d59a5570!important;border-radius:999px!important;background:rgba(9,10,11,.45)!important;color:#e6b36e!important}
+.lang-flag{font-size:22px;line-height:1}
+.lang-code{font-size:15px!important;font-weight:850!important;letter-spacing:.06em!important}
+@media(max-width:560px){
+ .nav .brand{font-size:18px!important;gap:5px}
+ .nav .brand span{font-size:18px!important}
+ .lang-toggle{min-width:86px!important;height:46px!important;padding:0 14px!important;gap:8px!important}
+ .lang-flag{font-size:20px}.lang-code{font-size:14px!important}
+}
