@@ -16,6 +16,8 @@ function hcdecor_workflow_log($job_id,$event,$note=''){
 }
 
 function hcdecor_workflow_set_status($job_id,$status,$note=''){
+    $job_id=(int)$job_id;
+    if(!$job_id || get_post_type($job_id)!=='hc_content_job') return false;
     $allowed=['draft','processing','review','approved','published_web','failed'];
     if(!in_array($status,$allowed,true)) return false;
     $old=(string)get_post_meta($job_id,'hc_agent_status',true);
