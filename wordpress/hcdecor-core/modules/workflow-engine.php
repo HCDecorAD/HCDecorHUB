@@ -39,6 +39,12 @@ add_action('rest_api_init',function(){
             foreach($jobs as $j){
                 $lock=(int)get_post_meta($j->ID,'hc_agent_lock_until',true);
                 if($lock>$now) continue;
+                $claim_token=wp_generate_uuid4();
+                if(!add_post_meta($j->ID,'hc_agent_claim_token',$claim_token,true)) continue;
+                if((string)get_post_meta($j->ID,'hc_agent_status',true)!=='draft'){
+                    delete_post_meta($j->ID,'hc_agent_claim_token',$claim_token);
+                    continue;
+                }
                 update_post_meta($j->ID,'hc_agent_lock_until',$now+600);
                 update_post_meta($j->ID,'hc_agent_claimed_at',current_time('mysql'));
                 hcdecor_workflow_set_status($j->ID,'processing','Agent claimed job');
@@ -48,7 +54,7 @@ add_action('rest_api_init',function(){
                     'channels'=>(array)get_post_meta($j->ID,'hc_channels',true),
                     'media_ids'=>(array)get_post_meta($j->ID,'hc_media_ids',true),
                     'cover_id'=>(int)get_post_meta($j->ID,'hc_cover_id',true),
-                    'status'=>'processing','outbound'=>false
+                    'status'=>'processing','claim_token'=>$claim_token,'outbound'=>false
                 ];
                 return rest_ensure_response($data);
             }
@@ -62,6 +68,15 @@ add_action('rest_api_init',function(){
             $id=(int)$r['id'];
             if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
             if((string)get_post_meta($id,'hc_agent_status',true)!=='processing') return new WP_Error('status','Job is not processing',['status'=>409]);
+            $token=sanitize_text_field((string)$r->get_param('claim_token'));
+            $expected=(string)get_post_meta($id,'hc_agent_claim_token',true);
+            if($expected==='' || $token==='' || !hash_equals($expected,$token)) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
+            $token=sanitize_text_field((string)$r->get_param('claim_token'));
+            $expected=(string)get_post_meta($id,'hc_agent_claim_token',true);
+            if($expected==='' || $token==='' || !hash_equals($expected,$token)) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
+            $token=sanitize_text_field((string)$r->get_param('claim_token'));
+            $expected=(string)get_post_meta($id,'hc_agent_claim_token',true);
+            if($expected==='' || $token==='' || !hash_equals($expected,$token)) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
             $lock=(int)get_post_meta($id,'hc_agent_lock_until',true);
             if($lock<=0 || $lock<time()) return new WP_Error('lock','Job lock expired; retry from Review Center',['status'=>409]);
             update_post_meta($id,'hc_agent_lock_until',time()+600);
@@ -81,6 +96,7 @@ add_action('rest_api_init',function(){
             $p=$r->get_json_params()?:[];
             if(function_exists('hcdecor_ops_save_fields')) hcdecor_ops_save_fields($id,$p);
             delete_post_meta($id,'hc_agent_lock_until');
+            delete_post_meta($id,'hc_agent_claim_token');
             hcdecor_workflow_set_status($id,'review','Agent completed generation');
             return rest_ensure_response(['ok'=>true,'id'=>$id,'status'=>'review','outbound'=>false]);
         }
@@ -97,6 +113,7 @@ add_action('rest_api_init',function(){
             $msg=sanitize_text_field((string)$r->get_param('message'));
             update_post_meta($id,'hc_agent_error',$msg);
             delete_post_meta($id,'hc_agent_lock_until');
+            delete_post_meta($id,'hc_agent_claim_token');
             hcdecor_workflow_set_status($id,'failed',$msg?:'Agent failed');
             return rest_ensure_response(['ok'=>true,'id'=>$id,'status'=>'failed','outbound'=>false]);
         }
@@ -120,6 +137,7 @@ function hcdecor_workflow_recover_stale_jobs($limit=10){
         if(($lock>0 && $lock<$now) || ($lock<=0 && $claimed>0 && $claimed<($now-900))){
             hcdecor_workflow_set_status($job->ID,'failed','Processing lock expired; safe retry available');
             delete_post_meta($job->ID,'hc_agent_lock_until');
+            delete_post_meta($job->ID,'hc_agent_claim_token');
             $recovered++;
         }
     }
@@ -164,6 +182,7 @@ add_action('admin_post_hcdecor_review_action',function(){
         delete_post_meta($id,'hc_reviewed_at');
         hcdecor_workflow_set_status($id,'draft','Retry requested by reviewer');
         delete_post_meta($id,'hc_agent_lock_until');
+            delete_post_meta($id,'hc_agent_claim_token');
         if(function_exists('wp_schedule_single_event')) wp_schedule_single_event(time()+3,'hcdecor_ai_process_job',[$id]);
     }
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-review&job='.$id.'&done=1')); exit;
