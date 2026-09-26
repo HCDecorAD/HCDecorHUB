@@ -35,7 +35,7 @@ function hcdecor_agent_create_job($project_id,$media_ids=[],$brief=''){
         if(function_exists('hcdecor_workflow_log')) hcdecor_workflow_log($id,'draft','Created from Agent Intake');
     }
     update_post_meta($id,'hc_outbound',false);
-    if(function_exists('wp_schedule_single_event')) wp_schedule_single_event(time()+5,'hcdecor_ai_process_job',[$id]);
+    if(function_exists('wp_schedule_single_event') && !wp_next_scheduled('hcdecor_ai_process_job',[$id])) wp_schedule_single_event(time()+5,'hcdecor_ai_process_job',[$id]);
     return $id;
 }
 
