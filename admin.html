@@ -2,7 +2,7 @@
 
 <div id="app"><header><a href="/" class="brand"><b>HC</b> HCDecor <span>Admin</span></a><div><a class="view" href="/" target="_blank">Website ↗</a></div></header><main>
 <section class="intro"><p>HCDECOR CONTROL</p><h1>Chỉnh giao diện trực quan</h1><small>Kéo thả · bật/tắt · sửa nội dung · thay ảnh · xem trước.</small></section>
-<div class="toolbar"><button id="undo">↶ Hoàn tác</button><button id="preview">◉ Xem trước</button><button id="publish" class="primary">Lưu bản chỉnh sửa</button></div>
+<div class="toolbar"><button id="undo">↶ Hoàn tác</button><button id="desktop">▣ Desktop</button><button id="mobile">▯ Mobile</button><button id="preview">◉ Mở preview</button><button id="publish" class="primary">Lưu bản chỉnh sửa</button></div>
 <section class="panel"><div class="panel-head"><div><b>Cấu trúc trang chủ</b><small>Kéo ☰ để sắp xếp</small></div><span id="status">Đã tải</span></div><div id="modules">
 <article draggable="true" data-id="home"><i>☰</i><div><b>Trang mở đầu</b><small>Hero / thương hiệu</small></div><label><input type="checkbox" checked> Hiện</label></article>
 <article draggable="true" data-id="services"><i>☰</i><div><b>Giải pháp toàn diện</b><small>4 nhóm dịch vụ</small></div><label><input type="checkbox" checked> Hiện</label></article>
@@ -10,9 +10,9 @@
 <article draggable="true" data-id="process"><i>☰</i><div><b>Quy trình</b><small>5 bước triển khai</small></div><label><input type="checkbox" checked> Hiện</label></article>
 <article draggable="true" data-id="about"><i>☰</i><div><b>Giới thiệu HCDecor</b><small>Thông tin thương hiệu</small></div><label><input type="checkbox" checked> Hiện</label></article>
 </div></section>
-<section class="panel quick"><div class="panel-head"><div><b>Nội dung & hình ảnh</b><small>Chỉnh trực tiếp bản xem trước</small></div></div>
+<section class="panel visual-edit"><div class="panel-head"><div><b>Visual Editor</b><small>Chọn vùng cần sửa, thay đổi hiển thị ngay trong preview</small></div><span id="editState">AUTO SAVE</span></div><div class="edit-tabs"><button data-target="hero" class="active">Hero</button><button data-target="services">Dịch vụ</button><button data-target="projects">Dự án</button><button data-target="about">Giới thiệu</button></div><div class="edit-grid"><label>Tiêu đề Hero<input id="heroTitle" placeholder="Tiêu đề chính"></label><label>Mô tả Hero<textarea id="heroLead" rows="3" placeholder="Mô tả"></textarea></label><label>Nút chính<input id="heroCta" placeholder="Nội dung nút"></label><label>Ảnh Hero<input id="heroImage" placeholder="URL ảnh"></label></div></section><section class="panel quick"><div class="panel-head"><div><b>Nội dung & hình ảnh</b><small>Chỉnh trực tiếp bản xem trước</small></div></div>
 <label>Tiêu đề Giải pháp<input id="serviceTitle" value="Giải pháp toàn diện"></label><label>Tiêu đề Dự án<input id="projectTitle" value="Công trình & ý tưởng nổi bật"></label>
 <div class="image-editor"><b>Ảnh Giải pháp</b><div id="serviceImages"></div></div><div class="image-editor"><b>Ảnh Dự án</b><div id="projectImages"></div></div>
 </section>
 <section class="panel preview-panel"><div class="panel-head"><div><b>Xem trước trực tiếp</b><small>Thay đổi hiển thị ngay</small></div><button id="refreshFrame" class="linkbtn">↻</button></div><iframe id="siteFrame" src="/?adminPreview=1" title="Xem trước website"></iframe></section>
-</main></div><script src="admin.js?v=9"></script><script>startAdmin();</script></body></html>
+</main></div><script src="admin.js?v=10"></script></body></html>
