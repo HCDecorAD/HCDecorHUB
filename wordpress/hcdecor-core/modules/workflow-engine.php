@@ -214,7 +214,7 @@ add_action('rest_api_init',function(){
             if($lock<=0 || $lock<time()) return new WP_Error('lock','Job lock expired; retry from Review Center',['status'=>409]);
             $p=$r->get_json_params()?:[];
             if(function_exists('hcdecor_ops_save_fields')) hcdecor_ops_save_fields($id,$p);
-            hcdecor_workflow_clear_worker_claim($id,true);
+            if(!hcdecor_workflow_clear_owned_claim($id,$token,true)) return new WP_Error('claim','Worker claim changed before completion',['status'=>409]);
             hcdecor_workflow_set_status($id,'review','Agent completed generation');
             return rest_ensure_response(['ok'=>true,'id'=>$id,'status'=>'review','outbound'=>false]);
         }
@@ -233,7 +233,7 @@ add_action('rest_api_init',function(){
             if($lock<=0 || $lock<time()) return new WP_Error('lock','Job lock expired; retry from Review Center',['status'=>409]);
             $msg=sanitize_text_field((string)$r->get_param('message'));
             update_post_meta($id,'hc_agent_error',$msg);
-            hcdecor_workflow_clear_worker_claim($id,true);
+            if(!hcdecor_workflow_clear_owned_claim($id,$token,true)) return new WP_Error('claim','Worker claim changed before failure update',['status'=>409]);
             hcdecor_workflow_set_status($id,'failed',$msg?:'Agent failed');
             return rest_ensure_response(['ok'=>true,'id'=>$id,'status'=>'failed','outbound'=>false]);
         }
