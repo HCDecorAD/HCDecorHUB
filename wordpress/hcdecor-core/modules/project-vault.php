@@ -204,12 +204,47 @@ add_action('hcdecor_after_web_publish',function($job_id,$project_id){
     }
 },45,2);
 
+function hcdecor_project_vault_sync_all($limit=100){
+    $limit=max(1,min(500,(int)$limit));
+    if(!function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()) return new WP_Error('drive','Google Drive chưa kết nối.');
+
+    $projects=get_posts([
+        'post_type'=>'hc_project','post_status'=>['publish','draft','private'],
+        'numberposts'=>$limit,'orderby'=>'modified','order'=>'DESC','fields'=>'ids'
+    ]);
+    $result=['scanned'=>count($projects),'synced'=>0,'failed'=>0,'errors'=>[]];
+    foreach($projects as $project_id){
+        $r=hcdecor_project_vault_save((int)$project_id,true);
+        if(is_wp_error($r)){
+            $result['failed']++;
+            if(count($result['errors'])<10) $result['errors'][]='#'.(int)$project_id.': '.$r->get_error_message();
+        }else{
+            $result['synced']++;
+        }
+    }
+    update_option('hcdecor_project_vault_bulk_last_at',current_time('mysql'),false);
+    update_option('hcdecor_project_vault_bulk_last_result',$result,false);
+    return $result;
+}
+
 add_action('admin_post_hcdecor_project_vault_save',function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
     $id=(int)($_POST['project_id']??0);
     check_admin_referer('hcdecor_project_vault_save_'.$id);
     $r=hcdecor_project_vault_save($id,true);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-project-vault&'.(is_wp_error($r)?'failed=1':'saved=1'))); exit;
+});
+
+add_action('admin_post_hcdecor_project_vault_sync_all',function(){
+    if(!current_user_can('edit_posts')) wp_die('Forbidden');
+    check_admin_referer('hcdecor_project_vault_sync_all');
+    $r=hcdecor_project_vault_sync_all(100);
+    if(is_wp_error($r)){
+        update_option('hcdecor_project_vault_last_error',$r->get_error_message(),false);
+        wp_safe_redirect(admin_url('admin.php?page=hcdecor-project-vault&bulk_failed=1')); exit;
+    }
+    delete_option('hcdecor_project_vault_last_error');
+    wp_safe_redirect(admin_url('admin.php?page=hcdecor-project-vault&bulk_done=1')); exit;
 });
 
 add_action('admin_post_hcdecor_project_vault_import',function(){
@@ -234,6 +269,13 @@ add_action('rest_api_init',function(){
         'methods'=>'POST','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
             $res=hcdecor_project_vault_save((int)$r['id'],true);
+            return is_wp_error($res)?$res:rest_ensure_response($res);
+        }
+    ]);
+    register_rest_route('hcdecor/v1','/projects/drive-sync-all',[
+        'methods'=>'POST','permission_callback'=>'hcdecor_ops_bridge_auth',
+        'callback'=>function(WP_REST_Request $r){
+            $res=hcdecor_project_vault_sync_all((int)($r->get_param('limit')?:100));
             return is_wp_error($res)?$res:rest_ensure_response($res);
         }
     ]);
@@ -265,9 +307,17 @@ function hcdecor_project_vault_page(){
       </style>
       <h1>HCDecor Project Vault</h1>
       <p>WordPress Project ↔ Google Drive <strong>01_PROJECTS</strong>. Project JSON giữ metadata và Drive File ID của media.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
+        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
+          <input type="hidden" name="action" value="hcdecor_project_vault_sync_all"><?php wp_nonce_field('hcdecor_project_vault_sync_all');?>
+          <button class="button button-primary">Sync All Projects → Drive</button>
+        </form>
+        <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-drive-inbox'));?>">Drive Inbox</a>
+      </div>
 
       <?php if(isset($_GET['saved'])):?><div class="notice notice-success inline"><p>Project đã lưu vào Drive Vault.</p></div><?php endif;?>
-      <?php if(isset($_GET['failed'])||isset($_GET['import_failed'])):?><div class="notice notice-error inline"><p><?php echo esc_html($error?:'Project Vault operation failed.');?></p></div><?php endif;?>
+      <?php if(isset($_GET['bulk_done'])): $br=(array)get_option('hcdecor_project_vault_bulk_last_result',[]);?><div class="notice notice-success inline"><p>Bulk sync hoàn tất: <?php echo (int)($br['synced']??0);?> synced · <?php echo (int)($br['failed']??0);?> failed.</p></div><?php endif;?>
+      <?php if(isset($_GET['failed'])||isset($_GET['import_failed'])||isset($_GET['bulk_failed'])):?><div class="notice notice-error inline"><p><?php echo esc_html($error?:'Project Vault operation failed.');?></p></div><?php endif;?>
 
       <div class="hcpv-grid">
         <section class="hcpv-card">
