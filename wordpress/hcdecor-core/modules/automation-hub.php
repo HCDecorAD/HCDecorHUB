@@ -359,6 +359,9 @@ add_action('admin_post_hcdecor_automation_retry',function(){
     delete_post_meta($id,'hc_auto_started_at');
     delete_post_meta($id,'hc_auto_done_at');
     delete_post_meta($id,'hc_auto_recovered_at');
+    delete_post_meta($id,'hc_auto_done_at');
+    update_post_meta($id,'hc_auto_manual_retry_at',current_time('mysql'));
+    update_post_meta($id,'hc_auto_manual_retry_by',get_current_user_id());
     hcdecor_auto_log($id,'manual_retry','Queued by administrator');
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-automation&retried=1')); exit;
 });
@@ -390,6 +393,7 @@ function hcdecor_automation_page(){
     if(!current_user_can('manage_options')) return;
     $s=hcdecor_auto_settings();
     $tasks=get_posts(['post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>40,'orderby'=>'date','order'=>'DESC']);
+    $settings_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
     ?>
     <div class="wrap hca" style="max-width:1300px"><h1>HCDecor Automation HUB</h1>
     <p>Trigger → Queue → Action → Retry → Review/Publish. Social outbound chỉ bật khi có connector.</p>
@@ -408,6 +412,7 @@ function hcdecor_automation_page(){
         <p>Retry <input type="number" name="max_attempts" value="<?php echo (int)$s['max_attempts'];?>" min="1" max="10" style="width:70px"> lần · mỗi <input type="number" name="retry_minutes" value="<?php echo (int)$s['retry_minutes'];?>" min="1" style="width:80px"> phút</p>
         <p><button class="button button-primary">Lưu Automation</button></p>
       </form>
+      <?php if(!empty($settings_change['at'])):?><hr><p><strong>Last settings change:</strong> <?php echo esc_html($settings_change['at']);?> · blocked <?php echo (int)($settings_change['blocked_tasks']??0);?> task(s)</p><?php endif;?>
       <hr><p><strong>Patterns:</strong> Editorial Calendar · per-channel queue · evergreen re-share · trigger/action recipes · webhooks · retry/backoff.</p>
       </section>
       <section style="background:#fff;border:1px solid #ddd;border-radius:12px;overflow:hidden">
