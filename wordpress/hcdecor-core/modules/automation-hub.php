@@ -283,7 +283,8 @@ add_action('hcdecor_automation_cleanup_tick',function(){
     update_option('hcdecor_automation_settings_last_change',$last_change,false);
     hcdecor_auto_cleanup_mutex_release();
     wp_unschedule_event($watchdog,'hcdecor_automation_cleanup_watchdog');
-    if(!empty($cleanup['limited']) && !wp_next_scheduled('hcdecor_automation_cleanup_tick')) wp_schedule_single_event(time()+60,'hcdecor_automation_cleanup_tick');
+    if(empty($cleanup['limited'])) wp_clear_scheduled_hook('hcdecor_automation_cleanup_watchdog');
+    elseif(!wp_next_scheduled('hcdecor_automation_cleanup_tick')) wp_schedule_single_event(time()+60,'hcdecor_automation_cleanup_tick');
 });
 
 add_action('hcdecor_automation_cleanup_watchdog',function(){
@@ -385,6 +386,7 @@ add_action('admin_post_hcdecor_automation_settings',function(){
         'cleanup_limited'=>!empty($cleanup['limited'])
     ],false);
     wp_clear_scheduled_hook('hcdecor_automation_cleanup_tick');
+    wp_clear_scheduled_hook('hcdecor_automation_cleanup_watchdog');
     if(!empty($cleanup['limited'])) wp_schedule_single_event(time()+60,'hcdecor_automation_cleanup_tick');
     if(!$new['enabled']){
         wp_clear_scheduled_hook('hcdecor_automation_tick');
