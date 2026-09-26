@@ -84,6 +84,8 @@ function hcdecor_publish_job_to_web($job_id){
 
 function hcdecor_rollback_job_publish($job_id){
     $job_id=(int)$job_id;
+    if(!function_exists('hcdecor_workflow_set_status')) return new WP_Error('workflow','Workflow engine unavailable.');
+    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='published_web') return new WP_Error('status','Only published Web jobs can be rolled back.');
     $snapshot=get_post_meta($job_id,'hc_publish_snapshot',true);
     $project=(int)get_post_meta($job_id,'hc_published_project_id',true);
     if(!$project || get_post_type($project)!=='hc_project' || !is_array($snapshot)) return new WP_Error('snapshot','No rollback snapshot.');
@@ -103,8 +105,6 @@ function hcdecor_rollback_job_publish($job_id){
     if($cover && wp_attachment_is_image($cover)) set_post_thumbnail($project,$cover);
     else delete_post_thumbnail($project);
 
-    if(!function_exists('hcdecor_workflow_set_status')) return new WP_Error('workflow','Workflow engine unavailable.');
-    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='published_web') return new WP_Error('status','Only published Web jobs can be rolled back.');
     if(!hcdecor_workflow_set_status($job_id,'approved','Rolled back Web publish')) return new WP_Error('transition','Web rollback status transition was rejected.');
     update_post_meta($job_id,'hc_rollback_at',current_time('mysql'));
     update_post_meta($job_id,'hc_rollback_by',get_current_user_id());
