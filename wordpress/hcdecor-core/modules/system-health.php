@@ -232,7 +232,7 @@ function hcdecor_health_snapshot(){
     if($actionable_blocked>0) $issues[]='Automation blocked: '.$actionable_blocked;
     if(!empty(((array)get_option('hcdecor_automation_settings_last_change',[]))['cleanup_limited'])){
         $issues[]='Automation settings cleanup backlog exceeds bounded pass';
-        if(!wp_next_scheduled('hcdecor_automation_cleanup_tick') && !get_transient('hcdecor_automation_cleanup_lock')) $issues[]='Automation cleanup backlog has no scheduled continuation';
+        if(!wp_next_scheduled('hcdecor_automation_cleanup_tick') && !((int)get_option('hcdecor_automation_cleanup_mutex',0)>=(time()-120))) $issues[]='Automation cleanup backlog has no scheduled continuation';
     }
     if($bridge==='') $issues[]='Agent Bridge token missing';
     if($drive_configured && $backup_ts===0) $issues[]='Backup has never completed';
@@ -333,8 +333,9 @@ function hcdecor_health_snapshot(){
             'settings_last_change'=>(array)get_option('hcdecor_automation_settings_last_change',[]),
             'settings_cleanup_limited'=>!empty(((array)get_option('hcdecor_automation_settings_last_change',[]))['cleanup_limited']),
             'cleanup_next'=>wp_next_scheduled('hcdecor_automation_cleanup_tick')?:0,
-            'cleanup_running'=>(bool)get_transient('hcdecor_automation_cleanup_lock'),
-            'cleanup_lock_age'=>get_transient('hcdecor_automation_cleanup_lock')?max(0,time()-(int)get_transient('hcdecor_automation_cleanup_lock')):0
+            'cleanup_running'=>((int)get_option('hcdecor_automation_cleanup_mutex',0))>=(time()-120),
+            'cleanup_lock_age'=>get_option('hcdecor_automation_cleanup_mutex',0)?max(0,time()-(int)get_option('hcdecor_automation_cleanup_mutex',0)):0,
+            'cleanup_mutex_stale'=>get_option('hcdecor_automation_cleanup_mutex',0) && (int)get_option('hcdecor_automation_cleanup_mutex',0)<(time()-120)
         ],
         'content_queue'=>$queue,
         'stale_processing'=>$stale_processing,
