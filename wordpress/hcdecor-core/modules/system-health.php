@@ -228,6 +228,7 @@ function hcdecor_health_snapshot(){
     if($drive_configured && $drive_test==='error') $issues[]='Google Drive connection error';
     if($auto['failed']>0) $issues[]='Automation failed: '.$auto['failed'];
     if($actionable_blocked>0) $issues[]='Automation blocked: '.$actionable_blocked;
+    if(!empty(((array)get_option('hcdecor_automation_settings_last_change',[]))['cleanup_limited'])) $issues[]='Automation settings cleanup backlog exceeds bounded pass';
     if($bridge==='') $issues[]='Agent Bridge token missing';
     if($drive_configured && $backup_ts===0) $issues[]='Backup has never completed';
     elseif($drive_configured && $backup_age>129600) $issues[]='Backup is stale (>36h)';
