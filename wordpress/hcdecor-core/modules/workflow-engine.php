@@ -44,14 +44,20 @@ add_action('rest_api_init',function(){
                 $lock=(int)get_post_meta($j->ID,'hc_agent_lock_until',true);
                 if($lock>$now) continue;
                 $claim_token=wp_generate_uuid4();
-                if(!add_post_meta($j->ID,'hc_agent_claim_token',$claim_token,true)) continue;
+                $mutex='hcdecor_claim_mutex_'.$j->ID;
+                if(!add_option($mutex,$claim_token,'',false)) continue;
                 if((string)get_post_meta($j->ID,'hc_agent_status',true)!=='draft'){
-                    delete_post_meta($j->ID,'hc_agent_claim_token',$claim_token);
+                    delete_option($mutex);
+                    continue;
+                }
+                if(!add_post_meta($j->ID,'hc_agent_claim_token',$claim_token,true)){
+                    delete_option($mutex);
                     continue;
                 }
                 update_post_meta($j->ID,'hc_agent_lock_until',$now+600);
                 update_post_meta($j->ID,'hc_agent_claimed_at',current_time('mysql'));
                 hcdecor_workflow_set_status($j->ID,'processing','Agent claimed job');
+                delete_option($mutex);
                 $data=[
                     'id'=>$j->ID,'title'=>$j->post_title,'brief'=>$j->post_content,
                     'project_id'=>(int)get_post_meta($j->ID,'hc_project_id',true),
