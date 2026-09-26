@@ -1,5 +1,5 @@
 {
-  "version": "2026.09.26.7",
+  "version": "2026.09.26.8",
   "files": [
     {
       "path": "hcdecor-core.php",
@@ -19,7 +19,7 @@
     {
       "path": "modules/background-sync.php",
       "url": "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/background-sync.php",
-      "git_sha1": "8f483fbf3bda0ae1a15d6bf8ed2ecd137b2f35de"
+      "git_sha1": "ec6edb680cb25fff707dcb9c250b2020d81e3496"
     },
     {
       "path": "modules/content-operations.php",
