@@ -152,7 +152,31 @@ add_action('init',function(){
 },75);
 
 add_action('hcdecor_backup_daily',function(){
-    if(function_exists('hcdecor_drive_configured') && hcdecor_drive_configured()) hcdecor_backup_save();
+    if(!function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()){
+        update_option('hcdecor_backup_last_error','Scheduled backup skipped: Drive Vault chưa kết nối.',false);
+        return;
+    }
+    $r=hcdecor_backup_save();
+    if(is_wp_error($r)){
+        $attempts=(int)get_option('hcdecor_backup_retry_count',0)+1;
+        update_option('hcdecor_backup_retry_count',$attempts,false);
+        if($attempts<3 && !wp_next_scheduled('hcdecor_backup_retry')){
+            wp_schedule_single_event(time()+min(1800,300*$attempts),'hcdecor_backup_retry');
+        }
+    }else{
+        delete_option('hcdecor_backup_retry_count');
+    }
+});
+add_action('hcdecor_backup_retry',function(){
+    if(!function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()) return;
+    $r=hcdecor_backup_save();
+    if(is_wp_error($r)){
+        $attempts=(int)get_option('hcdecor_backup_retry_count',0)+1;
+        update_option('hcdecor_backup_retry_count',$attempts,false);
+        if($attempts<3 && !wp_next_scheduled('hcdecor_backup_retry')) wp_schedule_single_event(time()+min(1800,300*$attempts),'hcdecor_backup_retry');
+    }else{
+        delete_option('hcdecor_backup_retry_count');
+    }
 });
 
 add_action('admin_post_hcdecor_backup_now',function(){
