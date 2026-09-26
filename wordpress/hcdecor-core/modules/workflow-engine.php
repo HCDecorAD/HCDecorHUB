@@ -269,9 +269,14 @@ function hcdecor_workflow_recover_stale_jobs($limit=10){
             $current_token=(string)get_post_meta($job->ID,'hc_agent_claim_token',true);
             $current_lock=(int)get_post_meta($job->ID,'hc_agent_lock_until',true);
             if($current_token!==$token || $current_lock!==$lock) continue;
-            hcdecor_workflow_set_status($job->ID,'failed',$invalid_claim?'Worker claim token missing; safe retry available':'Processing lock expired; safe retry available');
-            if($token!=='') hcdecor_workflow_clear_owned_claim($job->ID,$token,true);
-            else hcdecor_workflow_clear_worker_claim($job->ID,true);
+            $note=$invalid_claim?'Worker claim token missing; safe retry available':'Processing lock expired; safe retry available';
+            if($token!==''){
+                if(!hcdecor_workflow_finish_owned_claim($job->ID,$token,'failed',$note)) continue;
+            }else{
+                if((string)get_post_meta($job->ID,'hc_agent_status',true)!=='processing') continue;
+                if(!hcdecor_workflow_set_status($job->ID,'failed',$note)) continue;
+                hcdecor_workflow_clear_worker_claim($job->ID,true);
+            }
             update_post_meta($job->ID,'hc_agent_recovered_at',current_time('mysql'));
             update_post_meta($job->ID,'hc_agent_recovery_reason',$invalid_claim?'missing_claim_token':'expired_lock');
             $recovered++;
