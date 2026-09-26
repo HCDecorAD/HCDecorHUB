@@ -219,6 +219,7 @@ add_action('hcdecor_project_vault_async_save',function($project_id){
         return;
     }
     delete_post_meta($project_id,'hc_drive_project_retry_count');
+    delete_post_meta($project_id,'hc_drive_project_error');
 },10,1);
 
 add_action('hcdecor_after_web_publish',function($job_id,$project_id){
