@@ -50,6 +50,23 @@ function hcdecor_drive_inbox_project_from_name($name){
     return $id && get_post_type($id)==='hc_project' ? $id : 0;
 }
 
+function hcdecor_drive_inbox_project_from_parent($file){
+    $parents=(array)($file['parents']??[]);
+    if(!$parents || !function_exists('hcdecor_drive_list')) return 0;
+    foreach(array_slice($parents,0,3) as $parent_id){
+        $parent_id=sanitize_text_field((string)$parent_id);
+        if($parent_id==='') continue;
+        $items=hcdecor_drive_list($parent_id,5);
+        if(is_wp_error($items)) continue;
+        foreach((array)$items as $item){
+            $name=(string)($item['name']??'');
+            $project_id=hcdecor_drive_inbox_project_from_name($name);
+            if($project_id) return $project_id;
+        }
+    }
+    return 0;
+}
+
 function hcdecor_drive_inbox_link_project($attachment_id,$project_id){
     $attachment_id=(int)$attachment_id;
     $project_id=(int)$project_id;
@@ -122,6 +139,7 @@ function hcdecor_drive_inbox_scan($limit=null){
         $project_id=0;
         if(!empty($settings['auto_link_project'])){
             $project_id=hcdecor_drive_inbox_project_from_name($name);
+            if(!$project_id) $project_id=hcdecor_drive_inbox_project_from_parent($file);
             if($project_id && hcdecor_drive_inbox_link_project($attachment_id,$project_id)) $result['linked']++;
         }
 
