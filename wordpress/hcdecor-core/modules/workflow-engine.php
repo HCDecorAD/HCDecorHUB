@@ -51,7 +51,10 @@ function hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed=true){
 function hcdecor_workflow_finalize_claim($job_id,$claim_token,$now,$message='Agent claimed job'){
     $job_id=(int)$job_id;
     if($claim_token==='' || (string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token) return false;
-    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='draft') return false;
+    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='draft'){
+        if((string)get_post_meta($job_id,'hc_agent_claim_token',true)===$claim_token) hcdecor_workflow_clear_worker_claim($job_id,true);
+        return false;
+    }
     update_post_meta($job_id,'hc_agent_claimed_at',current_time('mysql'));
     update_post_meta($job_id,'hc_agent_lock_until',(int)$now+600);
     if(hcdecor_workflow_set_status($job_id,'processing',$message)) return true;
