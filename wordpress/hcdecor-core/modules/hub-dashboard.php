@@ -130,19 +130,30 @@ function hcdecor_hub_dashboard_attention($s){
     $c=(array)($s['counts']??[]);
     $h=(array)($s['health']??[]);
     $items=[];
+    $seen=[];
+    $add=function($level,$label,$url) use (&$items,&$seen){
+        $key=strtolower(trim((string)$label));
+        if($key==='' || isset($seen[$key])) return;
+        $seen[$key]=true;
+        $items[]=['level'=>$level,'label'=>(string)$label,'url'=>$url];
+    };
     foreach((array)($h['issues']??[]) as $issue){
-        $items[]=['level'=>'bad','label'=>(string)$issue,'url'=>admin_url('admin.php?page=hcdecor-system-health')];
+        $label=(string)$issue;
+        if(strpos($label,'Automation failed:')===0 || strpos($label,'Automation blocked:')===0) continue;
+        $add('bad',$label,admin_url('admin.php?page=hcdecor-system-health'));
     }
     $failed=(int)($c['job_status']['failed']??0);
-    if($failed>0) $items[]=['level'=>'bad','label'=>$failed.' content job(s) failed','url'=>admin_url('admin.php?page=hcdecor-content-operations')];
+    if($failed>0) $add('bad',$failed.' content job(s) failed',admin_url('admin.php?page=hcdecor-content-operations'));
     $blocked=(int)($c['automation']['blocked']??0);
     $auto_failed=(int)($c['automation']['failed']??0);
-    if($blocked>0) $items[]=['level'=>'warn','label'=>$blocked.' automation task(s) blocked','url'=>admin_url('admin.php?page=hcdecor-automation')];
-    if($auto_failed>0) $items[]=['level'=>'bad','label'=>$auto_failed.' automation task(s) failed','url'=>admin_url('admin.php?page=hcdecor-automation')];
-    if(!empty($s['inbox']['enabled']) && !empty($h['inbox']['error'])) $items[]=['level'=>'bad','label'=>'Drive Inbox: '.(string)$h['inbox']['error'],'url'=>admin_url('admin.php?page=hcdecor-drive-inbox')];
+    if($blocked>0) $add('warn',$blocked.' automation task(s) blocked',admin_url('admin.php?page=hcdecor-automation'));
+    if($auto_failed>0) $add('bad',$auto_failed.' automation task(s) failed',admin_url('admin.php?page=hcdecor-automation'));
+    if(!empty($s['inbox']['enabled']) && !empty($h['inbox']['error'])) $add('bad','Drive Inbox: '.(string)$h['inbox']['error'],admin_url('admin.php?page=hcdecor-drive-inbox'));
+    if(!empty($h['backup']['error'])) $add('bad','Backup: '.(string)$h['backup']['error'],admin_url('admin.php?page=hcdecor-data-backups'));
+    if(!empty($h['restore']['error'])) $add('bad','Restore: '.(string)$h['restore']['error'],admin_url('admin.php?page=hcdecor-restore-center'));
     $total_projects=(int)($c['projects_publish']??0)+(int)($c['projects_draft']??0);
     $pending=max(0,$total_projects-(int)($s['project_vault_synced']??0));
-    if($pending>0) $items[]=['level'=>'warn','label'=>$pending.' project(s) pending Project Vault sync','url'=>admin_url('admin.php?page=hcdecor-project-vault')];
+    if($pending>0) $add('warn',$pending.' project(s) pending Project Vault sync',admin_url('admin.php?page=hcdecor-project-vault'));
     return array_slice($items,0,8);
 }
 
