@@ -74,6 +74,13 @@ function hcdecor_ai_prompt($job_id){
         'BRIEF: '.$job->post_content,
         'CHANNELS: '.implode(', ',$channels?:['web']),
     ];
+    $media_notes=[];
+    foreach((array)get_post_meta($job_id,'hc_media_ids',true) as $mid){
+        $mid=(int)$mid; $summary=(string)get_post_meta($mid,'hc_ai_summary',true);
+        if($summary==='') continue;
+        $media_notes[]='#'.$mid.' '.$summary.' | cover_score='.(int)get_post_meta($mid,'hc_ai_cover_score',true).' | tags='.implode(',',(array)get_post_meta($mid,'hc_ai_tags',true));
+    }
+    if($media_notes) $parts[]='MEDIA ANALYSIS:\n'.implode("\n",$media_notes);
     if($review_note!=='') $parts[]='REVIEW NOTE: '.$review_note;
     $parts[]='Yêu cầu output: web_title, web_intro, web_body, seo_meta, facebook_caption, tiktok_script, youtube_title, youtube_description.';
     $parts[]='TikTok script nên có Hook → cảnh/shot gợi ý → nội dung chính → CTA. SEO meta ngắn gọn. Không thêm hashtag quá mức.';
