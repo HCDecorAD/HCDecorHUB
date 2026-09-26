@@ -171,7 +171,6 @@ function hcdecor_health_snapshot(){
     if($vault_errors>0) $issues[]='Project Vault errors: '.$vault_errors;
     if($vault_retrying>0) $issues[]='Project Vault retrying: '.$vault_retrying;
     if($backup_retry>0) $issues[]='Backup retrying: attempt '.$backup_retry;
-    if(!$backup_cron) $issues[]='Daily backup cron missing';
     $backup_running=(bool)get_transient('hcdecor_backup_running');
     if($backup_running) $issues[]='Backup currently running';
     if($vault_stale>0) $issues[]='Project Vault stale: '.$vault_stale;
@@ -195,7 +194,6 @@ function hcdecor_health_snapshot(){
     if(!empty($inbox_settings['enabled']) && ($inbox_ts===0 || $inbox_age>1800)) $score-=5;
     if($stale_processing>0) $score-=min(10,$stale_processing*2);
     if($oldest_review_age>86400) $score-=5;
-    if(!$backup_cron) $score-=8;
     $score=max(0,min(100,$score));
 
     return [
@@ -247,7 +245,11 @@ function hcdecor_health_snapshot(){
         'content_queue'=>$queue,
         'stale_processing'=>$stale_processing,
         'review_oldest_age_seconds'=>$oldest_review_age,
-        'throughput_7d'=>['created'=>$created_7d,'published'=>$published_7d],
+        'throughput_7d'=>[
+            'created'=>$created_7d,
+            'published'=>$published_7d,
+            'publish_rate'=>$created_7d>0?(int)round(($published_7d/$created_7d)*100):0
+        ],
         'bridge'=>['ready'=>$bridge!==''],
         'publisher'=>['ready'=>function_exists('hcdecor_publish_job_to_web') && post_type_exists('hc_content_job') && post_type_exists('hc_project')],
         'restore'=>[
@@ -267,6 +269,17 @@ function hcdecor_health_snapshot(){
         ],
         'issues'=>$issues
     ];
+}
+
+function hcdecor_health_auto_repair_schedules(){
+    $last=(int)get_option('hcdecor_health_auto_repair_at',0);
+    if($last && time()-$last<3600) return false;
+    $crons=hcdecor_health_crons();
+    $missing=array_filter($crons,function($v){ return empty($v['scheduled']); });
+    if(!$missing) return false;
+    hcdecor_health_repair_schedules();
+    update_option('hcdecor_health_auto_repair_at',time(),false);
+    return true;
 }
 
 function hcdecor_health_repair_schedules(){
@@ -303,6 +316,8 @@ add_action('admin_post_hcdecor_health_check',function(){
     update_option('hcdecor_health_last_snapshot',$snap,false);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-system-health&checked=1')); exit;
 });
+
+add_action('init',function(){ hcdecor_health_auto_repair_schedules(); },95);
 
 add_action('admin_post_hcdecor_health_repair',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
