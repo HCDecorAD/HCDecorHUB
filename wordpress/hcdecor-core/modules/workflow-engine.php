@@ -100,8 +100,9 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     if(!$released){
         $current=(array)get_option('hcdecor_worker_mutex_sweep_mutex',[]);
         if($current && (string)($current['token']??'')===(string)($owned['token']??'')) hcdecor_workflow_claim_mutex_delete_if_same('hcdecor_worker_mutex_sweep_mutex',$current);
+        if(!wp_next_scheduled('hcdecor_worker_mutex_sweep_tick')) wp_schedule_single_event(time()+15,'hcdecor_worker_mutex_sweep_tick');
     }
-    return ['stale'=>$stale,'deleted'=>$deleted,'limited'=>$continue,'busy'=>false];
+    return ['stale'=>$stale,'deleted'=>$deleted,'limited'=>$continue,'busy'=>false,'released'=>$released];
 }
 
 add_action('init',function(){
