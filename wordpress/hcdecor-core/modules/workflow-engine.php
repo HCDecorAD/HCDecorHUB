@@ -85,7 +85,7 @@ function hcdecor_workflow_refresh_owned_claim($job_id,$claim_token,$seconds=600)
     $new_lock=time()+max(60,(int)$seconds);
     update_post_meta($job_id,'hc_agent_lock_until',$new_lock);
     if((string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token || (string)get_post_meta($job_id,'hc_agent_status',true)!=='processing'){
-        if((int)get_post_meta($job_id,'hc_agent_lock_until',true)===$new_lock) delete_post_meta($job_id,'hc_agent_lock_until');
+        if((string)get_post_meta($job_id,'hc_agent_claim_token',true)===$claim_token && (int)get_post_meta($job_id,'hc_agent_lock_until',true)===$new_lock) delete_post_meta($job_id,'hc_agent_lock_until');
         return false;
     }
     update_post_meta($job_id,'hc_agent_heartbeat',current_time('mysql'));
