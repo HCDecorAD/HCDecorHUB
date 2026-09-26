@@ -593,3 +593,10 @@ add_action('admin_footer',function(){
   })();
   </script><?php
 });
+
+
+/* HCDECOR_PRODUCTION_MODULES */
+foreach (['background-sync.php','content-operations.php'] as $hcdecor_module) {
+    $hcdecor_module_path = plugin_dir_path(__FILE__) . 'modules/' . $hcdecor_module;
+    if (is_readable($hcdecor_module_path)) require_once $hcdecor_module_path;
+}
