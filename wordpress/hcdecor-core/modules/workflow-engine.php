@@ -116,6 +116,10 @@ add_action('admin_post_hcdecor_review_action',function(){
     }elseif($action==='changes'){
         hcdecor_workflow_set_status($id,'draft','Returned for changes');
         update_post_meta($id,'hc_review_note',sanitize_textarea_field(wp_unslash($_POST['review_note']??'')));
+    }elseif($action==='retry' && (string)get_post_meta($id,'hc_agent_status',true)==='failed'){
+        hcdecor_workflow_set_status($id,'draft','Retry requested by reviewer');
+        delete_post_meta($id,'hc_agent_lock_until');
+        if(function_exists('wp_schedule_single_event')) wp_schedule_single_event(time()+3,'hcdecor_ai_process_job',[$id]);
     }
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-review&job='.$id.'&done=1')); exit;
 });
@@ -154,7 +158,7 @@ function hcdecor_review_page(){
       <div class="hcr-preview"><?php foreach($fields as $name=>$x):?><div class="hcr-channel"><h3><?php echo esc_html($name);?></h3><?php if($x[0]):?><strong><?php echo esc_html($x[0]);?></strong><?php endif;?><p><?php echo esc_html(trim($x[1]));?></p></div><?php endforeach;?></div>
       <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><?php wp_nonce_field('hcdecor_review_'.$job_id);?><input type="hidden" name="action" value="hcdecor_review_action"><input type="hidden" name="job_id" value="<?php echo $job_id;?>">
         <label><strong>Ghi chú chỉnh sửa</strong></label><textarea name="review_note"></textarea>
-        <div class="hcr-actions"><button class="button" name="review_action" value="changes">Trả về chỉnh sửa</button><?php if($status==='review'):?><button class="button" name="review_action" value="approve">Approve</button><?php if(current_user_can('publish_posts')):?><button class="button button-primary" name="review_action" value="approve_publish">Approve + Publish Web</button><?php endif;?><?php endif;?><a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-content-operations&job='.$job_id));?>">Mở Content Job</a></div>
+        <div class="hcr-actions"><?php if($status==='failed'):?><button class="button button-primary" name="review_action" value="retry">Retry AI</button><?php else:?><button class="button" name="review_action" value="changes">Trả về chỉnh sửa</button><?php endif;?><?php if($status==='review'):?><button class="button" name="review_action" value="approve">Approve</button><?php if(current_user_can('publish_posts')):?><button class="button button-primary" name="review_action" value="approve_publish">Approve + Publish Web</button><?php endif;?><?php endif;?><a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-content-operations&job='.$job_id));?>">Mở Content Job</a></div>
       </form>
       <?php if($status==='approved'):?><p><a class="button button-primary" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-content-operations&job='.$job_id));?>">Publish Web trong Content Operations</a></p><?php endif;?>
     <?php else:?><p>Chưa có Content Job để review.</p><?php endif;?>
