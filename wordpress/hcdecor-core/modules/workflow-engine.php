@@ -155,7 +155,10 @@ add_action('rest_api_init',function(){
                     delete_option($mutex);
                     continue;
                 }
-                if(!hcdecor_workflow_finalize_claim($j->ID,$claim_token,$now)) continue;
+                if(!hcdecor_workflow_finalize_claim($j->ID,$claim_token,$now)){
+                    delete_option($mutex);
+                    continue;
+                }
                 delete_option($mutex);
                 return hcdecor_workflow_claim_response($j,$claim_token);
             }
