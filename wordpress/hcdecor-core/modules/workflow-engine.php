@@ -120,6 +120,8 @@ add_action('rest_api_init',function(){
             if(function_exists('hcdecor_ops_save_fields')) hcdecor_ops_save_fields($id,$p);
             delete_post_meta($id,'hc_agent_lock_until');
         delete_post_meta($id,'hc_agent_claim_token');
+        delete_post_meta($id,'hc_agent_heartbeat');
+        delete_post_meta($id,'hc_agent_claimed_at');
         delete_option('hcdecor_claim_mutex_'.$id);
             hcdecor_workflow_set_status($id,'review','Agent completed generation');
             return rest_ensure_response(['ok'=>true,'id'=>$id,'status'=>'review','outbound'=>false]);
@@ -161,12 +163,15 @@ function hcdecor_workflow_recover_stale_jobs($limit=10){
     foreach($jobs as $job){
         $lock=(int)get_post_meta($job->ID,'hc_agent_lock_until',true);
         $claimed=strtotime((string)get_post_meta($job->ID,'hc_agent_claimed_at',true))?:0;
+        $heartbeat=strtotime((string)get_post_meta($job->ID,'hc_agent_heartbeat',true))?:0;
         $token=(string)get_post_meta($job->ID,'hc_agent_claim_token',true);
-        $invalid_claim=($token==='' && $claimed>0 && $claimed<($now-120));
+        $last_worker_activity=max($claimed,$heartbeat);
+        $invalid_claim=($token==='' && $last_worker_activity>0 && $last_worker_activity<($now-120));
         if($invalid_claim || ($lock>0 && $lock<$now) || ($lock<=0 && $claimed>0 && $claimed<($now-900))){
             hcdecor_workflow_set_status($job->ID,'failed',$invalid_claim?'Worker claim token missing; safe retry available':'Processing lock expired; safe retry available');
             delete_post_meta($job->ID,'hc_agent_lock_until');
             delete_post_meta($job->ID,'hc_agent_claim_token');
+            delete_post_meta($job->ID,'hc_agent_heartbeat');
             delete_option('hcdecor_claim_mutex_'.$job->ID);
             update_post_meta($job->ID,'hc_agent_recovered_at',current_time('mysql'));
             update_post_meta($job->ID,'hc_agent_recovery_reason',$invalid_claim?'missing_claim_token':'expired_lock');
