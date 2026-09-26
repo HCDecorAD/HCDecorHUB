@@ -108,6 +108,29 @@ add_action('admin_post_hcdecor_hub_run_inbox',function(){
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-hub&hub_action=inbox')); exit;
 });
 
+
+add_action('admin_post_hcdecor_hub_retry_automation',function(){
+    if(!current_user_can('manage_options')) wp_die('Forbidden');
+    check_admin_referer('hcdecor_hub_retry_automation');
+    $tasks=get_posts([
+        'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>20,'fields'=>'ids',
+        'meta_key'=>'hc_auto_status','meta_value'=>'failed'
+    ]);
+    $retried=0;
+    foreach($tasks as $id){
+        $type=(string)get_post_meta($id,'hc_auto_type',true);
+        // Social publishing remains approval/configuration gated; never retry it from the safe dashboard action.
+        if($type==='social_publish') continue;
+        update_post_meta($id,'hc_auto_status','queued');
+        update_post_meta($id,'hc_auto_run_at',time());
+        if(function_exists('hcdecor_auto_log')) hcdecor_auto_log($id,'manual_retry','HUB V2 safe retry');
+        $retried++;
+    }
+    update_option('hcdecor_hub_last_retry',['time'=>current_time('mysql'),'retried'=>$retried],false);
+    delete_option('hcdecor_hub_action_error');
+    wp_safe_redirect(admin_url('admin.php?page=hcdecor-hub&hub_action=retry')); exit;
+});
+
 function hcdecor_hub_dashboard_badge($state){
     $state=(string)$state;
     if(in_array($state,['ok','healthy','connected','ready'],true)) return 'ok';
@@ -204,7 +227,7 @@ function hcdecor_hub_dashboard_page(){
       </div>
 
       <?php if(isset($_GET['maintenance'])):?><div class="notice notice-success inline"><p>Safe Maintenance đã chạy: sync + repair schedules + health snapshot.</p></div><?php endif;?>
-      <?php if(isset($_GET['hub_action'])): $hub_error=(string)get_option('hcdecor_hub_action_error','');?><div class="notice <?php echo $hub_error?'notice-error':'notice-success';?> inline"><p><?php echo esc_html($hub_error?:'Safe operation completed.');?></p></div><?php endif;?>
+      <?php if(isset($_GET['hub_action'])): $hub_error=(string)get_option('hcdecor_hub_action_error',''); $retry=(array)get_option('hcdecor_hub_last_retry',[]);?><div class="notice <?php echo $hub_error?'notice-error':'notice-success';?> inline"><p><?php echo esc_html($hub_error?:($_GET['hub_action']==='retry'?((int)($retry['retried']??0).' safe automation task(s) queued for retry.'):'Safe operation completed.'));?></p></div><?php endif;?>
 
       <div class="hchub-kpis">
         <div class="hchub-card"><div class="num"><?php echo (int)$c['projects_publish'];?></div><strong>Projects Live</strong><br><small><?php echo (int)$c['projects_draft'];?> draft</small></div>
@@ -292,6 +315,7 @@ function hcdecor_hub_dashboard_page(){
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-system-health'));?>">System Health</a>
               <?php if(current_user_can('upload_files')):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_hub_run_inbox"><?php wp_nonce_field('hcdecor_hub_run_inbox');?><button class="button">Run Drive Inbox</button></form><?php endif;?>
               <?php if(current_user_can('edit_posts')):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_hub_sync_projects"><?php wp_nonce_field('hcdecor_hub_sync_projects');?><button class="button">Sync Project Vault</button></form><?php endif;?>
+              <?php if(current_user_can('manage_options') && (int)$c['automation']['failed']>0):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_hub_retry_automation"><?php wp_nonce_field('hcdecor_hub_retry_automation');?><button class="button">Retry Safe Automation</button></form><?php endif;?>
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-data-backups'));?>">Data Backups</a>
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-restore-center'));?>">Restore Center</a>
             </div>
