@@ -145,7 +145,7 @@ function hcdecor_health_snapshot(){
     $vault_errors=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_error','meta_compare'=>'EXISTS','fields'=>'ids']))->found_posts;
     $vault_retrying=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_retry_count','meta_value'=>0,'meta_compare'=>'>','fields'=>'ids']))->found_posts;
     $backup_retry=(int)get_option('hcdecor_backup_retry_count',0);
-    $published_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'date_query'=>[['after'=>'7 days ago']],'meta_key'=>'hc_agent_status','meta_value'=>'published_web','fields'=>'ids']))->found_posts;
+    $published_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'date_query'=>[['column'=>'post_modified','after'=>'7 days ago']],'meta_key'=>'hc_agent_status','meta_value'=>'published_web','fields'=>'ids']))->found_posts;
     $created_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'date_query'=>[['after'=>'7 days ago']],'fields'=>'ids']))->found_posts;
     $backup_cron=(int)(wp_next_scheduled('hcdecor_backup_daily')?:0);
     $vault_stale=0;
@@ -172,6 +172,8 @@ function hcdecor_health_snapshot(){
     if($vault_retrying>0) $issues[]='Project Vault retrying: '.$vault_retrying;
     if($backup_retry>0) $issues[]='Backup retrying: attempt '.$backup_retry;
     if(!$backup_cron) $issues[]='Daily backup cron missing';
+    $backup_running=(bool)get_transient('hcdecor_backup_running');
+    if($backup_running) $issues[]='Backup currently running';
     if($vault_stale>0) $issues[]='Project Vault stale: '.$vault_stale;
     $inbox_settings=function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[];
     if(!empty($inbox_settings['enabled']) && $inbox_ts===0) $issues[]='Drive Inbox has never completed';
@@ -259,6 +261,7 @@ function hcdecor_health_snapshot(){
             'fresh'=>$backup_ts>0 && $backup_age<=129600,
             'retry_count'=>$backup_retry,
             'next_scheduled'=>$backup_cron,
+            'running'=>$backup_running,
             'error'=>(string)get_option('hcdecor_backup_last_error',''),
             'ready'=>function_exists('hcdecor_backup_save') && $drive_configured
         ],
