@@ -52,17 +52,14 @@ function hcdecor_drive_inbox_project_from_name($name){
 
 function hcdecor_drive_inbox_project_from_parent($file){
     $parents=(array)($file['parents']??[]);
-    if(!$parents || !function_exists('hcdecor_drive_list')) return 0;
+    if(!$parents || !function_exists('hcdecor_drive_file_meta')) return 0;
     foreach(array_slice($parents,0,3) as $parent_id){
         $parent_id=sanitize_text_field((string)$parent_id);
         if($parent_id==='') continue;
-        $items=hcdecor_drive_list($parent_id,5);
-        if(is_wp_error($items)) continue;
-        foreach((array)$items as $item){
-            $name=(string)($item['name']??'');
-            $project_id=hcdecor_drive_inbox_project_from_name($name);
-            if($project_id) return $project_id;
-        }
+        $meta=hcdecor_drive_file_meta($parent_id);
+        if(is_wp_error($meta)) continue;
+        $project_id=hcdecor_drive_inbox_project_from_name((string)($meta['name']??''));
+        if($project_id) return $project_id;
     }
     return 0;
 }
