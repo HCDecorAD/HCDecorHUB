@@ -100,6 +100,17 @@ function hcdecor_ops_bridge_auth(){
     return $token && $given && hash_equals($token,$given);
 }
 add_action('rest_api_init',function(){
+    register_rest_route('hcdecor/v1','/operations/queue',[
+        'methods'=>'GET','permission_callback'=>'hcdecor_ops_bridge_auth',
+        'callback'=>function(WP_REST_Request $r){
+            $status=sanitize_key($r->get_param('status')?:'');
+            $meta=$status?[['key'=>'hc_agent_status','value'=>$status]]:[];
+            $jobs=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'orderby'=>'modified','order'=>'ASC','meta_query'=>$meta]);
+            $out=[]; foreach($jobs as $j){$out[]=['id'=>$j->ID,'title'=>$j->post_title,'brief'=>$j->post_content,'project_id'=>(int)hcdecor_ops_get($j->ID,'project_id'),'status'=>hcdecor_ops_get($j->ID,'agent_status','draft'),'channels'=>(array)hcdecor_ops_get($j->ID,'channels',[]),'media_ids'=>(array)hcdecor_ops_get($j->ID,'media_ids',[]),'outbound'=>false];}
+            return rest_ensure_response($out);
+        }
+    ]);
+
     register_rest_route('hcdecor/v1','/operations/jobs/(?P<id>\d+)',[
         'methods'=>['GET','POST'],
         'permission_callback'=>'hcdecor_ops_bridge_auth',
