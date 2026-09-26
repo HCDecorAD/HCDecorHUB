@@ -10,7 +10,7 @@ function hcdecor_health_required_modules(){
     return [
         'background-sync.php','content-operations.php','workflow-engine.php','ai-providers.php',
         'media-intelligence.php','agent-intake.php','ai-workspace.php','web-publisher.php',
-        'automation-hub.php','automation-recipes.php','drive-vault.php','data-backup.php','data-restore.php',
+        'automation-hub.php','automation-recipes.php','drive-vault.php','drive-inbox.php','data-backup.php','data-restore.php',
         'project-publishing.php','media-manager.php','admin-cleanup.php'
     ];
 }
@@ -61,6 +61,11 @@ function hcdecor_health_crons(){
             'hook'=>'hcdecor_evergreen_tick',
             'scheduled'=>(bool)wp_next_scheduled('hcdecor_evergreen_tick'),
             'next'=>(int)(wp_next_scheduled('hcdecor_evergreen_tick')?:0)
+        ],
+        'drive_inbox'=>[
+            'hook'=>'hcdecor_drive_inbox_tick',
+            'scheduled'=>(bool)wp_next_scheduled('hcdecor_drive_inbox_tick'),
+            'next'=>(int)(wp_next_scheduled('hcdecor_drive_inbox_tick')?:0)
         ],
         'daily_backup'=>[
             'hook'=>'hcdecor_backup_daily',
@@ -142,6 +147,12 @@ function hcdecor_health_snapshot(){
             'status'=>$drive_configured?($drive_test?:'configured'):'off',
             'email'=>(string)get_option('hcdecor_drive_connected_email','')
         ],
+        'inbox'=>[
+            'settings'=>function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[],
+            'last_at'=>(string)get_option('hcdecor_drive_inbox_last_at',''),
+            'last_result'=>(array)get_option('hcdecor_drive_inbox_last_result',[]),
+            'error'=>(string)get_option('hcdecor_drive_inbox_last_error','')
+        ],
         'automation'=>[
             'enabled'=>!empty($auto_settings['enabled']),
             'social_enabled'=>!empty($auto_settings['social_enabled']),
@@ -169,6 +180,7 @@ function hcdecor_health_repair_schedules(){
     if(!wp_next_scheduled('hcdecor_ai_worker_tick')) wp_schedule_event(time()+30,'hcdecor_1min','hcdecor_ai_worker_tick');
     if(!wp_next_scheduled('hcdecor_automation_tick')) wp_schedule_event(time()+20,'hcdecor_1min','hcdecor_automation_tick');
     if(!wp_next_scheduled('hcdecor_evergreen_tick')) wp_schedule_event(time()+300,'hcdecor_daily','hcdecor_evergreen_tick');
+    if(!wp_next_scheduled('hcdecor_drive_inbox_tick')) wp_schedule_event(time()+120,'hcdecor_5min','hcdecor_drive_inbox_tick');
     if(!wp_next_scheduled('hcdecor_backup_daily')) wp_schedule_event(time()+900,'daily','hcdecor_backup_daily');
     if(!wp_next_scheduled('hcdecor_health_daily_report')) wp_schedule_event(time()+600,'daily','hcdecor_health_daily_report');
     return hcdecor_health_snapshot();
