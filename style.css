@@ -519,3 +519,9 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
  .section-title p{display:none}
  .section-title>span{font-size:9px;min-height:26px}
 }
+
+/* V6.5 section heading scale */
+.section-title>span{font-size:13px!important;letter-spacing:.18em!important;font-weight:850!important}
+.section-title h2{font-size:clamp(30px,3.1vw,44px)!important;letter-spacing:-.035em!important}
+@media(max-width:850px){.section-title>span{font-size:11px!important}.section-title h2{font-size:28px!important}}
+@media(max-width:560px){.section-title>span{font-size:10px!important}.section-title h2{font-size:25px!important}}
