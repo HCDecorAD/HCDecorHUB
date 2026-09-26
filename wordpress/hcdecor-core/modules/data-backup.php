@@ -170,6 +170,7 @@ add_action('hcdecor_backup_daily',function(){
     }
     $r=hcdecor_backup_save();
     if(is_wp_error($r)){
+        if($r->get_error_code()==='busy') return;
         $attempts=(int)get_option('hcdecor_backup_retry_count',0)+1;
         update_option('hcdecor_backup_retry_count',$attempts,false);
         if($attempts<3 && !wp_next_scheduled('hcdecor_backup_retry')){
@@ -187,6 +188,10 @@ add_action('hcdecor_backup_retry',function(){
     }
     $r=hcdecor_backup_save();
     if(is_wp_error($r)){
+        if($r->get_error_code()==='busy'){
+            if(!wp_next_scheduled('hcdecor_backup_retry')) wp_schedule_single_event(time()+300,'hcdecor_backup_retry');
+            return;
+        }
         $attempts=(int)get_option('hcdecor_backup_retry_count',0)+1;
         update_option('hcdecor_backup_retry_count',$attempts,false);
         if($attempts<3 && !wp_next_scheduled('hcdecor_backup_retry')) wp_schedule_single_event(time()+min(1800,300*$attempts),'hcdecor_backup_retry');
