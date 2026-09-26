@@ -98,6 +98,28 @@ add_action('admin_menu',function(){
     add_submenu_page('hcdecor-hub','Review Center','Review Center','edit_posts','hcdecor-review','hcdecor_review_page',2);
 },22);
 
+function hcdecor_workflow_recover_stale_jobs($limit=10){
+    $now=time();
+    $jobs=get_posts([
+        'post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>max(1,min(50,(int)$limit)),
+        'meta_query'=>[['key'=>'hc_agent_status','value'=>'processing']]
+    ]);
+    $recovered=0;
+    foreach($jobs as $job){
+        $lock=(int)get_post_meta($job->ID,'hc_agent_lock_until',true);
+        if($lock>0 && $lock<$now){
+            hcdecor_workflow_set_status($job->ID,'failed','Processing lock expired; safe retry available');
+            delete_post_meta($job->ID,'hc_agent_lock_until');
+            $recovered++;
+        }
+    }
+    return $recovered;
+}
+
+add_action('hcdecor_ai_worker_tick',function(){
+    hcdecor_workflow_recover_stale_jobs(20);
+},5);
+
 add_action('admin_post_hcdecor_review_action',function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
     $id=(int)($_POST['job_id']??0);
