@@ -230,12 +230,13 @@ function hcdecor_health_snapshot(){
     if($drive_configured && $drive_test==='error') $issues[]='Google Drive connection error';
     if($auto['failed']>0) $issues[]='Automation failed: '.$auto['failed'];
     if($actionable_blocked>0) $issues[]='Automation blocked: '.$actionable_blocked;
-    if(!empty(((array)get_option('hcdecor_automation_settings_last_change',[]))['cleanup_limited'])){
+    $automation_last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
+    if(!empty($automation_last_change['cleanup_limited'])){
         $issues[]='Automation settings cleanup backlog exceeds bounded pass';
         if(!wp_next_scheduled('hcdecor_automation_cleanup_tick') && !((int)get_option('hcdecor_automation_cleanup_mutex',0)>=(time()-120))) $issues[]='Automation cleanup backlog has no scheduled continuation';
+    }
     if(get_option('hcdecor_automation_cleanup_mutex',0) && (int)get_option('hcdecor_automation_cleanup_mutex',0)<(time()-120)) $issues[]='Automation cleanup mutex is stale';
     if(empty($automation_last_change['cleanup_limited']) && wp_next_scheduled('hcdecor_automation_cleanup_watchdog')) $issues[]='Automation cleanup watchdog is orphaned';
-    }
     if($bridge==='') $issues[]='Agent Bridge token missing';
     if($drive_configured && $backup_ts===0) $issues[]='Backup has never completed';
     elseif($drive_configured && $backup_age>129600) $issues[]='Backup is stale (>36h)';
