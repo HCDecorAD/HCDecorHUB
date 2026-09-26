@@ -164,6 +164,8 @@ function hcdecor_hub_dashboard_attention($s){
     $auto_failed=(int)($c['automation']['failed']??0);
     if($blocked>0) $add('warn',$blocked.' automation task(s) blocked',admin_url('admin.php?page=hcdecor-automation'));
     if($auto_failed>0) $add('bad',$auto_failed.' automation task(s) failed',admin_url('admin.php?page=hcdecor-automation'));
+    $unlinked=(int)($h['last_outcomes']['drive_inbox_unlinked']??0);
+    if(!empty($s['inbox']['enabled']) && $unlinked>0) $add('warn',$unlinked.' imported media item(s) not linked to a Project',admin_url('admin.php?page=hcdecor-drive-inbox'));
     if(!empty($s['inbox']['enabled']) && !empty($h['inbox']['error'])) $add('bad','Drive Inbox: '.(string)$h['inbox']['error'],admin_url('admin.php?page=hcdecor-drive-inbox'));
     elseif(!empty($s['inbox']['enabled']) && empty($h['inbox']['fresh'])) $add('warn','Drive Inbox has not completed within 30 minutes',admin_url('admin.php?page=hcdecor-drive-inbox'));
     if(!empty($h['backup']['error'])) $add('bad','Backup: '.(string)$h['backup']['error'],admin_url('admin.php?page=hcdecor-data-backups'));
