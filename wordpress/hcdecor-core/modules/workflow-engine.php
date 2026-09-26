@@ -47,7 +47,9 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     update_option('hcdecor_worker_mutex_sweep_last',[
         'at'=>current_time('mysql'),'scanned'=>count($rows),'stale'=>$stale,'deleted'=>$deleted,'limited'=>$limited
     ],false);
-    if($limited && !wp_next_scheduled('hcdecor_worker_mutex_sweep_tick')) wp_schedule_single_event(time()+30,'hcdecor_worker_mutex_sweep_tick');
+    $next=wp_next_scheduled('hcdecor_worker_mutex_sweep_tick');
+    if($limited && !$next) wp_schedule_single_event(time()+30,'hcdecor_worker_mutex_sweep_tick');
+    elseif(!$limited && $next) wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
     return compact('stale','deleted','limited');
 }
 
