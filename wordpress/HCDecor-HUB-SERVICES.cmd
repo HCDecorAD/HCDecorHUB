@@ -13,13 +13,13 @@ call wp core is-installed >>"%LOG%" 2>&1 || goto :fail
 echo [1/6] WordPress OK
 
 rem SERVICE A - Source Sync (isolated)
-echo [2/6] Sync Core / Studio / Bridge...
+echo [2/6] Sync Core / Agent / Bridge...
 if not exist "%P%\assets" mkdir "%P%\assets"
 if not exist "%P%\modules" mkdir "%P%\modules"
 curl.exe -fL "%BASE%/hcdecor-core/hcdecor-core.php?v=%V%" -o "%P%\hcdecor-core.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/homepage-builder.php?v=%V%" -o "%P%\homepage-builder.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%V%" -o "%P%\assets\hcdecor-homepage.css.new" >>"%LOG%" 2>&1 || goto :syncfail
-curl.exe -fL "%BASE%/hcdecor-core/modules/content-operations.php?v=%V%" -o "%P%\modules\content-operations.php.new" "%P%\modules\workflow-engine.php.new" "%P%\modules\ai-providers.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/content-operations.php?v=%V%" -o "%P%\modules\content-operations.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/workflow-engine.php?v=%V%" -o "%P%\modules\workflow-engine.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/ai-providers.php?v=%V%" -o "%P%\modules\ai-providers.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/background-sync.php?v=%V%" -o "%P%\modules\background-sync.php.new" >>"%LOG%" 2>&1 || goto :syncfail
@@ -60,7 +60,7 @@ call wp option get hcdecor_bridge_token >nul 2>&1
 if errorlevel 1 call wp eval "hcdecor_bridge_token(); echo 'BRIDGE_READY';" >>"%LOG%" 2>&1
 echo [OK] Agent Bridge
 echo [OK] Content Operations
- echo [OK] Media Manager
+echo [OK] Media Manager
 echo [SAFE] External publishing remains OFF
 
 echo.
@@ -76,7 +76,7 @@ echo ==================================================
 exit /b 0
 
 :syncfail
-del /q "%P%\hcdecor-core.php.new" "%P%\homepage-builder.php.new" "%P%\assets\hcdecor-homepage.css.new" "%P%\modules\content-operations.php.new" "%P%\modules\background-sync.php.new" "%P%\modules\project-publishing.php.new" "%P%\modules\media-manager.php.new" "%P%\modules\admin-cleanup.php.new" >nul 2>&1
+del /q "%P%\hcdecor-core.php.new" "%P%\homepage-builder.php.new" "%P%\assets\hcdecor-homepage.css.new" "%P%\modules\content-operations.php.new" "%P%\modules\workflow-engine.php.new" "%P%\modules\ai-providers.php.new" "%P%\modules\background-sync.php.new" "%P%\modules\project-publishing.php.new" "%P%\modules\media-manager.php.new" "%P%\modules\admin-cleanup.php.new" >nul 2>&1
 echo [WARN] Source Sync failed. Existing local files kept intact.
 goto :continue_after_sync
 
