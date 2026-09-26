@@ -349,6 +349,71 @@ function hcdecor_drive_save_job($job_id,$sync_media=true){
     return $res;
 }
 
+
+function hcdecor_drive_file_meta($file_id){
+    $file_id=preg_replace('/[^A-Za-z0-9_-]/','',(string)$file_id);
+    if(!$file_id) return new WP_Error('file','Invalid Drive file ID.');
+    $fields=rawurlencode('id,name,mimeType,size,modifiedTime,webViewLink,thumbnailLink,description');
+    $r=hcdecor_drive_request('GET','https://www.googleapis.com/drive/v3/files/'.rawurlencode($file_id).'?fields='.$fields);
+    if(is_wp_error($r)) return $r;
+    $d=json_decode($r['body'],true);
+    return is_array($d)?$d:new WP_Error('drive_json','Drive metadata invalid.');
+}
+
+function hcdecor_drive_import_media($file_id){
+    $meta=hcdecor_drive_file_meta($file_id);
+    if(is_wp_error($meta)) return $meta;
+    $mime=(string)($meta['mimeType']??'');
+    if(strpos($mime,'image/')!==0 && strpos($mime,'video/')!==0){
+        return new WP_Error('mime','Chỉ import image/video từ Drive.');
+    }
+    $existing=get_posts([
+        'post_type'=>'attachment','post_status'=>'inherit','numberposts'=>1,
+        'meta_key'=>'hc_drive_file_id','meta_value'=>(string)$meta['id']
+    ]);
+    if($existing) return (int)$existing[0]->ID;
+
+    $bytes=hcdecor_drive_download($file_id);
+    if(is_wp_error($bytes)) return $bytes;
+    $name=sanitize_file_name((string)($meta['name']??('drive-'.$file_id)));
+    if($name==='') $name='drive-'.$file_id;
+
+    $upload=wp_upload_bits($name,null,$bytes);
+    if(!empty($upload['error'])) return new WP_Error('upload',(string)$upload['error']);
+
+    require_once ABSPATH.'wp-admin/includes/image.php';
+    require_once ABSPATH.'wp-admin/includes/file.php';
+    require_once ABSPATH.'wp-admin/includes/media.php';
+
+    $id=wp_insert_attachment([
+        'post_mime_type'=>$mime,
+        'post_title'=>sanitize_text_field(pathinfo($name,PATHINFO_FILENAME)),
+        'post_status'=>'inherit'
+    ],$upload['file']);
+    if(is_wp_error($id)) return $id;
+
+    $attachment_meta=wp_generate_attachment_metadata($id,$upload['file']);
+    if($attachment_meta) wp_update_attachment_metadata($id,$attachment_meta);
+    update_post_meta($id,'hc_drive_file_id',sanitize_text_field((string)$meta['id']));
+    update_post_meta($id,'hc_drive_url',esc_url_raw((string)($meta['webViewLink']??'')));
+    update_post_meta($id,'hc_drive_synced_at',current_time('mysql'));
+    return (int)$id;
+}
+
+function hcdecor_drive_load_prompt($file_id){
+    $body=hcdecor_drive_download($file_id);
+    if(is_wp_error($body)) return $body;
+    $d=json_decode($body,true);
+    if(!is_array($d)||($d['schema']??'')!=='hcdecor.prompt.v1') return new WP_Error('schema','Invalid HCDecor prompt file.');
+    $prompt=(string)($d['prompt']??'');
+    if($prompt==='') return new WP_Error('prompt','Prompt is empty.');
+    update_option('hcdecor_drive_active_prompt',wp_kses_post($prompt),false);
+    update_option('hcdecor_drive_active_prompt_title',sanitize_text_field((string)($d['title']??'')),false);
+    update_option('hcdecor_drive_active_prompt_file',sanitize_text_field($file_id),false);
+    update_option('hcdecor_drive_active_prompt_loaded_at',current_time('mysql'),false);
+    return true;
+}
+
 function hcdecor_drive_download($file_id){
     $file_id=preg_replace('/[^A-Za-z0-9_-]/','',(string)$file_id);
     if(!$file_id) return new WP_Error('file','Invalid Drive file ID.');
@@ -472,6 +537,28 @@ add_action('admin_post_hcdecor_drive_import_job',function(){
     exit;
 });
 
+
+add_action('admin_post_hcdecor_drive_import_media',function(){
+    if(!current_user_can('upload_files')) wp_die('Forbidden');
+    $file=sanitize_text_field(wp_unslash($_POST['file_id']??''));
+    $folder=sanitize_key($_POST['folder_key']??'media_input');
+    check_admin_referer('hcdecor_drive_import_media_'.$file);
+    $r=hcdecor_drive_import_media($file);
+    $url=admin_url('admin.php?page=hcdecor-drive-vault&browse='.$folder);
+    $url=add_query_arg(is_wp_error($r)?['media_import_error'=>1]:['media_imported'=>(int)$r],$url);
+    wp_safe_redirect($url); exit;
+});
+
+add_action('admin_post_hcdecor_drive_activate_prompt',function(){
+    if(!current_user_can('manage_options')) wp_die('Forbidden');
+    $file=sanitize_text_field(wp_unslash($_POST['file_id']??''));
+    check_admin_referer('hcdecor_drive_activate_prompt_'.$file);
+    $r=hcdecor_drive_load_prompt($file);
+    $url=admin_url('admin.php?page=hcdecor-drive-vault&browse=prompts');
+    $url=add_query_arg(is_wp_error($r)?['prompt_load_error'=>1]:['prompt_active'=>1],$url);
+    wp_safe_redirect($url); exit;
+});
+
 add_action('admin_post_hcdecor_drive_save_prompt',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_drive_save_prompt');
@@ -531,6 +618,11 @@ function hcdecor_drive_vault_page(){
     $jobs=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>20,'orderby'=>'modified','order'=>'DESC']);
     $prompt_files=hcdecor_drive_configured()?hcdecor_drive_list($folders['prompts'],20):[];
     if(is_wp_error($prompt_files)) $prompt_files=[];
+    $browse_allowed=['prompts','media_input','media_ai','media_approved','content_draft','content_review','content_approved','content_published','projects','knowledge','templates','automation','archive'];
+    $browse_key=sanitize_key($_GET['browse']??'media_input');
+    if(!in_array($browse_key,$browse_allowed,true)) $browse_key='media_input';
+    $browse_files=hcdecor_drive_configured()?hcdecor_drive_list($folders[$browse_key]??$folders['root'],60):[];
+    if(is_wp_error($browse_files)) $browse_files=[];
     ?>
     <div class="wrap hcdv" style="max-width:1400px">
       <h1>HCDecor Drive Vault</h1>
@@ -586,6 +678,57 @@ function hcdecor_drive_vault_page(){
               <a class="button" target="_blank" rel="noopener" href="<?php echo esc_url('https://drive.google.com/drive/folders/'.$folders[$k]);?>"><?php echo esc_html($label);?></a>
             <?php endforeach;?>
             </div>
+          </div>
+          <div style="background:#fff;border:1px solid #ddd;border-radius:12px;padding:18px;margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+              <div><h2 style="margin:0 0 4px">Drive Browser</h2><span>Browse & Load trực tiếp, không cần copy File ID.</span></div>
+              <form method="get" action="<?php echo esc_url(admin_url('admin.php'));?>">
+                <input type="hidden" name="page" value="hcdecor-drive-vault">
+                <select name="browse" onchange="this.form.submit()">
+                <?php foreach([
+                  'prompts'=>'Prompt Vault','media_input'=>'Media Input','media_ai'=>'AI Media','media_approved'=>'Approved Media',
+                  'content_draft'=>'Content Draft','content_review'=>'Content Review','content_approved'=>'Content Approved',
+                  'content_published'=>'Content Published','projects'=>'Projects','knowledge'=>'Knowledge','templates'=>'Templates',
+                  'automation'=>'Automation','archive'=>'Archive'
+                ] as $k=>$label):?>
+                  <option value="<?php echo esc_attr($k);?>" <?php selected($browse_key,$k);?>><?php echo esc_html($label);?></option>
+                <?php endforeach;?>
+                </select>
+              </form>
+            </div>
+            <?php if(!hcdecor_drive_configured()):?>
+              <p style="margin-top:14px"><strong>Kết nối Google Drive để bật Browser.</strong></p>
+            <?php elseif(!$browse_files):?>
+              <p style="margin-top:14px">Folder hiện chưa có file.</p>
+            <?php else:?>
+              <div style="margin-top:12px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+              <?php foreach($browse_files as $df): $mime=(string)($df['mimeType']??''); $fid=(string)($df['id']??''); $name=(string)($df['name']??''); ?>
+                <div style="border:1px solid #e5e5e5;border-radius:10px;padding:12px;min-width:0">
+                  <strong style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><?php echo esc_html($name);?></strong>
+                  <small style="display:block;color:#646970;margin:4px 0 8px"><?php echo esc_html($mime);?></small>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap">
+                    <?php if(!empty($df['webViewLink'])):?><a class="button button-small" target="_blank" rel="noopener" href="<?php echo esc_url($df['webViewLink']);?>">Open</a><?php endif;?>
+                    <?php if($browse_key==='prompts' && substr($name,-5)==='.json'):?>
+                      <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
+                        <input type="hidden" name="action" value="hcdecor_drive_activate_prompt"><input type="hidden" name="file_id" value="<?php echo esc_attr($fid);?>"><?php wp_nonce_field('hcdecor_drive_activate_prompt_'.$fid);?>
+                        <button class="button button-small">Use Prompt</button>
+                      </form>
+                    <?php elseif(strpos($mime,'image/')===0 || strpos($mime,'video/')===0):?>
+                      <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
+                        <input type="hidden" name="action" value="hcdecor_drive_import_media"><input type="hidden" name="file_id" value="<?php echo esc_attr($fid);?>"><input type="hidden" name="folder_key" value="<?php echo esc_attr($browse_key);?>"><?php wp_nonce_field('hcdecor_drive_import_media_'.$fid);?>
+                        <button class="button button-small">Import Media</button>
+                      </form>
+                    <?php elseif(substr($name,-5)==='.json' && strpos($browse_key,'content_')===0):?>
+                      <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
+                        <input type="hidden" name="action" value="hcdecor_drive_import_job"><input type="hidden" name="file_id" value="<?php echo esc_attr($fid);?>"><?php wp_nonce_field('hcdecor_drive_import_job');?>
+                        <button class="button button-small">Load Job</button>
+                      </form>
+                    <?php endif;?>
+                  </div>
+                </div>
+              <?php endforeach;?>
+              </div>
+            <?php endif;?>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
             <div style="background:#fff;border:1px solid #ddd;border-radius:12px;padding:18px">
