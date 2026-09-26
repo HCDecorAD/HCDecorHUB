@@ -144,3 +144,31 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
  .footer-grid{gap:30px}
  .social-links{padding-right:56px}
 }
+
+/* V4.1 mobile typography balance — owner review */
+@media(max-width:850px){
+  /* Remove decorative numbering from service/project cards */
+  .cards article>b,.project-mark{display:none!important}
+
+  /* Hero: refined, less oversized */
+  .hero h1{font-size:clamp(34px,8.8vw,44px)!important;line-height:1.06!important;letter-spacing:-.035em!important;max-width:590px}
+  .hero h1 em{font-size:inherit}
+
+  /* Section titles: elegant rather than display-scale */
+  .section-head h2,.section h2{font-size:clamp(29px,7.2vw,38px)!important;line-height:1.1!important;letter-spacing:-.025em!important}
+  #projects .section-head h2{max-width:560px}
+
+  /* Section eyebrow + project category tabs: increase legibility */
+  #projects .eyebrow{font-size:13px!important;letter-spacing:.28em!important;font-weight:800}
+  .project-filters{gap:9px;margin-top:4px}
+  .project-filters button{font-size:14px!important;padding:10px 17px!important;min-height:42px;letter-spacing:.01em}
+
+  .cards article{padding-top:25px}
+}
+@media(max-width:560px){
+  .hero h1{font-size:36px!important}
+  .section-head h2,.section h2{font-size:31px!important}
+  #projects .section-head h2{font-size:32px!important}
+  #projects .eyebrow{font-size:13px!important}
+  .project-filters button{font-size:14px!important;padding:10px 16px!important}
+}
