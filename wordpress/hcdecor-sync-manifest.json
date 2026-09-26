@@ -1,5 +1,5 @@
 {
-  "version": "2026.09.27.129",
+  "version": "2026.09.27.130",
   "files": [
     {
       "path": "hcdecor-core.php",
@@ -44,7 +44,7 @@
     {
       "path": "modules/agent-intake.php",
       "url": "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/agent-intake.php",
-      "git_sha1": "b1272229e48345dd16de489287c3e4f0659d6216"
+      "git_sha1": "ea1bc341151d03f7248b560c33b45673be0ce0d3"
     },
     {
       "path": "modules/web-publisher.php",
