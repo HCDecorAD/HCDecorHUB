@@ -28,7 +28,9 @@ curl.exe -fL "%BASE%/hcdecor-core/homepage-builder.php?v=%STAMP%" -o "%PLUGIN%\h
 curl.exe -fL "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%STAMP%" -o "%PLUGIN%\assets\hcdecor-homepage.css" >>"%LOG%" 2>&1 || goto :fail
 echo [PASS] Sync Phase 2 source
 
-call wp eval "do_action('acf/init');if(!function_exists('acf_add_local_field_group'))exit(21);echo 'ACF_READY';" >>"%LOG%" 2>&1 || goto :fail
+rem ACF is already loaded by WordPress during wp eval. Do not fire acf/init manually:
+rem re-firing the lifecycle hook can trigger plugin callbacks twice.
+call wp eval "if(!function_exists('acf_add_local_field_group'))exit(21);if(!function_exists('acf_get_field_group'))exit(22);$g=acf_get_field_group('group_hc_project');if(!$g)exit(23);$s=acf_get_field_group('group_hc_service');if(!$s)exit(24);echo 'ACF_READY';" >>"%LOG%" 2>&1 || goto :fail_acf
 echo [PASS] ACF Data Model
 
 call wp eval-file "%PLUGIN%\homepage-builder.php" >>"%LOG%" 2>&1 || goto :fail
@@ -53,6 +55,11 @@ echo Log            : %LOG%
 echo ================================================
 exit /b 0
 
+:fail_acf
+echo [FAIL] ACF Data Model validation
+echo [FAIL] ACF Data Model validation >>"%LOG%"
+echo See: %LOG%
+exit /b 1
 :need_shell
 echo [FAIL] Run inside LocalWP Site Shell.
 exit /b 2
