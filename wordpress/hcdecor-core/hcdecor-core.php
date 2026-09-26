@@ -126,3 +126,43 @@ add_action('wp_head',function(){
 },1);
 
 add_filter('show_admin_bar',function($show){return is_admin()?$show:false;});
+
+
+/* Phase 2: ACF data model + lead integration foundation */
+add_action('acf/init',function(){
+  if(!function_exists('acf_add_local_field_group')) return;
+  acf_add_local_field_group([
+    'key'=>'group_hc_project','title'=>'HCDecor · Dữ liệu dự án',
+    'fields'=>[
+      ['key'=>'field_hc_client','label'=>'Khách hàng','name'=>'hc_client','type'=>'text'],
+      ['key'=>'field_hc_location','label'=>'Địa điểm','name'=>'hc_location','type'=>'text'],
+      ['key'=>'field_hc_year','label'=>'Năm','name'=>'hc_year','type'=>'number'],
+      ['key'=>'field_hc_summary','label'=>'Tóm tắt','name'=>'hc_summary','type'=>'textarea'],
+      ['key'=>'field_hc_gallery','label'=>'Thư viện ảnh','name'=>'hc_gallery','type'=>'gallery','return_format'=>'id']
+    ],
+    'location'=>[[['param'=>'post_type','operator'=>'==','value'=>'hc_project']]]
+  ]);
+  acf_add_local_field_group([
+    'key'=>'group_hc_service','title'=>'HCDecor · Dữ liệu dịch vụ',
+    'fields'=>[
+      ['key'=>'field_hc_service_icon','label'=>'Icon/nhãn','name'=>'hc_service_icon','type'=>'text'],
+      ['key'=>'field_hc_service_summary','label'=>'Mô tả ngắn','name'=>'hc_service_summary','type'=>'textarea'],
+      ['key'=>'field_hc_service_order','label'=>'Thứ tự','name'=>'hc_service_order','type'=>'number','default_value'=>10]
+    ],
+    'location'=>[[['param'=>'post_type','operator'=>'==','value'=>'hc_service']]]
+  ]);
+});
+
+add_action('rest_api_init',function(){
+  register_rest_route('hcdecor/v1','/phase2',[
+    'methods'=>'GET','permission_callback'=>'__return_true',
+    'callback'=>function(){
+      return rest_ensure_response([
+        'acf'=>function_exists('acf_add_local_field_group'),
+        'fluentform'=>defined('FLUENTFORM'),
+        'webhooks'=>class_exists('WP_Webhooks_Pro')||defined('WPWH_VERSION')||is_plugin_active('wp-webhooks/wp-webhooks.php'),
+        'outbound_enabled'=>false
+      ]);
+    }
+  ]);
+});
