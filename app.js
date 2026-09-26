@@ -15,7 +15,7 @@ function setLang(lang){
  const sh=document.querySelector('#services h2');if(sh)sh.innerHTML=d.servicesTitle;
  const ph=document.querySelector('#projects h2');if(ph)ph.textContent=d.projectsTitle;
  const qh=document.querySelector('#process h2');if(qh)qh.textContent=d.processTitle;
- const b=document.querySelector('.lang-toggle');if(b){const icon=b.querySelector('.lang-icon');if(icon)icon.textContent='文';b.querySelector('.lang-code').textContent=lang==='vi'?'EN':'VN';b.setAttribute('aria-label',lang==='vi'?'Switch to English':'Chuyển sang tiếng Việt');}
+ const b=document.querySelector('.lang-toggle');if(b){const flag=b.querySelector('.lang-flag');if(flag)flag.textContent=lang==='vi'?'🇬🇧':'🇻🇳';b.querySelector('.lang-code').textContent=lang==='vi'?'EN':'VI';b.setAttribute('aria-label',lang==='vi'?'Switch to English':'Chuyển sang tiếng Việt');}
  localStorage.setItem('hcdecor-lang',lang);
 }
 const langButton=document.querySelector('.lang-toggle');
