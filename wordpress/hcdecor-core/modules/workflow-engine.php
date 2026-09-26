@@ -92,10 +92,12 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
         $next_cursor=max($next_cursor,(int)$row->option_id);
         $name=(string)$row->option_name;
         if(strpos($name,'hcdecor_lifecycle_mutex_')===0) $lifecycle_scanned++;
-        $mutex=(array)get_option($name,[]);
-        if(empty($mutex['at']) || (int)$mutex['at']<$cutoff){
+        $observed=get_option($name,[]);
+        $mutex=is_array($observed)?$observed:[];
+        $mutex_at=is_array($observed)?(int)($mutex['at']??0):(int)$observed;
+        if(!$mutex_at || $mutex_at<$cutoff){
             $stale++;
-            if(hcdecor_workflow_claim_mutex_delete_if_same($name,$mutex)) $deleted++;
+            if(hcdecor_workflow_claim_mutex_delete_if_same($name,$observed)) $deleted++;
         }
     }
     $more_after=$limited || (!$wrapped && $next_cursor>0 && (bool)$wpdb->get_var($wpdb->prepare("SELECT option_id FROM {$wpdb->options} WHERE (option_name LIKE %s OR option_name LIKE %s) AND option_id>%d ORDER BY option_id ASC LIMIT 1",$claim_like,$lifecycle_like,$next_cursor)));
@@ -154,8 +156,9 @@ function hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed=true,$clear_
     if($clear_claimed) delete_post_meta($job_id,'hc_agent_claimed_at');
     if($clear_mutex){
         $key='hcdecor_claim_mutex_'.$job_id;
-        $mutex=(array)get_option($key,[]);
-        if($mutex && (empty($mutex['at']) || (int)$mutex['at']<(time()-120))) hcdecor_workflow_claim_mutex_delete_if_same($key,$mutex);
+        $observed=get_option($key,[]);
+        $mutex_at=is_array($observed)?(int)($observed['at']??0):(int)$observed;
+        if($observed && (!$mutex_at || $mutex_at<(time()-120))) hcdecor_workflow_claim_mutex_delete_if_same($key,$observed);
     }
 }
 
@@ -310,8 +313,9 @@ add_action('rest_api_init',function(){
                 $claim_token=wp_generate_uuid4();
                 $mutex='hcdecor_claim_mutex_'.$j->ID;
                 if(!add_option($mutex,['token'=>$claim_token,'at'=>$now],'',false)){
-                    $existing=(array)get_option($mutex,[]);
-                    if(!empty($existing['at']) && (int)$existing['at']<($now-120)){
+                    $existing=get_option($mutex,[]);
+                    $existing_at=is_array($existing)?(int)($existing['at']??0):(int)$existing;
+                    if($existing && (!$existing_at || $existing_at<($now-120))){
                         if(!hcdecor_workflow_claim_mutex_delete_if_same($mutex,$existing)) continue;
                         if(!add_option($mutex,['token'=>$claim_token,'at'=>$now],'',false)) continue;
                     }else continue;
@@ -505,8 +509,9 @@ add_action('admin_post_hcdecor_review_action',function(){
         hcdecor_workflow_set_status($id,'draft','Retry requested by reviewer');
         hcdecor_workflow_clear_worker_claim($id,true,false);
         $mutex_key='hcdecor_claim_mutex_'.$id;
-        $mutex=(array)get_option($mutex_key,[]);
-        if($mutex && (empty($mutex['at']) || (int)$mutex['at']<(time()-120))) hcdecor_workflow_claim_mutex_delete_if_same($mutex_key,$mutex);
+        $observed=get_option($mutex_key,[]);
+        $mutex_at=is_array($observed)?(int)($observed['at']??0):(int)$observed;
+        if($observed && (!$mutex_at || $mutex_at<(time()-120))) hcdecor_workflow_claim_mutex_delete_if_same($mutex_key,$observed);
         if(function_exists('wp_schedule_single_event') && !wp_next_scheduled('hcdecor_ai_process_job',[$id])) wp_schedule_single_event(time()+3,'hcdecor_ai_process_job',[$id]);
     }
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-review&job='.$id.'&done=1')); exit;
