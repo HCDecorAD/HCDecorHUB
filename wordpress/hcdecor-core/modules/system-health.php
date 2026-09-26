@@ -118,6 +118,7 @@ function hcdecor_health_snapshot(){
     $drive_configured=function_exists('hcdecor_drive_configured')&&hcdecor_drive_configured();
     $drive_test=(string)get_option('hcdecor_drive_test_status','');
     $auto_settings=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
+    $inbox_settings=function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[];
     $cron_required=['background_sync'=>true,'ai_worker'=>true,'backup'=>true,'health_report'=>true];
     $cron_required['automation']=!isset($auto_settings['enabled']) || !empty($auto_settings['enabled']);
     $cron_required['evergreen']=!empty($auto_settings['evergreen_enabled']);
