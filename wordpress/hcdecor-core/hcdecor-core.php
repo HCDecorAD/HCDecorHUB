@@ -2,7 +2,7 @@
 /**
  * Plugin Name: HCDecor Core
  * Description: Data/API foundation and bootstrap for HCDecor HUB + Elementor.
- * Version: 0.2.0
+ * Version: 0.3.0
  * Author: HCDecor
  */
 if (!defined('ABSPATH')) exit;
@@ -74,6 +74,31 @@ add_action('admin_notices',function(){
 });
 
 add_action('wp_enqueue_scripts',function(){wp_enqueue_style('hcdecor-elementor',plugins_url('assets/hcdecor-elementor.css',__FILE__),[], '0.3.0'); wp_enqueue_style('hcdecor-homepage',plugins_url('assets/hcdecor-homepage.css',__FILE__),['hcdecor-elementor'], '0.3.0');});
+
+function hcdecor_site_data(){
+  return [
+    'brand'=>['name'=>'HCDecor HUB','tagline'=>'Thiết kế · Thi công · Nội thất · Kiến trúc · 3D'],
+    'contact'=>['phone'=>'0888 821 842','tel'=>'+84888821842','address'=>'231D An Dương Vương, P. An Lạc, Tp.HCM, Việt Nam'],
+    'social'=>[
+      'facebook'=>'https://www.facebook.com/hocuong1979/',
+      'tiktok'=>'https://www.tiktok.com/@quangcaohocuong',
+      'youtube'=>'https://www.youtube.com/@HoCuongPre',
+      'zalo'=>'https://zalo.me/quangcaohocuong'
+    ]
+  ];
+}
+
+add_action('rest_api_init',function(){
+  register_rest_route('hcdecor/v1','/content',[
+    'methods'=>'GET','permission_callback'=>'__return_true',
+    'callback'=>function(){
+      $services=get_posts(['post_type'=>'hc_service','post_status'=>'publish','numberposts'=>20,'orderby'=>'menu_order title','order'=>'ASC']);
+      $projects=get_posts(['post_type'=>'hc_project','post_status'=>'publish','numberposts'=>12,'orderby'=>'date','order'=>'DESC']);
+      $map=function($p){return ['id'=>$p->ID,'title'=>get_the_title($p),'excerpt'=>get_the_excerpt($p),'image'=>get_the_post_thumbnail_url($p,'large')?:'','url'=>get_permalink($p)];};
+      return rest_ensure_response(['site'=>hcdecor_site_data(),'services'=>array_map($map,$services),'projects'=>array_map($map,$projects)]);
+    }
+  ]);
+});
 
 function hcdecor_seed_services(){
   $items=[
