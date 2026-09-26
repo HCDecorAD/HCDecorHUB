@@ -246,17 +246,21 @@ function hcdecor_ai_generate_job($job_id){
         update_post_meta($job_id,'hc_ai_usage',$result['usage']);
         update_post_meta($job_id,'hc_ai_generated_at',current_time('mysql'));
         delete_post_meta($job_id,'hc_ai_error');
-        if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($job_id,'review','AI generation completed via '.$result['provider']);
-        else update_post_meta($job_id,'hc_agent_status','review');
-        delete_post_meta($job_id,'hc_agent_lock_until');
+        $claim_token=(string)get_post_meta($job_id,'hc_agent_claim_token',true);
+        $finished=$claim_token!=='' && function_exists('hcdecor_workflow_finish_owned_claim')
+            ? hcdecor_workflow_finish_owned_claim($job_id,$claim_token,'review','AI generation completed via '.$result['provider'])
+            : (function_exists('hcdecor_workflow_set_status') && hcdecor_workflow_set_status($job_id,'review','AI generation completed via '.$result['provider']));
+        if(!$finished) return new WP_Error('workflow_conflict','AI content was generated but workflow ownership changed before completion.');
         do_action('hcdecor_after_ai_content_generated',$job_id,$result['provider'],$result['model']);
         return $result;
     }
     $message=$errors?implode(' | ',array_map(function($k,$v){return $k.': '.$v;},array_keys($errors),$errors)):'Chưa có AI API key.';
     update_post_meta($job_id,'hc_ai_error',$message);
-    if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($job_id,'failed',$message);
-    else update_post_meta($job_id,'hc_agent_status','failed');
-    delete_post_meta($job_id,'hc_agent_lock_until');
+    $claim_token=(string)get_post_meta($job_id,'hc_agent_claim_token',true);
+    $finished=$claim_token!=='' && function_exists('hcdecor_workflow_finish_owned_claim')
+        ? hcdecor_workflow_finish_owned_claim($job_id,$claim_token,'failed',$message)
+        : (function_exists('hcdecor_workflow_set_status') && hcdecor_workflow_set_status($job_id,'failed',$message));
+    if(!$finished) return new WP_Error('workflow_conflict','AI generation failed after workflow ownership changed.');
     return new WP_Error('ai_failed',$message);
 }
 
