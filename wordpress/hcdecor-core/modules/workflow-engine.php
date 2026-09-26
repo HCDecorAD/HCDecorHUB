@@ -117,7 +117,12 @@ add_action('rest_api_init',function(){
                     $existing_lock=(int)get_post_meta($j->ID,'hc_agent_lock_until',true);
                     if($existing_token!=='' && $existing_lock<=$now){
                         $claimed=strtotime((string)get_post_meta($j->ID,'hc_agent_claimed_at',true))?:0;
-                        if($claimed && $claimed<($now-120)) hcdecor_workflow_clear_worker_claim($j->ID,true);
+                        if($claimed && $claimed<($now-120)){
+                            hcdecor_workflow_clear_worker_claim($j->ID,true);
+                            update_post_meta($j->ID,'hc_agent_recovered_at',current_time('mysql'));
+                            update_post_meta($j->ID,'hc_agent_recovery_reason','orphan_draft_claim');
+                            hcdecor_workflow_log($j->ID,'draft','Recovered orphan worker claim during claim contention');
+                        }
                     }
                     delete_option($mutex);
                     continue;
