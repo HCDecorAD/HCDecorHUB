@@ -10,7 +10,7 @@ function hcdecor_health_required_modules(){
     return [
         'background-sync.php','content-operations.php','workflow-engine.php','ai-providers.php',
         'media-intelligence.php','agent-intake.php','ai-workspace.php','web-publisher.php',
-        'automation-hub.php','automation-recipes.php','drive-vault.php','data-backup.php',
+        'automation-hub.php','automation-recipes.php','drive-vault.php','data-backup.php','data-restore.php',
         'project-publishing.php','media-manager.php','admin-cleanup.php'
     ];
 }
@@ -150,6 +150,11 @@ function hcdecor_health_snapshot(){
         'content_queue'=>$queue,
         'bridge'=>['ready'=>$bridge!==''],
         'publisher'=>['ready'=>function_exists('hcdecor_publish_job_to_web')],
+        'restore'=>[
+            'ready'=>function_exists('hcdecor_restore_apply'),
+            'last'=>(array)get_option('hcdecor_restore_last_result',[]),
+            'error'=>(string)get_option('hcdecor_restore_last_error','')
+        ],
         'backup'=>[
             'last_at'=>(string)get_option('hcdecor_backup_last_at',''),
             'error'=>(string)get_option('hcdecor_backup_last_error',''),
