@@ -67,6 +67,7 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     $more_after=$limited || (!$wrapped && $next_cursor>0 && (bool)$wpdb->get_var($wpdb->prepare("SELECT option_id FROM {$wpdb->options} WHERE option_name LIKE %s AND option_id>%d ORDER BY option_id ASC LIMIT 1",$like,$next_cursor)));
     $continue=$more_after;
     $stored_cursor=$continue?$next_cursor:0;
+    if(!$rows) $stored_cursor=0;
     update_option('hcdecor_worker_mutex_sweep_last',[
         'at'=>current_time('mysql'),'ts'=>time(),'scanned'=>count($rows),'stale'=>$stale,'deleted'=>$deleted,'limited'=>$continue,'cursor'=>$stored_cursor,'wrapped'=>$wrapped
     ],false);
