@@ -198,6 +198,7 @@ function hcdecor_backup_page(){
           </form>
           <?php if($url):?><p><a class="button" target="_blank" rel="noopener" href="<?php echo esc_url($url);?>">Open Latest Backup</a></p><?php endif;?>
           <p><a class="button" target="_blank" rel="noopener" href="<?php echo esc_url('https://drive.google.com/drive/folders/'.hcdecor_backup_folder_id());?>">Open BACKUPS Folder</a></p>
+          <p><a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-restore-center'));?>">Restore Center</a></p>
         </section>
         <section style="background:#fff;border:1px solid #ddd;border-radius:12px;padding:18px">
           <h2>Recent Backups</h2>
