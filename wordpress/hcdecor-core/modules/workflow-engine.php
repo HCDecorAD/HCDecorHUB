@@ -130,10 +130,19 @@ add_action('admin_post_hcdecor_review_action',function(){
     check_admin_referer('hcdecor_review_'.$id);
     if(get_post_type($id)!=='hc_content_job') wp_die('Invalid job');
     $action=sanitize_key($_POST['review_action']??'');
+    $note=sanitize_textarea_field(wp_unslash($_POST['review_note']??''));
     if($action==='approve'){
+        if((string)get_post_meta($id,'hc_agent_status',true)!=='review') wp_die('Job is not ready for approval.');
+        update_post_meta($id,'hc_reviewed_by',get_current_user_id());
+        update_post_meta($id,'hc_reviewed_at',current_time('mysql'));
+        if($note!=='') update_post_meta($id,'hc_review_note',$note);
         hcdecor_workflow_set_status($id,'approved','Approved by reviewer');
     }elseif($action==='approve_publish'){
         if(!current_user_can('publish_posts')) wp_die('Forbidden');
+        if((string)get_post_meta($id,'hc_agent_status',true)!=='review') wp_die('Job is not ready for approval.');
+        update_post_meta($id,'hc_reviewed_by',get_current_user_id());
+        update_post_meta($id,'hc_reviewed_at',current_time('mysql'));
+        if($note!=='') update_post_meta($id,'hc_review_note',$note);
         hcdecor_workflow_set_status($id,'approved','Approved by reviewer');
         if(!function_exists('hcdecor_publish_job_to_web')) wp_die('Web publisher unavailable');
         $published=hcdecor_publish_job_to_web($id);
@@ -141,7 +150,7 @@ add_action('admin_post_hcdecor_review_action',function(){
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-review&job='.$id.'&published=1')); exit;
     }elseif($action==='changes'){
         hcdecor_workflow_set_status($id,'draft','Returned for changes');
-        update_post_meta($id,'hc_review_note',sanitize_textarea_field(wp_unslash($_POST['review_note']??'')));
+        update_post_meta($id,'hc_review_note',$note);
     }elseif($action==='retry' && (string)get_post_meta($id,'hc_agent_status',true)==='failed'){
         hcdecor_workflow_set_status($id,'draft','Retry requested by reviewer');
         delete_post_meta($id,'hc_agent_lock_until');
