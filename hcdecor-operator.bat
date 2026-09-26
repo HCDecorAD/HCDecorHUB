@@ -18,7 +18,11 @@ echo [3/8] Manifest validation
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
   "$ErrorActionPreference='Stop'; $m=Get-Content -Raw 'wordpress/hcdecor-sync-manifest.json'|ConvertFrom-Json; if(-not $m.version -or -not $m.files){throw 'Invalid sync manifest'}; Write-Host ('Manifest '+$m.version+' / '+$m.files.Count+' files')" || exit /b 20
 
-echo [4/8] PHP syntax checks
+echo [4/9] Manifest file integrity
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+  "$ErrorActionPreference='Stop'; $m=Get-Content -Raw 'wordpress/hcdecor-sync-manifest.json'|ConvertFrom-Json; foreach($f in $m.files){$p=Join-Path 'wordpress\hcdecor-core' $f.path; if(-not(Test-Path -LiteralPath $p)){throw ('Missing manifest file: '+$f.path)}; $actual=(& git hash-object -- $p).Trim(); if($actual -ne $f.git_sha1){throw ('Manifest SHA mismatch: '+$f.path+' expected '+$f.git_sha1+' actual '+$actual)}}; Write-Host ('Manifest integrity OK / '+$m.files.Count+' files')" || exit /b 25
+
+echo [5/9] PHP syntax checks
 where php >nul 2>nul
 if errorlevel 1 (
   echo SKIP: php CLI not installed.
@@ -35,19 +39,19 @@ if errorlevel 1 (
   echo PHP syntax OK.
 )
 
-echo [5/8] Safety guard checks
+echo [6/9] Safety guard checks
 findstr /c:"'social_enabled'=>false" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || (echo ERROR: social default guard missing.& exit /b 40)
 findstr /c:"'hc_outbound',false" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || (echo ERROR: content outbound guard missing.& exit /b 41)
 findstr /c:"Reviewer audit is required before publish." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || (echo ERROR: publish review guard missing.& exit /b 42)
 echo Safety guards OK.
 
-echo [6/8] Vercel build filter
+echo [7/9] Vercel build filter
 findstr /c:"ignoreCommand" "vercel.json" >nul || echo WARN: Vercel ignoreCommand not configured.
 
-echo [7/8] Optional Git update
+echo [8/9] Optional Git update
 if /I "%~1"=="--pull" (
-  git diff --quiet && git diff --cached --quiet
-  if errorlevel 1 (
+  git status --porcelain | findstr . >nul
+  if not errorlevel 1 (
     echo SKIP pull: working tree has changes.
   ) else (
     git pull --ff-only || exit /b 50
@@ -56,6 +60,6 @@ if /I "%~1"=="--pull" (
   echo Use: hcdecor-operator.bat --pull  to fast-forward before checks.
 )
 
-echo [8/8] Done
+echo [9/9] Done
 echo No social publish, restore, credential change, commit or push was executed.
 exit /b 0
