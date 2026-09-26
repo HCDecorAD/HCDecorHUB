@@ -223,7 +223,7 @@ function hcdecor_project_vault_sync_all($limit=100){
         'post_type'=>'hc_project','post_status'=>['publish','draft','private'],
         'numberposts'=>$limit,'orderby'=>'modified','order'=>'DESC','fields'=>'ids'
     ]);
-    $result=['scanned'=>count($projects),'synced'=>0,'failed'=>0,'errors'=>[]];
+    $result=['scanned'=>count($projects),'synced'=>0,'failed'=>0,'errors'=>[],'completed_at'=>''];
     foreach($projects as $project_id){
         $r=hcdecor_project_vault_save((int)$project_id,true);
         if(is_wp_error($r)){
@@ -234,7 +234,11 @@ function hcdecor_project_vault_sync_all($limit=100){
         }
     }
     update_option('hcdecor_project_vault_bulk_last_at',current_time('mysql'),false);
+    $result['completed_at']=current_time('mysql');
     update_option('hcdecor_project_vault_bulk_last_result',$result,false);
+    update_option('hcdecor_project_vault_bulk_last_at',$result['completed_at'],false);
+    if($result['failed']>0) update_option('hcdecor_project_vault_last_error','Bulk sync failed for '.$result['failed'].' project(s).',false);
+    else delete_option('hcdecor_project_vault_last_error');
     return $result;
 }
 
