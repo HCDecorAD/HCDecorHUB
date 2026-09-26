@@ -153,7 +153,20 @@ function hcdecor_health_snapshot(){
         if($entered) $oldest_review_age=max($oldest_review_age,max(0,current_time('timestamp')-$entered));
     }
     $processing_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'processing']);
+    $draft_orphan_claims=0;
+    $draft_claim_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'draft']);
     $now=time();
+    foreach($draft_claim_ids as $did){
+        $token=(string)get_post_meta($did,'hc_agent_claim_token',true);
+        if($token==='') continue;
+        $lock=(int)get_post_meta($did,'hc_agent_lock_until',true);
+        if($lock>$now) continue;
+        $claimed=strtotime((string)get_post_meta($did,'hc_agent_claimed_at',true))?:0;
+        $modified=strtotime((string)get_post_field('post_modified',$did))?:0;
+        $base=$claimed?:$modified;
+        $stale_after=$claimed?120:900;
+        if($base && $base<($now-$stale_after)) $draft_orphan_claims++;
+    }
     foreach($processing_ids as $pid){
         $lock=(int)get_post_meta($pid,'hc_agent_lock_until',true);
         $claimed=strtotime((string)get_post_meta($pid,'hc_agent_claimed_at',true))?:0;
@@ -226,6 +239,7 @@ function hcdecor_health_snapshot(){
 
     if($stale_processing>0) $issues[]='Stale processing jobs: '.$stale_processing;
     if($processing_without_token>0) $issues[]='Processing jobs missing claim token >2m: '.$processing_without_token;
+    if($draft_orphan_claims>0) $issues[]='Draft jobs with orphan worker claim: '.$draft_orphan_claims;
     if($oldest_review_age>86400) $issues[]='Review queue oldest item >24h';
 
     $score=100;
@@ -242,6 +256,7 @@ function hcdecor_health_snapshot(){
     if(!empty($inbox_settings['enabled']) && ($inbox_ts===0 || $inbox_age>1800)) $score-=5;
     if($stale_processing>0) $score-=min(10,$stale_processing*2);
     if($processing_without_token>0) $score-=min(8,$processing_without_token*2);
+    if($draft_orphan_claims>0) $score-=min(6,$draft_orphan_claims*2);
     if($oldest_review_age>86400) $score-=5;
     $score=max(0,min(100,$score));
 
@@ -298,6 +313,7 @@ function hcdecor_health_snapshot(){
         'stale_processing'=>$stale_processing,
         'worker'=>[
             'processing_without_token'=>$processing_without_token,
+            'draft_orphan_claims'=>$draft_orphan_claims,
             'locks_expiring_2m'=>$processing_lock_expiring,
             'recovered_24h'=>$recovered_24h,
             'recovery_reasons_24h'=>$recovery_reasons
