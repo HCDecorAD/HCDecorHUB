@@ -151,7 +151,7 @@ function hcdecor_hub_dashboard_attention($s){
     }
     foreach((array)($h['issues']??[]) as $issue){
         $label=(string)$issue;
-        if(strpos($label,'Automation failed:')===0 || strpos($label,'Automation blocked:')===0 || strpos($label,'Stale processing jobs:')===0 || strpos($label,'Processing jobs missing claim token')===0) continue;
+        if(strpos($label,'Automation failed:')===0 || strpos($label,'Automation blocked:')===0 || strpos($label,'Stale processing jobs:')===0 || strpos($label,'Processing jobs missing claim token')===0 || strpos($label,'Draft jobs with orphan worker claim:')===0) continue;
         $add('bad',$label,admin_url('admin.php?page=hcdecor-system-health'));
     }
     $review=(int)($c['job_status']['review']??0);
@@ -160,6 +160,7 @@ function hcdecor_hub_dashboard_attention($s){
     if($failed>0) $add('bad',$failed.' content job(s) failed',admin_url('admin.php?page=hcdecor-content-operations'));
     if((int)($h['stale_processing']??0)>0) $add('bad',(int)$h['stale_processing'].' processing job(s) stale',admin_url('admin.php?page=hcdecor-review'));
     if((int)($h['worker']['processing_without_token']??0)>0) $add('bad',(int)$h['worker']['processing_without_token'].' processing job(s) missing worker claim token',admin_url('admin.php?page=hcdecor-review'));
+    if((int)($h['worker']['draft_orphan_claims']??0)>0) $add('bad',(int)$h['worker']['draft_orphan_claims'].' draft job(s) have orphan worker claim',admin_url('admin.php?page=hcdecor-content-operations'));
     if((int)($h['review_oldest_age_seconds']??0)>86400) $add('warn','Review queue has item waiting over 24 hours',admin_url('admin.php?page=hcdecor-review'));
     $blocked=(int)($h['automation']['actionable_blocked']??0);
     $auto_failed=(int)($c['automation']['failed']??0);
