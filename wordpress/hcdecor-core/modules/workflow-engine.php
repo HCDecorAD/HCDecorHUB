@@ -380,6 +380,7 @@ add_action('admin_post_hcdecor_review_action',function(){
         update_post_meta($id,'hc_review_note',$note);
         if(function_exists('wp_schedule_single_event') && !wp_next_scheduled('hcdecor_ai_process_job',[$id])) wp_schedule_single_event(time()+3,'hcdecor_ai_process_job',[$id]);
     }elseif($action==='retry' && (string)get_post_meta($id,'hc_agent_status',true)==='failed'){
+        wp_clear_scheduled_hook('hcdecor_ai_process_job',[$id]);
         delete_post_meta($id,'hc_reviewed_by');
         delete_post_meta($id,'hc_reviewed_at');
         hcdecor_workflow_set_status($id,'draft','Retry requested by reviewer');
