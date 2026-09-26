@@ -22,12 +22,16 @@ curl.exe -fL "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%V%" -o "%P%\ass
 curl.exe -fL "%BASE%/hcdecor-core/modules/content-operations.php?v=%V%" -o "%P%\modules\content-operations.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/background-sync.php?v=%V%" -o "%P%\modules\background-sync.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/project-publishing.php?v=%V%" -o "%P%\modules\project-publishing.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/media-manager.php?v=%V%" -o "%P%\modules\media-manager.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/admin-cleanup.php?v=%V%" -o "%P%\modules\admin-cleanup.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 move /y "%P%\hcdecor-core.php.new" "%P%\hcdecor-core.php" >nul
 move /y "%P%\homepage-builder.php.new" "%P%\homepage-builder.php" >nul
 move /y "%P%\assets\hcdecor-homepage.css.new" "%P%\assets\hcdecor-homepage.css" >nul
 move /y "%P%\modules\content-operations.php.new" "%P%\modules\content-operations.php" >nul
 move /y "%P%\modules\background-sync.php.new" "%P%\modules\background-sync.php" >nul
 move /y "%P%\modules\project-publishing.php.new" "%P%\modules\project-publishing.php" >nul
+move /y "%P%\modules\media-manager.php.new" "%P%\modules\media-manager.php" >nul
+move /y "%P%\modules\admin-cleanup.php.new" "%P%\modules\admin-cleanup.php" >nul
 echo [OK] Source Sync
 
 rem SERVICE B - Plugin runtime (isolated)
@@ -47,11 +51,12 @@ call wp eval-file "%P%\homepage-builder.php" >>"%LOG%" 2>&1
 if errorlevel 1 (echo [WARN] Website builder skipped. HUB services continue.) else echo [OK] Website
 
 rem SERVICE E - Bridge/Agent quick health; no outbound
-echo [6/6] Agent Bridge / Content Operations...
+echo [6/6] Agent Bridge / Content Operations / Media...
 call wp option get hcdecor_bridge_token >nul 2>&1
 if errorlevel 1 call wp eval "hcdecor_bridge_token(); echo 'BRIDGE_READY';" >>"%LOG%" 2>&1
 echo [OK] Agent Bridge
 echo [OK] Content Operations
+ echo [OK] Media Manager
 echo [SAFE] External publishing remains OFF
 
 echo.
@@ -67,7 +72,7 @@ echo ==================================================
 exit /b 0
 
 :syncfail
-del /q "%P%\hcdecor-core.php.new" "%P%\homepage-builder.php.new" "%P%\assets\hcdecor-homepage.css.new" "%P%\modules\content-operations.php.new" "%P%\modules\background-sync.php.new" "%P%\modules\project-publishing.php.new" >nul 2>&1
+del /q "%P%\hcdecor-core.php.new" "%P%\homepage-builder.php.new" "%P%\assets\hcdecor-homepage.css.new" "%P%\modules\content-operations.php.new" "%P%\modules\background-sync.php.new" "%P%\modules\project-publishing.php.new" "%P%\modules\media-manager.php.new" "%P%\modules\admin-cleanup.php.new" >nul 2>&1
 echo [WARN] Source Sync failed. Existing local files kept intact.
 goto :continue_after_sync
 
