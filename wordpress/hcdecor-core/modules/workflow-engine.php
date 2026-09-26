@@ -143,6 +143,7 @@ add_action('rest_api_init',function(){
             update_post_meta($id,'hc_agent_error',$msg);
             delete_post_meta($id,'hc_agent_lock_until');
             delete_post_meta($id,'hc_agent_claim_token');
+            delete_post_meta($id,'hc_agent_heartbeat');
             hcdecor_workflow_set_status($id,'failed',$msg?:'Agent failed');
             return rest_ensure_response(['ok'=>true,'id'=>$id,'status'=>'failed','outbound'=>false]);
         }
