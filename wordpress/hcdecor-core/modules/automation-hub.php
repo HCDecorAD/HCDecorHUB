@@ -244,9 +244,15 @@ add_action('hcdecor_evergreen_tick',function(){
 });
 
 add_action('hcdecor_after_web_publish',function($job_id,$project_id){
-    $prepared=hcdecor_auto_prepare_social($project_id,$job_id);
-    if(!is_wp_error($prepared)) hcdecor_auto_enqueue('social_publish',$prepared,time()+60,'social:publish:'.$job_id);
-    hcdecor_auto_enqueue('webhook',['event'=>'hcdecor.web_published','data'=>['job_id'=>$job_id,'project_id'=>$project_id,'url'=>get_permalink($project_id)]],time(),'webhook:web:'.$job_id);
+    $s=hcdecor_auto_settings();
+    if(empty($s['enabled'])) return;
+    if(!empty($s['social_enabled'])){
+        $prepared=hcdecor_auto_prepare_social($project_id,$job_id);
+        if(!is_wp_error($prepared)) hcdecor_auto_enqueue('social_publish',$prepared,time()+60,'social:publish:'.$job_id);
+    }
+    if(!empty($s['webhook_enabled']) && !empty($s['webhook_url'])){
+        hcdecor_auto_enqueue('webhook',['event'=>'hcdecor.web_published','data'=>['job_id'=>$job_id,'project_id'=>$project_id,'url'=>get_permalink($project_id)]],time(),'webhook:web:'.$job_id);
+    }
 },10,2);
 
 add_action('admin_menu',function(){
@@ -286,6 +292,12 @@ add_action('admin_post_hcdecor_automation_retry',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     $id=(int)($_POST['task_id']??0); check_admin_referer('hcdecor_automation_retry_'.$id);
     if(get_post_type($id)!=='hc_automation_task') wp_die('Invalid task');
+    $s=hcdecor_auto_settings();
+    if(empty($s['enabled'])) wp_die('Automation HUB is disabled.');
+    $type=(string)get_post_meta($id,'hc_auto_type',true);
+    if($type==='social_publish' && empty($s['social_enabled'])) wp_die('Social outbound is disabled.');
+    if($type==='webhook' && (empty($s['webhook_enabled']) || empty($s['webhook_url']))) wp_die('Webhook outbound is disabled.');
+    if($type==='evergreen' && empty($s['evergreen_enabled'])) wp_die('Evergreen automation is disabled.');
     update_post_meta($id,'hc_auto_status','queued'); update_post_meta($id,'hc_auto_run_at',time());
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-automation&retried=1')); exit;
 });
