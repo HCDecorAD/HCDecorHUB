@@ -415,9 +415,15 @@ function hcdecor_health_auto_repair_schedules(){
         $deleted=function_exists('hcdecor_auto_cleanup_mutex_delete_if_same')
             ? hcdecor_auto_cleanup_mutex_delete_if_same($cleanup_mutex)
             : false;
-        if($deleted) $cleanup_repairs[]='automation_cleanup_mutex';
+        if($deleted){
+            $cleanup_repairs[]='automation_cleanup_mutex';
+            $cleanup_mutex=0;
+        }else{
+            $cleanup_mutex=(int)get_option('hcdecor_automation_cleanup_mutex',0);
+        }
     }
-    if(!empty($cleanup_change['cleanup_limited']) && !wp_next_scheduled('hcdecor_automation_cleanup_tick') && !wp_next_scheduled('hcdecor_automation_cleanup_watchdog') && !((int)get_option('hcdecor_automation_cleanup_mutex',0)>=(time()-120))){
+    $cleanup_running=$cleanup_mutex>=(time()-120);
+    if(!empty($cleanup_change['cleanup_limited']) && !wp_next_scheduled('hcdecor_automation_cleanup_tick') && !wp_next_scheduled('hcdecor_automation_cleanup_watchdog') && !$cleanup_running){
         wp_schedule_single_event(time()+15,'hcdecor_automation_cleanup_tick');
         $cleanup_repairs[]='automation_cleanup';
     }
