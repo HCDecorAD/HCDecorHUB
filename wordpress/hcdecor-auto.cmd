@@ -79,7 +79,7 @@ exit /b 0
 set "STEP=%~1"
 shift
 call :say "%STEP%"
-%* >>"%LOG%" 2>&1
+call %* >>"%LOG%" 2>&1
 if errorlevel 1 call :fail "%STEP%"
 echo [PASS] %STEP%
 exit /b 0
