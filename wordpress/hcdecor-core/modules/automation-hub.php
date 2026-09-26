@@ -320,7 +320,16 @@ add_action('admin_post_hcdecor_automation_settings',function(){
     // Evergreen only produces social outbound; never leave it enabled without social.
     if($new['evergreen_enabled'] && !$new['social_enabled']) $new['evergreen_enabled']=false;
     update_option('hcdecor_automation_settings',$new,false);
-    hcdecor_auto_block_pending_for_settings($new,100);
+    $blocked_now=hcdecor_auto_block_pending_for_settings($new,100);
+    update_option('hcdecor_automation_settings_last_change',[
+        'at'=>current_time('mysql'),
+        'by'=>get_current_user_id(),
+        'enabled'=>(bool)$new['enabled'],
+        'social_enabled'=>(bool)$new['social_enabled'],
+        'webhook_enabled'=>(bool)$new['webhook_enabled'],
+        'evergreen_enabled'=>(bool)$new['evergreen_enabled'],
+        'blocked_tasks'=>(int)$blocked_now
+    ],false);
     if(!$new['enabled']){
         wp_clear_scheduled_hook('hcdecor_automation_tick');
         wp_clear_scheduled_hook('hcdecor_evergreen_tick');
@@ -343,7 +352,14 @@ add_action('admin_post_hcdecor_automation_retry',function(){
     if($type==='social_publish' && empty($s['social_enabled'])) wp_die('Social outbound is disabled.');
     if($type==='webhook' && (empty($s['webhook_enabled']) || empty($s['webhook_url']))) wp_die('Webhook outbound is disabled.');
     if($type==='evergreen' && (empty($s['evergreen_enabled']) || empty($s['social_enabled']))) wp_die('Evergreen social outbound is disabled.');
-    update_post_meta($id,'hc_auto_status','queued'); update_post_meta($id,'hc_auto_run_at',time());
+    update_post_meta($id,'hc_auto_status','queued');
+    update_post_meta($id,'hc_auto_run_at',time());
+    update_post_meta($id,'hc_auto_attempts',0);
+    delete_post_meta($id,'hc_auto_last_error');
+    delete_post_meta($id,'hc_auto_started_at');
+    delete_post_meta($id,'hc_auto_done_at');
+    delete_post_meta($id,'hc_auto_recovered_at');
+    hcdecor_auto_log($id,'manual_retry','Queued by administrator');
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-automation&retried=1')); exit;
 });
 
