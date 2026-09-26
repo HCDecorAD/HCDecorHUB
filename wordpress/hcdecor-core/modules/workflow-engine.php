@@ -245,6 +245,7 @@ add_action('rest_api_init',function(){
             if(!hcdecor_workflow_owned_claim_active($id,$token)) return new WP_Error('claim','Worker claim changed before saving completion',['status'=>409]);
             $p=$r->get_json_params()?:[];
             if(function_exists('hcdecor_ops_save_fields')) hcdecor_ops_save_fields($id,$p);
+            if(!hcdecor_workflow_owned_claim_active($id,$token)) return new WP_Error('claim','Worker claim changed after saving completion',['status'=>409]);
             if(!hcdecor_workflow_finish_owned_claim($id,$token,'review','Agent completed generation')) return new WP_Error('claim','Worker claim changed before completion',['status'=>409]);
             return rest_ensure_response(['ok'=>true,'id'=>$id,'status'=>'review','outbound'=>false]);
         }
