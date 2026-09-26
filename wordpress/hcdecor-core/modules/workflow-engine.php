@@ -48,6 +48,14 @@ function hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed=true){
     delete_option('hcdecor_claim_mutex_'.$job_id);
 }
 
+function hcdecor_workflow_finalize_claim($job_id,$claim_token,$now,$message='Agent claimed job'){
+    update_post_meta($job_id,'hc_agent_claimed_at',current_time('mysql'));
+    update_post_meta($job_id,'hc_agent_lock_until',(int)$now+600);
+    if(hcdecor_workflow_set_status($job_id,'processing',$message)) return true;
+    hcdecor_workflow_clear_worker_claim($job_id,true);
+    return false;
+}
+
 function hcdecor_workflow_claim_response($job,$claim_token){
     return rest_ensure_response([
         'id'=>$job->ID,'title'=>$job->post_title,'brief'=>$job->post_content,
@@ -134,25 +142,17 @@ add_action('rest_api_init',function(){
                             update_post_meta($j->ID,'hc_agent_recovery_reason','orphan_draft_claim');
                             hcdecor_workflow_log($j->ID,'draft','Recovered orphan worker claim during claim contention');
                             if(add_post_meta($j->ID,'hc_agent_claim_token',$claim_token,true)){
-                                update_post_meta($j->ID,'hc_agent_claimed_at',current_time('mysql'));
-                                update_post_meta($j->ID,'hc_agent_lock_until',$now+600);
-                                if(hcdecor_workflow_set_status($j->ID,'processing','Agent claimed recovered job')){
+                                if(hcdecor_workflow_finalize_claim($j->ID,$claim_token,$now,'Agent claimed recovered job')){
                                     delete_option($mutex);
                                     return hcdecor_workflow_claim_response($j,$claim_token);
                                 }
-                                hcdecor_workflow_clear_worker_claim($j->ID,true);
                             }
                         }
                     }
                     delete_option($mutex);
                     continue;
                 }
-                update_post_meta($j->ID,'hc_agent_claimed_at',current_time('mysql'));
-                update_post_meta($j->ID,'hc_agent_lock_until',$now+600);
-                if(!hcdecor_workflow_set_status($j->ID,'processing','Agent claimed job')){
-                    hcdecor_workflow_clear_worker_claim($j->ID,true);
-                    continue;
-                }
+                if(!hcdecor_workflow_finalize_claim($j->ID,$claim_token,$now)) continue;
                 delete_option($mutex);
                 return hcdecor_workflow_claim_response($j,$claim_token);
             }
