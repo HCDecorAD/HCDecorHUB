@@ -429,9 +429,11 @@ function hcdecor_health_auto_repair_schedules(){
     }
     if(!$missing && !$cleanup_repairs) return false;
     $names=array_merge(array_keys($missing),$cleanup_repairs);
-    if($missing) hcdecor_health_repair_schedules($required);
-    update_option('hcdecor_health_auto_repair_at',time(),false);
-    update_option('hcdecor_health_auto_repair_last',['at'=>current_time('mysql'),'schedules'=>$names],false);
+    if($missing){
+        hcdecor_health_repair_schedules($required);
+        update_option('hcdecor_health_auto_repair_at',time(),false);
+    }
+    update_option('hcdecor_health_auto_repair_last',['at'=>current_time('mysql'),'schedules'=>$names,'cron_repaired'=>array_values(array_keys($missing)),'cleanup_repaired'=>$cleanup_repairs],false);
     return true;
 }
 
