@@ -25,7 +25,7 @@ function hcdecor_ops_fields() {
     return ['web_title','web_intro','web_body','seo_meta','facebook_caption','tiktok_script','youtube_title','youtube_description'];
 }
 function hcdecor_ops_statuses() {
-    return ['draft'=>'Draft','processing'=>'Processing','review'=>'Review','approved'=>'Approved','published_web'=>'Published Web'];
+    return ['draft'=>'Draft','processing'=>'Processing','review'=>'Review','approved'=>'Approved','published_web'=>'Published Web','failed'=>'Failed'];
 }
 function hcdecor_ops_get($id,$key,$default='') {
     $v=get_post_meta($id,'hc_'.$key,true);
