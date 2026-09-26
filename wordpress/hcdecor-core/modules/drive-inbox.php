@@ -197,6 +197,11 @@ add_action('admin_post_hcdecor_drive_inbox_settings',function(){
         'limit'=>max(1,min(50,(int)($_POST['limit']??12)))
     ];
     update_option('hcdecor_drive_inbox_settings',$settings,false);
+    if($settings['enabled']){
+        if(!wp_next_scheduled('hcdecor_drive_inbox_tick')) wp_schedule_event(time()+120,'hcdecor_5min','hcdecor_drive_inbox_tick');
+    }else{
+        wp_clear_scheduled_hook('hcdecor_drive_inbox_tick');
+    }
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-inbox&saved=1')); exit;
 });
 
