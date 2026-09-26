@@ -1,5 +1,5 @@
 {
-  "version": "2026.09.27.76",
+  "version": "2026.09.27.77",
   "files": [
     {
       "path": "hcdecor-core.php",
@@ -29,7 +29,7 @@
     {
       "path": "modules/workflow-engine.php",
       "url": "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/workflow-engine.php",
-      "git_sha1": "ff8adbbb263d419698e6424475fc01bfaafd56fa"
+      "git_sha1": "6ed5970e4e29984d759370d160528bb976be6e83"
     },
     {
       "path": "modules/ai-providers.php",
