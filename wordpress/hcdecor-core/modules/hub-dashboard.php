@@ -96,6 +96,26 @@ function hcdecor_hub_dashboard_badge($state){
     return 'warn';
 }
 
+function hcdecor_hub_dashboard_attention($s){
+    $c=(array)($s['counts']??[]);
+    $h=(array)($s['health']??[]);
+    $items=[];
+    foreach((array)($h['issues']??[]) as $issue){
+        $items[]=['level'=>'bad','label'=>(string)$issue,'url'=>admin_url('admin.php?page=hcdecor-system-health')];
+    }
+    $failed=(int)($c['job_status']['failed']??0);
+    if($failed>0) $items[]=['level'=>'bad','label'=>$failed.' content job(s) failed','url'=>admin_url('admin.php?page=hcdecor-content-operations')];
+    $blocked=(int)($c['automation']['blocked']??0);
+    $auto_failed=(int)($c['automation']['failed']??0);
+    if($blocked>0) $items[]=['level'=>'warn','label'=>$blocked.' automation task(s) blocked','url'=>admin_url('admin.php?page=hcdecor-automation')];
+    if($auto_failed>0) $items[]=['level'=>'bad','label'=>$auto_failed.' automation task(s) failed','url'=>admin_url('admin.php?page=hcdecor-automation')];
+    if(!empty($s['inbox']['enabled']) && !empty($h['inbox']['error'])) $items[]=['level'=>'bad','label'=>'Drive Inbox: '.(string)$h['inbox']['error'],'url'=>admin_url('admin.php?page=hcdecor-drive-inbox')];
+    $total_projects=(int)($c['projects_publish']??0)+(int)($c['projects_draft']??0);
+    $pending=max(0,$total_projects-(int)($s['project_vault_synced']??0));
+    if($pending>0) $items[]=['level'=>'warn','label'=>$pending.' project(s) pending Project Vault sync','url'=>admin_url('admin.php?page=hcdecor-project-vault')];
+    return array_slice($items,0,8);
+}
+
 function hcdecor_hub_dashboard_page(){
     if(!current_user_can('edit_posts')) return;
     $s=hcdecor_hub_dashboard_state();
@@ -106,6 +126,7 @@ function hcdecor_hub_dashboard_page(){
     $jobs=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>7,'orderby'=>'modified','order'=>'DESC']);
     $projects=get_posts(['post_type'=>'hc_project','post_status'=>['publish','draft'],'numberposts'=>7,'orderby'=>'modified','order'=>'DESC']);
     $social=!empty($s['automation']['social_enabled']);
+    $attention=hcdecor_hub_dashboard_attention($s);
     ?>
     <div class="wrap hchub">
       <style>
@@ -127,7 +148,7 @@ function hcdecor_hub_dashboard_page(){
       .hchub-list small{display:block;color:#646970;margin-top:2px}.hchub-quick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
       .hchub-quick .button{min-height:40px;display:flex;align-items:center;justify-content:center;text-align:center}
       .hchub-safe{border-left:4px solid #72aee6;background:#f0f6fc;padding:11px;margin-top:12px}
-      .hchub-section{margin-top:14px}
+      .hchub-section{margin-top:14px}.hchub-attention a{display:flex;align-items:center;gap:8px;text-decoration:none;color:#1d2327;padding:9px 0;border-top:1px solid #eee}.hchub-attention a:first-child{border-top:0}.hchub-attention .hchub-badge{flex:0 0 auto}
       @media(max-width:1200px){.hchub-kpis{grid-template-columns:repeat(3,1fr)}.hchub-services{grid-template-columns:repeat(2,1fr)}}
       @media(max-width:900px){.hchub-main{grid-template-columns:1fr}.hchub-head{display:block}.hchub-actions{margin-top:10px}}
       @media(max-width:600px){.hchub{margin-right:10px}.hchub-kpis{grid-template-columns:1fr 1fr}.hchub-services{grid-template-columns:1fr}.hchub-quick{grid-template-columns:1fr}.hchub-flow{overflow:auto;flex-wrap:nowrap;padding-bottom:4px}.hchub-step{white-space:nowrap}.hchub .button{min-height:44px}}
@@ -184,6 +205,15 @@ function hcdecor_hub_dashboard_page(){
               foreach($services as $x): $badge=hcdecor_hub_dashboard_badge($x[1]);?>
                 <div class="hchub-service"><strong><?php echo esc_html($x[0]);?></strong><br><span class="hchub-badge <?php echo esc_attr($badge);?>"><?php echo esc_html(strtoupper($x[1]));?></span></div>
               <?php endforeach;?>
+            </div>
+          </section>
+
+          <section class="hchub-panel hchub-section">
+            <h2>ATTENTION QUEUE · <?php echo count($attention);?></h2>
+            <div class="hchub-body hchub-attention">
+              <?php if(!$attention):?><p><span class="hchub-badge ok">CLEAR</span> Không có cảnh báo vận hành cần xử lý.</p><?php else: foreach($attention as $item):?>
+                <a href="<?php echo esc_url($item['url']);?>"><span class="hchub-badge <?php echo esc_attr($item['level']);?>"><?php echo $item['level']==='bad'?'ACTION':'CHECK';?></span><span><?php echo esc_html($item['label']);?></span></a>
+              <?php endforeach; endif;?>
             </div>
           </section>
 
