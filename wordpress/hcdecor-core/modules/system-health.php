@@ -95,6 +95,21 @@ function hcdecor_health_provider($provider){
     return $test==='ok'?'ok':($test==='error'?'error':'configured');
 }
 
+function hcdecor_health_actionable_blocked_count(){
+    $tasks=get_posts([
+        'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>100,'fields'=>'ids',
+        'meta_query'=>[['key'=>'hc_auto_status','value'=>'blocked']]
+    ]);
+    $settings=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
+    $count=0;
+    foreach($tasks as $id){
+        $type=(string)get_post_meta($id,'hc_auto_type',true);
+        if($type==='social_publish' && empty($settings['social_enabled'])) continue;
+        $count++;
+    }
+    return $count;
+}
+
 function hcdecor_health_snapshot(){
     $modules=hcdecor_health_modules();
     $crons=hcdecor_health_crons();
@@ -104,6 +119,7 @@ function hcdecor_health_snapshot(){
     $drive_test=(string)get_option('hcdecor_drive_test_status','');
     $auto_settings=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
     $bridge=(string)get_option('hcdecor_bridge_token','');
+    $actionable_blocked=hcdecor_health_actionable_blocked_count();
 
     $issues=[];
     foreach($modules as $name=>$ok) if(!$ok) $issues[]='Missing module: '.$name;
@@ -112,7 +128,7 @@ function hcdecor_health_snapshot(){
     if(hcdecor_health_provider('gemini')==='error') $issues[]='Gemini test error';
     if($drive_configured && $drive_test==='error') $issues[]='Google Drive connection error';
     if($auto['failed']>0) $issues[]='Automation failed: '.$auto['failed'];
-    if($auto['blocked']>0) $issues[]='Automation blocked: '.$auto['blocked'];
+    if($actionable_blocked>0) $issues[]='Automation blocked: '.$actionable_blocked;
     if($bridge==='') $issues[]='Agent Bridge token missing';
 
     $score=100;
@@ -121,7 +137,7 @@ function hcdecor_health_snapshot(){
     if(in_array('error',[hcdecor_health_provider('openai'),hcdecor_health_provider('gemini')],true)) $score-=10;
     if($drive_configured && $drive_test==='error') $score-=10;
     if($auto['failed']>0) $score-=min(15,$auto['failed']*3);
-    if($auto['blocked']>0) $score-=min(10,$auto['blocked']*2);
+    if($actionable_blocked>0) $score-=min(10,$actionable_blocked*2);
     $score=max(0,min(100,$score));
 
     return [
@@ -160,7 +176,8 @@ function hcdecor_health_snapshot(){
         'automation'=>[
             'enabled'=>!empty($auto_settings['enabled']),
             'social_enabled'=>!empty($auto_settings['social_enabled']),
-            'queue'=>$auto
+            'queue'=>$auto,
+            'actionable_blocked'=>$actionable_blocked
         ],
         'content_queue'=>$queue,
         'bridge'=>['ready'=>$bridge!==''],
