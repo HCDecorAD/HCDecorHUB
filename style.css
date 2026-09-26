@@ -172,3 +172,51 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
   #projects .eyebrow{font-size:13px!important}
   .project-filters button{font-size:14px!important;padding:10px 16px!important}
 }
+
+/* V4.2 compact mobile modules + single-row horizontal controls */
+@media(max-width:850px){
+  /* Each major section becomes a compact viewport module */
+  .section{padding:44px 0!important}
+  .section-head{margin-bottom:20px!important;gap:12px!important}
+  .section-head h2,.section h2{font-size:clamp(27px,6.8vw,34px)!important}
+  .section-head>p{font-size:14px!important;line-height:1.45!important;margin:0!important}
+
+  /* Service cards: horizontal swipe instead of a long vertical page */
+  #services .cards{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;padding:2px 16px 14px 0;scrollbar-width:none}
+  #services .cards::-webkit-scrollbar{display:none}
+  #services .cards article{flex:0 0:min(78vw,310px);scroll-snap-align:start;min-height:190px!important;padding:22px!important}
+  #services .cards article h3{font-size:20px!important;line-height:1.2!important;margin:0 0 12px!important}
+  #services .cards article p{font-size:14px!important;line-height:1.45!important}
+
+  /* Project filters always stay on one line and swipe when needed */
+  .project-filters{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto;white-space:nowrap;gap:8px!important;padding:2px 0 10px;scrollbar-width:none}
+  .project-filters::-webkit-scrollbar{display:none}
+  .project-filters button{flex:0 0 auto!important;font-size:13px!important;min-height:38px!important;padding:8px 14px!important}
+
+  /* Projects become a horizontal carousel */
+  .project-grid{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px!important;padding:2px 16px 14px 0;scrollbar-width:none}
+  .project-grid::-webkit-scrollbar{display:none}
+  .project{flex:0 0:min(82vw,330px);height:310px!important;scroll-snap-align:start}
+  .project h3{font-size:21px!important;line-height:1.18!important}
+
+  /* Process: one compact horizontal rail, no tall stacked timeline */
+  .steps{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px!important;border-top:0!important;padding:0 16px 12px 0;scrollbar-width:none}
+  .steps::-webkit-scrollbar{display:none}
+  .steps div{flex:0 0:min(64vw,245px);min-height:150px!important;padding:20px!important;border:1px solid #b8783235!important;border-radius:13px;background:#fff}
+  .steps b{display:none!important}
+  .steps h4{font-size:18px!important;line-height:1.2!important;margin:0 0 10px!important}
+  .steps p{font-size:14px!important;line-height:1.4!important;margin:0!important}
+
+  /* About module tighter */
+  .split{gap:24px!important}
+  .about-copy p{font-size:15px!important;line-height:1.55!important}
+  .about-metrics{gap:8px!important}
+  .about-metrics span{padding:11px 8px!important}
+}
+@media(max-width:560px){
+  .section{padding:38px 0!important}
+  #services .cards article{flex-basis:76vw}
+  .project{flex-basis:80vw;height:285px!important}
+  .steps div{flex-basis:62vw}
+  .project-filters button{font-size:13px!important;padding:8px 13px!important}
+}
