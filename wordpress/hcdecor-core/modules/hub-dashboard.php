@@ -240,6 +240,8 @@ function hcdecor_hub_dashboard_page(){
     $inbox_result=(array)($s['inbox_result']??[]);
     $vault_bulk=(array)($s['vault_bulk_result']??[]);
     $backup_age=$s['health']['backup']['age_seconds']??null;
+    $vault_coverage=(int)($s['health']['project_vault']['coverage_percent']??0);
+    $inbox_unlinked=(int)($s['health']['last_outcomes']['drive_inbox_unlinked']??0);
     ?>
     <div class="wrap hchub">
       <style>
@@ -292,9 +294,9 @@ function hcdecor_hub_dashboard_page(){
         <div class="hchub-card"><div class="num"><?php echo !empty($auto_repair['schedules'])?count((array)$auto_repair['schedules']):0;?></div><strong>Auto-repaired crons</strong><br><small><?php echo esc_html((string)($auto_repair['at']??'No repair needed'));?></small></div>
         <div class="hchub-card"><div class="num"><?php echo (int)($c['automation']['queued']+$c['automation']['scheduled']);?></div><strong>Automation</strong><br><small><?php echo (int)$c['automation']['failed'];?> failed</small></div>
         <div class="hchub-card"><div class="num"><?php echo $health_score;?>%</div><strong>System Health</strong><br><span class="hchub-badge <?php echo esc_attr(hcdecor_hub_dashboard_badge($health_state));?>"><?php echo esc_html(strtoupper($health_state));?></span></div>
-        <div class="hchub-card"><div class="num"><?php echo (int)$s['project_vault_synced'];?></div><strong>Project Vault</strong><br><small>Drive manifests</small></div>
+        <div class="hchub-card"><div class="num"><?php echo $vault_coverage;?>%</div><strong>Project Vault coverage</strong><br><small><?php echo (int)$s['project_vault_synced'];?> manifests synced</small></div>
         <div class="hchub-card"><div class="num"><?php echo (int)($vault_bulk['failed']??0);?></div><strong>Vault last sync failures</strong><br><small><?php echo esc_html((string)($s['vault_bulk_at']??'Never'));?></small></div>
-        <div class="hchub-card"><div class="num"><?php echo (int)($inbox_result['imported']??0);?></div><strong>Inbox last import</strong><br><small><?php echo (int)($inbox_result['linked']??0);?> linked · <?php echo (int)($inbox_result['failed']??0);?> failed</small></div>
+        <div class="hchub-card"><div class="num"><?php echo (int)($inbox_result['imported']??0);?></div><strong>Inbox last import</strong><br><small><?php echo (int)($inbox_result['linked']??0);?> linked · <?php echo $inbox_unlinked;?> unlinked · <?php echo (int)($inbox_result['failed']??0);?> failed</small></div>
         <div class="hchub-card"><div class="num"><?php echo $backup_age===null?'—':(int)floor($backup_age/3600).'h';?></div><strong>Backup age</strong><br><small><?php echo esc_html((string)($s['backup_last']??'Never'));?></small></div>
       </div>
 
