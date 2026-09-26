@@ -32,11 +32,20 @@ function hcdecor_workflow_set_status($job_id,$status,$note=''){
 add_action('init',function(){
     global $wpdb;
     $cutoff=time()-120;
-    $rows=$wpdb->get_col($wpdb->prepare("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s ORDER BY option_id ASC LIMIT 100",$wpdb->esc_like('hcdecor_claim_mutex_').'%'));
-    foreach((array)$rows as $name){
+    $rows=$wpdb->get_col($wpdb->prepare("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s ORDER BY option_id ASC LIMIT 101",$wpdb->esc_like('hcdecor_claim_mutex_').'%'));
+    $limited=count($rows)>100;
+    $rows=array_slice((array)$rows,0,100);
+    $stale=0; $deleted=0;
+    foreach($rows as $name){
         $mutex=(array)get_option($name,[]);
-        if(empty($mutex['at']) || (int)$mutex['at']<$cutoff) hcdecor_workflow_claim_mutex_delete_if_same($name,$mutex);
+        if(empty($mutex['at']) || (int)$mutex['at']<$cutoff){
+            $stale++;
+            if(hcdecor_workflow_claim_mutex_delete_if_same($name,$mutex)) $deleted++;
+        }
     }
+    update_option('hcdecor_worker_mutex_sweep_last',[
+        'at'=>current_time('mysql'),'scanned'=>count($rows),'stale'=>$stale,'deleted'=>$deleted,'limited'=>$limited
+    ],false);
 },60);
 
 function hcdecor_workflow_claim_mutex_delete_if_same($key,$observed){
