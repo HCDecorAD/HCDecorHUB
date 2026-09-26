@@ -218,6 +218,7 @@ add_action('admin_menu',function(){
   add_menu_page('HCDecor HUB','HCDecor HUB','edit_posts','hcdecor-hub','hcdecor_hub_admin','dashicons-layout',3);
 });
 function hcdecor_hub_admin(){
+  if(function_exists('hcdecor_hub_dashboard_page')){ hcdecor_hub_dashboard_page(); return; }
   $projects=(int)(wp_count_posts('hc_project')->publish??0);
   $media=(int)(wp_count_attachments()->inherit??0);
   $jobs=(int)(wp_count_posts('hc_content_job')->publish??0);
@@ -476,7 +477,7 @@ function hcdecor_bridge_admin(){
 }
 
 /* HCDECOR_PRODUCTION_MODULES */
-foreach (['background-sync.php','content-operations.php','workflow-engine.php','ai-providers.php','media-intelligence.php','agent-intake.php','ai-workspace.php','web-publisher.php','automation-hub.php','automation-recipes.php','drive-vault.php','drive-inbox.php','project-vault.php','data-backup.php','data-restore.php','system-health.php','project-publishing.php','media-manager.php','admin-cleanup.php'] as $hcdecor_module) {
+foreach (['background-sync.php','content-operations.php','workflow-engine.php','ai-providers.php','media-intelligence.php','agent-intake.php','ai-workspace.php','web-publisher.php','automation-hub.php','automation-recipes.php','drive-vault.php','drive-inbox.php','project-vault.php','data-backup.php','data-restore.php','system-health.php','project-publishing.php','media-manager.php','hub-dashboard.php','admin-cleanup.php'] as $hcdecor_module) {
     $hcdecor_module_path = plugin_dir_path(__FILE__) . 'modules/' . $hcdecor_module;
     if (is_readable($hcdecor_module_path)) require_once $hcdecor_module_path;
 }
