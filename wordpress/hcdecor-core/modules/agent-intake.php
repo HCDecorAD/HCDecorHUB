@@ -19,7 +19,11 @@ function hcdecor_agent_create_job($project_id,$media_ids=[],$brief=''){
     if(is_wp_error($id)) return $id;
     update_post_meta($id,'hc_project_id',$project_id);
     update_post_meta($id,'hc_media_ids',$media_ids);
-    if($media_ids) update_post_meta($id,'hc_cover_id',(int)$media_ids[0]);
+    if($media_ids){
+        $cover=(int)$media_ids[0]; $best=-1;
+        foreach($media_ids as $mid){$score=(int)get_post_meta($mid,'hc_ai_cover_score',true); if($score>$best){$best=$score;$cover=(int)$mid;}}
+        update_post_meta($id,'hc_cover_id',$cover);
+    }
     update_post_meta($id,'hc_channels',['web','facebook','tiktok','youtube']);
     update_post_meta($id,'hc_agent_status','draft');
     update_post_meta($id,'hc_outbound',false);
