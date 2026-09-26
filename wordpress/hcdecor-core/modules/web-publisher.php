@@ -21,6 +21,7 @@ function hcdecor_publish_snapshot($project_id){
 function hcdecor_publish_preflight($job_id){
     $job_id=(int)$job_id;
     if(get_post_type($job_id)!=='hc_content_job') return new WP_Error('job','Invalid content job');
+    if(!function_exists('hcdecor_workflow_set_status')) return new WP_Error('workflow','Workflow engine unavailable.');
     if((string)get_post_meta($job_id,'hc_agent_status',true)!=='approved') return new WP_Error('status','Job must be approved first.');
     if(!(int)get_post_meta($job_id,'hc_reviewed_by',true) || !(string)get_post_meta($job_id,'hc_reviewed_at',true)) return new WP_Error('review','Reviewer audit is required before publish.');
     $project=(int)get_post_meta($job_id,'hc_project_id',true);
@@ -75,8 +76,7 @@ function hcdecor_publish_job_to_web($job_id){
     update_post_meta($job_id,'hc_published_web_by',get_current_user_id());
     update_post_meta($job_id,'hc_published_web_url',get_permalink($project));
     update_post_meta($job_id,'hc_outbound',false);
-    if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($job_id,'published_web','Published to Web');
-    else update_post_meta($job_id,'hc_agent_status','published_web');
+    if(!hcdecor_workflow_set_status($job_id,'published_web','Published to Web')) return new WP_Error('transition','Web publish status transition was rejected.');
     do_action('hcdecor_after_web_publish',$job_id,$project);
 
     return ['job_id'=>$job_id,'project_id'=>$project,'url'=>get_permalink($project)];
@@ -103,8 +103,9 @@ function hcdecor_rollback_job_publish($job_id){
     if($cover && wp_attachment_is_image($cover)) set_post_thumbnail($project,$cover);
     else delete_post_thumbnail($project);
 
-    if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($job_id,'approved','Rolled back Web publish');
-    else update_post_meta($job_id,'hc_agent_status','approved');
+    if(!function_exists('hcdecor_workflow_set_status')) return new WP_Error('workflow','Workflow engine unavailable.');
+    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='published_web') return new WP_Error('status','Only published Web jobs can be rolled back.');
+    if(!hcdecor_workflow_set_status($job_id,'approved','Rolled back Web publish')) return new WP_Error('transition','Web rollback status transition was rejected.');
     update_post_meta($job_id,'hc_rollback_at',current_time('mysql'));
     update_post_meta($job_id,'hc_rollback_by',get_current_user_id());
     update_post_meta($job_id,'hc_outbound',false);
