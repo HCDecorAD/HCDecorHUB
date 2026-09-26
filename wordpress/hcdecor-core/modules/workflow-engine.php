@@ -169,7 +169,9 @@ function hcdecor_workflow_finish_owned_claim($job_id,$claim_token,$status,$note=
     $job_id=(int)$job_id;
     if(!hcdecor_workflow_owned_claim_active($job_id,$claim_token)) return false;
     if(!hcdecor_workflow_set_status($job_id,$status,$note)) return false;
-    hcdecor_workflow_clear_owned_claim($job_id,$claim_token,true);
+    if(!hcdecor_workflow_clear_owned_claim($job_id,$claim_token,true)){
+        hcdecor_workflow_log($job_id,$status,'Worker claim cleanup lost ownership after status finalization');
+    }
     return true;
 }
 
