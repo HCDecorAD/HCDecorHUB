@@ -66,7 +66,11 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     global $wpdb;
     $owned=hcdecor_workflow_sweep_mutex_acquire();
     if(!$owned){
-        if(!wp_next_scheduled('hcdecor_worker_mutex_sweep_tick')) wp_schedule_single_event(time()+15,'hcdecor_worker_mutex_sweep_tick');
+        $next=wp_next_scheduled('hcdecor_worker_mutex_sweep_tick');
+        if(!$next || $next<(time()-60)){
+            if($next) wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
+            wp_schedule_single_event(time()+15,'hcdecor_worker_mutex_sweep_tick');
+        }
         return ['stale'=>0,'deleted'=>0,'limited'=>false,'busy'=>true];
     }
     $limit=max(1,min(100,(int)$limit));
@@ -110,7 +114,11 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
         $current=get_option('hcdecor_worker_mutex_sweep_mutex',[]);
         $current_token=is_array($current)?(string)($current['token']??''):'';
         if($current_token!=='' && hash_equals((string)($owned['token']??''),$current_token)) hcdecor_workflow_claim_mutex_delete_if_same('hcdecor_worker_mutex_sweep_mutex',$current);
-        if(!wp_next_scheduled('hcdecor_worker_mutex_sweep_tick')) wp_schedule_single_event(time()+15,'hcdecor_worker_mutex_sweep_tick');
+        $retry=wp_next_scheduled('hcdecor_worker_mutex_sweep_tick');
+        if(!$retry || $retry<(time()-60)){
+            if($retry) wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
+            wp_schedule_single_event(time()+15,'hcdecor_worker_mutex_sweep_tick');
+        }
     }
     return ['stale'=>$stale,'deleted'=>$deleted,'limited'=>$continue,'busy'=>false,'released'=>$released];
 }
