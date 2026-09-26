@@ -285,23 +285,18 @@ add_action('admin_menu',function(){
 },28);
 
 function hcdecor_auto_block_pending_for_settings($settings,$limit=100){
-    $blocked=0; $scanned=0; $remaining=max(1,min(500,(int)$limit)); $after_id=0;
+    $blocked=0; $scanned=0; $remaining=max(1,min(500,(int)$limit)); $offset=0;
     while($remaining>0){
         $batch=min(100,$remaining);
         $ids=get_posts([
             'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>$batch,'fields'=>'ids',
-            'meta_query'=>[
-                'relation'=>'AND',
-                ['key'=>'hc_auto_status','value'=>['queued','scheduled'],'compare'=>'IN'],
-                ['key'=>'_edit_last','compare'=>'NOT EXISTS']
-            ],
-            'orderby'=>'ID','order'=>'ASC'
+            'meta_query'=>[['key'=>'hc_auto_status','value'=>['queued','scheduled'],'compare'=>'IN']],
+            'offset'=>$offset,'orderby'=>'ID','order'=>'ASC'
         ]);
         if(!$ids) break;
-        $progress=false;
+        $unchanged=0;
         foreach($ids as $id){
-            if($id<=$after_id) continue;
-            $progress=true; $after_id=$id; $scanned++; $remaining--;
+            $scanned++; $remaining--;
             $type=(string)get_post_meta($id,'hc_auto_type',true);
             $reason='';
             if(empty($settings['enabled'])) $reason='Automation HUB is OFF';
@@ -312,16 +307,13 @@ function hcdecor_auto_block_pending_for_settings($settings,$limit=100){
                 update_post_meta($id,'hc_auto_status','blocked');
                 hcdecor_auto_log($id,'blocked',$reason.' after settings change');
                 $blocked++;
-            }else{
-                update_post_meta($id,'_edit_last',0);
-            }
+            }else $unchanged++;
             if($remaining<=0) break;
         }
-        if(!$progress || count($ids)<$batch) break;
+        // Only unchanged rows remain in the pending result set; advance past those.
+        $offset+=$unchanged;
+        if(count($ids)<$batch) break;
     }
-    // Remove temporary scan markers; they are not operational state.
-    $marked=get_posts(['post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>500,'fields'=>'ids','meta_key'=>'_edit_last','meta_value'=>0]);
-    foreach($marked as $id) delete_post_meta($id,'_edit_last');
     return ['blocked'=>$blocked,'scanned'=>$scanned,'limited'=>$remaining<=0];
 }
 
