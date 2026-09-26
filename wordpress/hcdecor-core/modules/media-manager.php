@@ -23,6 +23,14 @@ add_action('admin_post_hcdecor_media_assign',function(){
     update_post_meta($project,'hc_project_gallery',$merged);
     update_post_meta($project,'hc_gallery_ids',$merged);
     if(!has_post_thumbnail($project) && !empty($ids[0]) && wp_attachment_is_image($ids[0])) set_post_thumbnail($project,$ids[0]);
+    $next=sanitize_key($_POST['next_action']??'assign');
+    if($next==='agent' && function_exists('hcdecor_agent_create_job')){
+        $brief=sanitize_textarea_field(wp_unslash($_POST['agent_brief']??''));
+        $job=hcdecor_agent_create_job($project,$ids,$brief);
+        if(!is_wp_error($job)){
+            wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$job.'&created=1')); exit;
+        }
+    }
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-media&assigned='.count($ids).'&project='.$project)); exit;
 });
 
@@ -90,9 +98,11 @@ function hcdecor_media_manager_page(){
           </div>
         <?php endforeach;?>
         </div><div id="hcmHidden"></div>
-        <label><strong>Gắn media đã chọn vào Project</strong></label>
+        <label><strong>Project</strong></label>
         <select name="project_id" required><option value="">— Chọn Project —</option><?php foreach($projects as $p):?><option value="<?php echo $p->ID;?>"><?php echo esc_html($p->post_title);?></option><?php endforeach;?></select>
-        <div class="hcm-actions"><button class="button button-primary">Gắn vào Project</button><span id="hcmCount">0 media đã chọn</span></div>
+        <label><strong>Brief cho HUB Agent</strong></label>
+        <textarea name="agent_brief" placeholder="Ví dụ: phân tích media, chọn điểm nổi bật, tạo Project Story và nội dung Web/Facebook/TikTok/YouTube."></textarea>
+        <div class="hcm-actions"><button class="button" name="next_action" value="assign">Chỉ gắn vào Project</button><button class="button button-primary" name="next_action" value="agent">Gắn + Gửi HUB Agent</button><span id="hcmCount">0 media đã chọn</span></div>
       </form>
     </div></section>
     <aside class="hcm-card"><h2>METADATA</h2><div class="hcm-body hcm-meta">
