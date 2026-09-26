@@ -392,3 +392,82 @@ add_action('admin_post_hcdecor_create_content_job',function(){
   if($id&&!is_wp_error($id)){update_post_meta($id,'hc_project_id',$pid);update_post_meta($id,'hc_channels',$channels);update_post_meta($id,'hc_agent_status','queued');update_post_meta($id,'hc_outbound',false);}
   wp_safe_redirect(admin_url('admin.php?page=hcdecor-agent')); exit;
 });
+
+
+/* HCDECOR_AGENT_BRIDGE_V1 */
+function hcdecor_bridge_token(){
+  $t=(string)get_option('hcdecor_bridge_token','');
+  if($t===''){ $t=wp_generate_password(48,false,false); update_option('hcdecor_bridge_token',$t,false); }
+  return $t;
+}
+function hcdecor_bridge_auth(WP_REST_Request $r){
+  $given=(string)$r->get_header('X-HCDecor-Bridge');
+  return $given!=='' && hash_equals(hcdecor_bridge_token(),$given);
+}
+add_action('rest_api_init',function(){
+  register_rest_route('hcdecor/v1','/bridge/status',[
+    'methods'=>'GET','permission_callback'=>'hcdecor_bridge_auth',
+    'callback'=>function(){return rest_ensure_response([
+      'ok'=>true,'bridge'=>'HCDecor Agent Bridge','version'=>'1.0','outbound'=>false,
+      'projects'=>(int)(wp_count_posts('hc_project')->publish??0),
+      'media'=>(int)(wp_count_attachments()->inherit??0),
+      'jobs'=>(int)(wp_count_posts('hc_content_job')->publish??0)
+    ]);}
+  ]);
+  register_rest_route('hcdecor/v1','/bridge/projects',[
+    'methods'=>'GET','permission_callback'=>'hcdecor_bridge_auth',
+    'callback'=>function(){
+      $ps=get_posts(['post_type'=>'hc_project','post_status'=>'publish','numberposts'=>100,'orderby'=>'modified','order'=>'DESC']);
+      return rest_ensure_response(array_map(function($p){return [
+        'id'=>$p->ID,'title'=>$p->post_title,'excerpt'=>$p->post_excerpt,
+        'gallery'=>(array)get_post_meta($p->ID,'hc_gallery_ids',true),'modified'=>$p->post_modified
+      ];},$ps));
+    }
+  ]);
+  register_rest_route('hcdecor/v1','/bridge/jobs',[
+    'methods'=>'GET','permission_callback'=>'hcdecor_bridge_auth',
+    'callback'=>function(){
+      $js=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>100,'orderby'=>'modified','order'=>'DESC']);
+      return rest_ensure_response(array_map(function($j){return [
+        'id'=>$j->ID,'title'=>$j->post_title,'brief'=>$j->post_content,
+        'project_id'=>(int)get_post_meta($j->ID,'hc_project_id',true),
+        'channels'=>(array)get_post_meta($j->ID,'hc_channels',true),
+        'status'=>(string)get_post_meta($j->ID,'hc_agent_status',true),
+        'outbound'=>false
+      ];},$js));
+    }
+  ]);
+  register_rest_route('hcdecor/v1','/bridge/jobs',[
+    'methods'=>'POST','permission_callback'=>'hcdecor_bridge_auth',
+    'callback'=>function(WP_REST_Request $r){
+      $pid=(int)$r->get_param('project_id');
+      $brief=sanitize_textarea_field((string)$r->get_param('brief'));
+      $channels=array_values(array_intersect((array)$r->get_param('channels'),['web','facebook','tiktok','youtube']));
+      $id=wp_insert_post(['post_type'=>'hc_content_job','post_status'=>'publish','post_title'=>'Bridge Job · '.($pid?get_the_title($pid):'Content').' · '.current_time('Y-m-d H:i'),'post_content'=>$brief]);
+      if(is_wp_error($id)) return $id;
+      update_post_meta($id,'hc_project_id',$pid); update_post_meta($id,'hc_channels',$channels);
+      update_post_meta($id,'hc_agent_status','queued'); update_post_meta($id,'hc_outbound',false);
+      return rest_ensure_response(['ok'=>true,'id'=>$id,'outbound'=>false]);
+    }
+  ]);
+  register_rest_route('hcdecor/v1','/bridge/jobs/(?P<id>\\d+)',[
+    'methods'=>'POST','permission_callback'=>'hcdecor_bridge_auth',
+    'callback'=>function(WP_REST_Request $r){
+      $id=(int)$r['id']; if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
+      foreach(['brief'=>'post_content','title'=>'post_title'] as $key=>$field){$v=$r->get_param($key);if($v!==null)wp_update_post(['ID'=>$id,$field=>sanitize_textarea_field((string)$v)]);}
+      $status=$r->get_param('status'); if($status!==null) update_post_meta($id,'hc_agent_status',sanitize_key($status));
+      return rest_ensure_response(['ok'=>true,'id'=>$id,'outbound'=>false]);
+    }
+  ]);
+});
+
+add_action('admin_menu',function(){
+  add_submenu_page('hcdecor-hub','Agent Bridge','Agent Bridge','manage_options','hcdecor-bridge','hcdecor_bridge_admin',2);
+},16);
+function hcdecor_bridge_admin(){
+  $token=hcdecor_bridge_token();
+  echo '<div class="wrap"><h1>HCDecor Agent Bridge</h1><p><strong>Trạng thái:</strong> READY · Outbound OFF</p>';
+  echo '<p>Bridge kết nối HUB Agent với Project, Media và Content Queue. Token chỉ dùng cho máy/agent được cấp quyền.</p>';
+  echo '<table class="widefat striped" style="max-width:900px"><tr><th>Endpoint</th><td><code>'.esc_html(rest_url('hcdecor/v1/bridge/status')).'</code></td></tr><tr><th>Header</th><td><code>X-HCDecor-Bridge</code></td></tr><tr><th>Token</th><td><input type="password" readonly value="'.esc_attr($token).'" style="width:520px" onclick="this.type=\'text\';this.select()"></td></tr></table>';
+  echo '<p><em>Không gửi token lên GitHub. Khi chuyển sang staging HTTPS, cùng Bridge này có thể được Agent truy cập từ xa.</em></p></div>';
+}
