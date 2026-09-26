@@ -25,7 +25,7 @@ function hcdecor_ops_fields() {
     return ['web_title','web_intro','web_body','seo_meta','facebook_caption','tiktok_script','youtube_title','youtube_description'];
 }
 function hcdecor_ops_statuses() {
-    return ['draft'=>'Draft','review'=>'Review','approved'=>'Approved','published_web'=>'Published Web'];
+    return ['draft'=>'Draft','processing'=>'Processing','review'=>'Review','approved'=>'Approved','published_web'=>'Published Web'];
 }
 function hcdecor_ops_get($id,$key,$default='') {
     $v=get_post_meta($id,'hc_'.$key,true);
@@ -33,13 +33,17 @@ function hcdecor_ops_get($id,$key,$default='') {
 }
 function hcdecor_ops_save_fields($job_id,$src) {
     foreach(hcdecor_ops_fields() as $key){
-        $value=isset($src[$key])?wp_unslash($src[$key]):'';
+        if(!array_key_exists($key,$src)) continue;
+        $value=wp_unslash($src[$key]);
         update_post_meta($job_id,'hc_'.$key,sanitize_textarea_field($value));
     }
-    $media=array_values(array_unique(array_filter(array_map('intval',(array)($src['media_ids']??[])))));
-    update_post_meta($job_id,'hc_media_ids',$media);
-    update_post_meta($job_id,'hc_cover_id',(int)($src['cover_id']??($media[0]??0)));
-    update_post_meta($job_id,'hc_channels',array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)($src['channels']??[]))));
+    if(array_key_exists('media_ids',$src)){
+        $media=array_values(array_unique(array_filter(array_map('intval',(array)$src['media_ids']))));
+        update_post_meta($job_id,'hc_media_ids',$media);
+        if(!array_key_exists('cover_id',$src) && $media) update_post_meta($job_id,'hc_cover_id',(int)$media[0]);
+    }
+    if(array_key_exists('cover_id',$src)) update_post_meta($job_id,'hc_cover_id',(int)$src['cover_id']);
+    if(array_key_exists('channels',$src)) update_post_meta($job_id,'hc_channels',array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)$src['channels'])));
     update_post_meta($job_id,'hc_outbound',false);
 }
 
