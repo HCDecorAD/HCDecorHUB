@@ -359,3 +359,36 @@ add_action('admin_post_hcdecor_print_quote',function(){
   foreach(hcdecor_quote_items($id) as $x){$line=(float)$x['qty']*(float)$x['price'];echo '<tr><td>'.esc_html($x['name']).'</td><td>'.esc_html($x['qty']).'</td><td class="num">'.esc_html(hcdecor_money($x['price'])).'</td><td class="num">'.esc_html(hcdecor_money($line)).'</td></tr>';}
   echo '</table><h2 style="text-align:right">Tổng: '.esc_html(hcdecor_money($t['total'])).'</h2><p>HCDecor · 231D An Dương Vương, P. An Lạc, Tp.HCM · 0888 821 842</p><button onclick="print()">In / Lưu PDF</button>'; exit;
 });
+
+
+/* HCDECOR_AGENT_DEMO_V1: content/media publishing workspace */
+add_action('init',function(){
+  register_post_type('hc_content_job',[
+    'labels'=>['name'=>'AI Content Jobs','singular_name'=>'AI Content Job','add_new_item'=>'Tạo Content Job'],
+    'public'=>false,'show_ui'=>true,'show_in_menu'=>false,'supports'=>['title','editor','custom-fields']
+  ]);
+},15);
+
+add_action('admin_menu',function(){
+  add_submenu_page('hcdecor-hub','AI Agent','AI Agent','edit_posts','hcdecor-agent','hcdecor_agent_admin',1);
+  add_submenu_page('hcdecor-hub','Content Queue','Content Queue','edit_posts','edit.php?post_type=hc_content_job');
+  add_submenu_page('hcdecor-hub','Media Library','Media Library','upload_files','upload.php');
+  add_submenu_page('hcdecor-hub','Projects','Projects','edit_posts','edit.php?post_type=hc_project');
+},15);
+
+function hcdecor_agent_admin(){
+  $jobs=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>8,'orderby'=>'date','order'=>'DESC']);
+  $projects=get_posts(['post_type'=>'hc_project','post_status'=>'publish','numberposts'=>6]);
+  echo '<div class="wrap"><h1>HCDecor HUB · AI Agent Demo</h1><p><strong>Project → Media → AI Content → Review → Publish</strong></p>';
+  echo '<div style="display:grid;grid-template-columns:2fr 1fr;gap:18px;max-width:1200px">';
+  echo '<section style="background:#fff;padding:20px;border:1px solid #ddd;border-radius:12px"><h2>Agent Workspace</h2><form method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="hcdecor_create_content_job">'.wp_nonce_field('hcdecor_agent_job','_wpnonce',true,false).'<p><label>Dự án</label><br><select name="project_id" style="width:100%;max-width:600px"><option value="0">Chọn dự án...</option>'; foreach($projects as $p) echo '<option value="'.$p->ID.'">'.esc_html($p->post_title).'</option>'; echo '</select></p><p><label>Yêu cầu cho AI Agent</label><br><textarea name="brief" rows="5" style="width:100%;max-width:800px" placeholder="Ví dụ: tạo nội dung giới thiệu dự án, caption Facebook/TikTok, đề xuất ảnh cover..."></textarea></p><p><label>Kênh đầu ra</label><br><label><input type="checkbox" name="channels[]" value="web" checked> Web</label> &nbsp; <label><input type="checkbox" name="channels[]" value="facebook"> Facebook</label> &nbsp; <label><input type="checkbox" name="channels[]" value="tiktok"> TikTok</label> &nbsp; <label><input type="checkbox" name="channels[]" value="youtube"> YouTube</label></p><button class="button button-primary">Tạo AI Content Job</button></form></section>';
+  echo '<aside style="background:#111;color:#eee;padding:20px;border-radius:12px"><h2 style="color:#fff">Pipeline</h2><p>① Upload Media</p><p>② Gắn vào Project</p><p>③ AI xử lý Content</p><p>④ Review / chỉnh sửa</p><p>⑤ Publish theo kênh</p><p style="color:#d59a55">Outbound hiện OFF · Demo an toàn</p></aside></div>';
+  echo '<h2>Content Queue</h2><table class="widefat striped"><thead><tr><th>Job</th><th>Project</th><th>Kênh</th><th>Trạng thái</th><th></th></tr></thead><tbody>'; if(!$jobs) echo '<tr><td colspan="5">Chưa có job. Tạo job đầu tiên ở trên.</td></tr>'; foreach($jobs as $j){$pid=(int)get_post_meta($j->ID,'hc_project_id',true);echo '<tr><td>'.esc_html($j->post_title).'</td><td>'.esc_html(get_the_title($pid)).'</td><td>'.esc_html(implode(', ',(array)get_post_meta($j->ID,'hc_channels',true))).'</td><td>'.esc_html(get_post_meta($j->ID,'hc_agent_status',true)?:'queued').'</td><td><a href="'.esc_url(get_edit_post_link($j->ID)).'">Review</a></td></tr>';} echo '</tbody></table></div>';
+}
+add_action('admin_post_hcdecor_create_content_job',function(){
+  check_admin_referer('hcdecor_agent_job'); if(!current_user_can('edit_posts')) wp_die('Forbidden');
+  $pid=(int)($_POST['project_id']??0); $brief=sanitize_textarea_field(wp_unslash($_POST['brief']??'')); $channels=array_values(array_intersect((array)($_POST['channels']??[]),['web','facebook','tiktok','youtube']));
+  $id=wp_insert_post(['post_type'=>'hc_content_job','post_status'=>'publish','post_title'=>'AI Job · '.($pid?get_the_title($pid):'Content').' · '.current_time('Y-m-d H:i'),'post_content'=>$brief]);
+  if($id&&!is_wp_error($id)){update_post_meta($id,'hc_project_id',$pid);update_post_meta($id,'hc_channels',$channels);update_post_meta($id,'hc_agent_status','queued');update_post_meta($id,'hc_outbound',false);}
+  wp_safe_redirect(admin_url('admin.php?page=hcdecor-agent')); exit;
+});
