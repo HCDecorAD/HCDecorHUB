@@ -248,7 +248,6 @@ function hcdecor_project_vault_sync_all($limit=100){
             $result['synced']++;
         }
     }
-    update_option('hcdecor_project_vault_bulk_last_at',current_time('mysql'),false);
     $result['completed_at']=current_time('mysql');
     update_option('hcdecor_project_vault_bulk_last_result',$result,false);
     update_option('hcdecor_project_vault_bulk_last_at',$result['completed_at'],false);
