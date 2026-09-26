@@ -459,7 +459,7 @@ add_action('rest_api_init',function(){
     'callback'=>function(WP_REST_Request $r){
       $id=(int)$r['id']; if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
       foreach(['brief'=>'post_content','title'=>'post_title'] as $key=>$field){$v=$r->get_param($key);if($v!==null)wp_update_post(['ID'=>$id,$field=>sanitize_textarea_field((string)$v)]);}
-      $status=$r->get_param('status'); if($status!==null){ $status=sanitize_key($status); $allowed=['draft','processing','review','failed']; if(!in_array($status,$allowed,true)) return new WP_Error('status','Bridge cannot approve or publish jobs',['status'=>403]); update_post_meta($id,'hc_agent_status',$status); }
+      $status=$r->get_param('status'); if($status!==null){ $status=sanitize_key($status); $allowed=['draft','processing','review','failed']; if(!in_array($status,$allowed,true)) return new WP_Error('status','Bridge cannot approve or publish jobs',['status'=>403]); $current=(string)get_post_meta($id,'hc_agent_status',true); if($status!==$current && (!function_exists('hcdecor_workflow_set_status') || !hcdecor_workflow_set_status($id,$status,'Status changed through Agent Bridge'))) return new WP_Error('transition','Invalid workflow status transition',['status'=>409]); }
       return rest_ensure_response(['ok'=>true,'id'=>$id,'outbound'=>false]);
     }
   ]);
