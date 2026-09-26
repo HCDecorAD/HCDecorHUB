@@ -48,12 +48,39 @@ function hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed=true){
     delete_option('hcdecor_claim_mutex_'.$job_id);
 }
 
+function hcdecor_workflow_recover_orphan_draft_claims($limit=20){
+    $jobs=get_posts([
+        'post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>max(1,min(50,(int)$limit)),'fields'=>'ids',
+        'meta_key'=>'hc_agent_status','meta_value'=>'draft','orderby'=>'modified','order'=>'ASC'
+    ]);
+    $now=time(); $recovered=0;
+    foreach($jobs as $job_id){
+        $token=(string)get_post_meta($job_id,'hc_agent_claim_token',true);
+        if($token==='') continue;
+        $lock=(int)get_post_meta($job_id,'hc_agent_lock_until',true);
+        if($lock>$now) continue;
+        $mutex=(array)get_option('hcdecor_claim_mutex_'.$job_id,[]);
+        if(!empty($mutex['at']) && (int)$mutex['at']>=($now-120)) continue;
+        $claimed=strtotime((string)get_post_meta($job_id,'hc_agent_claimed_at',true))?:0;
+        $modified=strtotime((string)get_post_field('post_modified',$job_id))?:0;
+        $age_base=$claimed?:$modified;
+        if(!$age_base || $age_base>=($now-900)) continue;
+        hcdecor_workflow_clear_worker_claim($job_id,true);
+        update_post_meta($job_id,'hc_agent_recovered_at',current_time('mysql'));
+        update_post_meta($job_id,'hc_agent_recovery_reason','orphan_draft_claim');
+        hcdecor_workflow_log($job_id,'draft','Recovered orphan worker claim');
+        $recovered++;
+    }
+    return $recovered;
+}
+
 add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/operations/claim',[
         'methods'=>'POST',
         'permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
             $now=time();
+            hcdecor_workflow_recover_orphan_draft_claims(20);
             $jobs=get_posts([
                 'post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>20,
                 'orderby'=>'date','order'=>'ASC',
@@ -75,12 +102,13 @@ add_action('rest_api_init',function(){
                     delete_option($mutex);
                     continue;
                 }
+                update_post_meta($j->ID,'hc_agent_claimed_at',current_time('mysql'));
                 if(!add_post_meta($j->ID,'hc_agent_claim_token',$claim_token,true)){
+                    delete_post_meta($j->ID,'hc_agent_claimed_at');
                     delete_option($mutex);
                     continue;
                 }
                 update_post_meta($j->ID,'hc_agent_lock_until',$now+600);
-                update_post_meta($j->ID,'hc_agent_claimed_at',current_time('mysql'));
                 hcdecor_workflow_set_status($j->ID,'processing','Agent claimed job');
                 delete_option($mutex);
                 $data=[
