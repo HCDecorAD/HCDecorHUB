@@ -107,6 +107,8 @@ function hcdecor_rollback_job_publish($job_id){
     else update_post_meta($job_id,'hc_agent_status','approved');
     update_post_meta($job_id,'hc_rollback_at',current_time('mysql'));
     update_post_meta($job_id,'hc_rollback_by',get_current_user_id());
+    update_post_meta($job_id,'hc_outbound',false);
+    do_action('hcdecor_project_data_changed',$project);
     return ['job_id'=>$job_id,'project_id'=>$project,'url'=>get_permalink($project)];
 }
 
