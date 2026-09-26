@@ -66,32 +66,34 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     $cutoff=time()-120;
     $last=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
     $cursor=max(0,(int)($last['cursor']??0));
-    $like=$wpdb->esc_like('hcdecor_claim_mutex_').'%';
-    $rows=$wpdb->get_results($wpdb->prepare("SELECT option_id,option_name FROM {$wpdb->options} WHERE option_name LIKE %s AND option_id>%d ORDER BY option_id ASC LIMIT %d",$like,$cursor,$limit+1));
+    $claim_like=$wpdb->esc_like('hcdecor_claim_mutex_').'%';
+    $lifecycle_like=$wpdb->esc_like('hcdecor_lifecycle_mutex_').'%';
+    $rows=$wpdb->get_results($wpdb->prepare("SELECT option_id,option_name FROM {$wpdb->options} WHERE (option_name LIKE %s OR option_name LIKE %s) AND option_id>%d ORDER BY option_id ASC LIMIT %d",$claim_like,$lifecycle_like,$cursor,$limit+1));
     $wrapped=false;
     if(!$rows && $cursor>0){
         $cursor=0; $wrapped=true;
-        $rows=$wpdb->get_results($wpdb->prepare("SELECT option_id,option_name FROM {$wpdb->options} WHERE option_name LIKE %s ORDER BY option_id ASC LIMIT %d",$like,$limit+1));
+        $rows=$wpdb->get_results($wpdb->prepare("SELECT option_id,option_name FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s ORDER BY option_id ASC LIMIT %d",$claim_like,$lifecycle_like,$limit+1));
     }
     $limited=count($rows)>$limit;
     $rows=array_slice((array)$rows,0,$limit);
-    $stale=0; $deleted=0; $next_cursor=$cursor;
+    $stale=0; $deleted=0; $lifecycle_scanned=0; $next_cursor=$cursor;
     foreach($rows as $row){
         $next_cursor=max($next_cursor,(int)$row->option_id);
         $name=(string)$row->option_name;
+        if(strpos($name,'hcdecor_lifecycle_mutex_')===0) $lifecycle_scanned++;
         $mutex=(array)get_option($name,[]);
         if(empty($mutex['at']) || (int)$mutex['at']<$cutoff){
             $stale++;
             if(hcdecor_workflow_claim_mutex_delete_if_same($name,$mutex)) $deleted++;
         }
     }
-    $more_after=$limited || (!$wrapped && $next_cursor>0 && (bool)$wpdb->get_var($wpdb->prepare("SELECT option_id FROM {$wpdb->options} WHERE option_name LIKE %s AND option_id>%d ORDER BY option_id ASC LIMIT 1",$like,$next_cursor)));
+    $more_after=$limited || (!$wrapped && $next_cursor>0 && (bool)$wpdb->get_var($wpdb->prepare("SELECT option_id FROM {$wpdb->options} WHERE (option_name LIKE %s OR option_name LIKE %s) AND option_id>%d ORDER BY option_id ASC LIMIT 1",$claim_like,$lifecycle_like,$next_cursor)));
     $continue=$more_after;
     $stored_cursor=$continue?$next_cursor:0;
     if(!$rows) $stored_cursor=0;
     if($wrapped && !$limited) $continue=false;
     update_option('hcdecor_worker_mutex_sweep_last',[
-        'at'=>current_time('mysql'),'ts'=>time(),'scanned'=>count($rows),'stale'=>$stale,'deleted'=>$deleted,'limited'=>$continue,'cursor'=>$stored_cursor,'wrapped'=>$wrapped
+        'at'=>current_time('mysql'),'ts'=>time(),'scanned'=>count($rows),'lifecycle_scanned'=>$lifecycle_scanned,'stale'=>$stale,'deleted'=>$deleted,'limited'=>$continue,'cursor'=>$stored_cursor,'wrapped'=>$wrapped
     ],false);
     $next=wp_next_scheduled('hcdecor_worker_mutex_sweep_tick');
     if($continue && !$next) wp_schedule_single_event(time()+30,'hcdecor_worker_mutex_sweep_tick');
