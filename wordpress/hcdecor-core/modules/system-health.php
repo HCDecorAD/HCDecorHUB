@@ -179,11 +179,20 @@ function hcdecor_health_snapshot(){
     $last_auto_repair=(array)get_option('hcdecor_health_auto_repair_last',[]);
     $last_auto_repair_ts=!empty($last_auto_repair['at'])?(strtotime((string)$last_auto_repair['at'])?:0):0;
     $vault_stale=0;
-    $vault_ids=get_posts(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_drive_project_file_id','meta_compare'=>'EXISTS']);
-    foreach($vault_ids as $pid){
-        $synced=strtotime((string)get_post_meta($pid,'hc_drive_project_synced_at',true))?:0;
-        $modified=strtotime((string)get_post_field('post_modified',$pid))?:0;
-        if($modified>0 && ($synced===0 || $modified>$synced+5)) $vault_stale++;
+    $vault_stale_scanned=0;
+    for($page=1;$page<=4;$page++){
+        $vault_ids=get_posts([
+            'post_type'=>'hc_project','post_status'=>['publish','draft','private'],'numberposts'=>50,'fields'=>'ids',
+            'meta_key'=>'hc_drive_project_file_id','meta_compare'=>'EXISTS','paged'=>$page,'orderby'=>'ID','order'=>'ASC'
+        ]);
+        if(!$vault_ids) break;
+        foreach($vault_ids as $pid){
+            $vault_stale_scanned++;
+            $synced=strtotime((string)get_post_meta($pid,'hc_drive_project_synced_at',true))?:0;
+            $modified=strtotime((string)get_post_field('post_modified',$pid))?:0;
+            if($modified>0 && ($synced===0 || $modified>$synced+5)) $vault_stale++;
+        }
+        if(count($vault_ids)<50) break;
     }
 
     $issues=[];
@@ -266,7 +275,9 @@ function hcdecor_health_snapshot(){
             'pending_projects'=>max(0,$project_total-$vault_synced),
             'error_projects'=>$vault_errors,
             'retrying_projects'=>$vault_retrying,
-            'stale_projects'=>$vault_stale
+            'stale_projects'=>$vault_stale,
+            'stale_scan_count'=>$vault_stale_scanned,
+            'stale_scan_limited'=>$vault_synced>$vault_stale_scanned
         ],
         'inbox'=>[
             'settings'=>$inbox_settings,
