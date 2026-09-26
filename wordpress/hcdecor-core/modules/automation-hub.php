@@ -186,8 +186,17 @@ add_filter('cron_schedules',function($s){
     return $s;
 });
 add_action('init',function(){
-    if(!wp_next_scheduled('hcdecor_automation_tick')) wp_schedule_event(time()+20,'hcdecor_1min','hcdecor_automation_tick');
-    if(!wp_next_scheduled('hcdecor_evergreen_tick')) wp_schedule_event(time()+300,'hcdecor_daily','hcdecor_evergreen_tick');
+    $s=hcdecor_auto_settings();
+    if(!empty($s['enabled'])){
+        if(!wp_next_scheduled('hcdecor_automation_tick')) wp_schedule_event(time()+20,'hcdecor_1min','hcdecor_automation_tick');
+    }else{
+        wp_clear_scheduled_hook('hcdecor_automation_tick');
+    }
+    if(!empty($s['enabled']) && !empty($s['evergreen_enabled'])){
+        if(!wp_next_scheduled('hcdecor_evergreen_tick')) wp_schedule_event(time()+300,'hcdecor_daily','hcdecor_evergreen_tick');
+    }else{
+        wp_clear_scheduled_hook('hcdecor_evergreen_tick');
+    }
 },50);
 
 add_action('hcdecor_automation_tick',function(){
