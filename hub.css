@@ -18,3 +18,6 @@ button{background:linear-gradient(110deg,#955625,#e1a85e,#9b5b27);border:1px sol
 
 /* HUB V4 safe publisher queue */
 .ops-stats{grid-template-columns:repeat(4,1fr)}.schedule-label{display:block;margin-top:12px;color:#a89f96;font-size:12px}.schedule-label input{margin-top:6px}.queue-btn{width:100%;margin-top:8px}.queue-msg{min-height:20px;margin:7px 2px 0;color:#d9b56d;font-size:12px}@media(max-width:720px){.ops-stats{grid-template-columns:1fr 1fr}}
+
+/* HUB V5 automation bridge */
+.secondary{grid-template-columns:repeat(3,1fr)}@media(max-width:720px){.secondary{grid-template-columns:1fr 1fr 1fr}.secondary button{font-size:11px}}
