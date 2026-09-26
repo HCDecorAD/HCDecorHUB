@@ -428,7 +428,7 @@ function hcdecor_automation_page(){
         <p>Retry <input type="number" name="max_attempts" value="<?php echo (int)$s['max_attempts'];?>" min="1" max="10" style="width:70px"> lần · mỗi <input type="number" name="retry_minutes" value="<?php echo (int)$s['retry_minutes'];?>" min="1" style="width:80px"> phút</p>
         <p><button class="button button-primary">Lưu Automation</button></p>
       </form>
-      <?php if(!empty($settings_change['at'])):?><hr><p><strong>Last settings change:</strong> <?php echo esc_html($settings_change['at']);?> · blocked <?php echo (int)($settings_change['blocked_tasks']??0);?> task(s)</p><?php endif;?>
+      <?php if(!empty($settings_change['at'])):?><hr><p><strong>Last settings change:</strong> <?php echo esc_html($settings_change['at']);?> · blocked <?php echo (int)($settings_change['blocked_tasks']??0);?> / scanned <?php echo (int)($settings_change['scanned_tasks']??0);?> task(s)<?php echo !empty($settings_change['cleanup_limited'])?' · bounded limit reached':'';?></p><?php endif;?>
       <hr><p><strong>Patterns:</strong> Editorial Calendar · per-channel queue · evergreen re-share · trigger/action recipes · webhooks · retry/backoff.</p>
       </section>
       <section style="background:#fff;border:1px solid #ddd;border-radius:12px;overflow:hidden">
