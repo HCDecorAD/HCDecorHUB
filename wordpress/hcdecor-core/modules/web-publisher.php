@@ -56,6 +56,7 @@ function hcdecor_publish_job_to_web($job_id){
     update_post_meta($job_id,'hc_outbound',false);
     if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($job_id,'published_web','Published to Web');
     else update_post_meta($job_id,'hc_agent_status','published_web');
+    do_action('hcdecor_after_web_publish',$job_id,$project);
 
     return ['job_id'=>$job_id,'project_id'=>$project,'url'=>get_permalink($project)];
 }
