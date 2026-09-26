@@ -76,6 +76,18 @@ function hcdecor_workflow_finalize_claim($job_id,$claim_token,$now,$message='Age
     return false;
 }
 
+function hcdecor_workflow_refresh_owned_claim($job_id,$claim_token,$seconds=600){
+    $job_id=(int)$job_id;
+    if($claim_token==='' || (string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token) return false;
+    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='processing') return false;
+    $lock=(int)get_post_meta($job_id,'hc_agent_lock_until',true);
+    if($lock<=0 || $lock<time()) return false;
+    update_post_meta($job_id,'hc_agent_lock_until',time()+max(60,(int)$seconds));
+    if((string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token || (string)get_post_meta($job_id,'hc_agent_status',true)!=='processing') return false;
+    update_post_meta($job_id,'hc_agent_heartbeat',current_time('mysql'));
+    return true;
+}
+
 function hcdecor_workflow_finish_owned_claim($job_id,$claim_token,$status,$note=''){
     $job_id=(int)$job_id;
     if($claim_token==='' || (string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token) return false;
@@ -202,10 +214,7 @@ add_action('rest_api_init',function(){
             $token=sanitize_text_field((string)$r->get_param('claim_token'));
             $expected=(string)get_post_meta($id,'hc_agent_claim_token',true);
             if($expected==='' || $token==='' || !hash_equals($expected,$token)) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
-            $lock=(int)get_post_meta($id,'hc_agent_lock_until',true);
-            if($lock<=0 || $lock<time()) return new WP_Error('lock','Job lock expired; retry from Review Center',['status'=>409]);
-            update_post_meta($id,'hc_agent_lock_until',time()+600);
-            update_post_meta($id,'hc_agent_heartbeat',current_time('mysql'));
+            if(!hcdecor_workflow_refresh_owned_claim($id,$token,600)) return new WP_Error('claim','Worker claim changed or expired during heartbeat',['status'=>409]);
             return rest_ensure_response(['ok'=>true,'id'=>$id]);
         }
     ]);
