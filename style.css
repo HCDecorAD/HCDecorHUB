@@ -280,3 +280,19 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
   .steps div{flex-basis:78vw!important}
   .social-links{padding-right:42px!important}
 }
+
+
+/* V4.4 Process — clear numbered step flow on mobile */
+@media(max-width:850px){
+  .steps{counter-reset:hcstep;display:grid!important;grid-template-columns:1fr!important;overflow:visible!important;gap:0!important;padding:0!important;margin-top:18px!important;position:relative}
+  .steps:before{content:"";position:absolute;left:19px;top:22px;bottom:22px;width:1px;background:linear-gradient(#d59a55,#b8783230)}
+  .steps div{counter-increment:hcstep;position:relative;flex:none!important;width:100%!important;min-height:0!important;padding:12px 12px 18px 58px!important;border:0!important;border-radius:0!important;background:transparent!important;scroll-snap-align:none!important}
+  .steps div:before{content:counter(hcstep,decimal-leading-zero);position:absolute;left:0;top:8px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#11100e;color:#e0aa62;border:1px solid #c48745;font-size:12px;font-weight:800;letter-spacing:.04em;z-index:1}
+  .steps h4{font-size:18px!important;line-height:1.2!important;margin:0 0 5px!important;color:#111}
+  .steps p{font-size:14px!important;line-height:1.4!important;margin:0!important;color:#6f777d}
+}
+@media(max-width:560px){
+  .steps div{padding:10px 8px 16px 54px!important}
+  .steps:before{left:18px}
+  .steps div:before{width:38px;height:38px}
+}
