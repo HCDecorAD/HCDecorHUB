@@ -234,8 +234,8 @@ function hcdecor_health_snapshot(){
     $worker_mutex_sweep_ts=(int)($worker_mutex_sweep['ts']??0);
     if(!$worker_mutex_sweep_ts && !empty($worker_mutex_sweep['at'])) $worker_mutex_sweep_ts=strtotime((string)$worker_mutex_sweep['at'])?:0;
     $worker_mutex_sweep_fresh=$worker_mutex_sweep_ts>=(time()-600);
-    $worker_sweep_mutex=(array)get_option('hcdecor_worker_mutex_sweep_mutex',[]);
-    $worker_sweep_mutex_at=(int)($worker_sweep_mutex['at']??0);
+    $worker_sweep_mutex_raw=get_option('hcdecor_worker_mutex_sweep_mutex',[]);
+    $worker_sweep_mutex_at=is_array($worker_sweep_mutex_raw)?(int)($worker_sweep_mutex_raw['at']??0):(int)$worker_sweep_mutex_raw;
     $worker_sweep_mutex_stale=$worker_sweep_mutex_at>0 && $worker_sweep_mutex_at<(time()-30);
     $automation_last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
     $automation_cleanup_raw=get_option('hcdecor_automation_cleanup_mutex',[]);
@@ -430,17 +430,19 @@ function hcdecor_health_auto_repair_schedules(){
     $worker_sweep_ts=(int)($worker_sweep['ts']??0);
     if(!$worker_sweep_ts && !empty($worker_sweep['at'])) $worker_sweep_ts=strtotime((string)$worker_sweep['at'])?:0;
     $worker_sweep_fresh=$worker_sweep_ts>=(time()-600);
-    $worker_sweep_lock=(array)get_option('hcdecor_worker_mutex_sweep_mutex',[]);
-    $worker_sweep_lock_at=(int)($worker_sweep_lock['at']??0);
+    $worker_sweep_lock_raw=get_option('hcdecor_worker_mutex_sweep_mutex',[]);
+    $worker_sweep_lock_at=is_array($worker_sweep_lock_raw)?(int)($worker_sweep_lock_raw['at']??0):(int)$worker_sweep_lock_raw;
     if($worker_sweep_lock_at && $worker_sweep_lock_at<(time()-30) && function_exists('hcdecor_workflow_claim_mutex_delete_if_same')){
-        if(hcdecor_workflow_claim_mutex_delete_if_same('hcdecor_worker_mutex_sweep_mutex',$worker_sweep_lock)){
+        if(hcdecor_workflow_claim_mutex_delete_if_same('hcdecor_worker_mutex_sweep_mutex',$worker_sweep_lock_raw)){
             $cleanup_repairs[]='worker_mutex_sweep_lock';
-            $worker_sweep_lock=[];
+            $worker_sweep_lock_raw=[];
+            $worker_sweep_lock_at=0;
         }else{
-            $worker_sweep_lock=(array)get_option('hcdecor_worker_mutex_sweep_mutex',[]);
+            $worker_sweep_lock_raw=get_option('hcdecor_worker_mutex_sweep_mutex',[]);
+            $worker_sweep_lock_at=is_array($worker_sweep_lock_raw)?(int)($worker_sweep_lock_raw['at']??0):(int)$worker_sweep_lock_raw;
         }
     }
-    $worker_sweep_busy=!empty($worker_sweep_lock['at']) && (int)$worker_sweep_lock['at']>=(time()-30);
+    $worker_sweep_busy=$worker_sweep_lock_at>=(time()-30);
     if(!$worker_sweep_fresh && !$worker_sweep_next && !$worker_sweep_busy){
         wp_schedule_single_event(time()+15,'hcdecor_worker_mutex_sweep_tick');
         $cleanup_repairs[]='worker_mutex_sweep_refresh';
