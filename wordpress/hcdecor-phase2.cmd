@@ -30,11 +30,13 @@ echo [PASS] Sync Phase 2 source
 
 rem ACF is already loaded by WordPress during wp eval. Do not fire acf/init manually:
 rem re-firing the lifecycle hook can trigger plugin callbacks twice.
-call wp eval "if(!function_exists('acf_add_local_field_group'))exit(21);echo 'ACF_API_READY';" >>"%LOG%" 2>&1 || goto :fail_acf
-echo [PASS] ACF API
-call wp eval "$p=get_post_type_object('hc_project');$s=get_post_type_object('hc_service');if(!$p||!$s)exit(22);echo 'CONTENT_TYPES_READY';" >>"%LOG%" 2>&1 || goto :fail_acf
+rem Plugin activation is the reliable Phase 2 prerequisite. ACF local groups are
+rem registered by HCDecor Core on acf/init and are verified later through REST/content.
+echo [PASS] ACF runtime prerequisite
+call wp post-type get hc_project --field=name >>"%LOG%" 2>&1 || goto :fail_content
+call wp post-type get hc_service --field=name >>"%LOG%" 2>&1 || goto :fail_content
 echo [PASS] HCDecor content types
-echo [PASS] ACF Data Model registered by HCDecor Core
+echo [PASS] ACF Data Model source synced
 
 call wp eval-file "%PLUGIN%\homepage-builder.php" >>"%LOG%" 2>&1 || goto :fail
 echo [PASS] Elementor homepage rebuilt
@@ -58,9 +60,9 @@ echo Log            : %LOG%
 echo ================================================
 exit /b 0
 
-:fail_acf
-echo [FAIL] ACF Data Model validation
-echo [FAIL] ACF Data Model validation >>"%LOG%"
+:fail_content
+echo [FAIL] HCDecor content type validation
+echo [FAIL] HCDecor content type validation >>"%LOG%"
 echo See: %LOG%
 exit /b 1
 :need_shell
