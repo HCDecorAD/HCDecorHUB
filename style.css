@@ -415,3 +415,9 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
  .experience-head{align-items:flex-start;flex-direction:column}.experience-head h2{font-size:29px!important}.experience-more{font-size:13px}
  .experience-grid{grid-template-columns:1fr 1fr;gap:10px}.experience-card{min-height:150px;padding:16px}.experience-card.video{grid-column:1/3;min-height:190px}.experience-card h3{font-size:17px}.exp-icon{width:44px;height:44px;font-size:18px}
 }
+
+/* V5.1 real visual media */
+.solution-art img{width:100%;height:100%;display:block;object-fit:cover;transition:transform .45s ease}
+.solution-tile:hover .solution-art img{transform:scale(1.035)}
+.solution-tile:after{background:linear-gradient(transparent 25%,rgba(4,6,7,.88))!important}
+@media(max-width:560px){.solution-art img{object-position:center}.solution-tile:first-child .solution-art img{object-position:55% center}}
