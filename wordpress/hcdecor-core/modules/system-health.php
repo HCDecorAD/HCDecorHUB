@@ -130,7 +130,9 @@ function hcdecor_health_snapshot(){
     $actionable_blocked=hcdecor_health_actionable_blocked_count();
     $auto_recovered_24h=0;
     $auto_recovery_reasons=['running_timeout'=>0,'missing_started_at'=>0];
-    $auto_recovered_ids=get_posts(['post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>100,'fields'=>'ids','meta_query'=>[['key'=>'hc_auto_recovered_at','value'=>wp_date('Y-m-d H:i:s',time()-DAY_IN_SECONDS),'compare'=>'>=','type'=>'DATETIME']]]);
+    $auto_recovered_ids=get_posts(['post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>101,'fields'=>'ids','meta_query'=>[['key'=>'hc_auto_recovered_at','value'=>wp_date('Y-m-d H:i:s',time()-DAY_IN_SECONDS),'compare'=>'>=','type'=>'DATETIME']]]);
+    $auto_recovery_scan_limited=count($auto_recovered_ids)>100;
+    if($auto_recovery_scan_limited) $auto_recovered_ids=array_slice($auto_recovered_ids,0,100);
     foreach($auto_recovered_ids as $aid){
         $at=strtotime((string)get_post_meta($aid,'hc_auto_recovered_at',true))?:0;
         if($at && $at>=time()-DAY_IN_SECONDS){
@@ -327,6 +329,7 @@ function hcdecor_health_snapshot(){
             'actionable_blocked'=>$actionable_blocked,
             'recovered_24h'=>$auto_recovered_24h,
             'recovery_reasons_24h'=>$auto_recovery_reasons,
+            'recovery_scan_limited'=>$auto_recovery_scan_limited,
             'settings_last_change'=>(array)get_option('hcdecor_automation_settings_last_change',[]),
             'settings_cleanup_limited'=>!empty(((array)get_option('hcdecor_automation_settings_last_change',[]))['cleanup_limited']),
             'cleanup_next'=>wp_next_scheduled('hcdecor_automation_cleanup_tick')?:0,
