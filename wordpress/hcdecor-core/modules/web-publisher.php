@@ -48,8 +48,8 @@ function hcdecor_publish_job_to_web($job_id){
     $title=(string)get_post_meta($job_id,'hc_web_title',true);
     $intro=(string)get_post_meta($job_id,'hc_web_intro',true);
     $body=(string)get_post_meta($job_id,'hc_web_body',true);
-    $media=array_values(array_unique(array_filter(array_map('intval',(array)get_post_meta($job_id,'hc_media_ids',true)))));
-    $cover=(int)get_post_meta($job_id,'hc_cover_id',true);
+    $media=(array)$preflight['media_ids'];
+    $cover=(int)$preflight['cover_id'];
     $seo=(string)get_post_meta($job_id,'hc_seo_meta',true);
 
     $result=wp_update_post([
