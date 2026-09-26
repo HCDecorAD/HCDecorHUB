@@ -172,6 +172,22 @@ function hcdecor_workflow_finish_owned_claim($job_id,$claim_token,$status,$note=
     return true;
 }
 
+function hcdecor_workflow_lifecycle_mutex_acquire($job_id,$claim_token,$ttl=30){
+    $job_id=(int)$job_id; $claim_token=(string)$claim_token;
+    if(!$job_id || $claim_token==='') return false;
+    $key='hcdecor_lifecycle_mutex_'.$job_id; $now=time();
+    $held=(array)get_option($key,[]);
+    if($held && (!empty($held['at']) && (int)$held['at']>=($now-max(5,(int)$ttl)))) return false;
+    if($held && !hcdecor_workflow_claim_mutex_delete_if_same($key,$held)) return false;
+    $owned=['token'=>wp_generate_uuid4(),'claim_token'=>$claim_token,'at'=>$now];
+    return add_option($key,$owned,'','no')?$owned:false;
+}
+
+function hcdecor_workflow_lifecycle_mutex_release($job_id,$owned){
+    $key='hcdecor_lifecycle_mutex_'.(int)$job_id;
+    return is_array($owned) && !empty($owned['token'])?hcdecor_workflow_claim_mutex_delete_if_same($key,$owned):false;
+}
+
 function hcdecor_workflow_claim_response($job,$claim_token){
     return rest_ensure_response([
         'id'=>$job->ID,'title'=>$job->post_title,'brief'=>$job->post_content,
@@ -306,10 +322,14 @@ add_action('rest_api_init',function(){
             $lock=(int)get_post_meta($id,'hc_agent_lock_until',true);
             if($lock<=0 || $lock<time()) return new WP_Error('lock','Job lock expired; retry from Review Center',['status'=>409]);
             if(!hcdecor_workflow_owned_claim_active($id,$token)) return new WP_Error('claim','Worker claim changed before saving completion',['status'=>409]);
+            $lifecycle=hcdecor_workflow_lifecycle_mutex_acquire($id,$token,30);
+            if(!$lifecycle) return new WP_Error('busy','Job completion is already being finalized',['status'=>409]);
+            if(!hcdecor_workflow_owned_claim_active($id,$token)){ hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle); return new WP_Error('claim','Worker claim changed before saving completion',['status'=>409]); }
             $p=$r->get_json_params()?:[];
             if(function_exists('hcdecor_ops_save_fields')) hcdecor_ops_save_fields($id,$p);
-            if(!hcdecor_workflow_owned_claim_active($id,$token)) return new WP_Error('claim','Worker claim changed after saving completion',['status'=>409]);
-            if(!hcdecor_workflow_finish_owned_claim($id,$token,'review','Agent completed generation')) return new WP_Error('claim','Worker claim changed before completion',['status'=>409]);
+            if(!hcdecor_workflow_owned_claim_active($id,$token)){ hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle); return new WP_Error('claim','Worker claim changed after saving completion',['status'=>409]); }
+            if(!hcdecor_workflow_finish_owned_claim($id,$token,'review','Agent completed generation')){ hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle); return new WP_Error('claim','Worker claim changed before completion',['status'=>409]); }
+            hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle);
             return rest_ensure_response(['ok'=>true,'id'=>$id,'status'=>'review','outbound'=>false]);
         }
     ]);
