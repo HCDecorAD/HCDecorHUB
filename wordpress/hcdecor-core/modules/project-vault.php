@@ -89,7 +89,18 @@ function hcdecor_project_vault_save($project_id,$sync_media=true){
     if(!function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()) return new WP_Error('drive','Google Drive chưa kết nối.');
     if(!function_exists('hcdecor_drive_save_json')) return new WP_Error('drive','Drive Vault unavailable.');
 
-    if($sync_media) hcdecor_project_vault_sync_media($project_id);
+    if($sync_media){
+        $media_sync=hcdecor_project_vault_sync_media($project_id);
+        if(is_wp_error($media_sync)){
+            update_post_meta($project_id,'hc_drive_project_error',$media_sync->get_error_message());
+            return $media_sync;
+        }
+        if(is_array($media_sync) && !empty($media_sync['failed'])){
+            $msg='Media Vault sync incomplete: '.(int)$media_sync['failed'].' failed.';
+            update_post_meta($project_id,'hc_drive_project_error',$msg);
+            return new WP_Error('media_sync',$msg,$media_sync);
+        }
+    }
     $data=hcdecor_project_vault_data($project_id);
     if(is_wp_error($data)) return $data;
 
