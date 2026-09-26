@@ -35,9 +35,15 @@ add_action('init',function(){
     $rows=$wpdb->get_col("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE 'hcdecor_claim_mutex_%' LIMIT 100");
     foreach((array)$rows as $name){
         $mutex=(array)get_option($name,[]);
-        if(empty($mutex['at']) || (int)$mutex['at']<$cutoff) delete_option($name);
+        if(empty($mutex['at']) || (int)$mutex['at']<$cutoff) hcdecor_workflow_claim_mutex_delete_if_same($name,$mutex);
     }
 },60);
+
+function hcdecor_workflow_claim_mutex_delete_if_same($key,$observed){
+    $current=(array)get_option($key,[]);
+    if(!$current || $current!==$observed) return false;
+    return delete_option($key);
+}
 
 function hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed=true,$clear_mutex=true){
     $job_id=(int)$job_id;
@@ -171,7 +177,7 @@ add_action('rest_api_init',function(){
                 if(!add_option($mutex,['token'=>$claim_token,'at'=>$now],'',false)){
                     $existing=(array)get_option($mutex,[]);
                     if(!empty($existing['at']) && (int)$existing['at']<($now-120)){
-                        delete_option($mutex);
+                        if(!hcdecor_workflow_claim_mutex_delete_if_same($mutex,$existing)) continue;
                         if(!add_option($mutex,['token'=>$claim_token,'at'=>$now],'',false)) continue;
                     }else continue;
                 }
