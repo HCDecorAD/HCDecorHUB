@@ -187,6 +187,39 @@ function hcdecor_ai_call_gemini($job_id){
     return ['provider'=>'gemini','model'=>(string)($data['model']??hcdecor_ai_model('gemini')),'content'=>$json,'usage'=>$data['usage']??[]];
 }
 
+
+function hcdecor_ai_test_provider($provider){
+    if(!in_array($provider,['openai','gemini'],true)) return new WP_Error('provider','Invalid provider.');
+    $key=hcdecor_ai_secret($provider);
+    if($key==='') return new WP_Error('key','API key chưa cấu hình.');
+    $model=hcdecor_ai_model($provider);
+    if($provider==='openai'){
+        $url='https://api.openai.com/v1/models/'.rawurlencode($model);
+        $r=wp_remote_get($url,['timeout'=>20,'headers'=>['Authorization'=>'Bearer '.$key]]);
+    }else{
+        $url='https://generativelanguage.googleapis.com/v1beta/models/'.rawurlencode($model);
+        $r=wp_remote_get($url,['timeout'=>20,'headers'=>['x-goog-api-key'=>$key]]);
+    }
+    if(is_wp_error($r)) return $r;
+    $status=(int)wp_remote_retrieve_response_code($r);
+    $data=json_decode(wp_remote_retrieve_body($r),true);
+    if($status<200 || $status>=300){
+        $msg=(string)($data['error']['message']??('HTTP '.$status));
+        return new WP_Error('api_test',$msg,['status'=>$status]);
+    }
+    return ['provider'=>$provider,'model'=>$model,'ok'=>true];
+}
+function hcdecor_ai_store_test($provider,$result){
+    if(is_wp_error($result)){
+        update_option('hcdecor_ai_'.$provider.'_test_status','error',false);
+        update_option('hcdecor_ai_'.$provider.'_test_message',sanitize_text_field($result->get_error_message()),false);
+    }else{
+        update_option('hcdecor_ai_'.$provider.'_test_status','ok',false);
+        update_option('hcdecor_ai_'.$provider.'_test_message','',false);
+    }
+    update_option('hcdecor_ai_'.$provider.'_tested_at',time(),false);
+}
+
 function hcdecor_ai_generate_job($job_id){
     if(get_post_type($job_id)!=='hc_content_job') return new WP_Error('invalid_job','Invalid content job.');
     $errors=[];
@@ -272,6 +305,27 @@ add_action('admin_menu',function(){
     add_submenu_page('hcdecor-hub','AI Providers','AI Providers','manage_options','hcdecor-ai-providers','hcdecor_ai_settings_page',4);
 },26);
 
+
+add_action('admin_post_hcdecor_ai_test_provider',function(){
+    if(!current_user_can('manage_options')) wp_die('Forbidden');
+    $provider=sanitize_key($_POST['provider']??'');
+    check_admin_referer('hcdecor_ai_test_'.$provider);
+    $result=hcdecor_ai_test_provider($provider);
+    hcdecor_ai_store_test($provider,$result);
+    wp_safe_redirect(admin_url('admin.php?page=hcdecor-ai-providers&tested='.$provider)); exit;
+});
+
+add_action('admin_init',function(){
+    if(!current_user_can('manage_options')) return;
+    if(($_GET['page']??'')!=='hcdecor-ai-providers') return;
+    foreach(['openai','gemini'] as $provider){
+        if(!hcdecor_ai_available($provider)) continue;
+        $last=(int)get_option('hcdecor_ai_'.$provider.'_tested_at',0);
+        if((time()-$last)<21600) continue;
+        hcdecor_ai_store_test($provider,hcdecor_ai_test_provider($provider));
+    }
+},20);
+
 add_action('admin_post_hcdecor_ai_settings',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_ai_settings');
@@ -291,6 +345,8 @@ add_action('admin_post_hcdecor_ai_settings',function(){
 function hcdecor_ai_settings_page(){
     if(!current_user_can('manage_options')) return;
     $openai=hcdecor_ai_available('openai'); $gemini=hcdecor_ai_available('gemini');
+    $openai_test=(string)get_option('hcdecor_ai_openai_test_status',''); $gemini_test=(string)get_option('hcdecor_ai_gemini_test_status','');
+    $openai_msg=(string)get_option('hcdecor_ai_openai_test_message',''); $gemini_msg=(string)get_option('hcdecor_ai_gemini_test_message','');
     ?>
     <div class="wrap" style="max-width:900px"><h1>HCDecor AI Providers</h1>
     <p>AI xử lý nội dung + hình ảnh cho Content Operations. Có thể dùng một provider hoặc primary + fallback.</p>
@@ -299,11 +355,13 @@ function hcdecor_ai_settings_page(){
       <input type="hidden" name="action" value="hcdecor_ai_settings"><?php wp_nonce_field('hcdecor_ai_settings');?>
       <table class="form-table"><tbody>
       <tr><th>Primary</th><td><select name="primary"><option value="auto" <?php selected(hcdecor_ai_primary(),'auto');?>>Auto fallback</option><option value="openai" <?php selected(hcdecor_ai_primary(),'openai');?>>OpenAI</option><option value="gemini" <?php selected(hcdecor_ai_primary(),'gemini');?>>Gemini</option></select></td></tr>
-      <tr><th>OpenAI</th><td><p><strong><?php echo $openai?'CONNECTED':'NOT CONFIGURED';?></strong></p><input class="regular-text" type="password" name="openai_key" autocomplete="new-password" placeholder="Dán API key mới để lưu"><p><input class="regular-text" type="text" name="openai_model" value="<?php echo esc_attr(hcdecor_ai_model('openai'));?>"></p><label><input type="checkbox" name="openai_clear" value="1"> Xóa key lưu trong WordPress</label><?php if(defined('HCDECOR_OPENAI_API_KEY')):?><p><em>Key đang lấy từ wp-config.php.</em></p><?php endif;?></td></tr>
-      <tr><th>Gemini</th><td><p><strong><?php echo $gemini?'CONNECTED':'NOT CONFIGURED';?></strong></p><input class="regular-text" type="password" name="gemini_key" autocomplete="new-password" placeholder="Dán API key mới để lưu"><p><input class="regular-text" type="text" name="gemini_model" value="<?php echo esc_attr(hcdecor_ai_model('gemini'));?>"></p><label><input type="checkbox" name="gemini_clear" value="1"> Xóa key lưu trong WordPress</label><?php if(defined('HCDECOR_GEMINI_API_KEY')):?><p><em>Key đang lấy từ wp-config.php.</em></p><?php endif;?></td></tr>
+      <tr><th>OpenAI</th><td><p><strong><?php echo !$openai?'NOT CONFIGURED':($openai_test==='ok'?'CONNECTED':($openai_test==='error'?'ERROR':'KEY SAVED'));?></strong></p><input class="regular-text" type="password" name="openai_key" autocomplete="new-password" placeholder="Dán API key mới để lưu"><p><input class="regular-text" type="text" name="openai_model" value="<?php echo esc_attr(hcdecor_ai_model('openai'));?>"></p><label><input type="checkbox" name="openai_clear" value="1"> Xóa key lưu trong WordPress</label><?php if(defined('HCDECOR_OPENAI_API_KEY')):?><p><em>Key đang lấy từ wp-config.php.</em></p><?php endif;?><?php if($openai_test==='error'&&$openai_msg):?><p style="color:#b32d2e"><strong><?php echo esc_html($openai_msg);?></strong></p><?php endif;?><p><button class="button" form="hc-ai-test-openai">Test OpenAI</button></p></td></tr>
+      <tr><th>Gemini</th><td><p><strong><?php echo !$gemini?'NOT CONFIGURED':($gemini_test==='ok'?'CONNECTED':($gemini_test==='error'?'ERROR':'KEY SAVED'));?></strong></p><input class="regular-text" type="password" name="gemini_key" autocomplete="new-password" placeholder="Dán API key mới để lưu"><p><input class="regular-text" type="text" name="gemini_model" value="<?php echo esc_attr(hcdecor_ai_model('gemini'));?>"></p><label><input type="checkbox" name="gemini_clear" value="1"> Xóa key lưu trong WordPress</label><?php if(defined('HCDECOR_GEMINI_API_KEY')):?><p><em>Key đang lấy từ wp-config.php.</em></p><?php endif;?><?php if($gemini_test==='error'&&$gemini_msg):?><p style="color:#b32d2e"><strong><?php echo esc_html($gemini_msg);?></strong></p><?php endif;?><p><button class="button" form="hc-ai-test-gemini">Test Gemini</button></p></td></tr>
       </tbody></table>
       <p><button class="button button-primary">Lưu AI Providers</button></p>
     </form>
     <p><strong>Worker:</strong> tự xử lý Content Job trạng thái Draft mỗi phút → Review. Social outbound vẫn OFF.</p>
+    <form id="hc-ai-test-openai" method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>" style="display:none"><input type="hidden" name="action" value="hcdecor_ai_test_provider"><input type="hidden" name="provider" value="openai"><?php wp_nonce_field('hcdecor_ai_test_openai');?></form>
+    <form id="hc-ai-test-gemini" method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>" style="display:none"><input type="hidden" name="action" value="hcdecor_ai_test_provider"><input type="hidden" name="provider" value="gemini"><?php wp_nonce_field('hcdecor_ai_test_gemini');?></form>
     </div><?php
 }
