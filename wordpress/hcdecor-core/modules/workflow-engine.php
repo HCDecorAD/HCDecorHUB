@@ -69,13 +69,17 @@ function hcdecor_workflow_claim_mutex_delete_if_same($key,$observed){
     return $deleted===1;
 }
 
-function hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed=true,$clear_mutex=true){
+function hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed=true,$clear_mutex=false){
     $job_id=(int)$job_id;
     delete_post_meta($job_id,'hc_agent_lock_until');
     delete_post_meta($job_id,'hc_agent_claim_token');
     delete_post_meta($job_id,'hc_agent_heartbeat');
     if($clear_claimed) delete_post_meta($job_id,'hc_agent_claimed_at');
-    if($clear_mutex) delete_option('hcdecor_claim_mutex_'.$job_id);
+    if($clear_mutex){
+        $key='hcdecor_claim_mutex_'.$job_id;
+        $mutex=(array)get_option($key,[]);
+        if($mutex && (empty($mutex['at']) || (int)$mutex['at']<(time()-120))) hcdecor_workflow_claim_mutex_delete_if_same($key,$mutex);
+    }
 }
 
 function hcdecor_workflow_claim_mutex_release($job_id,$claim_token){
