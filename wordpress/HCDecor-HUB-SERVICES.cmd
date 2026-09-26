@@ -14,13 +14,18 @@ echo [1/6] WordPress OK
 
 rem SERVICE A - Source Sync (isolated)
 echo [2/6] Sync Core / Studio / Bridge...
-if not exist "%P%\assets" mkdir "%P%\assets"\r\nif not exist "%P%\modules" mkdir "%P%\modules"
+if not exist "%P%\assets" mkdir "%P%\assets"
+if not exist "%P%\modules" mkdir "%P%\modules"
 curl.exe -fL "%BASE%/hcdecor-core/hcdecor-core.php?v=%V%" -o "%P%\hcdecor-core.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/homepage-builder.php?v=%V%" -o "%P%\homepage-builder.php.new" >>"%LOG%" 2>&1 || goto :syncfail
-curl.exe -fL "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%V%" -o "%P%\assets\hcdecor-homepage.css.new" >>"%LOG%" 2>&1 || goto :syncfail\r\ncurl.exe -fL "%BASE%/hcdecor-core/modules/content-operations.php?v=%V%" -o "%P%\modules\content-operations.php.new" >>"%LOG%" 2>&1 || goto :syncfail\r\ncurl.exe -fL "%BASE%/hcdecor-core/modules/background-sync.php?v=%V%" -o "%P%\modules\background-sync.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%V%" -o "%P%\assets\hcdecor-homepage.css.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/content-operations.php?v=%V%" -o "%P%\modules\content-operations.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/background-sync.php?v=%V%" -o "%P%\modules\background-sync.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 move /y "%P%\hcdecor-core.php.new" "%P%\hcdecor-core.php" >nul
 move /y "%P%\homepage-builder.php.new" "%P%\homepage-builder.php" >nul
-move /y "%P%\assets\hcdecor-homepage.css.new" "%P%\assets\hcdecor-homepage.css" >nul\r\nmove /y "%P%\modules\content-operations.php.new" "%P%\modules\content-operations.php" >nul\r\nmove /y "%P%\modules\background-sync.php.new" "%P%\modules\background-sync.php" >nul
+move /y "%P%\assets\hcdecor-homepage.css.new" "%P%\assets\hcdecor-homepage.css" >nul
+move /y "%P%\modules\content-operations.php.new" "%P%\modules\content-operations.php" >nul
+move /y "%P%\modules\background-sync.php.new" "%P%\modules\background-sync.php" >nul
 echo [OK] Source Sync
 
 rem SERVICE B - Plugin runtime (isolated)
@@ -35,23 +40,23 @@ call wp option get siteurl >>"%LOG%" 2>&1
 if errorlevel 1 (echo [WARN] Data service deferred>>"%LOG%") else echo [OK] Data
 
 rem SERVICE D - Website builder; failure does not stop Agent/Bridge
-echo [5/6] Website Demo...
+echo [5/6] Website...
 call wp eval-file "%P%\homepage-builder.php" >>"%LOG%" 2>&1
-if errorlevel 1 (echo [WARN] Website builder skipped. HUB services continue.) else echo [OK] Website Demo
+if errorlevel 1 (echo [WARN] Website builder skipped. HUB services continue.) else echo [OK] Website
 
 rem SERVICE E - Bridge/Agent quick health; no outbound
-echo [6/6] Agent Bridge / Content Studio...
+echo [6/6] Agent Bridge / Content Operations...
 call wp option get hcdecor_bridge_token >nul 2>&1
 if errorlevel 1 call wp eval "hcdecor_bridge_token(); echo 'BRIDGE_READY';" >>"%LOG%" 2>&1
 echo [OK] Agent Bridge
-echo [OK] Content Studio
+echo [OK] Content Operations
 echo [SAFE] External publishing remains OFF
 
 echo.
 echo ==================================================
 echo HCDECOR HUB SERVICES: READY
 echo HUB     : http://hcdecor-hub.local/wp-admin/admin.php?page=hcdecor-hub
-echo Studio  : http://hcdecor-hub.local/wp-admin/admin.php?page=hcdecor-studio
+echo Content : http://hcdecor-hub.local/wp-admin/admin.php?page=hcdecor-content-operations
 echo Agent   : http://hcdecor-hub.local/wp-admin/admin.php?page=hcdecor-agent
 echo Bridge  : http://hcdecor-hub.local/wp-admin/admin.php?page=hcdecor-bridge
 echo Media   : http://hcdecor-hub.local/wp-admin/upload.php
