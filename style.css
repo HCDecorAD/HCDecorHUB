@@ -362,3 +362,33 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
  .portfolio-note{display:none}
  .mobile-contact-dock{opacity:.92}
 }
+
+
+/* V4.8 Adaptive icon-first layout — approved */
+.visual-cards{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important;overflow:visible!important;padding:0!important}
+.visual-cards article{min-height:190px!important;padding:22px 14px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:16px!important;text-align:center}
+.visual-cards article h3{margin:0!important;font-size:18px!important;line-height:1.15!important}
+.visual-cards article p{display:none!important}
+.project-grid{display:grid!important;grid-template-columns:1.25fr 1fr 1fr!important;gap:14px!important;overflow:visible!important;padding:0!important}
+.project{height:300px!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:flex-end!important;padding:24px!important}
+.project:before{z-index:0}.project:after{display:none!important}
+.project>h3{position:relative!important;z-index:2!important;margin:12px 0 0!important;font-size:25px!important;line-height:1.05!important}
+.project-symbol{position:relative;z-index:2;width:52px;height:52px;display:grid;place-items:center;border:1px solid #d59a5570;border-radius:14px;background:#090b0dcc;color:#efc987;font-size:25px}
+@media(max-width:850px){
+ .visual-cards{grid-template-columns:repeat(2,1fr)!important}
+ .visual-cards article{min-height:150px!important}
+ .project-grid{grid-template-columns:1.15fr .85fr!important}
+ .project{height:230px!important}
+ .project:nth-child(3){grid-column:1/-1;height:180px!important}
+}
+@media(max-width:560px){
+ .visual-cards{grid-template-columns:repeat(2,1fr)!important;gap:10px!important}
+ .visual-cards article{min-height:132px!important;padding:16px 8px!important;border-radius:16px!important}
+ .visual-cards article h3{font-size:16px!important}
+ .service-visual{width:48px!important;height:48px!important}
+ .project-grid{grid-template-columns:1fr 1fr!important;gap:10px!important}
+ .project{height:190px!important;padding:17px!important;flex-basis:auto!important}
+ .project:nth-child(3){grid-column:1/-1;height:150px!important}
+ .project>h3{font-size:20px!important}
+ .project-symbol{width:44px;height:44px;font-size:21px;border-radius:12px}
+}
