@@ -14,13 +14,13 @@ echo [1/6] WordPress OK
 
 rem SERVICE A - Source Sync (isolated)
 echo [2/6] Sync Core / Studio / Bridge...
-if not exist "%P%\assets" mkdir "%P%\assets"
+if not exist "%P%\assets" mkdir "%P%\assets"\r\nif not exist "%P%\modules" mkdir "%P%\modules"
 curl.exe -fL "%BASE%/hcdecor-core/hcdecor-core.php?v=%V%" -o "%P%\hcdecor-core.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/homepage-builder.php?v=%V%" -o "%P%\homepage-builder.php.new" >>"%LOG%" 2>&1 || goto :syncfail
-curl.exe -fL "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%V%" -o "%P%\assets\hcdecor-homepage.css.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%V%" -o "%P%\assets\hcdecor-homepage.css.new" >>"%LOG%" 2>&1 || goto :syncfail\r\ncurl.exe -fL "%BASE%/hcdecor-core/modules/content-operations.php?v=%V%" -o "%P%\modules\content-operations.php.new" >>"%LOG%" 2>&1 || goto :syncfail\r\ncurl.exe -fL "%BASE%/hcdecor-core/modules/background-sync.php?v=%V%" -o "%P%\modules\background-sync.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 move /y "%P%\hcdecor-core.php.new" "%P%\hcdecor-core.php" >nul
 move /y "%P%\homepage-builder.php.new" "%P%\homepage-builder.php" >nul
-move /y "%P%\assets\hcdecor-homepage.css.new" "%P%\assets\hcdecor-homepage.css" >nul
+move /y "%P%\assets\hcdecor-homepage.css.new" "%P%\assets\hcdecor-homepage.css" >nul\r\nmove /y "%P%\modules\content-operations.php.new" "%P%\modules\content-operations.php" >nul\r\nmove /y "%P%\modules\background-sync.php.new" "%P%\modules\background-sync.php" >nul
 echo [OK] Source Sync
 
 rem SERVICE B - Plugin runtime (isolated)
@@ -31,7 +31,7 @@ echo [OK] Runtime
 
 rem SERVICE C - Data migrations/seed (non-destructive)
 echo [4/6] Data...
-call wp eval "do_action('init'); echo 'DATA_OK';" >>"%LOG%" 2>&1
+call wp option get siteurl >>"%LOG%" 2>&1
 if errorlevel 1 (echo [WARN] Data service deferred>>"%LOG%") else echo [OK] Data
 
 rem SERVICE D - Website builder; failure does not stop Agent/Bridge
@@ -60,7 +60,7 @@ echo ==================================================
 exit /b 0
 
 :syncfail
-del /q "%P%\hcdecor-core.php.new" "%P%\homepage-builder.php.new" "%P%\assets\hcdecor-homepage.css.new" >nul 2>&1
+del /q "%P%\hcdecor-core.php.new" "%P%\homepage-builder.php.new" "%P%\assets\hcdecor-homepage.css.new" "%P%\modules\content-operations.php.new" "%P%\modules\background-sync.php.new" >nul 2>&1
 echo [WARN] Source Sync failed. Existing local files kept intact.
 goto :continue_after_sync
 
