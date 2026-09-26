@@ -29,12 +29,13 @@ function hcdecor_workflow_set_status($job_id,$status,$note=''){
     return true;
 }
 
-add_action('init',function(){
+function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     global $wpdb;
+    $limit=max(1,min(100,(int)$limit));
     $cutoff=time()-120;
-    $rows=$wpdb->get_col($wpdb->prepare("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s ORDER BY option_id ASC LIMIT 101",$wpdb->esc_like('hcdecor_claim_mutex_').'%'));
-    $limited=count($rows)>100;
-    $rows=array_slice((array)$rows,0,100);
+    $rows=$wpdb->get_col($wpdb->prepare("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s ORDER BY option_id ASC LIMIT %d",$wpdb->esc_like('hcdecor_claim_mutex_').'%', $limit+1));
+    $limited=count($rows)>$limit;
+    $rows=array_slice((array)$rows,0,$limit);
     $stale=0; $deleted=0;
     foreach($rows as $name){
         $mutex=(array)get_option($name,[]);
@@ -46,7 +47,12 @@ add_action('init',function(){
     update_option('hcdecor_worker_mutex_sweep_last',[
         'at'=>current_time('mysql'),'scanned'=>count($rows),'stale'=>$stale,'deleted'=>$deleted,'limited'=>$limited
     ],false);
-},60);
+    if($limited && !wp_next_scheduled('hcdecor_worker_mutex_sweep_tick')) wp_schedule_single_event(time()+30,'hcdecor_worker_mutex_sweep_tick');
+    return compact('stale','deleted','limited');
+}
+
+add_action('init',function(){ hcdecor_workflow_sweep_claim_mutexes(100); },60);
+add_action('hcdecor_worker_mutex_sweep_tick',function(){ hcdecor_workflow_sweep_claim_mutexes(100); });
 
 function hcdecor_workflow_claim_mutex_delete_if_same($key,$observed){
     global $wpdb;
