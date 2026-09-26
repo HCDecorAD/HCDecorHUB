@@ -342,7 +342,7 @@ add_action('admin_post_hcdecor_automation_retry',function(){
     $type=(string)get_post_meta($id,'hc_auto_type',true);
     if($type==='social_publish' && empty($s['social_enabled'])) wp_die('Social outbound is disabled.');
     if($type==='webhook' && (empty($s['webhook_enabled']) || empty($s['webhook_url']))) wp_die('Webhook outbound is disabled.');
-    if($type==='evergreen' && empty($s['evergreen_enabled'])) wp_die('Evergreen automation is disabled.');
+    if($type==='evergreen' && (empty($s['evergreen_enabled']) || empty($s['social_enabled']))) wp_die('Evergreen social outbound is disabled.');
     update_post_meta($id,'hc_auto_status','queued'); update_post_meta($id,'hc_auto_run_at',time());
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-automation&retried=1')); exit;
 });
