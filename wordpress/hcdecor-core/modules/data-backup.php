@@ -166,7 +166,7 @@ add_action('rest_api_init',function(){
             ]);
         }
     ]);
-]);
+});
 
 function hcdecor_backup_page(){
     if(!current_user_can('manage_options')) return;
