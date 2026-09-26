@@ -199,13 +199,10 @@ function hcdecor_health_snapshot(){
     elseif($drive_configured && $backup_age>129600) $issues[]='Backup is stale (>36h)';
     if($drive_configured && $project_total>0 && $vault_synced<$project_total) $issues[]='Project Vault pending: '.($project_total-$vault_synced);
     if($vault_errors>0) $issues[]='Project Vault errors: '.$vault_errors;
-    if($vault_retrying>0) $issues[]='Project Vault retrying: '.$vault_retrying;
-    if($backup_retry>0) $issues[]='Backup retrying: attempt '.$backup_retry;
     if((int)($vault_bulk['failed']??0)>0 && $vault_bulk_ts && (current_time('timestamp')-$vault_bulk_ts)<=86400) $issues[]='Recent Project Vault bulk sync failed: '.(int)$vault_bulk['failed'];
     if(!empty($inbox_settings['enabled']) && (int)($inbox_result['failed']??0)>0) $issues[]='Last Drive Inbox run failed: '.(int)$inbox_result['failed'];
     $backup_running=(bool)get_transient('hcdecor_backup_running');
     if($vault_stale>0) $issues[]='Project Vault stale: '.$vault_stale;
-    $inbox_settings=function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[];
     if(!empty($inbox_settings['enabled']) && $inbox_ts===0) $issues[]='Drive Inbox has never completed';
     elseif(!empty($inbox_settings['enabled']) && $inbox_age>1800) $issues[]='Drive Inbox is stale (>30 min)';
     $recovered_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_query'=>[['key'=>'hc_agent_recovered_at','compare'=>'EXISTS']]]);
@@ -235,6 +232,7 @@ function hcdecor_health_snapshot(){
     if($vault_stale>0) $score-=min(8,$vault_stale);
     if(!empty($inbox_settings['enabled']) && ($inbox_ts===0 || $inbox_age>1800)) $score-=5;
     if($stale_processing>0) $score-=min(10,$stale_processing*2);
+    if($processing_without_token>0) $score-=min(8,$processing_without_token*2);
     if($oldest_review_age>86400) $score-=5;
     $score=max(0,min(100,$score));
 
@@ -308,6 +306,7 @@ function hcdecor_health_snapshot(){
         'throughput_7d'=>[
             'created'=>$created_7d,
             'published'=>$published_7d,
+            'output_ratio'=>$created_7d>0?(int)round(($published_7d/$created_7d)*100):0,
             'publish_rate'=>$created_7d>0?(int)round(($published_7d/$created_7d)*100):0
         ],
         'bridge'=>['ready'=>$bridge!==''],
