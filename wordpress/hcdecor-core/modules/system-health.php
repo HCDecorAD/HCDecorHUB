@@ -231,8 +231,9 @@ function hcdecor_health_snapshot(){
     if($auto['failed']>0) $issues[]='Automation failed: '.$auto['failed'];
     if($actionable_blocked>0) $issues[]='Automation blocked: '.$actionable_blocked;
     $worker_mutex_sweep=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
-    $worker_mutex_sweep_ts=!empty($worker_mutex_sweep['at'])?(strtotime((string)$worker_mutex_sweep['at'])?:0):0;
-    $worker_mutex_sweep_fresh=$worker_mutex_sweep_ts>=(current_time('timestamp')-600);
+    $worker_mutex_sweep_ts=(int)($worker_mutex_sweep['ts']??0);
+    if(!$worker_mutex_sweep_ts && !empty($worker_mutex_sweep['at'])) $worker_mutex_sweep_ts=strtotime((string)$worker_mutex_sweep['at'])?:0;
+    $worker_mutex_sweep_fresh=$worker_mutex_sweep_ts>=(time()-600);
     $automation_last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
     $automation_cleanup_mutex=(int)get_option('hcdecor_automation_cleanup_mutex',0);
     $automation_cleanup_running=$automation_cleanup_mutex>=(time()-120);
