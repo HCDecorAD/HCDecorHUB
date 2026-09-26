@@ -104,7 +104,10 @@ function hcdecor_health_actionable_blocked_count(){
     $count=0;
     foreach($tasks as $id){
         $type=(string)get_post_meta($id,'hc_auto_type',true);
+        if(empty($settings['enabled'])) continue;
         if($type==='social_publish' && empty($settings['social_enabled'])) continue;
+        if($type==='webhook' && (empty($settings['webhook_enabled']) || empty($settings['webhook_url']))) continue;
+        if($type==='evergreen' && empty($settings['evergreen_enabled'])) continue;
         $count++;
     }
     return $count;
@@ -125,6 +128,12 @@ function hcdecor_health_snapshot(){
     $cron_required['drive_inbox']=!isset($inbox_settings['enabled']) || !empty($inbox_settings['enabled']);
     $bridge=(string)get_option('hcdecor_bridge_token','');
     $actionable_blocked=hcdecor_health_actionable_blocked_count();
+    $auto_recovered_24h=0;
+    $auto_recovered_ids=get_posts(['post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_query'=>[['key'=>'hc_auto_recovered_at','compare'=>'EXISTS']]]);
+    foreach($auto_recovered_ids as $aid){
+        $at=strtotime((string)get_post_meta($aid,'hc_auto_recovered_at',true))?:0;
+        if($at && $at>=time()-DAY_IN_SECONDS) $auto_recovered_24h++;
+    }
     $backup_last=(string)get_option('hcdecor_backup_last_at','');
     $backup_ts=$backup_last!==''?strtotime($backup_last):0;
     $backup_age=$backup_ts?max(0,current_time('timestamp')-$backup_ts):null;
@@ -273,7 +282,8 @@ function hcdecor_health_snapshot(){
             'enabled'=>!empty($auto_settings['enabled']),
             'social_enabled'=>!empty($auto_settings['social_enabled']),
             'queue'=>$auto,
-            'actionable_blocked'=>$actionable_blocked
+            'actionable_blocked'=>$actionable_blocked,
+            'recovered_24h'=>$auto_recovered_24h
         ],
         'content_queue'=>$queue,
         'stale_processing'=>$stale_processing,
