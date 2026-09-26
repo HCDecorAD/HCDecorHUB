@@ -176,11 +176,11 @@ add_action('rest_api_init',function(){
                     }else continue;
                 }
                 if((string)get_post_meta($j->ID,'hc_agent_status',true)!=='draft'){
-                    delete_option($mutex);
+                    hcdecor_workflow_claim_mutex_release($j->ID,$claim_token);
                     continue;
                 }
                 if((int)get_post_meta($j->ID,'hc_agent_lock_until',true)>$now){
-                    delete_option($mutex);
+                    hcdecor_workflow_claim_mutex_release($j->ID,$claim_token);
                     continue;
                 }
                 if(!add_post_meta($j->ID,'hc_agent_claim_token',$claim_token,true)){
@@ -195,21 +195,21 @@ add_action('rest_api_init',function(){
                             hcdecor_workflow_log($j->ID,'draft','Recovered orphan worker claim during claim contention');
                             if(add_post_meta($j->ID,'hc_agent_claim_token',$claim_token,true)){
                                 if(hcdecor_workflow_finalize_claim($j->ID,$claim_token,$now,'Agent claimed recovered job')){
-                                    delete_option($mutex);
+                                    hcdecor_workflow_claim_mutex_release($j->ID,$claim_token);
                                     return hcdecor_workflow_claim_response($j,$claim_token);
                                 }
                                 hcdecor_workflow_clear_owned_claim($j->ID,$claim_token,true);
                             }
                         }
                     }
-                    delete_option($mutex);
+                    hcdecor_workflow_claim_mutex_release($j->ID,$claim_token);
                     continue;
                 }
                 if(!hcdecor_workflow_finalize_claim($j->ID,$claim_token,$now)){
-                    delete_option($mutex);
+                    hcdecor_workflow_claim_mutex_release($j->ID,$claim_token);
                     continue;
                 }
-                delete_option($mutex);
+                hcdecor_workflow_claim_mutex_release($j->ID,$claim_token);
                 return hcdecor_workflow_claim_response($j,$claim_token);
             }
             return rest_ensure_response(['job'=>null,'message'=>'Queue empty']);
