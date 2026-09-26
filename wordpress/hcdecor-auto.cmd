@@ -79,11 +79,19 @@ call :say "Build Elementor homepage"
 call wp eval-file "%PLUGIN%\homepage-builder.php" >>"%LOG%" 2>&1 || goto :fail_build
 echo [PASS] Build Elementor homepage
 
-wp elementor flush-css >>"%LOG%" 2>&1
-if errorlevel 1 echo [WARN] Elementor CLI CSS flush unavailable >>"%LOG%"
+rem Do not call "wp elementor flush-css" here: on LocalWP/Elementor it may block indefinitely.
+call :say "Regenerate Elementor CSS cache"
+call wp eval "if(class_exists('\\Elementor\\Plugin')){\\Elementor\\Plugin::$instance->files_manager->clear_cache();echo 'CSS_CACHE_CLEARED';}else{echo 'ELEMENTOR_NOT_LOADED';exit(21);}" >>"%LOG%" 2>&1
+if errorlevel 1 (
+  echo [WARN] Elementor CSS cache clear skipped
+  echo [WARN] Elementor CSS cache clear skipped >>"%LOG%"
+) else (
+  echo [PASS] Regenerate Elementor CSS cache
+)
 
-wp eval "$p=get_page_by_path('trang-chu');if(!$p)exit(11);$n=wp_count_posts('hc_service')->publish;if($n<4)exit(12);$r=rest_do_request('/hcdecor/v1/site');if($r->is_error()||$r->get_status()!=200)exit(13);$d=get_post_meta((int)get_option('page_on_front'),'_elementor_data',true);if(!$d||strlen($d)<500)exit(14);echo 'VALID';" >>"%LOG%" 2>&1
-if errorlevel 1 call :fail "Validate homepage/services/REST"
+call :say "Validate homepage/services/REST"
+call wp eval "$p=get_page_by_path('trang-chu');if(!$p)exit(11);$n=wp_count_posts('hc_service')->publish;if($n<4)exit(12);$r=rest_do_request('/hcdecor/v1/site');if($r->is_error()||$r->get_status()!=200)exit(13);$d=get_post_meta((int)get_option('page_on_front'),'_elementor_data',true);if(!$d||strlen($d)<500)exit(14);echo 'VALID';" >>"%LOG%" 2>&1
+if errorlevel 1 goto :fail_validate
 echo [PASS] Validate homepage/services/REST
 
 call :say "ALL AUTOMATED CHECKS PASS"
@@ -137,6 +145,9 @@ call :fail "Assign homepage"
 exit /b 1
 :fail_build
 call :fail "Build Elementor homepage"
+exit /b 1
+:fail_validate
+call :fail "Validate homepage/services/REST"
 exit /b 1
 
 :say
