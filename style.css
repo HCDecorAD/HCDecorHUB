@@ -622,3 +622,10 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
  #services .eyebrow.dark,#projects .eyebrow,#process>.wrap>.eyebrow{font-size:16px!important}
  #services .section-head h2,#projects .section-head h2,#process>.wrap>h2{font-size:25px!important}
 }
+
+/* V6.5 HUB brand + compact language icon */
+.hub-mark{margin-left:7px;padding:4px 7px;border:1px solid #d59a5570;border-radius:7px;color:#d9aa6a;font:800 10px/1 Inter,system-ui,sans-serif;letter-spacing:.12em;vertical-align:middle}
+.lang-toggle{min-width:58px;justify-content:center;gap:7px}
+.lang-icon{display:inline-grid;place-items:center;font-size:14px;line-height:1;color:#d9aa6a}
+.lang-code{font-size:11px;font-weight:800;letter-spacing:.08em}
+@media(max-width:560px){.brand{font-size:18px!important}.hub-mark{font-size:9px;padding:3px 5px;margin-left:4px}.lang-toggle{min-width:54px;padding:7px 8px!important}}
