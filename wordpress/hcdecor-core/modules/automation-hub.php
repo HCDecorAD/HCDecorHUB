@@ -257,12 +257,15 @@ add_action('hcdecor_automation_cleanup_tick',function(){
     $s=hcdecor_auto_settings();
     $last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
     if(empty($last_change['cleanup_limited'])) return;
+    if(get_transient('hcdecor_automation_cleanup_lock')) return;
+    set_transient('hcdecor_automation_cleanup_lock',1,55);
     $cleanup=hcdecor_auto_block_pending_for_settings($s,100);
     $last_change['blocked_tasks']=(int)($last_change['blocked_tasks']??0)+(int)($cleanup['blocked']??0);
     $last_change['scanned_tasks']=(int)($last_change['scanned_tasks']??0)+(int)($cleanup['scanned']??0);
     $last_change['cleanup_limited']=!empty($cleanup['limited']);
     $last_change['cleanup_continued_at']=current_time('mysql');
     update_option('hcdecor_automation_settings_last_change',$last_change,false);
+    delete_transient('hcdecor_automation_cleanup_lock');
     if(!empty($cleanup['limited']) && !wp_next_scheduled('hcdecor_automation_cleanup_tick')) wp_schedule_single_event(time()+60,'hcdecor_automation_cleanup_tick');
 });
 
