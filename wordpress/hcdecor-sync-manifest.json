@@ -1,5 +1,5 @@
 {
-  "version": "2026.09.27.32",
+  "version": "2026.09.27.33",
   "files": [
     {
       "path": "hcdecor-core.php",
@@ -89,12 +89,12 @@
     {
       "path": "modules/system-health.php",
       "url": "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/system-health.php",
-      "git_sha1": "57df3e7e068f247f3f227f3abb078f633ad36ab5"
+      "git_sha1": "0a977a4edd3e62a277c3e66cb69cd1f595567dab"
     },
     {
       "path": "modules/data-backup.php",
       "url": "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/data-backup.php",
-      "git_sha1": "c70c596cb9c0aa3e54a489cc17b6a15829f348d9"
+      "git_sha1": "ec95b74f4f710c71d94799162673e6969c10260d"
     },
     {
       "path": "modules/data-restore.php",
@@ -114,7 +114,7 @@
     {
       "path": "modules/hub-dashboard.php",
       "url": "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/hub-dashboard.php",
-      "git_sha1": "c602a276583c69c284a53655a54a0cc58bc70fe7"
+      "git_sha1": "0be1f77505a597f51f1b20fcae288f99a8322638"
     }
   ]
 }
