@@ -260,3 +260,49 @@ function hcdecor_master_seed_demo(){
   update_option('hcdecor_master_demo_v1','done');
 }
 add_action('init','hcdecor_master_seed_demo',60);
+
+
+/* HCDECOR_WORKFLOW_V2 */
+add_action('init',function(){
+  register_post_status('hc_new',['label'=>'Mới','public'=>false,'internal'=>true,'show_in_admin_all_list'=>true]);
+  register_post_status('hc_contacting',['label'=>'Đang tư vấn','public'=>false,'internal'=>true,'show_in_admin_all_list'=>true]);
+  register_post_status('hc_survey',['label'=>'Khảo sát','public'=>false,'internal'=>true,'show_in_admin_all_list'=>true]);
+  register_post_status('hc_quoted',['label'=>'Đã báo giá','public'=>false,'internal'=>true,'show_in_admin_all_list'=>true]);
+  register_post_status('hc_won',['label'=>'Đã chốt','public'=>false,'internal'=>true,'show_in_admin_all_list'=>true]);
+},20);
+
+function hcdecor_money($n){return number_format((float)$n,0,',','.').' đ';}
+function hcdecor_quote_total($id){
+  $qty=max(1,(float)get_post_meta($id,'hc_qty',true));
+  $price=(float)get_post_meta($id,'hc_unit_price',true);
+  $discount=(float)get_post_meta($id,'hc_discount',true);
+  $vat=(float)get_post_meta($id,'hc_vat',true);
+  $sub=$qty*$price; $after=max(0,$sub-$discount); return $after+($after*$vat/100);
+}
+add_action('add_meta_boxes',function(){
+  add_meta_box('hc_lead_flow','HCDecor · Lead Workflow',function($p){
+    $status=get_post_meta($p->ID,'hc_status',true)?:'new'; $phone=get_post_meta($p->ID,'hc_phone',true); $service=get_post_meta($p->ID,'hc_service',true);
+    echo '<p>Điện thoại<br><input style="width:100%" name="hc_phone" value="'.esc_attr($phone).'"></p><p>Dịch vụ<br><input style="width:100%" name="hc_service" value="'.esc_attr($service).'"></p><p>Trạng thái<br><select name="hc_status">';
+    foreach(['new'=>'Mới','contacting'=>'Đang tư vấn','survey'=>'Khảo sát','quoted'=>'Đã báo giá','won'=>'Đã chốt','lost'=>'Không chốt'] as $k=>$v) echo '<option value="'.$k.'" '.selected($status,$k,false).'>'.$v.'</option>';
+    echo '</select></p>';
+  },'hc_lead','normal','high');
+  add_meta_box('hc_quote_calc','HCDecor · Chi tiết báo giá',function($p){
+    foreach(['hc_customer'=>'Khách hàng','hc_item'=>'Hạng mục','hc_qty'=>'Số lượng','hc_unit_price'=>'Đơn giá','hc_discount'=>'Giảm giá','hc_vat'=>'VAT %'] as $k=>$v) echo '<p>'.$v.'<br><input style="width:100%" name="'.$k.'" value="'.esc_attr(get_post_meta($p->ID,$k,true)).'"></p>';
+    echo '<p><strong>Tổng hiện tại: '.esc_html(hcdecor_money(hcdecor_quote_total($p->ID))).'</strong></p>';
+  },'hc_quote','normal','high');
+});
+add_action('save_post',function($id){
+  if(defined('DOING_AUTOSAVE')&&DOING_AUTOSAVE) return;
+  if(get_post_type($id)==='hc_lead') foreach(['hc_phone','hc_service','hc_status'] as $k) if(isset($_POST[$k])) update_post_meta($id,$k,sanitize_text_field(wp_unslash($_POST[$k])));
+  if(get_post_type($id)==='hc_quote') foreach(['hc_customer','hc_item','hc_qty','hc_unit_price','hc_discount','hc_vat'] as $k) if(isset($_POST[$k])) update_post_meta($id,$k,sanitize_text_field(wp_unslash($_POST[$k])));
+});
+
+add_action('admin_menu',function(){
+  add_submenu_page('hcdecor-hub','Pipeline','Pipeline','edit_posts','hcdecor-pipeline','hcdecor_pipeline_admin');
+},20);
+function hcdecor_pipeline_admin(){
+  $statuses=['new'=>'Mới','contacting'=>'Đang tư vấn','survey'=>'Khảo sát','quoted'=>'Đã báo giá','won'=>'Đã chốt'];
+  echo '<div class="wrap"><h1>HCDecor HUB · Pipeline</h1><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">';
+  foreach($statuses as $k=>$label){$q=new WP_Query(['post_type'=>'hc_lead','post_status'=>'publish','meta_key'=>'hc_status','meta_value'=>$k,'posts_per_page'=>20]);echo '<section style="background:#fff;border:1px solid #ddd;border-radius:10px;padding:14px"><h2>'.$label.' · '.$q->found_posts.'</h2>';foreach($q->posts as $p)echo '<p><a href="'.esc_url(get_edit_post_link($p->ID)).'">'.esc_html($p->post_title).'</a></p>';echo '</section>';}
+  echo '</div></div>';
+}
