@@ -23,6 +23,7 @@ add_action('admin_post_hcdecor_media_assign',function(){
     update_post_meta($project,'hc_project_gallery',$merged);
     update_post_meta($project,'hc_gallery_ids',$merged);
     if(!has_post_thumbnail($project) && !empty($ids[0]) && wp_attachment_is_image($ids[0])) set_post_thumbnail($project,$ids[0]);
+    do_action('hcdecor_project_data_changed',$project);
     $next=sanitize_key($_POST['next_action']??'assign');
     if($next==='agent' && function_exists('hcdecor_agent_create_job')){
         $brief=sanitize_textarea_field(wp_unslash($_POST['agent_brief']??''));
