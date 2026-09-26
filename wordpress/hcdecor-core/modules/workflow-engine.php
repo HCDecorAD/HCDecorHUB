@@ -92,6 +92,14 @@ function hcdecor_workflow_refresh_owned_claim($job_id,$claim_token,$seconds=600)
     return true;
 }
 
+function hcdecor_workflow_owned_claim_active($job_id,$claim_token){
+    $job_id=(int)$job_id;
+    if($claim_token==='' || (string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token) return false;
+    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='processing') return false;
+    $lock=(int)get_post_meta($job_id,'hc_agent_lock_until',true);
+    return $lock>0 && $lock>=time();
+}
+
 function hcdecor_workflow_finish_owned_claim($job_id,$claim_token,$status,$note=''){
     $job_id=(int)$job_id;
     if($claim_token==='' || (string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token) return false;
@@ -234,6 +242,7 @@ add_action('rest_api_init',function(){
             if($expected==='' || $token==='' || !hash_equals($expected,$token)) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
             $lock=(int)get_post_meta($id,'hc_agent_lock_until',true);
             if($lock<=0 || $lock<time()) return new WP_Error('lock','Job lock expired; retry from Review Center',['status'=>409]);
+            if(!hcdecor_workflow_owned_claim_active($id,$token)) return new WP_Error('claim','Worker claim changed before saving completion',['status'=>409]);
             $p=$r->get_json_params()?:[];
             if(function_exists('hcdecor_ops_save_fields')) hcdecor_ops_save_fields($id,$p);
             if(!hcdecor_workflow_finish_owned_claim($id,$token,'review','Agent completed generation')) return new WP_Error('claim','Worker claim changed before completion',['status'=>409]);
@@ -252,9 +261,10 @@ add_action('rest_api_init',function(){
             if($expected==='' || $token==='' || !hash_equals($expected,$token)) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
             $lock=(int)get_post_meta($id,'hc_agent_lock_until',true);
             if($lock<=0 || $lock<time()) return new WP_Error('lock','Job lock expired; retry from Review Center',['status'=>409]);
+            if(!hcdecor_workflow_owned_claim_active($id,$token)) return new WP_Error('claim','Worker claim changed before saving failure',['status'=>409]);
             $msg=sanitize_text_field((string)$r->get_param('message'));
-            update_post_meta($id,'hc_agent_error',$msg);
             if(!hcdecor_workflow_finish_owned_claim($id,$token,'failed',$msg?:'Agent failed')) return new WP_Error('claim','Worker claim changed before failure update',['status'=>409]);
+            update_post_meta($id,'hc_agent_error',$msg);
             return rest_ensure_response(['ok'=>true,'id'=>$id,'status'=>'failed','outbound'=>false]);
         }
     ]);
