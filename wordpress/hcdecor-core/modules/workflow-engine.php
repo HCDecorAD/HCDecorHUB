@@ -111,7 +111,8 @@ function hcdecor_workflow_recover_stale_jobs($limit=10){
     $recovered=0;
     foreach($jobs as $job){
         $lock=(int)get_post_meta($job->ID,'hc_agent_lock_until',true);
-        if($lock>0 && $lock<$now){
+        $claimed=strtotime((string)get_post_meta($job->ID,'hc_agent_claimed_at',true))?:0;
+        if(($lock>0 && $lock<$now) || ($lock<=0 && $claimed>0 && $claimed<($now-900))){
             hcdecor_workflow_set_status($job->ID,'failed','Processing lock expired; safe retry available');
             delete_post_meta($job->ID,'hc_agent_lock_until');
             $recovered++;
