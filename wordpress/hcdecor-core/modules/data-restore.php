@@ -129,6 +129,9 @@ function hcdecor_restore_projects($backup,$media_map){
             if(array_key_exists($key,$p)) update_post_meta($id,$meta,sanitize_textarea_field((string)$p[$key]));
         }
 
+        if(!empty($p['drive_project_file_id'])) update_post_meta($id,'hc_drive_project_file_id',sanitize_text_field((string)$p['drive_project_file_id']));
+        if(!empty($p['drive_project_url'])) update_post_meta($id,'hc_drive_project_url',esc_url_raw((string)$p['drive_project_url']));
+
         $thumb_old=(int)($p['thumbnail_id']??0);
         $thumb=(int)($media_map[$thumb_old]??0);
         if($thumb) set_post_thumbnail($id,$thumb);
