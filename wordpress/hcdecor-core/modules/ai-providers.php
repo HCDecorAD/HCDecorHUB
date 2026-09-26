@@ -231,6 +231,7 @@ function hcdecor_ai_store_test($provider,$result){
 
 function hcdecor_ai_generate_job($job_id){
     if(get_post_type($job_id)!=='hc_content_job') return new WP_Error('invalid_job','Invalid content job.');
+    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='processing') return new WP_Error('invalid_status','Job must be processing before AI generation.');
     $errors=[];
     foreach(hcdecor_ai_provider_order() as $provider){
         if(!hcdecor_ai_available($provider)) continue;
@@ -277,8 +278,10 @@ add_action('hcdecor_ai_worker_tick',function(){
     $lock=(int)get_post_meta($id,'hc_agent_lock_until',true);
     if($lock>time()) return;
     update_post_meta($id,'hc_agent_lock_until',time()+180);
-    if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($id,'processing','Internal AI worker');
-    else update_post_meta($id,'hc_agent_status','processing');
+    if(!function_exists('hcdecor_workflow_set_status') || !hcdecor_workflow_set_status($id,'processing','Internal AI worker')){
+        delete_post_meta($id,'hc_agent_lock_until');
+        return;
+    }
     hcdecor_ai_generate_job($id);
 });
 
@@ -287,8 +290,17 @@ add_action('admin_post_hcdecor_ai_run_job',function(){
     $id=(int)($_POST['job_id']??0);
     check_admin_referer('hcdecor_ai_run_'.$id);
     if(get_post_type($id)!=='hc_content_job') wp_die('Invalid job');
+    $status=(string)get_post_meta($id,'hc_agent_status',true);
+    if($status==='failed'){
+        if(!function_exists('hcdecor_workflow_set_status') || !hcdecor_workflow_set_status($id,'draft','Manual AI retry requested')) wp_die('Unable to reset failed job for retry.');
+        $status='draft';
+    }
+    if($status!=='draft') wp_die('Job is not ready for AI processing.');
     update_post_meta($id,'hc_agent_lock_until',time()+180);
-    if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($id,'processing','Manual AI run');
+    if(!function_exists('hcdecor_workflow_set_status') || !hcdecor_workflow_set_status($id,'processing','Manual AI run')){
+        delete_post_meta($id,'hc_agent_lock_until');
+        wp_die('Unable to start AI processing.');
+    }
     $r=hcdecor_ai_generate_job($id);
     $q=is_wp_error($r)?'ai_error=1':'ai_done=1';
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$id.'&'.$q)); exit;
