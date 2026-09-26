@@ -1,0 +1,10 @@
+/* HCDecor Elementor homepage v1 */
+.hc-hero,.hc-services,.hc-projects,.hc-process,.hc-contact{padding:96px 28px;background:#090b0d;color:#f3f1ed}
+.hc-hero{display:flex;justify-content:center}
+.hc-hero h1{font-size:clamp(48px,7vw,92px);line-height:.96;max-width:1000px}
+.hc-services h6,.hc-projects h6,.hc-process h6{color:#d59a55;letter-spacing:.18em}
+.hc-service-grid{display:grid!important;grid-template-columns:repeat(4,1fr);gap:18px}
+.hc-service-grid h3{min-height:220px;padding:24px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:#111417;display:flex;align-items:flex-end}
+.hc-contact{padding-bottom:120px}
+@media(max-width:1024px){.hc-service-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:767px){.hc-hero,.hc-services,.hc-projects,.hc-process,.hc-contact{padding:64px 20px}.hc-hero h1{font-size:44px}.hc-service-grid{grid-template-columns:1fr}.hc-service-grid h3{min-height:150px}}
