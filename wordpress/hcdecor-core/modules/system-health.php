@@ -328,7 +328,8 @@ function hcdecor_health_snapshot(){
             'settings_last_change'=>(array)get_option('hcdecor_automation_settings_last_change',[]),
             'settings_cleanup_limited'=>!empty(((array)get_option('hcdecor_automation_settings_last_change',[]))['cleanup_limited']),
             'cleanup_next'=>wp_next_scheduled('hcdecor_automation_cleanup_tick')?:0,
-            'cleanup_running'=>(bool)get_transient('hcdecor_automation_cleanup_lock')
+            'cleanup_running'=>(bool)get_transient('hcdecor_automation_cleanup_lock'),
+            'cleanup_lock_age'=>get_transient('hcdecor_automation_cleanup_lock')?max(0,time()-(int)get_transient('hcdecor_automation_cleanup_lock')):0
         ],
         'content_queue'=>$queue,
         'stale_processing'=>$stale_processing,
