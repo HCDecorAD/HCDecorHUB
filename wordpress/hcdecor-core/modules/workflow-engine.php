@@ -102,6 +102,10 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     }
     $more_after=$limited || (!$wrapped && $next_cursor>0 && (bool)$wpdb->get_var($wpdb->prepare("SELECT option_id FROM {$wpdb->options} WHERE (option_name LIKE %s OR option_name LIKE %s) AND option_id>%d ORDER BY option_id ASC LIMIT 1",$claim_like,$lifecycle_like,$next_cursor)));
     $continue=$more_after;
+    if(!$wrapped && !$more_after && $cursor>0){
+        $before=(bool)$wpdb->get_var($wpdb->prepare("SELECT option_id FROM {$wpdb->options} WHERE (option_name LIKE %s OR option_name LIKE %s) AND option_id<=%d ORDER BY option_id ASC LIMIT 1",$claim_like,$lifecycle_like,$cursor));
+        if($before) $continue=true;
+    }
     if($wrapped && !$limited) $continue=false;
     $stored_cursor=$continue?$next_cursor:0;
     if(!$rows) $stored_cursor=0;
