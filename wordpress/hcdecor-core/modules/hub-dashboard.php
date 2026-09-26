@@ -159,6 +159,7 @@ function hcdecor_hub_dashboard_attention($s){
     $failed=(int)($c['job_status']['failed']??0);
     if($failed>0) $add('bad',$failed.' content job(s) failed',admin_url('admin.php?page=hcdecor-content-operations'));
     if((int)($h['stale_processing']??0)>0) $add('bad',(int)$h['stale_processing'].' processing job(s) stale',admin_url('admin.php?page=hcdecor-review'));
+    if((int)($h['worker']['processing_without_token']??0)>0) $add('bad',(int)$h['worker']['processing_without_token'].' processing job(s) missing worker claim token',admin_url('admin.php?page=hcdecor-review'));
     if((int)($h['review_oldest_age_seconds']??0)>86400) $add('warn','Review queue has item waiting over 24 hours',admin_url('admin.php?page=hcdecor-review'));
     $blocked=(int)($c['automation']['blocked']??0);
     $auto_failed=(int)($c['automation']['failed']??0);
