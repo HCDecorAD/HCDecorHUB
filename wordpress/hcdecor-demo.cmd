@@ -15,7 +15,11 @@ call wp eval-file "%P%\homepage-builder.php" >nul 2>&1 || goto :fail
 echo.
 echo ================================================
 echo HCDECOR HUB DEMO: READY
-echo Open: http://hcdecor-hub.local/
+echo Website: http://hcdecor-hub.local/
+echo HUB Admin: http://hcdecor-hub.local/wp-admin/admin.php?page=hcdecor-hub
+echo Media: http://hcdecor-hub.local/wp-admin/upload.php
+echo Projects: http://hcdecor-hub.local/wp-admin/edit.php?post_type=hc_project
+echo Quotes: http://hcdecor-hub.local/wp-admin/edit.php?post_type=hc_quote
 echo ================================================
 exit /b 0
 :fail
