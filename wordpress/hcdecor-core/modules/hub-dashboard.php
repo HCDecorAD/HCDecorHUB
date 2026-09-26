@@ -62,6 +62,7 @@ function hcdecor_hub_dashboard_state(){
         'project_vault_synced'=>$pv,
         'sync_version'=>(string)get_option('hcdecor_sync_version',''),
         'sync_last'=>(string)get_option('hcdecor_sync_last',''),
+        'sync_last_error'=>(string)get_option('hcdecor_sync_last_error',''),
         'backup_last'=>(string)get_option('hcdecor_backup_last_at',''),
         'inbox_last'=>(string)get_option('hcdecor_drive_inbox_last_at',''),
         'inbox_result'=>(array)get_option('hcdecor_drive_inbox_last_result',[])
@@ -137,6 +138,15 @@ function hcdecor_hub_dashboard_attention($s){
         $seen[$key]=true;
         $items[]=['level'=>$level,'label'=>(string)$label,'url'=>$url];
     };
+    $sync_error=(string)($s['sync_last_error']??'');
+    if($sync_error!=='') $add('bad','Code sync error: '.$sync_error,admin_url('admin.php?page=hcdecor-system-health'));
+    $sync_last=(string)($s['sync_last']??'');
+    if($sync_last!==''){
+        $sync_ts=strtotime($sync_last);
+        if($sync_ts && (current_time('timestamp')-$sync_ts)>1800) $add('warn','Code sync is stale (>30 min)',admin_url('admin.php?page=hcdecor-system-health'));
+    } else {
+        $add('warn','Code sync has not completed yet',admin_url('admin.php?page=hcdecor-system-health'));
+    }
     foreach((array)($h['issues']??[]) as $issue){
         $label=(string)$issue;
         if(strpos($label,'Automation failed:')===0 || strpos($label,'Automation blocked:')===0) continue;
