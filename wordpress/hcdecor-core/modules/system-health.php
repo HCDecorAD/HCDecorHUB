@@ -134,8 +134,9 @@ function hcdecor_health_snapshot(){
     $oldest_review_age=0;
     $review_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'review']);
     foreach($review_ids as $rid){
-        $modified=strtotime((string)get_post_field('post_modified',$rid))?:0;
-        if($modified) $oldest_review_age=max($oldest_review_age,max(0,current_time('timestamp')-$modified));
+        $entered=strtotime((string)get_post_meta($rid,'hc_review_entered_at',true))?:0;
+        if(!$entered) $entered=strtotime((string)get_post_field('post_modified',$rid))?:0;
+        if($entered) $oldest_review_age=max($oldest_review_age,max(0,current_time('timestamp')-$entered));
     }
     $processing_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'processing']);
     $now=time();
@@ -154,7 +155,7 @@ function hcdecor_health_snapshot(){
     $vault_bulk_ts=$vault_bulk_at!==''?(strtotime($vault_bulk_at)?:0):0;
     $inbox_result=(array)get_option('hcdecor_drive_inbox_last_result',[]);
     $inbox_unlinked=max(0,(int)($inbox_result['imported']??0)-(int)($inbox_result['linked']??0));
-    $published_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'date_query'=>[['column'=>'post_modified','after'=>'7 days ago']],'meta_key'=>'hc_agent_status','meta_value'=>'published_web','fields'=>'ids']))->found_posts;
+    $published_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'fields'=>'ids','meta_query'=>[['key'=>'hc_published_web_at','value'=>wp_date('Y-m-d H:i:s',current_time('timestamp')-7*DAY_IN_SECONDS),'compare'=>'>=','type'=>'DATETIME']]]))->found_posts;
     $created_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'date_query'=>[['after'=>'7 days ago']],'fields'=>'ids']))->found_posts;
     $backup_cron=(int)(wp_next_scheduled('hcdecor_backup_daily')?:0);
     $last_auto_repair=(array)get_option('hcdecor_health_auto_repair_last',[]);
