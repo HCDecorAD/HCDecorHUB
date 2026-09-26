@@ -85,16 +85,16 @@ function hcdecor_media_manager_page(){
     .hcm{max-width:1450px}.hcm-head{display:flex;justify-content:space-between;align-items:center;margin:16px 0}.hcm-grid{display:grid;grid-template-columns:minmax(520px,1fr) 360px;gap:14px}.hcm-card{background:#fff;border:1px solid #dcdcde;border-radius:14px;overflow:hidden}.hcm-card h2{font-size:14px;margin:0;padding:14px 16px;border-bottom:1px solid #eee}.hcm-body{padding:14px}.hcm-library{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.hcm-item{position:relative;border:2px solid transparent;border-radius:10px;overflow:hidden;background:#eef0f2;cursor:pointer}.hcm-item.selected{border-color:#c7863d}.hcm-item img,.hcm-video{display:block;width:100%;aspect-ratio:1;object-fit:cover}.hcm-video{display:grid;place-items:center;background:#1c232a;color:#fff;font-weight:800}.hcm-check{position:absolute;top:6px;right:6px;background:#fff;border-radius:50%;width:24px;height:24px;display:grid;place-items:center;box-shadow:0 1px 5px #0003}.hcm-item.selected .hcm-check{background:#c7863d;color:#fff}.hcm-item small{display:block;padding:6px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff}.hcm-actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.hcm select,.hcm input[type=text],.hcm textarea{width:100%}.hcm textarea{min-height:90px}.hcm-meta img{max-width:100%;height:auto;border-radius:10px}.hcm-notice{background:#ecf7ed;border-left:4px solid #46b450;padding:10px 12px;margin:10px 0}@media(max-width:1100px){.hcm-grid{grid-template-columns:1fr}.hcm-library{grid-template-columns:repeat(4,1fr)}}@media(max-width:782px){.hcm-library{grid-template-columns:repeat(3,1fr)}}
     </style>
     <div class="hcm-head"><div><h1>HCDecor Media Manager</h1><p>Upload → chọn media → gắn vào Project → Agent xử lý nội dung.</p></div><strong><?php echo count($media);?> media gần nhất</strong></div>
-    <?php if(isset($_GET['assigned'])||isset($_GET['updated'])):?><div class="hcm-notice">Đã cập nhật.</div><?php endif;?>
+    <?php if(isset($_GET['assigned'])||isset($_GET['updated'])||isset($_GET['ai_ok'])):?><div class="hcm-notice"><?php echo isset($_GET['ai_ok'])?'AI analyzed: '.intval($_GET['ai_ok']).' · failed: '.intval($_GET['ai_fail']??0):'Đã cập nhật.';?></div><?php endif;?>
     <div class="hcm-grid"><section class="hcm-card"><h2>MEDIA LIBRARY</h2><div class="hcm-body">
       <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>" id="hcmAssign">
         <input type="hidden" name="action" value="hcdecor_media_assign"><?php wp_nonce_field('hcdecor_media_assign');?>
-        <div class="hcm-actions"><button type="button" class="button button-primary" id="hcmUpload">+ Upload / chọn Media</button><a class="button" href="<?php echo esc_url(admin_url('upload.php'));?>">WordPress Media Library</a></div>
+        <div class="hcm-actions"><button type="button" class="button button-primary" id="hcmUpload">+ Upload / chọn Media</button><a class="button" href="<?php echo esc_url(admin_url('upload.php'));?>">WordPress Media Library</a><button type="submit" class="button" formaction="<?php echo esc_url(admin_url('admin-post.php'));?>" name="action" value="hcdecor_media_ai_analyze">AI Analyze Selected</button></div><?php wp_nonce_field('hcdecor_media_ai_analyze');?>
         <div class="hcm-library" id="hcmLibrary">
         <?php foreach($media as $m): $is_video=strpos($m->post_mime_type,'video/')===0; $thumb=wp_get_attachment_image_url($m->ID,'medium');?>
           <div class="hcm-item" data-id="<?php echo $m->ID;?>">
             <?php if($thumb):?><img src="<?php echo esc_url($thumb);?>" alt=""><?php else:?><div class="hcm-video">VIDEO</div><?php endif;?>
-            <span class="hcm-check">✓</span><small><?php echo esc_html($m->post_title?:basename(get_attached_file($m->ID)));?></small>
+            <span class="hcm-check">✓</span><small><?php echo esc_html($m->post_title?:basename(get_attached_file($m->ID)));?></small><?php $score=(int)get_post_meta($m->ID,'hc_ai_cover_score',true); $type=(string)get_post_meta($m->ID,'hc_ai_visual_type',true); if($score||$type):?><small style="color:#a5651d">AI <?php echo $score?esc_html($score.'/100'):'';?> <?php echo esc_html($type);?></small><?php endif;?>
           </div>
         <?php endforeach;?>
         </div><div id="hcmHidden"></div>
@@ -113,7 +113,7 @@ function hcdecor_media_manager_page(){
           <label>Title</label><input type="text" name="title" value="<?php echo esc_attr($edit->post_title);?>">
           <label>Alt text</label><input type="text" name="alt" value="<?php echo esc_attr(get_post_meta($edit_id,'_wp_attachment_image_alt',true));?>">
           <label>Caption</label><textarea name="caption"><?php echo esc_textarea($edit->post_excerpt);?></textarea>
-          <label>Description</label><textarea name="description"><?php echo esc_textarea($edit->post_content);?></textarea>
+          <label>Description</label><textarea name="description"><?php echo esc_textarea($edit->post_content);?></textarea><?php $ais=(string)get_post_meta($edit_id,'hc_ai_summary',true); $aiscore=(int)get_post_meta($edit_id,'hc_ai_cover_score',true); $aitags=(array)get_post_meta($edit_id,'hc_ai_tags',true); if($ais):?><hr><p><strong>AI Summary</strong><br><?php echo esc_html($ais);?></p><p><strong>Cover score:</strong> <?php echo $aiscore;?>/100</p><p><strong>Tags:</strong> <?php echo esc_html(implode(', ',$aitags));?></p><?php endif;?>
           <p><button class="button button-primary">Lưu metadata</button></p>
         </form>
       <?php else:?><p>Chọn một media rồi mở <strong>Edit metadata</strong>.</p><div id="hcmMetaLink"></div><?php endif;?>
