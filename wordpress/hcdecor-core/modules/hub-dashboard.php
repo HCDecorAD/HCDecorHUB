@@ -161,9 +161,9 @@ function hcdecor_hub_dashboard_attention($s){
     if((int)($h['stale_processing']??0)>0) $add('bad',(int)$h['stale_processing'].' processing job(s) stale',admin_url('admin.php?page=hcdecor-review'));
     if((int)($h['worker']['processing_without_token']??0)>0) $add('bad',(int)$h['worker']['processing_without_token'].' processing job(s) missing worker claim token',admin_url('admin.php?page=hcdecor-review'));
     if((int)($h['review_oldest_age_seconds']??0)>86400) $add('warn','Review queue has item waiting over 24 hours',admin_url('admin.php?page=hcdecor-review'));
-    $blocked=(int)($c['automation']['blocked']??0);
+    $blocked=(int)($h['automation']['actionable_blocked']??0);
     $auto_failed=(int)($c['automation']['failed']??0);
-    if($blocked>0) $add('warn',$blocked.' automation task(s) blocked',admin_url('admin.php?page=hcdecor-automation'));
+    if($blocked>0) $add('warn',$blocked.' actionable automation task(s) blocked',admin_url('admin.php?page=hcdecor-automation'));
     if($auto_failed>0) $add('bad',$auto_failed.' automation task(s) failed',admin_url('admin.php?page=hcdecor-automation'));
     $unlinked=(int)($h['last_outcomes']['drive_inbox_unlinked']??0);
     if(!empty($s['inbox']['enabled']) && $unlinked>0) $add('warn',$unlinked.' imported media item(s) not linked to a Project',admin_url('admin.php?page=hcdecor-drive-inbox'));
@@ -246,6 +246,7 @@ function hcdecor_hub_dashboard_page(){
     $inbox_unlinked=(int)($s['health']['last_outcomes']['drive_inbox_unlinked']??0);
     $worker_recovered=(int)($s['health']['worker']['recovered_24h']??0);
     $worker_reasons=(array)($s['health']['worker']['recovery_reasons_24h']??[]);
+    $auto_recovered=(int)($s['health']['automation']['recovered_24h']??0);
     ?>
     <div class="wrap hchub">
       <style>
@@ -296,7 +297,7 @@ function hcdecor_hub_dashboard_page(){
         <div class="hchub-card"><div class="num"><?php echo (int)$c['jobs'];?></div><strong>Content Jobs</strong><br><small><?php echo (int)$pipeline['review'];?> review · <?php echo (int)$pipeline['published'];?> published · <?php echo (int)$pipeline['failed'];?> failed</small></div>
         <div class="hchub-card"><div class="num"><?php echo (int)($throughput['published']??0);?></div><strong>Published / 7 days</strong><br><small><?php echo (int)($throughput['created']??0);?> jobs created · <?php echo (int)($throughput['publish_rate']??0);?>% ratio</small></div>
         <div class="hchub-card"><div class="num"><?php echo !empty($auto_repair['schedules'])?count((array)$auto_repair['schedules']):0;?></div><strong>Auto-repaired crons</strong><br><small><?php echo esc_html((string)($auto_repair['at']??'No repair needed'));?></small></div>
-        <div class="hchub-card"><div class="num"><?php echo (int)($c['automation']['queued']+$c['automation']['scheduled']);?></div><strong>Automation</strong><br><small><?php echo (int)$c['automation']['failed'];?> failed</small></div>
+        <div class="hchub-card"><div class="num"><?php echo (int)($c['automation']['queued']+$c['automation']['scheduled']);?></div><strong>Automation</strong><br><small><?php echo (int)$c['automation']['failed'];?> failed · <?php echo $auto_recovered;?> recovered/24h</small></div>
         <div class="hchub-card"><div class="num"><?php echo $health_score;?>%</div><strong>System Health</strong><br><span class="hchub-badge <?php echo esc_attr(hcdecor_hub_dashboard_badge($health_state));?>"><?php echo esc_html(strtoupper($health_state));?></span></div>
         <div class="hchub-card"><div class="num"><?php echo $vault_coverage;?>%</div><strong>Project Vault coverage</strong><br><small><?php echo (int)$s['project_vault_synced'];?> manifests synced</small></div>
         <div class="hchub-card"><div class="num"><?php echo (int)($vault_bulk['failed']??0);?></div><strong>Vault last sync failures</strong><br><small><?php echo esc_html((string)($s['vault_bulk_at']??'Never'));?></small></div>
