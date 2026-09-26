@@ -306,3 +306,56 @@ function hcdecor_pipeline_admin(){
   foreach($statuses as $k=>$label){$q=new WP_Query(['post_type'=>'hc_lead','post_status'=>'publish','meta_key'=>'hc_status','meta_value'=>$k,'posts_per_page'=>20]);echo '<section style="background:#fff;border:1px solid #ddd;border-radius:10px;padding:14px"><h2>'.$label.' · '.$q->found_posts.'</h2>';foreach($q->posts as $p)echo '<p><a href="'.esc_url(get_edit_post_link($p->ID)).'">'.esc_html($p->post_title).'</a></p>';echo '</section>';}
   echo '</div></div>';
 }
+
+
+/* HCDECOR_WORKFLOW_V3: lead -> quote, multi-items, project gallery */
+function hcdecor_quote_items($id){
+  $v=get_post_meta($id,'hc_quote_items',true);
+  return is_array($v)?$v:[];
+}
+function hcdecor_quote_items_total($id){
+  $sum=0; foreach(hcdecor_quote_items($id) as $x) $sum+=((float)($x['qty']??0))*((float)($x['price']??0));
+  $discount=(float)get_post_meta($id,'hc_discount',true); $vat=(float)get_post_meta($id,'hc_vat',true);
+  $after=max(0,$sum-$discount); return ['subtotal'=>$sum,'total'=>$after+($after*$vat/100)];
+}
+add_action('add_meta_boxes',function(){
+  add_meta_box('hc_project_gallery','HCDecor · Gallery dự án',function($p){
+    $ids=(array)get_post_meta($p->ID,'hc_gallery_ids',true);
+    echo '<p>Media IDs (cách nhau bằng dấu phẩy)</p><input style="width:100%" name="hc_gallery_ids" value="'.esc_attr(implode(',',$ids)).'"><p><a class="button" href="'.esc_url(admin_url('media-new.php')).'">Upload hình ảnh</a></p>';
+    if($ids){echo '<div style="display:flex;gap:8px;flex-wrap:wrap">';foreach($ids as $aid){$src=wp_get_attachment_image_url((int)$aid,'thumbnail');if($src)echo '<img src="'.esc_url($src).'" style="width:100px;height:80px;object-fit:cover;border-radius:6px">';}echo '</div>';}
+  },'hc_project','normal','high');
+  add_meta_box('hc_quote_items','HCDecor · Hạng mục báo giá',function($p){
+    $items=hcdecor_quote_items($p->ID); for($i=0;$i<8;$i++){ $x=$items[$i]??[]; echo '<p><input name="hc_item_name[]" placeholder="Hạng mục" value="'.esc_attr($x['name']??'').'" style="width:45%"> <input name="hc_item_qty[]" placeholder="SL" value="'.esc_attr($x['qty']??'').'" style="width:10%"> <input name="hc_item_price[]" placeholder="Đơn giá" value="'.esc_attr($x['price']??'').'" style="width:25%"></p>'; }
+    $t=hcdecor_quote_items_total($p->ID); echo '<p><strong>Tạm tính: '.esc_html(hcdecor_money($t['subtotal'])).' · Tổng: '.esc_html(hcdecor_money($t['total'])).'</strong></p>';
+  },'hc_quote','normal','high');
+},20);
+add_action('save_post',function($id){
+  if(defined('DOING_AUTOSAVE')&&DOING_AUTOSAVE) return;
+  if(get_post_type($id)==='hc_project' && isset($_POST['hc_gallery_ids'])){
+    $ids=array_values(array_filter(array_map('intval',explode(',',sanitize_text_field(wp_unslash($_POST['hc_gallery_ids']))))));
+    update_post_meta($id,'hc_gallery_ids',$ids);
+  }
+  if(get_post_type($id)==='hc_quote' && isset($_POST['hc_item_name'])){
+    $items=[]; $names=(array)$_POST['hc_item_name']; $qty=(array)($_POST['hc_item_qty']??[]); $prices=(array)($_POST['hc_item_price']??[]);
+    foreach($names as $i=>$n){$n=sanitize_text_field(wp_unslash($n));if($n!=='')$items[]=['name'=>$n,'qty'=>(float)($qty[$i]??0),'price'=>(float)($prices[$i]??0)];}
+    update_post_meta($id,'hc_quote_items',$items);
+  }
+},20);
+
+add_filter('post_row_actions',function($a,$p){
+  if($p->post_type==='hc_lead') $a['hc_quote']='<a href="'.esc_url(wp_nonce_url(admin_url('admin-post.php?action=hcdecor_lead_to_quote&lead='.$p->ID),'hcdecor_lead_to_quote_'.$p->ID)).'">Tạo báo giá</a>';
+  if($p->post_type==='hc_quote') $a['hc_print']='<a target="_blank" href="'.esc_url(wp_nonce_url(admin_url('admin-post.php?action=hcdecor_print_quote&quote='.$p->ID),'hcdecor_print_quote_'.$p->ID)).'">Xem/In báo giá</a>';
+  return $a;
+},10,2);
+add_action('admin_post_hcdecor_lead_to_quote',function(){
+  $lead=(int)($_GET['lead']??0); check_admin_referer('hcdecor_lead_to_quote_'.$lead); if(!current_user_can('edit_post',$lead)) wp_die('Forbidden');
+  $p=get_post($lead); $qid=wp_insert_post(['post_type'=>'hc_quote','post_status'=>'publish','post_title'=>'Báo giá · '.$p->post_title]);
+  if($qid&&!is_wp_error($qid)){update_post_meta($qid,'hc_customer',$p->post_title);update_post_meta($qid,'hc_phone',get_post_meta($lead,'hc_phone',true));update_post_meta($lead,'hc_status','quoted');wp_safe_redirect(get_edit_post_link($qid,'raw'));exit;}
+  wp_die('Cannot create quote');
+});
+add_action('admin_post_hcdecor_print_quote',function(){
+  $id=(int)($_GET['quote']??0); check_admin_referer('hcdecor_print_quote_'.$id); if(!current_user_can('edit_post',$id)) wp_die('Forbidden');
+  $q=get_post($id); $t=hcdecor_quote_items_total($id); echo '<!doctype html><meta charset="utf-8"><title>'.esc_html($q->post_title).'</title><style>body{font-family:Arial;max-width:900px;margin:40px auto;color:#171717}h1{border-bottom:3px solid #b77b36;padding-bottom:14px}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left}.num{text-align:right}@media print{button{display:none}}</style><h1>HCDecor HUB · BÁO GIÁ</h1><p><strong>'.esc_html(get_post_meta($id,'hc_customer',true)).'</strong> · '.esc_html(get_post_meta($id,'hc_phone',true)).'</p><table><tr><th>Hạng mục</th><th>SL</th><th class="num">Đơn giá</th><th class="num">Thành tiền</th></tr>';
+  foreach(hcdecor_quote_items($id) as $x){$line=(float)$x['qty']*(float)$x['price'];echo '<tr><td>'.esc_html($x['name']).'</td><td>'.esc_html($x['qty']).'</td><td class="num">'.esc_html(hcdecor_money($x['price'])).'</td><td class="num">'.esc_html(hcdecor_money($line)).'</td></tr>';}
+  echo '</table><h2 style="text-align:right">Tổng: '.esc_html(hcdecor_money($t['total'])).'</h2><p>HCDecor · 231D An Dương Vương, P. An Lạc, Tp.HCM · 0888 821 842</p><button onclick="print()">In / Lưu PDF</button>'; exit;
+});
