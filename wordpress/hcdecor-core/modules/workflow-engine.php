@@ -86,6 +86,7 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     $continue=$more_after;
     $stored_cursor=$continue?$next_cursor:0;
     if(!$rows) $stored_cursor=0;
+    if($wrapped && !$limited) $continue=false;
     update_option('hcdecor_worker_mutex_sweep_last',[
         'at'=>current_time('mysql'),'ts'=>time(),'scanned'=>count($rows),'stale'=>$stale,'deleted'=>$deleted,'limited'=>$continue,'cursor'=>$stored_cursor,'wrapped'=>$wrapped
     ],false);
