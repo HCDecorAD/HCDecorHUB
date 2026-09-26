@@ -164,6 +164,10 @@ function hcdecor_hub_dashboard_attention($s){
     $total_projects=(int)($c['projects_publish']??0)+(int)($c['projects_draft']??0);
     $pending=max(0,$total_projects-(int)($s['project_vault_synced']??0));
     if($pending>0) $add('warn',$pending.' project(s) pending Project Vault sync',admin_url('admin.php?page=hcdecor-project-vault'));
+    usort($items,function($a,$b){
+        $priority=['bad'=>0,'warn'=>1];
+        return ($priority[$a['level']]??2)<=>($priority[$b['level']]??2);
+    });
     return array_slice($items,0,8);
 }
 
