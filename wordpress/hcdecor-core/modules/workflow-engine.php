@@ -51,7 +51,12 @@ function hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed=true){
 function hcdecor_workflow_recover_orphan_draft_claims($limit=20){
     $jobs=get_posts([
         'post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>max(1,min(50,(int)$limit)),'fields'=>'ids',
-        'meta_key'=>'hc_agent_status','meta_value'=>'draft','orderby'=>'modified','order'=>'ASC'
+        'meta_query'=>[
+            'relation'=>'AND',
+            ['key'=>'hc_agent_status','value'=>'draft'],
+            ['key'=>'hc_agent_claim_token','compare'=>'EXISTS']
+        ],
+        'orderby'=>'modified','order'=>'ASC'
     ]);
     $now=time(); $recovered=0;
     foreach($jobs as $job_id){
@@ -81,7 +86,7 @@ add_action('rest_api_init',function(){
         'permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
             $now=time();
-            hcdecor_workflow_recover_orphan_draft_claims(20);
+            hcdecor_workflow_recover_orphan_draft_claims(50);
             $jobs=get_posts([
                 'post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>20,
                 'orderby'=>'date','order'=>'ASC',
