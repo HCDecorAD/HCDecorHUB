@@ -146,8 +146,9 @@ function hcdecor_health_snapshot(){
     foreach($processing_ids as $pid){
         $lock=(int)get_post_meta($pid,'hc_agent_lock_until',true);
         $claimed=strtotime((string)get_post_meta($pid,'hc_agent_claimed_at',true))?:0;
+        $heartbeat=strtotime((string)get_post_meta($pid,'hc_agent_heartbeat',true))?:0;
         $token=(string)get_post_meta($pid,'hc_agent_claim_token',true);
-        if($token==='') $processing_without_token++;
+        if($token==='' && max($claimed,$heartbeat)>0 && max($claimed,$heartbeat)<($now-120)) $processing_without_token++;
         if($lock>$now && ($lock-$now)<=120) $processing_lock_expiring++;
         if(($lock>0 && $lock<$now) || ($lock<=0 && $claimed>0 && $claimed<($now-900))) $stale_processing++;
     }
@@ -203,7 +204,7 @@ function hcdecor_health_snapshot(){
     }
 
     if($stale_processing>0) $issues[]='Stale processing jobs: '.$stale_processing;
-    if($processing_without_token>0) $issues[]='Processing jobs missing claim token: '.$processing_without_token;
+    if($processing_without_token>0) $issues[]='Processing jobs missing claim token >2m: '.$processing_without_token;
     if($oldest_review_age>86400) $issues[]='Review queue oldest item >24h';
 
     $score=100;
