@@ -287,6 +287,12 @@ function hcdecor_health_auto_repair_schedules(){
     $required['evergreen']=!empty($auto['evergreen_enabled']);
     $required['drive_inbox']=!isset($inbox['enabled']) || !empty($inbox['enabled']);
     $missing=array_filter($crons,function($v,$name)use($required){ return !empty($required[$name]) && empty($v['scheduled']); },ARRAY_FILTER_USE_BOTH);
+    foreach($crons as $name=>$x){
+        if(isset($required[$name]) && empty($required[$name]) && !empty($x['scheduled'])){
+            $hook=['automation'=>'hcdecor_automation_tick','evergreen'=>'hcdecor_evergreen_tick','drive_inbox'=>'hcdecor_drive_inbox_tick'][$name]??'';
+            if($hook) wp_clear_scheduled_hook($hook);
+        }
+    }
     if(!$missing) return false;
     $names=array_keys($missing);
     hcdecor_health_repair_schedules($required);
