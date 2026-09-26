@@ -64,6 +64,10 @@ function hcdecor_publish_job_to_web($job_id){
     update_post_meta($project,'hc_seo_meta',$seo);
     if($cover && wp_attachment_is_image($cover)) set_post_thumbnail($project,$cover);
 
+    $history=(array)get_post_meta($job_id,'hc_publish_history',true);
+    $history[]=['published_at'=>current_time('mysql'),'snapshot'=>$snapshot];
+    if(count($history)>5) $history=array_slice($history,-5);
+    update_post_meta($job_id,'hc_publish_history',$history);
     update_post_meta($job_id,'hc_publish_snapshot',$snapshot);
     update_post_meta($job_id,'hc_published_project_id',$project);
     update_post_meta($job_id,'hc_published_web_at',current_time('mysql'));
