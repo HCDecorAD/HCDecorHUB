@@ -119,7 +119,8 @@ add_action('rest_api_init',function(){
             $p=$r->get_json_params()?:[];
             if(function_exists('hcdecor_ops_save_fields')) hcdecor_ops_save_fields($id,$p);
             delete_post_meta($id,'hc_agent_lock_until');
-            delete_post_meta($id,'hc_agent_claim_token');
+        delete_post_meta($id,'hc_agent_claim_token');
+        delete_option('hcdecor_claim_mutex_'.$id);
             hcdecor_workflow_set_status($id,'review','Agent completed generation');
             return rest_ensure_response(['ok'=>true,'id'=>$id,'status'=>'review','outbound'=>false]);
         }
@@ -164,6 +165,8 @@ function hcdecor_workflow_recover_stale_jobs($limit=10){
             hcdecor_workflow_set_status($job->ID,'failed','Processing lock expired; safe retry available');
             delete_post_meta($job->ID,'hc_agent_lock_until');
             delete_post_meta($job->ID,'hc_agent_claim_token');
+            delete_option('hcdecor_claim_mutex_'.$job->ID);
+            update_post_meta($job->ID,'hc_agent_recovered_at',current_time('mysql'));
             $recovered++;
         }
     }
