@@ -74,3 +74,28 @@ add_action('admin_notices',function(){
 });
 
 add_action('wp_enqueue_scripts',function(){wp_enqueue_style('hcdecor-elementor',plugins_url('assets/hcdecor-elementor.css',__FILE__),[], '0.2.0');});
+
+function hcdecor_seed_services(){
+  $items=[
+    ['Bảng hiệu','Thiết kế và thi công bảng hiệu, mặt dựng và nhận diện không gian.'],
+    ['Nội thất','Thiết kế và triển khai nội thất theo nhu cầu sử dụng thực tế.'],
+    ['3D & Phối cảnh','Phối cảnh 3D giúp hình dung phương án trước khi triển khai.'],
+    ['Kiến trúc','Giải pháp kiến trúc cân bằng thẩm mỹ, công năng và khả năng thi công.']
+  ];
+  foreach($items as $item){
+    if(!get_page_by_title($item[0],OBJECT,'hc_service')){
+      wp_insert_post(['post_type'=>'hc_service','post_status'=>'publish','post_title'=>$item[0],'post_excerpt'=>$item[1],'post_content'=>$item[1]]);
+    }
+  }
+}
+add_action('init',function(){if(get_option('hcdecor_seed_v1')!=='done'){hcdecor_seed_services();update_option('hcdecor_seed_v1','done');}},20);
+
+add_action('after_setup_theme',function(){
+  add_theme_support('post-thumbnails');
+  add_theme_support('title-tag');
+  add_theme_support('custom-logo');
+});
+
+add_action('wp_head',function(){
+  echo '<meta name="theme-color" content="#090b0d">';
+},1);
