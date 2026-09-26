@@ -34,8 +34,8 @@ add_action('init',function(){
     $cutoff=time()-120;
     $rows=$wpdb->get_col("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE 'hcdecor_claim_mutex_%' LIMIT 100");
     foreach((array)$rows as $name){
-        $token=(string)get_option($name,'');
-        if($token==='') delete_option($name);
+        $mutex=(array)get_option($name,[]);
+        if(empty($mutex['at']) || (int)$mutex['at']<$cutoff) delete_option($name);
     }
 },60);
 
@@ -55,7 +55,13 @@ add_action('rest_api_init',function(){
                 if($lock>$now) continue;
                 $claim_token=wp_generate_uuid4();
                 $mutex='hcdecor_claim_mutex_'.$j->ID;
-                if(!add_option($mutex,$claim_token,'',false)) continue;
+                if(!add_option($mutex,['token'=>$claim_token,'at'=>$now],'',false)){
+                    $existing=(array)get_option($mutex,[]);
+                    if(!empty($existing['at']) && (int)$existing['at']<($now-120)){
+                        delete_option($mutex);
+                        if(!add_option($mutex,['token'=>$claim_token,'at'=>$now],'',false)) continue;
+                    }else continue;
+                }
                 if((string)get_post_meta($j->ID,'hc_agent_status',true)!=='draft'){
                     delete_option($mutex);
                     continue;
