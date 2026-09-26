@@ -421,19 +421,23 @@ function hcdecor_health_auto_repair_schedules(){
         $cleanup_repairs[]='automation_watchdog';
     }
     if($last && time()-$last<3600) $missing=[];
+    $disabled_repairs=[];
     foreach($crons as $name=>$x){
         if(isset($required[$name]) && empty($required[$name]) && !empty($x['scheduled'])){
             $hook=['automation'=>'hcdecor_automation_tick','evergreen'=>'hcdecor_evergreen_tick','drive_inbox'=>'hcdecor_drive_inbox_tick'][$name]??'';
-            if($hook) wp_clear_scheduled_hook($hook);
+            if($hook){
+                wp_clear_scheduled_hook($hook);
+                $disabled_repairs[]=$name.'_disabled';
+            }
         }
     }
-    if(!$missing && !$cleanup_repairs) return false;
-    $names=array_merge(array_keys($missing),$cleanup_repairs);
+    if(!$missing && !$cleanup_repairs && !$disabled_repairs) return false;
+    $names=array_merge(array_keys($missing),$cleanup_repairs,$disabled_repairs);
     if($missing){
         hcdecor_health_repair_schedules($required);
         update_option('hcdecor_health_auto_repair_at',time(),false);
     }
-    update_option('hcdecor_health_auto_repair_last',['at'=>current_time('mysql'),'schedules'=>$names,'cron_repaired'=>array_values(array_keys($missing)),'cleanup_repaired'=>$cleanup_repairs],false);
+    update_option('hcdecor_health_auto_repair_last',['at'=>current_time('mysql'),'schedules'=>$names,'cron_repaired'=>array_values(array_keys($missing)),'cleanup_repaired'=>$cleanup_repairs,'disabled_crons_cleared'=>$disabled_repairs],false);
     return true;
 }
 
