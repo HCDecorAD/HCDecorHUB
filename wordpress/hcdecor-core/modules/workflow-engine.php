@@ -152,6 +152,7 @@ add_action('rest_api_init',function(){
                                     delete_option($mutex);
                                     return hcdecor_workflow_claim_response($j,$claim_token);
                                 }
+                                if((string)get_post_meta($j->ID,'hc_agent_claim_token',true)===$claim_token) hcdecor_workflow_clear_worker_claim($j->ID,true);
                             }
                         }
                     }
