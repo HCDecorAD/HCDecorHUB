@@ -29,6 +29,7 @@ curl.exe -fL "%BASE%/hcdecor-core/modules/web-publisher.php?v=%V%" -o "%P%\modul
 curl.exe -fL "%BASE%/hcdecor-core/modules/automation-hub.php?v=%V%" -o "%P%\modules\automation-hub.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/automation-recipes.php?v=%V%" -o "%P%\modules\automation-recipes.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/drive-vault.php?v=%V%" -o "%P%\modules\drive-vault.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/drive-inbox.php?v=%V%" -o "%P%\modules\drive-inbox.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/data-backup.php?v=%V%" -o "%P%\modules\data-backup.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/data-restore.php?v=%V%" -o "%P%\modules\data-restore.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/system-health.php?v=%V%" -o "%P%\modules\system-health.php.new" >>"%LOG%" 2>&1 || goto :syncfail
@@ -49,6 +50,7 @@ move /y "%P%\modules\web-publisher.php.new" "%P%\modules\web-publisher.php" >nul
 move /y "%P%\modules\automation-hub.php.new" "%P%\modules\automation-hub.php" >nul
 move /y "%P%\modules\automation-recipes.php.new" "%P%\modules\automation-recipes.php" >nul
 move /y "%P%\modules\drive-vault.php.new" "%P%\modules\drive-vault.php" >nul
+move /y "%P%\modules\drive-inbox.php.new" "%P%\modules\drive-inbox.php" >nul
 move /y "%P%\modules\data-backup.php.new" "%P%\modules\data-backup.php" >nul
 move /y "%P%\modules\data-restore.php.new" "%P%\modules\data-restore.php" >nul
 move /y "%P%\modules\system-health.php.new" "%P%\modules\system-health.php" >nul
@@ -85,6 +87,7 @@ echo [OK] Media Manager
 echo [OK] Automation HUB
 echo [OK] Recipe Engine
 echo [OK] Drive Vault
+echo [OK] Drive Inbox
 echo [OK] Data Backups
 echo [OK] Restore Center
 echo [OK] System Health
@@ -103,7 +106,7 @@ echo ==================================================
 exit /b 0
 
 :syncfail
-del /q "%P%\hcdecor-core.php.new" "%P%\homepage-builder.php.new" "%P%\assets\hcdecor-homepage.css.new" "%P%\modules\content-operations.php.new" "%P%\modules\workflow-engine.php.new" "%P%\modules\ai-providers.php.new" "%P%\modules\media-intelligence.php.new" "%P%\modules\agent-intake.php.new" "%P%\modules\ai-workspace.php.new" "%P%\modules\web-publisher.php.new" "%P%\modules\automation-hub.php.new" "%P%\modules\automation-recipes.php.new" "%P%\modules\drive-vault.php.new" "%P%\modules\data-backup.php.new" "%P%\modules\data-restore.php.new" "%P%\modules\system-health.php.new" "%P%\modules\background-sync.php.new" "%P%\modules\project-publishing.php.new" "%P%\modules\media-manager.php.new" "%P%\modules\admin-cleanup.php.new" >nul 2>&1
+del /q "%P%\hcdecor-core.php.new" "%P%\homepage-builder.php.new" "%P%\assets\hcdecor-homepage.css.new" "%P%\modules\content-operations.php.new" "%P%\modules\workflow-engine.php.new" "%P%\modules\ai-providers.php.new" "%P%\modules\media-intelligence.php.new" "%P%\modules\agent-intake.php.new" "%P%\modules\ai-workspace.php.new" "%P%\modules\web-publisher.php.new" "%P%\modules\automation-hub.php.new" "%P%\modules\automation-recipes.php.new" "%P%\modules\drive-vault.php.new" "%P%\modules\drive-inbox.php.new" "%P%\modules\data-backup.php.new" "%P%\modules\data-restore.php.new" "%P%\modules\system-health.php.new" "%P%\modules\background-sync.php.new" "%P%\modules\project-publishing.php.new" "%P%\modules\media-manager.php.new" "%P%\modules\admin-cleanup.php.new" >nul 2>&1
 echo [WARN] Source Sync failed. Existing local files kept intact.
 goto :continue_after_sync
 
