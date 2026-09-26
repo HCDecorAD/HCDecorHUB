@@ -43,7 +43,7 @@ add_action('hcdecor_ai_process_job',function($job_id){
     $job_id=(int)$job_id;
     if(get_post_type($job_id)!=='hc_content_job') return;
     $status=(string)get_post_meta($job_id,'hc_agent_status',true);
-    if(!in_array($status,['draft','failed'],true)) return;
+    if($status!=='draft') return;
     if(!function_exists('hcdecor_ai_generate_job')) return;
     update_post_meta($job_id,'hc_agent_lock_until',time()+180);
     if(function_exists('hcdecor_workflow_set_status')){
