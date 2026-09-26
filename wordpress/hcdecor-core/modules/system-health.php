@@ -118,6 +118,10 @@ function hcdecor_health_snapshot(){
     $drive_configured=function_exists('hcdecor_drive_configured')&&hcdecor_drive_configured();
     $drive_test=(string)get_option('hcdecor_drive_test_status','');
     $auto_settings=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
+    $cron_required=['background_sync'=>true,'ai_worker'=>true,'backup'=>true,'health_report'=>true];
+    $cron_required['automation']=!isset($auto_settings['enabled']) || !empty($auto_settings['enabled']);
+    $cron_required['evergreen']=!empty($auto_settings['evergreen_enabled']);
+    $cron_required['drive_inbox']=!isset($inbox_settings['enabled']) || !empty($inbox_settings['enabled']);
     $bridge=(string)get_option('hcdecor_bridge_token','');
     $actionable_blocked=hcdecor_health_actionable_blocked_count();
     $backup_last=(string)get_option('hcdecor_backup_last_at','');
@@ -158,7 +162,7 @@ function hcdecor_health_snapshot(){
 
     $issues=[];
     foreach($modules as $name=>$ok) if(!$ok) $issues[]='Missing module: '.$name;
-    foreach($crons as $name=>$x) if(!$x['scheduled']) $issues[]='Cron missing: '.$name;
+    foreach($crons as $name=>$x) if(!empty($cron_required[$name]) && !$x['scheduled']) $issues[]='Cron missing: '.$name;
     if(hcdecor_health_provider('openai')==='error') $issues[]='OpenAI test error';
     if(hcdecor_health_provider('gemini')==='error') $issues[]='Gemini test error';
     if($drive_configured && $drive_test==='error') $issues[]='Google Drive connection error';
@@ -182,7 +186,7 @@ function hcdecor_health_snapshot(){
 
     $score=100;
     $score-=count(array_filter($modules,function($v){return !$v;}))*8;
-    $score-=count(array_filter($crons,function($v){return !$v['scheduled'];}))*5;
+    $score-=count(array_filter($crons,function($v,$name)use($cron_required){return !empty($cron_required[$name]) && !$v['scheduled'];},ARRAY_FILTER_USE_BOTH))*5;
     if(in_array('error',[hcdecor_health_provider('openai'),hcdecor_health_provider('gemini')],true)) $score-=10;
     if($drive_configured && $drive_test==='error') $score-=10;
     if($auto['failed']>0) $score-=min(15,$auto['failed']*3);
