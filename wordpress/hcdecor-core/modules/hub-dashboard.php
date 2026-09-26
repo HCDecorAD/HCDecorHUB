@@ -152,8 +152,12 @@ function hcdecor_hub_dashboard_attention($s){
         if(strpos($label,'Automation failed:')===0 || strpos($label,'Automation blocked:')===0) continue;
         $add('bad',$label,admin_url('admin.php?page=hcdecor-system-health'));
     }
+    $review=(int)($c['job_status']['review']??0);
+    $published=(int)($c['job_status']['published_web']??0);
     $failed=(int)($c['job_status']['failed']??0);
     if($failed>0) $add('bad',$failed.' content job(s) failed',admin_url('admin.php?page=hcdecor-content-operations'));
+    if((int)($h['stale_processing']??0)>0) $add('bad',(int)$h['stale_processing'].' processing job(s) stale',admin_url('admin.php?page=hcdecor-review'));
+    if((int)($h['review_oldest_age_seconds']??0)>86400) $add('warn','Review queue has item waiting over 24 hours',admin_url('admin.php?page=hcdecor-review'));
     $blocked=(int)($c['automation']['blocked']??0);
     $auto_failed=(int)($c['automation']['failed']??0);
     if($blocked>0) $add('warn',$blocked.' automation task(s) blocked',admin_url('admin.php?page=hcdecor-automation'));
@@ -175,6 +179,19 @@ function hcdecor_hub_dashboard_attention($s){
         return ($priority[$a['level']]??2)<=>($priority[$b['level']]??2);
     });
     return array_slice($items,0,8);
+}
+
+function hcdecor_hub_dashboard_pipeline($s){
+    $j=(array)($s['counts']['job_status']??[]);
+    $total=array_sum(array_map('intval',$j));
+    $published=(int)($j['published_web']??0);
+    $failed=(int)($j['failed']??0);
+    $active=max(0,$total-$published-$failed);
+    return [
+        'total'=>$total,'active'=>$active,'review'=>(int)($j['review']??0),
+        'approved'=>(int)($j['approved']??0),'published'=>$published,'failed'=>$failed,
+        'publish_rate'=>$total>0?(int)round(($published/$total)*100):0
+    ];
 }
 
 function hcdecor_hub_dashboard_readiness($s){
@@ -206,6 +223,7 @@ function hcdecor_hub_dashboard_page(){
     $social=!empty($s['automation']['social_enabled']);
     $attention=hcdecor_hub_dashboard_attention($s);
     $readiness=hcdecor_hub_dashboard_readiness($s);
+    $pipeline=hcdecor_hub_dashboard_pipeline($s);
     ?>
     <div class="wrap hchub">
       <style>
@@ -253,7 +271,7 @@ function hcdecor_hub_dashboard_page(){
       <div class="hchub-kpis">
         <div class="hchub-card"><div class="num"><?php echo (int)$c['projects_publish'];?></div><strong>Projects Live</strong><br><small><?php echo (int)$c['projects_draft'];?> draft</small></div>
         <div class="hchub-card"><div class="num"><?php echo (int)$c['media'];?></div><strong>Media</strong><br><small>WordPress library</small></div>
-        <div class="hchub-card"><div class="num"><?php echo (int)$c['jobs'];?></div><strong>Content Jobs</strong><br><small><?php echo (int)$c['job_status']['review'];?> review</small></div>
+        <div class="hchub-card"><div class="num"><?php echo (int)$c['jobs'];?></div><strong>Content Jobs</strong><br><small><?php echo (int)$pipeline['review'];?> review · <?php echo (int)$pipeline['published'];?> published · <?php echo (int)$pipeline['failed'];?> failed</small></div>
         <div class="hchub-card"><div class="num"><?php echo (int)($c['automation']['queued']+$c['automation']['scheduled']);?></div><strong>Automation</strong><br><small><?php echo (int)$c['automation']['failed'];?> failed</small></div>
         <div class="hchub-card"><div class="num"><?php echo $health_score;?>%</div><strong>System Health</strong><br><span class="hchub-badge <?php echo esc_attr(hcdecor_hub_dashboard_badge($health_state));?>"><?php echo esc_html(strtoupper($health_state));?></span></div>
         <div class="hchub-card"><div class="num"><?php echo (int)$s['project_vault_synced'];?></div><strong>Project Vault</strong><br><small>Drive manifests</small></div>
