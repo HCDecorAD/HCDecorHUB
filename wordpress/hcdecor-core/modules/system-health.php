@@ -234,6 +234,9 @@ function hcdecor_health_snapshot(){
     $worker_mutex_sweep_ts=(int)($worker_mutex_sweep['ts']??0);
     if(!$worker_mutex_sweep_ts && !empty($worker_mutex_sweep['at'])) $worker_mutex_sweep_ts=strtotime((string)$worker_mutex_sweep['at'])?:0;
     $worker_mutex_sweep_fresh=$worker_mutex_sweep_ts>=(time()-600);
+    $worker_sweep_mutex=(array)get_option('hcdecor_worker_mutex_sweep_mutex',[]);
+    $worker_sweep_mutex_at=(int)($worker_sweep_mutex['at']??0);
+    $worker_sweep_mutex_stale=$worker_sweep_mutex_at>0 && $worker_sweep_mutex_at<(time()-30);
     $automation_last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
     $automation_cleanup_raw=get_option('hcdecor_automation_cleanup_mutex',[]);
     $automation_cleanup_mutex=is_array($automation_cleanup_raw)?(int)($automation_cleanup_raw['at']??0):(int)$automation_cleanup_raw;
@@ -244,6 +247,7 @@ function hcdecor_health_snapshot(){
         if(!wp_next_scheduled('hcdecor_automation_cleanup_tick') && !wp_next_scheduled('hcdecor_automation_cleanup_watchdog') && !$automation_cleanup_running) $issues[]='Automation cleanup backlog has no scheduled continuation';
     }
     if($automation_cleanup_stale) $issues[]='Automation cleanup mutex is stale';
+    if($worker_sweep_mutex_stale) $issues[]='Worker mutex sweep execution lock is stale';
     if($worker_mutex_sweep_fresh && !empty($worker_mutex_sweep['limited']) && !wp_next_scheduled('hcdecor_worker_mutex_sweep_tick')) $issues[]='Worker mutex sweep is bounded without scheduled continuation';
     if(empty($automation_last_change['cleanup_limited']) && wp_next_scheduled('hcdecor_automation_cleanup_watchdog')) $issues[]='Automation cleanup watchdog is orphaned';
     if($bridge==='') $issues[]='Agent Bridge token missing';
@@ -361,6 +365,7 @@ function hcdecor_health_snapshot(){
             'recovery_scan_limited'=>$worker_recovery_scan_limited,
             'mutex_sweep'=>$worker_mutex_sweep,
             'mutex_sweep_fresh'=>$worker_mutex_sweep_fresh,
+            'mutex_sweep_lock_stale'=>$worker_sweep_mutex_stale,
             'mutex_sweep_next'=>wp_next_scheduled('hcdecor_worker_mutex_sweep_tick')?:0
         ],
         'review_oldest_age_seconds'=>$oldest_review_age,
