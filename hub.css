@@ -9,3 +9,6 @@ input,textarea,.channels label{background:#090a0b;border-color:#b8783228}
 button{background:linear-gradient(110deg,#955625,#e1a85e,#9b5b27);border:1px solid #efc47a55}
 .upload{border-color:#b8783255}
 @media(max-width:720px){main{padding:34px 16px}.hero{margin-bottom:30px}.hero h1{font-size:38px;line-height:1.04}.grid{gap:10px}article,.preview{padding:18px;border-radius:14px}.actions{display:grid;grid-template-columns:1fr 1fr}.actions button{padding:13px 8px}}
+
+/* HUB V2 draft operations */
+.secondary{margin-top:8px}.secondary button{background:#141719;color:#d9b56d;border:1px solid #b8783240}.draft-head{display:flex;align-items:center;justify-content:space-between}.draft-head span{color:var(--muted);font-size:12px}.draft{position:relative}.draft b{display:block;padding-right:100px}.draft-actions{display:flex;gap:7px;margin-top:12px}.draft-actions button{padding:8px 11px;font-size:12px;background:#181a1c;color:#ddd;border:1px solid #ffffff12}.draft-actions button:last-child{color:#e5a39b}@media(max-width:720px){.secondary{grid-template-columns:1fr 1fr}.draft b{padding-right:0}.drafts>div{padding:16px}.draft-actions button{flex:1}}
