@@ -285,12 +285,16 @@ add_action('admin_menu',function(){
 },28);
 
 function hcdecor_auto_block_pending_for_settings($settings,$limit=100){
-    $ids=get_posts([
-        'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>max(1,min(200,(int)$limit)),'fields'=>'ids',
-        'meta_query'=>[['key'=>'hc_auto_status','value'=>['queued','scheduled'],'compare'=>'IN']]
-    ]);
-    $blocked=0;
-    foreach($ids as $id){
+    $blocked=0; $remaining=max(1,min(500,(int)$limit)); $page=1;
+    while($remaining>0){
+        $batch=min(100,$remaining);
+        $ids=get_posts([
+            'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>$batch,'fields'=>'ids',
+            'meta_query'=>[['key'=>'hc_auto_status','value'=>['queued','scheduled'],'compare'=>'IN']],
+            'paged'=>$page,'orderby'=>'ID','order'=>'ASC'
+        ]);
+        if(!$ids) break;
+        foreach($ids as $id){
         $type=(string)get_post_meta($id,'hc_auto_type',true);
         $reason='';
         if(empty($settings['enabled'])) $reason='Automation HUB is OFF';
@@ -302,6 +306,10 @@ function hcdecor_auto_block_pending_for_settings($settings,$limit=100){
             hcdecor_auto_log($id,'blocked',$reason.' after settings change');
             $blocked++;
         }
+        }
+        $remaining-=count($ids);
+        if(count($ids)<$batch) break;
+        $page++;
     }
     return $blocked;
 }
@@ -325,7 +333,7 @@ add_action('admin_post_hcdecor_automation_settings',function(){
     // Evergreen only produces social outbound; never leave it enabled without social.
     if($new['evergreen_enabled'] && !$new['social_enabled']) $new['evergreen_enabled']=false;
     update_option('hcdecor_automation_settings',$new,false);
-    $blocked_now=hcdecor_auto_block_pending_for_settings($new,100);
+    $blocked_now=hcdecor_auto_block_pending_for_settings($new,500);
     update_option('hcdecor_automation_settings_last_change',[
         'at'=>current_time('mysql'),
         'by'=>get_current_user_id(),
