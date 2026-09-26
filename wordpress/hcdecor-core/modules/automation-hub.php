@@ -285,36 +285,31 @@ add_action('admin_menu',function(){
 },28);
 
 function hcdecor_auto_block_pending_for_settings($settings,$limit=100){
-    $blocked=0; $scanned=0; $remaining=max(1,min(500,(int)$limit)); $offset=0;
-    while($remaining>0){
-        $batch=min(100,$remaining);
-        $ids=get_posts([
-            'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>$batch,'fields'=>'ids',
-            'meta_query'=>[['key'=>'hc_auto_status','value'=>['queued','scheduled'],'compare'=>'IN']],
-            'offset'=>$offset,'orderby'=>'ID','order'=>'ASC'
-        ]);
-        if(!$ids) break;
-        $unchanged=0;
-        foreach($ids as $id){
-            $scanned++; $remaining--;
-            $type=(string)get_post_meta($id,'hc_auto_type',true);
-            $reason='';
-            if(empty($settings['enabled'])) $reason='Automation HUB is OFF';
-            elseif($type==='social_publish' && empty($settings['social_enabled'])) $reason='Social outbound is OFF';
-            elseif($type==='webhook' && (empty($settings['webhook_enabled']) || empty($settings['webhook_url']))) $reason='Webhook outbound is OFF';
-            elseif($type==='evergreen' && (empty($settings['evergreen_enabled']) || empty($settings['social_enabled']))) $reason='Evergreen social outbound is OFF';
-            if($reason!==''){
-                update_post_meta($id,'hc_auto_status','blocked');
-                hcdecor_auto_log($id,'blocked',$reason.' after settings change');
-                $blocked++;
-            }else $unchanged++;
-            if($remaining<=0) break;
-        }
-        // Only unchanged rows remain in the pending result set; advance past those.
-        $offset+=$unchanged;
-        if(count($ids)<$batch) break;
+    $limit=max(1,min(500,(int)$limit)); $types=[]; $master_off=empty($settings['enabled']);
+    if(!$master_off){
+        if(empty($settings['social_enabled'])) $types[]='social_publish';
+        if(empty($settings['webhook_enabled']) || empty($settings['webhook_url'])) $types[]='webhook';
+        if(empty($settings['evergreen_enabled']) || empty($settings['social_enabled'])) $types[]='evergreen';
     }
-    return ['blocked'=>$blocked,'scanned'=>$scanned,'limited'=>$remaining<=0];
+    if(!$master_off && !$types) return ['blocked'=>0,'scanned'=>0,'limited'=>false];
+    $meta=[
+        'relation'=>'AND',
+        ['key'=>'hc_auto_status','value'=>['queued','scheduled'],'compare'=>'IN']
+    ];
+    if(!$master_off) $meta[]=['key'=>'hc_auto_type','value'=>array_values(array_unique($types)),'compare'=>'IN'];
+    $ids=get_posts([
+        'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>$limit+1,'fields'=>'ids',
+        'meta_query'=>$meta,'orderby'=>'ID','order'=>'ASC'
+    ]);
+    $limited=count($ids)>$limit;
+    if($limited) $ids=array_slice($ids,0,$limit);
+    foreach($ids as $id){
+        $type=(string)get_post_meta($id,'hc_auto_type',true);
+        $reason=$master_off?'Automation HUB is OFF':($type==='social_publish'?'Social outbound is OFF':($type==='webhook'?'Webhook outbound is OFF':'Evergreen social outbound is OFF'));
+        update_post_meta($id,'hc_auto_status','blocked');
+        hcdecor_auto_log($id,'blocked',$reason.' after settings change');
+    }
+    return ['blocked'=>count($ids),'scanned'=>count($ids),'limited'=>$limited];
 }
 
 add_action('admin_post_hcdecor_automation_settings',function(){
