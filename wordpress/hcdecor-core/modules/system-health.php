@@ -248,6 +248,7 @@ function hcdecor_health_snapshot(){
     }
     if($automation_cleanup_stale) $issues[]='Automation cleanup mutex is stale';
     if($worker_sweep_mutex_stale) $issues[]='Worker mutex sweep execution lock is stale';
+    if(!$worker_mutex_sweep_fresh && !wp_next_scheduled('hcdecor_worker_mutex_sweep_tick') && !$worker_sweep_mutex_at) $issues[]='Worker mutex sweep audit is stale without refresh';
     if($worker_mutex_sweep_fresh && !empty($worker_mutex_sweep['limited']) && !wp_next_scheduled('hcdecor_worker_mutex_sweep_tick')) $issues[]='Worker mutex sweep is bounded without scheduled continuation';
     if(empty($automation_last_change['cleanup_limited']) && wp_next_scheduled('hcdecor_automation_cleanup_watchdog')) $issues[]='Automation cleanup watchdog is orphaned';
     if($bridge==='') $issues[]='Agent Bridge token missing';
