@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) exit;
 
 /**
  * HCDecor managed background sync.
- * Pulls only files declared in the public manifest, verifies SHA-256, writes atomically.
+ * Pulls only files declared in the public manifest, verifies Git blob SHA, writes atomically.
  */
 define('HCDECOR_SYNC_MANIFEST','https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-sync-manifest.json');
 
@@ -29,13 +29,13 @@ function hcdecor_run_background_sync(){
     $changed=0;
     foreach($m['files'] as $f){
         $rel=ltrim((string)($f['path']??''),'/');
-        if(!$rel||strpos($rel,'..')!==false||empty($f['url'])||empty($f['sha256'])) continue;
+        if(!$rel||strpos($rel,'..')!==false||empty($f['url'])||empty($f['git_sha1'])) continue;
         $target=$base.$rel;
         $rr=wp_remote_get($f['url'].(strpos($f['url'],'?')===false?'?':'&').'v='.rawurlencode((string)($m['version']??time())),['timeout'=>20,'headers'=>['Cache-Control'=>'no-cache']]);
         if(is_wp_error($rr)||wp_remote_retrieve_response_code($rr)!==200) continue;
         $body=wp_remote_retrieve_body($rr);
-        if(!hash_equals(strtolower($f['sha256']),hash('sha256',$body))) continue;
-        if(file_exists($target)&&hash_file('sha256',$target)===strtolower($f['sha256'])) continue;
+        $git_sha=sha1('blob '.strlen($body)."\0".$body); if(!hash_equals(strtolower($f['git_sha1']),$git_sha)) continue;
+        if(file_exists($target)){ $local=file_get_contents($target); if($local!==false && sha1('blob '.strlen($local)."\0".$local)===strtolower($f['git_sha1'])) continue; }
         if(hcdecor_sync_atomic($target,$body)) $changed++;
     }
     update_option('hcdecor_sync_version',sanitize_text_field($m['version']??''));
