@@ -160,6 +160,7 @@ function hcdecor_hub_dashboard_attention($s){
     if($auto_failed>0) $add('bad',$auto_failed.' automation task(s) failed',admin_url('admin.php?page=hcdecor-automation'));
     if(!empty($s['inbox']['enabled']) && !empty($h['inbox']['error'])) $add('bad','Drive Inbox: '.(string)$h['inbox']['error'],admin_url('admin.php?page=hcdecor-drive-inbox'));
     if(!empty($h['backup']['error'])) $add('bad','Backup: '.(string)$h['backup']['error'],admin_url('admin.php?page=hcdecor-data-backups'));
+    elseif(empty($h['backup']['fresh'])) $add('warn','Backup is missing or older than 36 hours',admin_url('admin.php?page=hcdecor-data-backups'));
     if(!empty($h['restore']['error'])) $add('bad','Restore: '.(string)$h['restore']['error'],admin_url('admin.php?page=hcdecor-restore-center'));
     $total_projects=(int)($c['projects_publish']??0)+(int)($c['projects_draft']??0);
     $pending=max(0,$total_projects-(int)($s['project_vault_synced']??0));
@@ -179,7 +180,8 @@ function hcdecor_hub_dashboard_readiness($s){
         'Drive Vault'=>!empty($s['drive']) && (string)($s['drive_test']??'')==='ok',
         'AI provider'=>in_array((string)($h['ai']['openai']??'off'),['ok','configured'],true) || in_array((string)($h['ai']['gemini']??'off'),['ok','configured'],true),
         'Web publisher'=>!empty($h['publisher']['ready']),
-        'Backup'=>!empty($h['backup']['ready']),
+        'Backup'=>!empty($h['backup']['ready']) && !empty($h['backup']['fresh']),
+        'Project Vault'=>!empty($h['project_vault']['ready']) && (int)($h['project_vault']['pending_projects']??0)===0,
         'Agent Bridge'=>!empty($h['bridge']['ready'])
     ];
     $ready=count(array_filter($checks));
