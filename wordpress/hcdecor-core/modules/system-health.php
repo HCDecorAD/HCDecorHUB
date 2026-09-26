@@ -137,6 +137,13 @@ function hcdecor_health_snapshot(){
     $project_total=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'fields'=>'ids']))->found_posts;
     $vault_synced=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_file_id','fields'=>'ids']))->found_posts;
     $vault_errors=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_error','meta_compare'=>'EXISTS','fields'=>'ids']))->found_posts;
+    $vault_stale=0;
+    $vault_ids=get_posts(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'numberposts'=>100,'fields'=>'ids','meta_key'=>'hc_drive_project_file_id','meta_compare'=>'EXISTS']);
+    foreach($vault_ids as $pid){
+        $synced=strtotime((string)get_post_meta($pid,'hc_drive_project_synced_at',true))?:0;
+        $modified=strtotime((string)get_post_field('post_modified',$pid))?:0;
+        if($modified>0 && ($synced===0 || $modified>$synced+5)) $vault_stale++;
+    }
 
     $issues=[];
     foreach($modules as $name=>$ok) if(!$ok) $issues[]='Missing module: '.$name;
@@ -151,6 +158,7 @@ function hcdecor_health_snapshot(){
     elseif($drive_configured && $backup_age>129600) $issues[]='Backup is stale (>36h)';
     if($drive_configured && $project_total>0 && $vault_synced<$project_total) $issues[]='Project Vault pending: '.($project_total-$vault_synced);
     if($vault_errors>0) $issues[]='Project Vault errors: '.$vault_errors;
+    if($vault_stale>0) $issues[]='Project Vault stale: '.$vault_stale;
     $inbox_settings=function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[];
     if(!empty($inbox_settings['enabled']) && $inbox_ts===0) $issues[]='Drive Inbox has never completed';
     elseif(!empty($inbox_settings['enabled']) && $inbox_age>1800) $issues[]='Drive Inbox is stale (>30 min)';
@@ -166,6 +174,7 @@ function hcdecor_health_snapshot(){
     if($drive_configured && ($backup_ts===0 || $backup_age>129600)) $score-=8;
     if($drive_configured && $project_total>0 && $vault_synced<$project_total) $score-=min(8,$project_total-$vault_synced);
     if($vault_errors>0) $score-=min(10,$vault_errors*2);
+    if($vault_stale>0) $score-=min(8,$vault_stale);
     if(!empty($inbox_settings['enabled']) && ($inbox_ts===0 || $inbox_age>1800)) $score-=5;
     if($stale_processing>0) $score-=min(10,$stale_processing*2);
     $score=max(0,min(100,$score));
@@ -198,7 +207,8 @@ function hcdecor_health_snapshot(){
             'total_projects'=>$project_total,
             'synced_projects'=>$vault_synced,
             'pending_projects'=>max(0,$project_total-$vault_synced),
-            'error_projects'=>$vault_errors
+            'error_projects'=>$vault_errors,
+            'stale_projects'=>$vault_stale
         ],
         'inbox'=>[
             'settings'=>$inbox_settings,
