@@ -57,7 +57,8 @@ function hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed=true,$clear_
 function hcdecor_workflow_claim_mutex_release($job_id,$claim_token){
     $key='hcdecor_claim_mutex_'.(int)$job_id;
     $mutex=(array)get_option($key,[]);
-    if($claim_token!=='' && (string)($mutex['token']??'')===$claim_token) delete_option($key);
+    if($claim_token==='' || (string)($mutex['token']??'')!==$claim_token) return false;
+    return hcdecor_workflow_claim_mutex_delete_if_same($key,$mutex);
 }
 
 function hcdecor_workflow_clear_owned_claim($job_id,$claim_token,$clear_claimed=true){
