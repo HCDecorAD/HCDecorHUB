@@ -8,3 +8,14 @@
 .hc-contact{padding-bottom:120px}
 @media(max-width:1024px){.hc-service-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:767px){.hc-hero,.hc-services,.hc-projects,.hc-process,.hc-contact{padding:64px 20px}.hc-hero h1{font-size:44px}.hc-service-grid{grid-template-columns:1fr}.hc-service-grid h3{min-height:150px}}
+
+/* HCDecor Elementor homepage v2 */
+.hc-project-grid{display:grid!important;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:28px}
+.hc-project-card{min-height:320px;padding:28px!important;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:linear-gradient(180deg,#171b1f,#0f1215);display:flex!important;justify-content:flex-end}
+.hc-project-card h3{font-size:30px;margin:0}
+.hc-project-card p{color:#a6adb3}
+.hc-process-grid{display:grid!important;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:28px}
+.hc-process-grid .elementor-widget-text-editor{padding:24px;border-top:1px solid rgba(213,154,85,.55);background:#111417;min-height:130px}
+.hc-process-grid strong{font-size:28px;color:#d59a55}
+@media(max-width:1024px){.hc-project-grid{grid-template-columns:1fr 1fr}.hc-process-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:767px){.hc-project-grid,.hc-process-grid{grid-template-columns:1fr}.hc-project-card{min-height:210px}.hc-process-grid .elementor-widget-text-editor{min-height:auto}}
