@@ -14,6 +14,6 @@ add_action('admin_menu',function(){
 },999);
 
 add_filter('parent_file',function($parent){
-    if(isset($_GET['page']) && in_array($_GET['page'],['hcdecor-ai-workspace','hcdecor-content-operations','hcdecor-review','hcdecor-media','hcdecor-ai-providers','hcdecor-automation','hcdecor-drive-vault','hcdecor-drive-inbox','hcdecor-data-backups','hcdecor-restore-center','hcdecor-system-health','hcdecor-bridge'],true)) return 'hcdecor-hub';
+    if(isset($_GET['page']) && in_array($_GET['page'],['hcdecor-ai-workspace','hcdecor-content-operations','hcdecor-review','hcdecor-media','hcdecor-ai-providers','hcdecor-automation','hcdecor-drive-vault','hcdecor-drive-inbox','hcdecor-project-vault','hcdecor-data-backups','hcdecor-restore-center','hcdecor-system-health','hcdecor-bridge'],true)) return 'hcdecor-hub';
     return $parent;
 });
