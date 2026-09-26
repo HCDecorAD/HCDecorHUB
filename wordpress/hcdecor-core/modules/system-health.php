@@ -143,6 +143,8 @@ function hcdecor_health_snapshot(){
     $project_total=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'fields'=>'ids']))->found_posts;
     $vault_synced=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_file_id','fields'=>'ids']))->found_posts;
     $vault_errors=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_error','meta_compare'=>'EXISTS','fields'=>'ids']))->found_posts;
+    $vault_retrying=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_retry_count','meta_value'=>0,'meta_compare'=>'>','fields'=>'ids']))->found_posts;
+    $backup_retry=(int)get_option('hcdecor_backup_retry_count',0);
     $vault_stale=0;
     $vault_ids=get_posts(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'numberposts'=>100,'fields'=>'ids','meta_key'=>'hc_drive_project_file_id','meta_compare'=>'EXISTS']);
     foreach($vault_ids as $pid){
@@ -164,6 +166,8 @@ function hcdecor_health_snapshot(){
     elseif($drive_configured && $backup_age>129600) $issues[]='Backup is stale (>36h)';
     if($drive_configured && $project_total>0 && $vault_synced<$project_total) $issues[]='Project Vault pending: '.($project_total-$vault_synced);
     if($vault_errors>0) $issues[]='Project Vault errors: '.$vault_errors;
+    if($vault_retrying>0) $issues[]='Project Vault retrying: '.$vault_retrying;
+    if($backup_retry>0) $issues[]='Backup retrying: attempt '.$backup_retry;
     if($vault_stale>0) $issues[]='Project Vault stale: '.$vault_stale;
     $inbox_settings=function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[];
     if(!empty($inbox_settings['enabled']) && $inbox_ts===0) $issues[]='Drive Inbox has never completed';
@@ -216,6 +220,7 @@ function hcdecor_health_snapshot(){
             'synced_projects'=>$vault_synced,
             'pending_projects'=>max(0,$project_total-$vault_synced),
             'error_projects'=>$vault_errors,
+            'retrying_projects'=>$vault_retrying,
             'stale_projects'=>$vault_stale
         ],
         'inbox'=>[
@@ -246,6 +251,7 @@ function hcdecor_health_snapshot(){
             'last_at'=>$backup_last,
             'age_seconds'=>$backup_age,
             'fresh'=>$backup_ts>0 && $backup_age<=129600,
+            'retry_count'=>$backup_retry,
             'error'=>(string)get_option('hcdecor_backup_last_error',''),
             'ready'=>function_exists('hcdecor_backup_save') && $drive_configured
         ],
