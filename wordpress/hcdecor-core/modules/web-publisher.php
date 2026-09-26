@@ -102,12 +102,11 @@ function hcdecor_rollback_job_publish($job_id){
     $cover=(int)($snapshot['cover']??0);
     if($cover && wp_attachment_is_image($cover)) set_post_thumbnail($project,$cover);
     else delete_post_thumbnail($project);
-    else delete_post_thumbnail($project);
 
-    update_post_meta($job_id,'hc_agent_status','approved');
+    if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($job_id,'approved','Rolled back Web publish');
+    else update_post_meta($job_id,'hc_agent_status','approved');
     update_post_meta($job_id,'hc_rollback_at',current_time('mysql'));
     update_post_meta($job_id,'hc_rollback_by',get_current_user_id());
-    if(function_exists('hcdecor_workflow_log')) hcdecor_workflow_log($job_id,'approved','Rolled back Web publish');
     return ['job_id'=>$job_id,'project_id'=>$project,'url'=>get_permalink($project)];
 }
 
