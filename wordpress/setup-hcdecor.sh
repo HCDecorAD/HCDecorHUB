@@ -1,48 +1,75 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
+trap 'echo; echo "HCDECOR BOOTSTRAP: FAIL at line $LINENO"; exit 1' ERR
 
-echo "== HCDecor WordPress bootstrap =="
-wp core is-installed >/dev/null || { echo "ERROR: Run this inside Local > Site shell."; exit 1; }
+pass(){ echo "[PASS] $1"; }
+step(){ echo; echo "== $1 =="; }
 
-echo "[1/7] Theme"
-wp theme install hello-elementor --activate
+step "Preflight"
+wp core is-installed >/dev/null
+pass "WordPress installed"
 
-echo "[2/7] Elementor"
-wp plugin install elementor --activate
+step "Theme + Elementor"
+wp theme install hello-elementor --activate >/dev/null || wp theme activate hello-elementor >/dev/null
+wp plugin is-installed elementor || wp plugin install elementor --activate
+wp plugin activate elementor >/dev/null || true
+wp theme is-active hello-elementor
+wp plugin is-active elementor
+pass "Hello Elementor + Elementor active"
 
-echo "[3/7] HCDecor Core"
-if wp plugin is-installed hcdecor-core; then
-  wp plugin activate hcdecor-core
-else
-  echo "HCDecor Core is not installed in wp-content/plugins/hcdecor-core."
-  echo "Copy/install the plugin first, then rerun this command."
-  exit 2
-fi
+step "HCDecor Core"
+wp plugin is-installed hcdecor-core
+wp plugin activate hcdecor-core >/dev/null || true
+wp plugin is-active hcdecor-core
+pass "HCDecor Core active"
 
-echo "[4/7] Permalinks"
-wp rewrite structure '/%postname%/' --hard
-wp rewrite flush --hard
+step "Site configuration"
+wp rewrite structure '/%postname%/' >/dev/null
+wp rewrite flush >/dev/null
+wp option update blogname 'HCDecor HUB' >/dev/null
+wp option update blogdescription 'Thiết kế · Thi công · Nội thất · Kiến trúc · 3D' >/dev/null
+wp option update elementor_disable_color_schemes yes >/dev/null
+wp option update elementor_disable_typography_schemes yes >/dev/null
+pass "Site options configured"
 
-echo "[5/7] Homepage"
-HOME_ID=$(wp post list --post_type=page --name=trang-chu --field=ID --format=ids | awk '{print $1}')
-if [ -n "${HOME_ID:-}" ]; then
-  wp option update show_on_front page
-  wp option update page_on_front "$HOME_ID"
-fi
+step "Homepage"
+HOME_ID="$(wp eval '$p=get_page_by_path("trang-chu"); echo $p ? $p->ID : "";')"
+test -n "$HOME_ID"
+wp option update show_on_front page >/dev/null
+wp option update page_on_front "$HOME_ID" >/dev/null
+test "$(wp option get page_on_front)" = "$HOME_ID"
+pass "Trang chủ assigned: ID $HOME_ID"
 
-echo "[6/7] Elementor settings"
-wp option update elementor_disable_color_schemes yes
-wp option update elementor_disable_typography_schemes yes
-wp option update blogname 'HCDecor HUB'
-wp option update blogdescription 'Thiết kế · Thi công · Nội thất · Kiến trúc · 3D'
+step "Required pages"
+for slug in trang-chu gioi-thieu dich-vu-hcdecor du-an-hcdecor lien-he; do
+  wp eval "$p=get_page_by_path('$slug'); if(!$p){fwrite(STDERR,'Missing $slug'.PHP_EOL); exit(1);}"
+done
+pass "5 required pages exist"
 
-echo "[7/7] Validation"
-wp core version
-wp theme status hello-elementor
-wp plugin status elementor
-wp plugin status hcdecor-core
-wp post list --post_type=page --fields=ID,post_title,post_status --format=table
-wp post list --post_type=hc_service --fields=ID,post_title,post_status --format=table
-echo "REST:"
-wp eval 'echo rest_url("hcdecor/v1/site").PHP_EOL;'
-echo "== HCDecor bootstrap PASS =="
+step "Services"
+for name in "Bảng hiệu" "Nội thất" "3D & Phối cảnh" "Kiến trúc"; do
+  wp eval "$p=get_page_by_title('$name',OBJECT,'hc_service'); if(!$p){fwrite(STDERR,'Missing service: $name'.PHP_EOL); exit(1);}"
+done
+pass "4 services exist"
+
+step "Project taxonomy"
+for name in "Bảng hiệu" "Nội thất" "3D & Phối cảnh" "Kiến trúc"; do
+  wp eval "$t=term_exists('$name','hc_project_type'); if(!$t){fwrite(STDERR,'Missing project type: $name'.PHP_EOL); exit(1);}"
+done
+pass "4 project types exist"
+
+step "REST API"
+wp eval '$r=rest_do_request("/hcdecor/v1/site"); if($r->is_error() || $r->get_status()!==200){fwrite(STDERR,"REST failed".PHP_EOL);exit(1);} echo "REST 200".PHP_EOL;'
+pass "HCDecor REST endpoint"
+
+step "Elementor homepage readiness"
+wp post meta update "$HOME_ID" _wp_page_template elementor_header_footer >/dev/null
+wp post meta update "$HOME_ID" _elementor_edit_mode builder >/dev/null
+pass "Homepage prepared for Elementor"
+
+echo
+echo "========================================"
+echo "HCDECOR BOOTSTRAP: PASS"
+echo "Homepage ID: $HOME_ID"
+echo "Next: open WordPress > Pages > Trang chủ > Edit with Elementor"
+echo "========================================"
