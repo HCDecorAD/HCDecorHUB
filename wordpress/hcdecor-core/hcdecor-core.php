@@ -2,7 +2,7 @@
 /**
  * Plugin Name: HCDecor Core
  * Description: Data/API foundation and bootstrap for HCDecor HUB + Elementor.
- * Version: 0.4.0
+ * Version: 0.5.0
  * Author: HCDecor
  */
 if (!defined('ABSPATH')) exit;
@@ -204,3 +204,24 @@ add_action('wp_footer',function(){
     <div><p><?php echo esc_html($s['contact']['address']); ?></p><a href="tel:<?php echo esc_attr($s['contact']['tel']); ?>">0888 821 842</a> · <a href="<?php echo esc_url($s['social']['zalo']); ?>">Zalo</a></div>
   </footer>
 <?php },5);
+
+
+/* Demo operations */
+add_action('init',function(){
+  register_post_type('hc_quote',[
+    'labels'=>['name'=>'Báo giá','singular_name'=>'Báo giá','add_new_item'=>'Tạo báo giá'],
+    'public'=>false,'show_ui'=>true,'menu_icon'=>'dashicons-media-spreadsheet',
+    'supports'=>['title','editor','custom-fields']
+  ]);
+});
+add_action('admin_menu',function(){
+  add_menu_page('HCDecor HUB','HCDecor HUB','edit_posts','hcdecor-hub','hcdecor_hub_admin','dashicons-layout',3);
+});
+function hcdecor_hub_admin(){
+  $projects=wp_count_posts('hc_project')->publish??0;
+  $quotes=wp_count_posts('hc_quote')->publish??0;
+  $media=wp_count_attachments()->inherit??0;
+  echo '<div class="wrap"><h1>HCDecor HUB · Demo</h1><p>Website · Dự án · Media · Báo giá · Automation</p>';
+  echo '<p><strong>Dự án:</strong> '.intval($projects).' &nbsp; <strong>Media:</strong> '.intval($media).' &nbsp; <strong>Báo giá:</strong> '.intval($quotes).'</p>';
+  echo '<p><a class="button button-primary" href="'.esc_url(admin_url('post-new.php?post_type=hc_project')).'">+ Tạo dự án</a> <a class="button" href="'.esc_url(admin_url('upload.php')).'">Upload hình ảnh</a> <a class="button" href="'.esc_url(admin_url('post-new.php?post_type=hc_quote')).'">+ Tạo báo giá</a></p></div>';
+}
