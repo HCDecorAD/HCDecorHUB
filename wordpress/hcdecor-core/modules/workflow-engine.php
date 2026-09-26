@@ -55,7 +55,7 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
         }
     }
     update_option('hcdecor_worker_mutex_sweep_last',[
-        'at'=>current_time('mysql'),'scanned'=>count($rows),'stale'=>$stale,'deleted'=>$deleted,'limited'=>$limited
+        'at'=>current_time('mysql'),'ts'=>time(),'scanned'=>count($rows),'stale'=>$stale,'deleted'=>$deleted,'limited'=>$limited
     ],false);
     $next=wp_next_scheduled('hcdecor_worker_mutex_sweep_tick');
     if($limited && !$next) wp_schedule_single_event(time()+30,'hcdecor_worker_mutex_sweep_tick');
@@ -63,7 +63,13 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     return compact('stale','deleted','limited');
 }
 
-add_action('init',function(){ hcdecor_workflow_sweep_claim_mutexes(100); },60);
+add_action('init',function(){
+    $last=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
+    $last_ts=(int)($last['ts']??0);
+    if(!$last_ts && !empty($last['at'])) $last_ts=strtotime((string)$last['at'])?:0;
+    if($last_ts && $last_ts>=time()-30) return;
+    hcdecor_workflow_sweep_claim_mutexes(100);
+},60);
 add_action('hcdecor_worker_mutex_sweep_tick',function(){ hcdecor_workflow_sweep_claim_mutexes(100); });
 
 function hcdecor_workflow_claim_mutex_delete_if_same($key,$observed){
