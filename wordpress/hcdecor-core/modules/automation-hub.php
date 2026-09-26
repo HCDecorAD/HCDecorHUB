@@ -219,14 +219,19 @@ function hcdecor_auto_recover_stale_running($limit=20){
         'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>max(1,min(50,(int)$limit)),'fields'=>'ids',
         'meta_query'=>[['key'=>'hc_auto_status','value'=>'running']]
     ]);
-    $recovered=0; $cutoff=time()-900;
+    $recovered=0; $now=time();
     foreach($ids as $id){
         $started=strtotime((string)get_post_meta($id,'hc_auto_started_at',true))?:0;
-        if($started && $started<$cutoff){
+        $modified=strtotime((string)get_post_field('post_modified',$id))?:0;
+        $reason='';
+        if($started && $started<($now-900)) $reason='running_timeout';
+        elseif(!$started && $modified && $modified<($now-1800)) $reason='missing_started_at';
+        if($reason!==''){
             update_post_meta($id,'hc_auto_status','failed');
-            update_post_meta($id,'hc_auto_last_error','Automation task exceeded 15 minute running timeout');
+            update_post_meta($id,'hc_auto_last_error',$reason==='running_timeout'?'Automation task exceeded 15 minute running timeout':'Automation running state missing start timestamp for over 30 minutes');
             update_post_meta($id,'hc_auto_recovered_at',current_time('mysql'));
-            hcdecor_auto_log($id,'recovered','Stale running task marked failed; manual retry available');
+            update_post_meta($id,'hc_auto_recovery_reason',$reason);
+            hcdecor_auto_log($id,'recovered',$reason==='running_timeout'?'Stale running task marked failed; manual retry available':'Legacy/corrupt running task missing start timestamp marked failed');
             $recovered++;
         }
     }
@@ -359,6 +364,7 @@ add_action('admin_post_hcdecor_automation_retry',function(){
     delete_post_meta($id,'hc_auto_started_at');
     delete_post_meta($id,'hc_auto_done_at');
     delete_post_meta($id,'hc_auto_recovered_at');
+    delete_post_meta($id,'hc_auto_recovery_reason');
     update_post_meta($id,'hc_auto_manual_retry_at',current_time('mysql'));
     update_post_meta($id,'hc_auto_manual_retry_by',get_current_user_id());
     hcdecor_auto_log($id,'manual_retry','Queued by administrator');
