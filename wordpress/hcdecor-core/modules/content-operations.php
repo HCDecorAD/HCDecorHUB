@@ -80,21 +80,9 @@ add_action('admin_post_hcdecor_ops_publish_web', function(){
     if(!current_user_can('publish_posts')) wp_die('Forbidden');
     $id=(int)($_POST['job_id']??0); check_admin_referer('hcdecor_ops_publish_'.$id);
     if(get_post_type($id)!=='hc_content_job') wp_die('Invalid job');
-    if(hcdecor_ops_get($id,'agent_status')!=='approved') wp_die('Job must be approved first.');
-    $project=(int)hcdecor_ops_get($id,'project_id');
-    if(!$project || get_post_type($project)!=='hc_project') wp_die('Invalid project');
-    $title=hcdecor_ops_get($id,'web_title',get_the_title($project));
-    $intro=hcdecor_ops_get($id,'web_intro');
-    $body=hcdecor_ops_get($id,'web_body');
-    wp_update_post(['ID'=>$project,'post_title'=>$title,'post_excerpt'=>$intro,'post_content'=>$body]);
-    $media=(array)hcdecor_ops_get($id,'media_ids',[]);
-    update_post_meta($project,'hc_project_gallery',$media);
-    $cover=(int)hcdecor_ops_get($id,'cover_id');
-    if($cover && wp_attachment_is_image($cover)) set_post_thumbnail($project,$cover);
-    update_post_meta($project,'hc_seo_meta',hcdecor_ops_get($id,'seo_meta'));
-    update_post_meta($id,'hc_agent_status','published_web');
-    update_post_meta($id,'hc_published_web_at',current_time('mysql'));
-    update_post_meta($id,'hc_outbound',false);
+    if(!function_exists('hcdecor_publish_job_to_web')) wp_die('Web publisher unavailable');
+    $r=hcdecor_publish_job_to_web($id);
+    if(is_wp_error($r)) wp_die($r->get_error_message());
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$id.'&published=1')); exit;
 });
 
