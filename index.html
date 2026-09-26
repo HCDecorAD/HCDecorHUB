@@ -87,11 +87,11 @@
   var main=document.querySelector('main'), ids=['home','services','projects','process','about'];
   (s.order||ids).forEach(function(id){var el=document.getElementById(id);if(el&&main)main.appendChild(el)});
   Object.entries(s.visible||{}).forEach(function(e){var el=document.getElementById(e[0]);if(el)el.style.display=e[1]?'':'none'});
-  var st=document.querySelector('#services h2'),pt=document.querySelector('#projects h2');if(st&&s.serviceTitle)st.textContent=s.serviceTitle;if(pt&&s.projectTitle)pt.textContent=s.projectTitle;
+  var st=document.querySelector('#services h2'),pt=document.querySelector('#projects h2');if(st&&s.serviceTitle)st.textContent=s.serviceTitle;if(pt&&s.projectTitle)pt.textContent=s.projectTitle;var ht=document.querySelector('#home h1'),hl=document.querySelector('#home .lead'),hc=document.querySelector('#home .hero-actions a'),hi=document.querySelector('#home .hero-photo img');if(ht&&s.heroTitle)ht.textContent=s.heroTitle;if(hl&&s.heroLead)hl.textContent=s.heroLead;if(hc&&s.heroCta)hc.textContent=s.heroCta;if(hi&&s.heroImage)hi.src=s.heroImage;
   document.querySelectorAll('#services .solution-art img').forEach(function(img,i){if(s.serviceImages&&s.serviceImages[i])img.src=s.serviceImages[i]});
   document.querySelectorAll('#projects .project>img').forEach(function(img,i){if(s.projectImages&&s.projectImages[i])img.src=s.projectImages[i]});
  }
- if(new URLSearchParams(location.search).has('adminPreview')){try{applyAdmin(JSON.parse(localStorage.getItem('hcdecor-admin-v2')||'null'))}catch(e){}}
+ if(new URLSearchParams(location.search).has('adminPreview')){try{applyAdmin(JSON.parse(localStorage.getItem('hcdecor-admin-v5')||'null'))}catch(e){}}
  addEventListener('message',function(e){if(e.origin===location.origin&&e.data&&e.data.type==='hcdecor-preview')applyAdmin(e.data.state)});
 })();
 </script>
