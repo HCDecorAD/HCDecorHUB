@@ -321,3 +321,9 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
 @media(max-width:390px){
   #process .section-head h2{font-size:24px!important;letter-spacing:-.04em!important}
 }
+
+/* VN / EN language control */
+.nav-tools{display:flex;align-items:center;gap:9px}
+.lang-toggle{display:inline-flex;align-items:center;gap:5px;border:1px solid #b77a3f66;background:#0d0d0dcc;color:#d9aa6a;border-radius:999px;padding:7px 10px;font:700 11px/1 system-ui;letter-spacing:.05em;cursor:pointer}
+.lang-flag{font-size:15px;line-height:1}.lang-toggle:hover,.lang-toggle:focus-visible{border-color:#d9aa6a;color:#f0c98e}
+@media(max-width:850px){.nav-tools{margin-left:auto}.nav>.menu-toggle{display:none}.nav-tools .menu-toggle{display:grid}.lang-toggle{padding:7px 9px}.nav .cta.small{display:none}}
