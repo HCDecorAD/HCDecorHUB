@@ -183,6 +183,12 @@ function hcdecor_hub_dashboard_attention($s){
     return array_slice($items,0,8);
 }
 
+function hcdecor_hub_dashboard_next_action($attention){
+    if(empty($attention)) return ['level'=>'ok','label'=>'System clear — continue normal Project → Content → Review → Publish flow.','url'=>admin_url('admin.php?page=hcdecor-hub')];
+    $x=(array)$attention[0];
+    return ['level'=>(string)($x['level']??'warn'),'label'=>(string)($x['label']??'Review attention queue'),'url'=>(string)($x['url']??admin_url('admin.php?page=hcdecor-hub'))];
+}
+
 function hcdecor_hub_dashboard_pipeline($s){
     $j=(array)($s['counts']['job_status']??[]);
     $total=array_sum(array_map('intval',$j));
@@ -225,6 +231,7 @@ function hcdecor_hub_dashboard_page(){
     $social=!empty($s['automation']['social_enabled']);
     $attention=hcdecor_hub_dashboard_attention($s);
     $readiness=hcdecor_hub_dashboard_readiness($s);
+    $next_action=hcdecor_hub_dashboard_next_action($attention);
     $pipeline=hcdecor_hub_dashboard_pipeline($s);
     $throughput=(array)($s['health']['throughput_7d']??[]);
     $auto_repair=(array)($s['health']['auto_repair']??[]);
