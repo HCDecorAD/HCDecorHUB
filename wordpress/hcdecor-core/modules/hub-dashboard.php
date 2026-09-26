@@ -227,6 +227,7 @@ function hcdecor_hub_dashboard_page(){
     $readiness=hcdecor_hub_dashboard_readiness($s);
     $pipeline=hcdecor_hub_dashboard_pipeline($s);
     $throughput=(array)($s['health']['throughput_7d']??[]);
+    $auto_repair=(array)($s['health']['auto_repair']??[]);
     ?>
     <div class="wrap hchub">
       <style>
@@ -276,6 +277,7 @@ function hcdecor_hub_dashboard_page(){
         <div class="hchub-card"><div class="num"><?php echo (int)$c['media'];?></div><strong>Media</strong><br><small>WordPress library</small></div>
         <div class="hchub-card"><div class="num"><?php echo (int)$c['jobs'];?></div><strong>Content Jobs</strong><br><small><?php echo (int)$pipeline['review'];?> review · <?php echo (int)$pipeline['published'];?> published · <?php echo (int)$pipeline['failed'];?> failed</small></div>
         <div class="hchub-card"><div class="num"><?php echo (int)($throughput['published']??0);?></div><strong>Published / 7 days</strong><br><small><?php echo (int)($throughput['created']??0);?> jobs created · <?php echo (int)($throughput['publish_rate']??0);?>% ratio</small></div>
+        <div class="hchub-card"><div class="num"><?php echo !empty($auto_repair['schedules'])?count((array)$auto_repair['schedules']):0;?></div><strong>Auto-repaired crons</strong><br><small><?php echo esc_html((string)($auto_repair['at']??'No repair needed'));?></small></div>
         <div class="hchub-card"><div class="num"><?php echo (int)($c['automation']['queued']+$c['automation']['scheduled']);?></div><strong>Automation</strong><br><small><?php echo (int)$c['automation']['failed'];?> failed</small></div>
         <div class="hchub-card"><div class="num"><?php echo $health_score;?>%</div><strong>System Health</strong><br><span class="hchub-badge <?php echo esc_attr(hcdecor_hub_dashboard_badge($health_state));?>"><?php echo esc_html(strtoupper($health_state));?></span></div>
         <div class="hchub-card"><div class="num"><?php echo (int)$s['project_vault_synced'];?></div><strong>Project Vault</strong><br><small>Drive manifests</small></div>
