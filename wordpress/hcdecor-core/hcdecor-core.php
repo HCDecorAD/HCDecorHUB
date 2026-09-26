@@ -218,12 +218,15 @@ add_action('admin_menu',function(){
   add_menu_page('HCDecor HUB','HCDecor HUB','edit_posts','hcdecor-hub','hcdecor_hub_admin','dashicons-layout',3);
 });
 function hcdecor_hub_admin(){
-  $projects=wp_count_posts('hc_project')->publish??0;
-  $quotes=wp_count_posts('hc_quote')->publish??0;
-  $media=wp_count_attachments()->inherit??0;
-  echo '<div class="wrap"><h1>HCDecor HUB · Demo</h1><p>Website · Dự án · Media · Báo giá · Automation</p>';
-  echo '<p><strong>Dự án:</strong> '.intval($projects).' &nbsp; <strong>Media:</strong> '.intval($media).' &nbsp; <strong>Báo giá:</strong> '.intval($quotes).'</p>';
-  echo '<p><a class="button button-primary" href="'.esc_url(admin_url('post-new.php?post_type=hc_project')).'">+ Tạo dự án</a> <a class="button" href="'.esc_url(admin_url('upload.php')).'">Upload hình ảnh</a> <a class="button" href="'.esc_url(admin_url('post-new.php?post_type=hc_quote')).'">+ Tạo báo giá</a></p></div>';
+  $projects=(int)(wp_count_posts('hc_project')->publish??0);
+  $media=(int)(wp_count_attachments()->inherit??0);
+  $jobs=(int)(wp_count_posts('hc_content_job')->publish??0);
+  echo '<div class="wrap"><h1>HCDecor HUB</h1><p><strong>Project → Media → Agent → Review → Publish Web</strong></p>';
+  echo '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,220px));gap:12px;margin:18px 0">';
+  foreach([['Dự án',$projects],['Media',$media],['Content Jobs',$jobs]] as $x) echo '<div style="background:#fff;border:1px solid #dcdcde;border-radius:12px;padding:18px"><strong style="font-size:28px">'.intval($x[1]).'</strong><br>'.esc_html($x[0]).'</div>';
+  echo '</div>';
+  echo '<p><a class="button button-primary" href="'.esc_url(admin_url('admin.php?page=hcdecor-content-operations')).'">Content Operations</a> <a class="button" href="'.esc_url(admin_url('admin.php?page=hcdecor-media')).'">Media Manager</a> <a class="button" href="'.esc_url(admin_url('edit.php?post_type=hc_project')).'">Projects</a> <a class="button" href="'.esc_url(admin_url('admin.php?page=hcdecor-bridge')).'">Agent Bridge</a></p>';
+  echo '<p><strong>Social outbound:</strong> OFF</p></div>';
 }
 
 
@@ -259,7 +262,7 @@ function hcdecor_master_seed_demo(){
   }
   update_option('hcdecor_master_demo_v1','done');
 }
-add_action('init','hcdecor_master_seed_demo',60);
+// Demo seeding disabled in production.
 
 
 /* HCDECOR_WORKFLOW_V2 */
@@ -473,7 +476,7 @@ function hcdecor_bridge_admin(){
 }
 
 /* HCDECOR_PRODUCTION_MODULES */
-foreach (['background-sync.php','content-operations.php','project-publishing.php'] as $hcdecor_module) {
+foreach (['background-sync.php','content-operations.php','project-publishing.php','media-manager.php','admin-cleanup.php'] as $hcdecor_module) {
     $hcdecor_module_path = plugin_dir_path(__FILE__) . 'modules/' . $hcdecor_module;
     if (is_readable($hcdecor_module_path)) require_once $hcdecor_module_path;
 }
