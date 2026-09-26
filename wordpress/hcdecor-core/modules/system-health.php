@@ -417,6 +417,15 @@ function hcdecor_health_auto_repair_schedules(){
     $missing=array_filter($crons,function($v,$name)use($required){ return !empty($required[$name]) && empty($v['scheduled']); },ARRAY_FILTER_USE_BOTH);
     $cleanup_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
     $cleanup_repairs=[];
+    $worker_sweep=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
+    $worker_sweep_next=wp_next_scheduled('hcdecor_worker_mutex_sweep_tick');
+    if(!empty($worker_sweep['limited']) && !$worker_sweep_next){
+        wp_schedule_single_event(time()+15,'hcdecor_worker_mutex_sweep_tick');
+        $cleanup_repairs[]='worker_mutex_sweep';
+    }elseif(empty($worker_sweep['limited']) && $worker_sweep_next){
+        wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
+        $cleanup_repairs[]='worker_mutex_sweep_orphan';
+    }
     $cleanup_mutex=(int)get_option('hcdecor_automation_cleanup_mutex',0);
     if($cleanup_mutex && $cleanup_mutex<(time()-120)){
         $deleted=function_exists('hcdecor_auto_cleanup_mutex_delete_if_same')
