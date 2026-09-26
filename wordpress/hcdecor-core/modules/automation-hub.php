@@ -139,6 +139,12 @@ function hcdecor_auto_prepare_social($project_id,$job_id=0){
 }
 
 function hcdecor_auto_run_task($task_id){
+    $settings=hcdecor_auto_settings();
+    if(empty($settings['enabled'])){
+        update_post_meta($task_id,'hc_auto_status','blocked');
+        hcdecor_auto_log($task_id,'blocked','Automation HUB is OFF');
+        return false;
+    }
     $type=(string)get_post_meta($task_id,'hc_auto_type',true);
     $payload=hcdecor_auto_payload($task_id);
     update_post_meta($task_id,'hc_auto_status','running');
@@ -146,12 +152,16 @@ function hcdecor_auto_run_task($task_id){
     hcdecor_auto_log($task_id,'running',$type);
 
     if($type==='webhook'){
+        if(empty($settings['webhook_enabled']) || empty($settings['webhook_url'])){
+            update_post_meta($task_id,'hc_auto_status','blocked');
+            hcdecor_auto_log($task_id,'blocked','Webhook outbound is OFF');
+            return false;
+        }
         $r=hcdecor_auto_webhook((string)($payload['event']??'hcdecor.event'),(array)($payload['data']??[]));
         if(is_wp_error($r)) return hcdecor_auto_retry($task_id,$r->get_error_message());
     }
     elseif($type==='social_publish'){
-        $s=hcdecor_auto_settings();
-        if(empty($s['social_enabled'])){
+        if(empty($settings['social_enabled'])){
             update_post_meta($task_id,'hc_auto_status','blocked');
             hcdecor_auto_log($task_id,'blocked','Social outbound is OFF');
             return false;
@@ -161,6 +171,11 @@ function hcdecor_auto_run_task($task_id){
         if(is_wp_error($r)) return hcdecor_auto_retry($task_id,$r->get_error_message());
     }
     elseif($type==='evergreen'){
+        if(empty($settings['evergreen_enabled'])){
+            update_post_meta($task_id,'hc_auto_status','blocked');
+            hcdecor_auto_log($task_id,'blocked','Evergreen automation is OFF');
+            return false;
+        }
         $project=(int)($payload['project_id']??0);
         $prepared=hcdecor_auto_prepare_social($project,0);
         if(is_wp_error($prepared)) return hcdecor_auto_retry($task_id,$prepared->get_error_message());
