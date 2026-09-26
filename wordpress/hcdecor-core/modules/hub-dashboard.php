@@ -169,7 +169,6 @@ function hcdecor_hub_dashboard_attention($s){
     if(!empty($s['inbox']['enabled']) && !empty($h['inbox']['error'])) $add('bad','Drive Inbox: '.(string)$h['inbox']['error'],admin_url('admin.php?page=hcdecor-drive-inbox'));
     elseif(!empty($s['inbox']['enabled']) && empty($h['inbox']['fresh'])) $add('warn','Drive Inbox has not completed within 30 minutes',admin_url('admin.php?page=hcdecor-drive-inbox'));
     if(!empty($h['backup']['error'])) $add('bad','Backup: '.(string)$h['backup']['error'],admin_url('admin.php?page=hcdecor-data-backups'));
-    if(empty($h['backup']['next_scheduled'])) $add('bad','Daily backup schedule is missing',admin_url('admin.php?page=hcdecor-system-health'));
     if(!empty($h['backup']['running'])) $add('info','Backup is currently running',admin_url('admin.php?page=hcdecor-data-backups'));
     elseif(empty($h['backup']['fresh'])) $add('warn','Backup is missing or older than 36 hours',admin_url('admin.php?page=hcdecor-data-backups'));
     if(!empty($h['restore']['error'])) $add('bad','Restore: '.(string)$h['restore']['error'],admin_url('admin.php?page=hcdecor-restore-center'));
