@@ -132,7 +132,7 @@ function hcdecor_health_snapshot(){
     $inbox_age=$inbox_ts?max(0,current_time('timestamp')-$inbox_ts):null;
     $stale_processing=0;
     $oldest_review_age=0;
-    $review_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>100,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'review']);
+    $review_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'review']);
     foreach($review_ids as $rid){
         $modified=strtotime((string)get_post_field('post_modified',$rid))?:0;
         if($modified) $oldest_review_age=max($oldest_review_age,max(0,current_time('timestamp')-$modified));
@@ -152,8 +152,10 @@ function hcdecor_health_snapshot(){
     $published_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'date_query'=>[['column'=>'post_modified','after'=>'7 days ago']],'meta_key'=>'hc_agent_status','meta_value'=>'published_web','fields'=>'ids']))->found_posts;
     $created_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'date_query'=>[['after'=>'7 days ago']],'fields'=>'ids']))->found_posts;
     $backup_cron=(int)(wp_next_scheduled('hcdecor_backup_daily')?:0);
+    $last_auto_repair=(array)get_option('hcdecor_health_auto_repair_last',[]);
+    $last_auto_repair_ts=!empty($last_auto_repair['at'])?(strtotime((string)$last_auto_repair['at'])?:0):0;
     $vault_stale=0;
-    $vault_ids=get_posts(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'numberposts'=>100,'fields'=>'ids','meta_key'=>'hc_drive_project_file_id','meta_compare'=>'EXISTS']);
+    $vault_ids=get_posts(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_drive_project_file_id','meta_compare'=>'EXISTS']);
     foreach($vault_ids as $pid){
         $synced=strtotime((string)get_post_meta($pid,'hc_drive_project_synced_at',true))?:0;
         $modified=strtotime((string)get_post_field('post_modified',$pid))?:0;
@@ -249,7 +251,11 @@ function hcdecor_health_snapshot(){
         'content_queue'=>$queue,
         'stale_processing'=>$stale_processing,
         'review_oldest_age_seconds'=>$oldest_review_age,
-        'auto_repair'=>(array)get_option('hcdecor_health_auto_repair_last',[]),
+        'auto_repair'=>[
+            'at'=>(string)($last_auto_repair['at']??''),
+            'age_seconds'=>$last_auto_repair_ts?max(0,current_time('timestamp')-$last_auto_repair_ts):null,
+            'schedules'=>(array)($last_auto_repair['schedules']??[])
+        ],
         'throughput_7d'=>[
             'created'=>$created_7d,
             'published'=>$published_7d,
