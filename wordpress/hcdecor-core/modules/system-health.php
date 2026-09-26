@@ -186,7 +186,6 @@ function hcdecor_health_snapshot(){
     if((int)($vault_bulk['failed']??0)>0 && $vault_bulk_ts && (current_time('timestamp')-$vault_bulk_ts)<=86400) $issues[]='Recent Project Vault bulk sync failed: '.(int)$vault_bulk['failed'];
     if(!empty($inbox_settings['enabled']) && (int)($inbox_result['failed']??0)>0) $issues[]='Last Drive Inbox run failed: '.(int)$inbox_result['failed'];
     $backup_running=(bool)get_transient('hcdecor_backup_running');
-    if($backup_running) $issues[]='Backup currently running';
     if($vault_stale>0) $issues[]='Project Vault stale: '.$vault_stale;
     $inbox_settings=function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[];
     if(!empty($inbox_settings['enabled']) && $inbox_ts===0) $issues[]='Drive Inbox has never completed';
@@ -281,6 +280,11 @@ function hcdecor_health_snapshot(){
             'ready'=>function_exists('hcdecor_restore_apply'),
             'last'=>(array)get_option('hcdecor_restore_last_result',[]),
             'error'=>(string)get_option('hcdecor_restore_last_error','')
+        ],
+        'activity'=>[
+            'backup_running'=>$backup_running,
+            'project_vault_retrying'=>$vault_retrying,
+            'backup_retrying'=>$backup_retry
         ],
         'backup'=>[
             'last_at'=>$backup_last,
