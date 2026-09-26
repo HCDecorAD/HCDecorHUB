@@ -471,3 +471,35 @@ function hcdecor_bridge_admin(){
   echo '<table class="widefat striped" style="max-width:900px"><tr><th>Endpoint</th><td><code>'.esc_html(rest_url('hcdecor/v1/bridge/status')).'</code></td></tr><tr><th>Header</th><td><code>X-HCDecor-Bridge</code></td></tr><tr><th>Token</th><td><input type="password" readonly value="'.esc_attr($token).'" style="width:520px" onclick="this.type=\'text\';this.select()"></td></tr></table>';
   echo '<p><em>Không gửi token lên GitHub. Khi chuyển sang staging HTTPS, cùng Bridge này có thể được Agent truy cập từ xa.</em></p></div>';
 }
+
+
+/* HCDECOR_CONTENT_STUDIO_V1 */
+add_action('admin_menu',function(){
+  add_submenu_page('hcdecor-hub','Content Studio','Content Studio','edit_posts','hcdecor-studio','hcdecor_studio_admin',1);
+},14);
+
+function hcdecor_studio_admin(){
+  $projects=get_posts(['post_type'=>'hc_project','post_status'=>'publish','numberposts'=>30,'orderby'=>'modified','order'=>'DESC']);
+  $media=get_posts(['post_type'=>'attachment','post_status'=>'inherit','post_mime_type'=>'image','numberposts'=>12,'orderby'=>'date','order'=>'DESC']);
+  echo '<div class="wrap hc-studio"><style>
+  .hc-studio{max-width:1280px}.hc-studio-head{display:flex;justify-content:space-between;align-items:center;margin:10px 0 22px}.hc-badge{background:#111;color:#d59a55;padding:8px 12px;border-radius:999px}
+  .hc-studio-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.hc-card{background:#fff;border:1px solid #dcdcde;border-radius:14px;padding:20px}.hc-card h2{margin-top:0}
+  .hc-projects{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.hc-project{border:1px solid #ddd;border-radius:10px;padding:12px;min-height:90px}.hc-project strong{display:block;margin-bottom:8px}
+  .hc-media{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.hc-media img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;background:#eee}
+  .hc-channel{display:inline-block;padding:7px 10px;border:1px solid #ddd;border-radius:8px;margin:0 5px 5px 0}.hc-flow{display:flex;gap:8px;flex-wrap:wrap}.hc-flow span{background:#111;color:#fff;padding:10px 13px;border-radius:8px}
+  @media(max-width:900px){.hc-studio-grid{grid-template-columns:1fr}.hc-projects{grid-template-columns:1fr}.hc-media{grid-template-columns:repeat(3,1fr)}}
+  </style><div class="hc-studio-head"><div><h1>HCDecor HUB · Content Studio</h1><p>Project + Media → AI Agent → Preview → Publish</p></div><span class="hc-badge">DEMO · OUTBOUND OFF</span></div>';
+  echo '<div class="hc-studio-grid"><section class="hc-card"><h2>1 · Chọn Project</h2><div class="hc-projects">';
+  if(!$projects) echo '<p>Chưa có project.</p>'; foreach($projects as $p) echo '<div class="hc-project"><strong>'.esc_html($p->post_title).'</strong><small>'.esc_html($p->post_excerpt).'</small><p><a href="'.esc_url(get_edit_post_link($p->ID)).'">Media & dữ liệu →</a></p></div>';
+  echo '</div><hr><h2>2 · Media gần đây</h2><div class="hc-media">';
+  if(!$media) echo '<p>Chưa có ảnh. <a href="'.esc_url(admin_url('media-new.php')).'">Upload ảnh đầu tiên</a></p>'; foreach($media as $m){$src=wp_get_attachment_image_url($m->ID,'medium');if($src)echo '<a href="'.esc_url(get_edit_post_link($m->ID)).'"><img src="'.esc_url($src).'" alt=""></a>';}
+  echo '</div><p><a class="button" href="'.esc_url(admin_url('media-new.php')).'">+ Upload Media</a> <a class="button" href="'.esc_url(admin_url('upload.php')).'">Media Library</a></p></section>';
+  echo '<section class="hc-card"><h2>3 · AI Agent Brief</h2><form method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="hcdecor_create_content_job">'.wp_nonce_field('hcdecor_agent_job','_wpnonce',true,false).'<p><select name="project_id" style="width:100%"><option value="0">Chọn Project</option>';foreach($projects as $p)echo '<option value="'.$p->ID.'">'.esc_html($p->post_title).'</option>';echo '</select></p><textarea name="brief" rows="7" style="width:100%" placeholder="Ví dụ: Phân tích hình ảnh dự án, viết nội dung Web và caption social; đề xuất ảnh cover, tiêu đề và CTA."></textarea><h3>Kênh preview</h3><label class="hc-channel"><input type="checkbox" name="channels[]" value="web" checked> Web</label><label class="hc-channel"><input type="checkbox" name="channels[]" value="facebook" checked> Facebook</label><label class="hc-channel"><input type="checkbox" name="channels[]" value="tiktok"> TikTok</label><label class="hc-channel"><input type="checkbox" name="channels[]" value="youtube"> YouTube</label><p><button class="button button-primary button-hero">Tạo Content Job</button></p></form><hr><h2>4 · Agent Flow</h2><div class="hc-flow"><span>Analyze</span><span>Generate</span><span>Review</span><span>Preview</span><span>Publish</span></div><p><em>Publish ra ngoài đang khóa. Có thể chỉnh content và preview an toàn.</em></p><p><a class="button" href="'.esc_url(admin_url('edit.php?post_type=hc_content_job')).'">Mở Content Queue</a></p></section></div></div>';
+}
+
+add_filter('manage_hc_content_job_posts_columns',function($c){return ['cb'=>$c['cb'],'title'=>'Content Job','project'=>'Project','channels'=>'Kênh','agent'=>'Agent status','date'=>'Ngày'];});
+add_action('manage_hc_content_job_posts_custom_column',function($col,$id){
+  if($col==='project') echo esc_html(get_the_title((int)get_post_meta($id,'hc_project_id',true)));
+  if($col==='channels') echo esc_html(implode(' · ',(array)get_post_meta($id,'hc_channels',true)));
+  if($col==='agent') echo '<strong>'.esc_html(get_post_meta($id,'hc_agent_status',true)?:'queued').'</strong>';
+},10,2);
