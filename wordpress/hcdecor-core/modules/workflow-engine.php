@@ -48,6 +48,17 @@ function hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed=true){
     delete_option('hcdecor_claim_mutex_'.$job_id);
 }
 
+function hcdecor_workflow_claim_response($job,$claim_token){
+    return rest_ensure_response([
+        'id'=>$job->ID,'title'=>$job->post_title,'brief'=>$job->post_content,
+        'project_id'=>(int)get_post_meta($job->ID,'hc_project_id',true),
+        'channels'=>(array)get_post_meta($job->ID,'hc_channels',true),
+        'media_ids'=>(array)get_post_meta($job->ID,'hc_media_ids',true),
+        'cover_id'=>(int)get_post_meta($job->ID,'hc_cover_id',true),
+        'status'=>'processing','claim_token'=>$claim_token,'outbound'=>false
+    ]);
+}
+
 function hcdecor_workflow_recover_orphan_draft_claims($limit=20){
     $jobs=get_posts([
         'post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>max(1,min(50,(int)$limit)),'fields'=>'ids',
@@ -127,14 +138,7 @@ add_action('rest_api_init',function(){
                                 update_post_meta($j->ID,'hc_agent_lock_until',$now+600);
                                 if(hcdecor_workflow_set_status($j->ID,'processing','Agent claimed recovered job')){
                                     delete_option($mutex);
-                                    return rest_ensure_response([
-                                        'id'=>$j->ID,'title'=>$j->post_title,'brief'=>$j->post_content,
-                                        'project_id'=>(int)get_post_meta($j->ID,'hc_project_id',true),
-                                        'channels'=>(array)get_post_meta($j->ID,'hc_channels',true),
-                                        'media_ids'=>(array)get_post_meta($j->ID,'hc_media_ids',true),
-                                        'cover_id'=>(int)get_post_meta($j->ID,'hc_cover_id',true),
-                                        'status'=>'processing','claim_token'=>$claim_token,'outbound'=>false
-                                    ]);
+                                    return hcdecor_workflow_claim_response($j,$claim_token);
                                 }
                                 hcdecor_workflow_clear_worker_claim($j->ID,true);
                             }
@@ -150,15 +154,7 @@ add_action('rest_api_init',function(){
                     continue;
                 }
                 delete_option($mutex);
-                $data=[
-                    'id'=>$j->ID,'title'=>$j->post_title,'brief'=>$j->post_content,
-                    'project_id'=>(int)get_post_meta($j->ID,'hc_project_id',true),
-                    'channels'=>(array)get_post_meta($j->ID,'hc_channels',true),
-                    'media_ids'=>(array)get_post_meta($j->ID,'hc_media_ids',true),
-                    'cover_id'=>(int)get_post_meta($j->ID,'hc_cover_id',true),
-                    'status'=>'processing','claim_token'=>$claim_token,'outbound'=>false
-                ];
-                return rest_ensure_response($data);
+                return hcdecor_workflow_claim_response($j,$claim_token);
             }
             return rest_ensure_response(['job'=>null,'message'=>'Queue empty']);
         }
