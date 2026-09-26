@@ -218,10 +218,12 @@ function hcdecor_workflow_finish_owned_claim($job_id,$claim_token,$status,$note=
 function hcdecor_workflow_lifecycle_mutex_acquire($job_id,$claim_token,$ttl=30){
     $job_id=(int)$job_id; $claim_token=(string)$claim_token;
     if(!$job_id || $claim_token==='') return false;
-    $key='hcdecor_lifecycle_mutex_'.$job_id; $now=time();
-    $held=(array)get_option($key,[]);
-    if($held && (!empty($held['at']) && (int)$held['at']>=($now-max(5,(int)$ttl)))) return false;
-    if($held && !hcdecor_workflow_claim_mutex_delete_if_same($key,$held)) return false;
+    $key='hcdecor_lifecycle_mutex_'.$job_id; $now=time(); $ttl=max(5,min(120,(int)$ttl));
+    $held_raw=get_option($key,[]);
+    $held=is_array($held_raw)?$held_raw:[];
+    $held_at=(int)($held['at']??0);
+    if($held_at && $held_at>=($now-$ttl)) return false;
+    if($held_raw!==false && $held_raw!==[] && $held_raw!=='' && !hcdecor_workflow_claim_mutex_delete_if_same($key,$held_raw)) return false;
     $owned=['token'=>wp_generate_uuid4(),'claim_token'=>$claim_token,'at'=>$now];
     return add_option($key,$owned,'','no')?$owned:false;
 }
