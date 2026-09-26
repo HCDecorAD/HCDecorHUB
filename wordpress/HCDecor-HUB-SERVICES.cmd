@@ -19,7 +19,8 @@ if not exist "%P%\modules" mkdir "%P%\modules"
 curl.exe -fL "%BASE%/hcdecor-core/hcdecor-core.php?v=%V%" -o "%P%\hcdecor-core.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/homepage-builder.php?v=%V%" -o "%P%\homepage-builder.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%V%" -o "%P%\assets\hcdecor-homepage.css.new" >>"%LOG%" 2>&1 || goto :syncfail
-curl.exe -fL "%BASE%/hcdecor-core/modules/content-operations.php?v=%V%" -o "%P%\modules\content-operations.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/content-operations.php?v=%V%" -o "%P%\modules\content-operations.php.new" "%P%\modules\workflow-engine.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/workflow-engine.php?v=%V%" -o "%P%\modules\workflow-engine.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/background-sync.php?v=%V%" -o "%P%\modules\background-sync.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/project-publishing.php?v=%V%" -o "%P%\modules\project-publishing.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/media-manager.php?v=%V%" -o "%P%\modules\media-manager.php.new" >>"%LOG%" 2>&1 || goto :syncfail
@@ -28,6 +29,7 @@ move /y "%P%\hcdecor-core.php.new" "%P%\hcdecor-core.php" >nul
 move /y "%P%\homepage-builder.php.new" "%P%\homepage-builder.php" >nul
 move /y "%P%\assets\hcdecor-homepage.css.new" "%P%\assets\hcdecor-homepage.css" >nul
 move /y "%P%\modules\content-operations.php.new" "%P%\modules\content-operations.php" >nul
+move /y "%P%\modules\workflow-engine.php.new" "%P%\modules\workflow-engine.php" >nul
 move /y "%P%\modules\background-sync.php.new" "%P%\modules\background-sync.php" >nul
 move /y "%P%\modules\project-publishing.php.new" "%P%\modules\project-publishing.php" >nul
 move /y "%P%\modules\media-manager.php.new" "%P%\modules\media-manager.php" >nul
