@@ -3,15 +3,17 @@ setlocal EnableExtensions EnableDelayedExpansion
 title HCDecor AUTO Runner
 cd /d "%~dp0"
 
-rem LocalWP WP-CLI environment recovery when launched outside Site Shell
+rem HCDecor AUTO must run inside LocalWP Site Shell so WP-CLI environment is loaded.
 where wp >nul 2>&1
 if errorlevel 1 (
-  if exist "%APPDATA%\\Local\\lightning-services" (
-    for /d %%D in ("%APPDATA%\\Local\\lightning-services\\php-*") do set "PATH=%%~fD\\bin\\win64;!PATH!"
-  )
+  echo.
+  echo ================================================
+  echo HCDECOR AUTO: NEED LOCAL SITE SHELL
+  echo Open LocalWP ^> HCDecor HUB ^> Site shell
+  echo Then run: cd /d "C:\Users\DELL\Local Sites\hcdecor-hub\app\public" ^& call hcdecor-auto.cmd
+  echo ================================================
+  exit /b 2
 )
-where wp >nul 2>&1
-if errorlevel 1 goto :need_shell
 set "LOG=%CD%\hcdecor-auto.log"
 set "BASE=https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress"
 set "STAMP=%RANDOM%%RANDOM%"
@@ -30,17 +32,7 @@ call :run "Check Hello Elementor" "wp theme is-active hello-elementor"
 if not exist "%PLUGIN%" mkdir "%PLUGIN%"
 if not exist "%ASSETS%" mkdir "%ASSETS%"
 
-call :need_shell
-echo.
-echo ================================================
-echo HCDECOR AUTO: CAN THIEP 1 LAN
-echo Runner dang duoc mo ngoai Local Site Shell nen WP-CLI chua duoc nap.
-echo Trong LocalWP: HCDecor HUB ^> Site shell, sau do go: call hcdecor-auto.cmd
-echo ================================================
-pause
-exit /b 2
-
-:download "%BASE%/hcdecor-core/hcdecor-core.php?v=%STAMP%" "%PLUGIN%\hcdecor-core.php"
+call :download "%BASE%/hcdecor-core/hcdecor-core.php?v=%STAMP%" "%PLUGIN%\hcdecor-core.php"
 call :download "%BASE%/hcdecor-core/homepage-builder.php?v=%STAMP%" "%PLUGIN%\homepage-builder.php"
 call :download "%BASE%/hcdecor-core/assets/hcdecor-elementor.css?v=%STAMP%" "%ASSETS%\hcdecor-elementor.css"
 call :download "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%STAMP%" "%ASSETS%\hcdecor-homepage.css"
