@@ -397,7 +397,6 @@ function hcdecor_health_snapshot(){
 
 function hcdecor_health_auto_repair_schedules(){
     $last=(int)get_option('hcdecor_health_auto_repair_at',0);
-    if($last && time()-$last<3600) return false;
     $crons=hcdecor_health_crons();
     $auto=function_exists('hcdecor_auto_settings')?(array)hcdecor_auto_settings():[];
     $inbox=function_exists('hcdecor_drive_inbox_settings')?(array)hcdecor_drive_inbox_settings():[];
@@ -408,6 +407,11 @@ function hcdecor_health_auto_repair_schedules(){
     $missing=array_filter($crons,function($v,$name)use($required){ return !empty($required[$name]) && empty($v['scheduled']); },ARRAY_FILTER_USE_BOTH);
     $cleanup_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
     $cleanup_repairs=[];
+    $cleanup_mutex=(int)get_option('hcdecor_automation_cleanup_mutex',0);
+    if($cleanup_mutex && $cleanup_mutex<(time()-120)){
+        delete_option('hcdecor_automation_cleanup_mutex');
+        $cleanup_repairs[]='automation_cleanup_mutex';
+    }
     if(!empty($cleanup_change['cleanup_limited']) && !wp_next_scheduled('hcdecor_automation_cleanup_tick') && !((int)get_option('hcdecor_automation_cleanup_mutex',0)>=(time()-120))){
         wp_schedule_single_event(time()+15,'hcdecor_automation_cleanup_tick');
         $cleanup_repairs[]='automation_cleanup';
@@ -416,6 +420,7 @@ function hcdecor_health_auto_repair_schedules(){
         wp_clear_scheduled_hook('hcdecor_automation_cleanup_watchdog');
         $cleanup_repairs[]='automation_watchdog';
     }
+    if($last && time()-$last<3600) $missing=[];
     foreach($crons as $name=>$x){
         if(isset($required[$name]) && empty($required[$name]) && !empty($x['scheduled'])){
             $hook=['automation'=>'hcdecor_automation_tick','evergreen'=>'hcdecor_evergreen_tick','drive_inbox'=>'hcdecor_drive_inbox_tick'][$name]??'';
