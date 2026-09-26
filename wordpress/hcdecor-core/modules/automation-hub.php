@@ -249,7 +249,10 @@ add_action('hcdecor_automation_tick',function(){
         $last_change['cleanup_continued_at']=current_time('mysql');
         update_option('hcdecor_automation_settings_last_change',$last_change,false);
     }
-    if(empty($s['enabled'])) return;
+    if(empty($s['enabled'])){
+        if(!empty($last_change['cleanup_limited']) && !wp_next_scheduled('hcdecor_automation_cleanup_tick')) wp_schedule_single_event(time()+60,'hcdecor_automation_cleanup_tick');
+        return;
+    }
     hcdecor_auto_recover_stale_running(20);
     $tasks=get_posts([
         'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>5,'orderby'=>'date','order'=>'ASC',
@@ -260,6 +263,19 @@ add_action('hcdecor_automation_tick',function(){
         ]
     ]);
     foreach($tasks as $t) hcdecor_auto_run_task($t->ID);
+});
+
+add_action('hcdecor_automation_cleanup_tick',function(){
+    $s=hcdecor_auto_settings();
+    $last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
+    if(empty($last_change['cleanup_limited'])) return;
+    $cleanup=hcdecor_auto_block_pending_for_settings($s,100);
+    $last_change['blocked_tasks']=(int)($last_change['blocked_tasks']??0)+(int)($cleanup['blocked']??0);
+    $last_change['scanned_tasks']=(int)($last_change['scanned_tasks']??0)+(int)($cleanup['scanned']??0);
+    $last_change['cleanup_limited']=!empty($cleanup['limited']);
+    $last_change['cleanup_continued_at']=current_time('mysql');
+    update_option('hcdecor_automation_settings_last_change',$last_change,false);
+    if(!empty($cleanup['limited'])) wp_schedule_single_event(time()+60,'hcdecor_automation_cleanup_tick');
 });
 
 add_action('hcdecor_evergreen_tick',function(){
