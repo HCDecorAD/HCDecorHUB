@@ -393,7 +393,7 @@ add_action('admin_post_hcdecor_create_content_job',function(){
   check_admin_referer('hcdecor_agent_job'); if(!current_user_can('edit_posts')) wp_die('Forbidden');
   $pid=(int)($_POST['project_id']??0); $brief=sanitize_textarea_field(wp_unslash($_POST['brief']??'')); $channels=array_values(array_intersect((array)($_POST['channels']??[]),['web','facebook','tiktok','youtube']));
   $id=wp_insert_post(['post_type'=>'hc_content_job','post_status'=>'publish','post_title'=>'AI Job · '.($pid?get_the_title($pid):'Content').' · '.current_time('Y-m-d H:i'),'post_content'=>$brief]);
-  if($id&&!is_wp_error($id)){update_post_meta($id,'hc_project_id',$pid);update_post_meta($id,'hc_channels',$channels);update_post_meta($id,'hc_agent_status','queued');update_post_meta($id,'hc_outbound',false);}
+  if($id&&!is_wp_error($id)){update_post_meta($id,'hc_project_id',$pid);update_post_meta($id,'hc_channels',$channels);update_post_meta($id,'hc_agent_status','draft');update_post_meta($id,'hc_outbound',false);}
   wp_safe_redirect(admin_url('admin.php?page=hcdecor-agent')); exit;
 });
 
@@ -459,7 +459,7 @@ add_action('rest_api_init',function(){
     'callback'=>function(WP_REST_Request $r){
       $id=(int)$r['id']; if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
       foreach(['brief'=>'post_content','title'=>'post_title'] as $key=>$field){$v=$r->get_param($key);if($v!==null)wp_update_post(['ID'=>$id,$field=>sanitize_textarea_field((string)$v)]);}
-      $status=$r->get_param('status'); if($status!==null){ $status=sanitize_key($status); $allowed=['draft','processing','review','approved','published_web','failed']; if(!in_array($status,$allowed,true)) return new WP_Error('status','Invalid job status',['status'=>400]); update_post_meta($id,'hc_agent_status',$status); }
+      $status=$r->get_param('status'); if($status!==null){ $status=sanitize_key($status); $allowed=['draft','processing','review','failed']; if(!in_array($status,$allowed,true)) return new WP_Error('status','Bridge cannot approve or publish jobs',['status'=>403]); update_post_meta($id,'hc_agent_status',$status); }
       return rest_ensure_response(['ok'=>true,'id'=>$id,'outbound'=>false]);
     }
   ]);
