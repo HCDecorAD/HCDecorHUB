@@ -13,5 +13,5 @@ start "HCDecor HUB Background Sync" cmd /k ""%CD%\HCDecor-HUB-WATCH.cmd""
 echo.
 echo HCDECOR HUB STARTED
 echo Background sync window can stay minimized.
-echo Content Studio: http://hcdecor-hub.local/wp-admin/admin.php?page=hcdecor-studio
+echo AI Providers: http://hcdecor-hub.local/wp-admin/admin.php?page=hcdecor-ai-providers
 exit /b 0
