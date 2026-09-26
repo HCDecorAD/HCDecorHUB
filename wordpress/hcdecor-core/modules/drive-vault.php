@@ -54,6 +54,93 @@ function hcdecor_drive_configured(){
     return hcdecor_drive_secret('client_id')!=='' && hcdecor_drive_secret('client_secret')!=='' && hcdecor_drive_secret('refresh_token')!=='';
 }
 
+function hcdecor_drive_oauth_redirect_uri(){
+    return admin_url('admin-post.php?action=hcdecor_drive_oauth_callback');
+}
+
+function hcdecor_drive_oauth_connect_url(){
+    $client=hcdecor_drive_secret('client_id');
+    if($client==='') return '';
+    $state=wp_create_nonce('hcdecor_drive_oauth_state');
+    return add_query_arg([
+        'client_id'=>$client,
+        'redirect_uri'=>hcdecor_drive_oauth_redirect_uri(),
+        'response_type'=>'code',
+        'scope'=>'https://www.googleapis.com/auth/drive',
+        'access_type'=>'offline',
+        'prompt'=>'consent',
+        'include_granted_scopes'=>'true',
+        'state'=>$state
+    ],'https://accounts.google.com/o/oauth2/v2/auth');
+}
+
+add_action('admin_post_hcdecor_drive_oauth_start',function(){
+    if(!current_user_can('manage_options')) wp_die('Forbidden');
+    check_admin_referer('hcdecor_drive_oauth_start');
+    if(hcdecor_drive_secret('client_id')==='' || hcdecor_drive_secret('client_secret')===''){
+        wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&oauth_missing=1')); exit;
+    }
+    wp_redirect(hcdecor_drive_oauth_connect_url()); exit;
+});
+
+add_action('admin_post_hcdecor_drive_oauth_callback',function(){
+    if(!current_user_can('manage_options')) wp_die('Forbidden');
+    $state=(string)($_GET['state']??'');
+    if(!$state || !wp_verify_nonce($state,'hcdecor_drive_oauth_state')) wp_die('Invalid OAuth state.');
+    if(!empty($_GET['error'])){
+        wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&oauth_error='.rawurlencode(sanitize_text_field(wp_unslash($_GET['error']))))); exit;
+    }
+    $code=(string)wp_unslash($_GET['code']??'');
+    if($code==='') wp_die('Missing OAuth code.');
+    $r=wp_remote_post('https://oauth2.googleapis.com/token',[
+        'timeout'=>30,
+        'body'=>[
+            'code'=>$code,
+            'client_id'=>hcdecor_drive_secret('client_id'),
+            'client_secret'=>hcdecor_drive_secret('client_secret'),
+            'redirect_uri'=>hcdecor_drive_oauth_redirect_uri(),
+            'grant_type'=>'authorization_code'
+        ]
+    ]);
+    if(is_wp_error($r)){
+        update_option('hcdecor_drive_test_status','error',false);
+        update_option('hcdecor_drive_test_message',$r->get_error_message(),false);
+        wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&oauth_failed=1')); exit;
+    }
+    $status=(int)wp_remote_retrieve_response_code($r);
+    $data=json_decode(wp_remote_retrieve_body($r),true);
+    if($status<200 || $status>=300 || empty($data['access_token'])){
+        update_option('hcdecor_drive_test_status','error',false);
+        update_option('hcdecor_drive_test_message',sanitize_text_field((string)($data['error_description']??$data['error']??('OAuth HTTP '.$status))),false);
+        wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&oauth_failed=1')); exit;
+    }
+    if(!empty($data['refresh_token'])) update_option('hcdecor_drive_refresh_token',sanitize_text_field($data['refresh_token']),false);
+    set_transient('hcdecor_drive_access_token',sanitize_text_field($data['access_token']),max(60,(int)($data['expires_in']??3600)-120));
+    $test=hcdecor_drive_test();
+    if(is_wp_error($test)){
+        update_option('hcdecor_drive_test_status','error',false);
+        update_option('hcdecor_drive_test_message',$test->get_error_message(),false);
+    }else{
+        update_option('hcdecor_drive_test_status','ok',false);
+        update_option('hcdecor_drive_test_message',sanitize_text_field((string)($test['user']['emailAddress']??'Connected')),false);
+        update_option('hcdecor_drive_connected_email',sanitize_email((string)($test['user']['emailAddress']??'')),false);
+        update_option('hcdecor_drive_connected_at',current_time('mysql'),false);
+    }
+    wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&oauth_connected=1')); exit;
+});
+
+add_action('admin_post_hcdecor_drive_disconnect',function(){
+    if(!current_user_can('manage_options')) wp_die('Forbidden');
+    check_admin_referer('hcdecor_drive_disconnect');
+    delete_option('hcdecor_drive_refresh_token');
+    delete_option('hcdecor_drive_connected_email');
+    delete_option('hcdecor_drive_connected_at');
+    delete_option('hcdecor_drive_test_status');
+    delete_option('hcdecor_drive_test_message');
+    delete_transient('hcdecor_drive_access_token');
+    wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&disconnected=1')); exit;
+});
+
 function hcdecor_drive_access_token($force=false){
     if(!$force){
         $cached=get_transient('hcdecor_drive_access_token');
@@ -445,10 +532,26 @@ function hcdecor_drive_vault_page(){
             <p><label>Refresh Token</label><input class="widefat" type="password" name="refresh_token" autocomplete="new-password" placeholder="<?php echo hcdecor_drive_secret('refresh_token')?'Đã lưu · nhập mới để thay':'';?>"></p>
             <p><button class="button button-primary">Lưu kết nối</button> <label><input type="checkbox" name="clear_auth" value="1"> Xóa auth</label></p>
           </form>
-          <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
-            <input type="hidden" name="action" value="hcdecor_drive_test"><?php wp_nonce_field('hcdecor_drive_test');?>
-            <button class="button">Test Drive</button>
-          </form>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
+              <input type="hidden" name="action" value="hcdecor_drive_test"><?php wp_nonce_field('hcdecor_drive_test');?>
+              <button class="button">Test Drive</button>
+            </form>
+            <?php if(hcdecor_drive_secret('client_id')!=='' && hcdecor_drive_secret('client_secret')!==''):?>
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
+              <input type="hidden" name="action" value="hcdecor_drive_oauth_start"><?php wp_nonce_field('hcdecor_drive_oauth_start');?>
+              <button class="button button-primary">Connect Google Drive</button>
+            </form>
+            <?php endif;?>
+            <?php if(hcdecor_drive_secret('refresh_token')!==''):?>
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
+              <input type="hidden" name="action" value="hcdecor_drive_disconnect"><?php wp_nonce_field('hcdecor_drive_disconnect');?>
+              <button class="button">Disconnect</button>
+            </form>
+            <?php endif;?>
+          </div>
+          <p><strong>OAuth Redirect URI</strong><br><code style="word-break:break-all"><?php echo esc_html(hcdecor_drive_oauth_redirect_uri());?></code></p>
+          <?php $connected_email=(string)get_option('hcdecor_drive_connected_email',''); if($connected_email):?><p><strong>Google account:</strong> <?php echo esc_html($connected_email);?></p><?php endif;?>
           <hr><p><strong>Root Vault</strong><br><code><?php echo esc_html($folders['root']);?></code></p>
           <p><a class="button" target="_blank" rel="noopener" href="<?php echo esc_url('https://drive.google.com/drive/folders/'.$folders['root']);?>">Open Google Drive Vault</a></p>
         </section>
