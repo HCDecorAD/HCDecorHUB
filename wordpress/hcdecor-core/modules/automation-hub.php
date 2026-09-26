@@ -263,18 +263,27 @@ function hcdecor_auto_cleanup_mutex_delete_if_same($observed){
     return $deleted===1;
 }
 
+function hcdecor_auto_cleanup_mutex_state($raw=null){
+    if($raw===null) $raw=get_option('hcdecor_automation_cleanup_mutex',[]);
+    if(is_array($raw)) return ['token'=>(string)($raw['token']??''),'at'=>(int)($raw['at']??0),'raw'=>$raw];
+    $at=(int)$raw;
+    return ['token'=>'','at'=>$at,'raw'=>$raw];
+}
+
 function hcdecor_auto_cleanup_mutex_acquire(){
-    $key='hcdecor_automation_cleanup_mutex'; $now=time(); $held=(int)get_option($key,0);
-    if($held && $held<($now-120)){
-        if(!hcdecor_auto_cleanup_mutex_delete_if_same($held)) return false;
-        $held=0;
+    $key='hcdecor_automation_cleanup_mutex'; $now=time();
+    $state=hcdecor_auto_cleanup_mutex_state();
+    if($state['at'] && $state['at']<($now-120)){
+        if(!hcdecor_auto_cleanup_mutex_delete_if_same($state['raw'])) return false;
+        $state=['token'=>'','at'=>0,'raw'=>[]];
     }
-    if($held) return false;
-    return add_option($key,$now,'','no')?$now:false;
+    if($state['at']) return false;
+    $owned=['token'=>wp_generate_uuid4(),'at'=>$now];
+    return add_option($key,$owned,'','no')?$owned:false;
 }
 
 function hcdecor_auto_cleanup_mutex_release($owned){
-    return $owned?hcdecor_auto_cleanup_mutex_delete_if_same((int)$owned):false;
+    return is_array($owned) && !empty($owned['token'])?hcdecor_auto_cleanup_mutex_delete_if_same($owned):false;
 }
 
 add_action('hcdecor_automation_cleanup_tick',function(){
@@ -303,8 +312,8 @@ add_action('hcdecor_automation_cleanup_tick',function(){
 add_action('hcdecor_automation_cleanup_watchdog',function(){
     $last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
     if(empty($last_change['cleanup_limited'])) return;
-    $held=(int)get_option('hcdecor_automation_cleanup_mutex',0);
-    if($held && $held<(time()-120)) hcdecor_auto_cleanup_mutex_delete_if_same($held);
+    $state=hcdecor_auto_cleanup_mutex_state();
+    if($state['at'] && $state['at']<(time()-120)) hcdecor_auto_cleanup_mutex_delete_if_same($state['raw']);
     if(!wp_next_scheduled('hcdecor_automation_cleanup_tick')) wp_schedule_single_event(time()+5,'hcdecor_automation_cleanup_tick');
 });
 
