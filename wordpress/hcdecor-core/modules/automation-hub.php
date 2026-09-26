@@ -359,7 +359,6 @@ add_action('admin_post_hcdecor_automation_retry',function(){
     delete_post_meta($id,'hc_auto_started_at');
     delete_post_meta($id,'hc_auto_done_at');
     delete_post_meta($id,'hc_auto_recovered_at');
-    delete_post_meta($id,'hc_auto_done_at');
     update_post_meta($id,'hc_auto_manual_retry_at',current_time('mysql'));
     update_post_meta($id,'hc_auto_manual_retry_by',get_current_user_id());
     hcdecor_auto_log($id,'manual_retry','Queued by administrator');
