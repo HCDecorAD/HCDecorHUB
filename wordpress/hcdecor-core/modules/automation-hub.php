@@ -217,7 +217,8 @@ add_action('init',function(){
 function hcdecor_auto_recover_stale_running($limit=20){
     $ids=get_posts([
         'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>max(1,min(50,(int)$limit)),'fields'=>'ids',
-        'meta_query'=>[['key'=>'hc_auto_status','value'=>'running']]
+        'meta_query'=>[['key'=>'hc_auto_status','value'=>'running']],
+        'orderby'=>'modified','order'=>'ASC'
     ]);
     $recovered=0; $now=time();
     foreach($ids as $id){
@@ -241,7 +242,7 @@ function hcdecor_auto_recover_stale_running($limit=20){
 add_action('hcdecor_automation_tick',function(){
     $s=hcdecor_auto_settings();
     if(empty($s['enabled'])) return;
-    hcdecor_auto_recover_stale_running(20);
+    hcdecor_auto_recover_stale_running(50);
     $tasks=get_posts([
         'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>5,'orderby'=>'date','order'=>'ASC',
         'meta_query'=>[
