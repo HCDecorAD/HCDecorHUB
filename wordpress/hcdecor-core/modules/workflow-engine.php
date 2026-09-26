@@ -61,6 +61,7 @@ add_action('rest_api_init',function(){
         'callback'=>function(WP_REST_Request $r){
             $id=(int)$r['id'];
             if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
+            if((string)get_post_meta($id,'hc_agent_status',true)!=='processing') return new WP_Error('status','Job is not processing',['status'=>409]);
             update_post_meta($id,'hc_agent_lock_until',time()+600);
             update_post_meta($id,'hc_agent_heartbeat',current_time('mysql'));
             return rest_ensure_response(['ok'=>true,'id'=>$id]);
@@ -72,6 +73,9 @@ add_action('rest_api_init',function(){
         'callback'=>function(WP_REST_Request $r){
             $id=(int)$r['id'];
             if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
+            if((string)get_post_meta($id,'hc_agent_status',true)!=='processing') return new WP_Error('status','Job is not processing',['status'=>409]);
+            $lock=(int)get_post_meta($id,'hc_agent_lock_until',true);
+            if($lock>0 && $lock<time()) return new WP_Error('lock','Job lock expired; retry from Review Center',['status'=>409]);
             $p=$r->get_json_params()?:[];
             if(function_exists('hcdecor_ops_save_fields')) hcdecor_ops_save_fields($id,$p);
             delete_post_meta($id,'hc_agent_lock_until');
