@@ -25,9 +25,20 @@ echo HCDecor AUTO %date% %time% >> "%LOG%"
 echo ================================================== >> "%LOG%"
 call :say "HCDecor AUTO started"
 
-call :run "Preflight WordPress" wp core is-installed
-call :run "Check Elementor" wp plugin is-active elementor
-call :run "Check Hello Elementor" wp theme is-active hello-elementor
+call :say "Preflight WordPress"
+call wp core is-installed >>"%LOG%" 2>&1
+if errorlevel 1 goto :fail_preflight
+echo [PASS] Preflight WordPress
+
+call :say "Check Elementor"
+call wp plugin is-active elementor >>"%LOG%" 2>&1
+if errorlevel 1 goto :fail_elementor
+echo [PASS] Check Elementor
+
+call :say "Check Hello Elementor"
+call wp theme is-active hello-elementor >>"%LOG%" 2>&1
+if errorlevel 1 goto :fail_hello
+echo [PASS] Check Hello Elementor
 
 if not exist "%PLUGIN%" mkdir "%PLUGIN%"
 if not exist "%ASSETS%" mkdir "%ASSETS%"
@@ -37,17 +48,36 @@ call :download "%BASE%/hcdecor-core/homepage-builder.php?v=%STAMP%" "%PLUGIN%\ho
 call :download "%BASE%/hcdecor-core/assets/hcdecor-elementor.css?v=%STAMP%" "%ASSETS%\hcdecor-elementor.css"
 call :download "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%STAMP%" "%ASSETS%\hcdecor-homepage.css"
 
-call :run "Activate HCDecor Core" wp plugin activate hcdecor-core
-call :run "Site name" wp option update blogname HCDecor-HUB
-call :run "Permalink" wp option update permalink_structure /%%postname%%/
-call :run "Flush rewrite" wp rewrite flush
+call :say "Activate HCDecor Core"
+call wp plugin activate hcdecor-core >>"%LOG%" 2>&1 || goto :fail_core
+echo [PASS] Activate HCDecor Core
 
-for /f "delims=" %%I in ('wp eval "$p=get_page_by_path('trang-chu'); echo $p?$p->ID:'';"') do set "HOME_ID=%%I"
-if not defined HOME_ID call :fail "Homepage missing"
+call :say "Site name"
+call wp option update blogname "HCDecor HUB" >>"%LOG%" 2>&1 || goto :fail_site
+echo [PASS] Site name
 
-call :run "Set static homepage" wp option update show_on_front page
-call :run "Assign homepage" wp option update page_on_front !HOME_ID!
-call :run "Build Elementor homepage" wp eval-file %PLUGIN%\homepage-builder.php
+call :say "Permalink"
+call wp option update permalink_structure "/%%postname%%/" >>"%LOG%" 2>&1 || goto :fail_permalink
+echo [PASS] Permalink
+
+call :say "Flush rewrite"
+call wp rewrite flush >>"%LOG%" 2>&1 || goto :fail_rewrite
+echo [PASS] Flush rewrite
+
+for /f "delims=" %%I in ('call wp eval "$p=get_page_by_path('trang-chu'); echo $p?$p->ID:'';"') do set "HOME_ID=%%I"
+if not defined HOME_ID goto :fail_home
+
+call :say "Set static homepage"
+call wp option update show_on_front page >>"%LOG%" 2>&1 || goto :fail_static
+echo [PASS] Set static homepage
+
+call :say "Assign homepage"
+call wp option update page_on_front !HOME_ID! >>"%LOG%" 2>&1 || goto :fail_assign
+echo [PASS] Assign homepage
+
+call :say "Build Elementor homepage"
+call wp eval-file "%PLUGIN%\homepage-builder.php" >>"%LOG%" 2>&1 || goto :fail_build
+echo [PASS] Build Elementor homepage
 
 wp elementor flush-css >>"%LOG%" 2>&1
 if errorlevel 1 echo [WARN] Elementor CLI CSS flush unavailable >>"%LOG%"
@@ -75,14 +105,39 @@ curl.exe -fL "%~1" -o "%~2" >>"%LOG%" 2>&1
 if errorlevel 1 call :fail "Download failed: %~2"
 exit /b 0
 
-:run
-set "STEP=%~1"
-shift
-call :say "%STEP%"
-call %* >>"%LOG%" 2>&1
-if errorlevel 1 call :fail "%STEP%"
-echo [PASS] %STEP%
-exit /b 0
+:fail_preflight
+call :fail "Preflight WordPress"
+exit /b 1
+:fail_elementor
+call :fail "Check Elementor"
+exit /b 1
+:fail_hello
+call :fail "Check Hello Elementor"
+exit /b 1
+:fail_core
+call :fail "Activate HCDecor Core"
+exit /b 1
+:fail_site
+call :fail "Site name"
+exit /b 1
+:fail_permalink
+call :fail "Permalink"
+exit /b 1
+:fail_rewrite
+call :fail "Flush rewrite"
+exit /b 1
+:fail_home
+call :fail "Homepage missing"
+exit /b 1
+:fail_static
+call :fail "Set static homepage"
+exit /b 1
+:fail_assign
+call :fail "Assign homepage"
+exit /b 1
+:fail_build
+call :fail "Build Elementor homepage"
+exit /b 1
 
 :say
 echo [AUTO] %~1
