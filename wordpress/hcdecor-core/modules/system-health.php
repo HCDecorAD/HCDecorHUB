@@ -127,6 +127,12 @@ function hcdecor_health_snapshot(){
     $inbox_ts=$inbox_last!==''?strtotime($inbox_last):0;
     $inbox_age=$inbox_ts?max(0,current_time('timestamp')-$inbox_ts):null;
     $stale_processing=0;
+    $oldest_review_age=0;
+    $review_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>100,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'review']);
+    foreach($review_ids as $rid){
+        $modified=strtotime((string)get_post_field('post_modified',$rid))?:0;
+        if($modified) $oldest_review_age=max($oldest_review_age,max(0,current_time('timestamp')-$modified));
+    }
     $processing_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'processing']);
     $now=time();
     foreach($processing_ids as $pid){
@@ -163,6 +169,7 @@ function hcdecor_health_snapshot(){
     if(!empty($inbox_settings['enabled']) && $inbox_ts===0) $issues[]='Drive Inbox has never completed';
     elseif(!empty($inbox_settings['enabled']) && $inbox_age>1800) $issues[]='Drive Inbox is stale (>30 min)';
     if($stale_processing>0) $issues[]='Stale processing jobs: '.$stale_processing;
+    if($oldest_review_age>86400) $issues[]='Review queue oldest item >24h';
 
     $score=100;
     $score-=count(array_filter($modules,function($v){return !$v;}))*8;
@@ -177,6 +184,7 @@ function hcdecor_health_snapshot(){
     if($vault_stale>0) $score-=min(8,$vault_stale);
     if(!empty($inbox_settings['enabled']) && ($inbox_ts===0 || $inbox_age>1800)) $score-=5;
     if($stale_processing>0) $score-=min(10,$stale_processing*2);
+    if($oldest_review_age>86400) $score-=5;
     $score=max(0,min(100,$score));
 
     return [
@@ -226,6 +234,7 @@ function hcdecor_health_snapshot(){
         ],
         'content_queue'=>$queue,
         'stale_processing'=>$stale_processing,
+        'review_oldest_age_seconds'=>$oldest_review_age,
         'bridge'=>['ready'=>$bridge!==''],
         'publisher'=>['ready'=>function_exists('hcdecor_publish_job_to_web') && post_type_exists('hc_content_job') && post_type_exists('hc_project')],
         'restore'=>[
