@@ -245,6 +245,7 @@ function hcdecor_health_snapshot(){
         'content_queue'=>$queue,
         'stale_processing'=>$stale_processing,
         'review_oldest_age_seconds'=>$oldest_review_age,
+        'auto_repair'=>(array)get_option('hcdecor_health_auto_repair_last',[]),
         'throughput_7d'=>[
             'created'=>$created_7d,
             'published'=>$published_7d,
@@ -283,8 +284,10 @@ function hcdecor_health_auto_repair_schedules(){
     $required['drive_inbox']=!isset($inbox['enabled']) || !empty($inbox['enabled']);
     $missing=array_filter($crons,function($v,$name)use($required){ return !empty($required[$name]) && empty($v['scheduled']); },ARRAY_FILTER_USE_BOTH);
     if(!$missing) return false;
+    $names=array_keys($missing);
     hcdecor_health_repair_schedules($required);
     update_option('hcdecor_health_auto_repair_at',time(),false);
+    update_option('hcdecor_health_auto_repair_last',['at'=>current_time('mysql'),'schedules'=>$names],false);
     return true;
 }
 
