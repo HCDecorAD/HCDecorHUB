@@ -108,6 +108,10 @@ add_action('rest_api_init',function(){
                     delete_option($mutex);
                     continue;
                 }
+                if((int)get_post_meta($j->ID,'hc_agent_lock_until',true)>$now){
+                    delete_option($mutex);
+                    continue;
+                }
                 if(!add_post_meta($j->ID,'hc_agent_claim_token',$claim_token,true)){
                     delete_option($mutex);
                     continue;
