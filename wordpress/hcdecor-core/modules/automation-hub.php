@@ -303,10 +303,12 @@ add_action('hcdecor_automation_cleanup_tick',function(){
     $last_change['cleanup_limited']=!empty($cleanup['limited']);
     $last_change['cleanup_continued_at']=current_time('mysql');
     update_option('hcdecor_automation_settings_last_change',$last_change,false);
-    hcdecor_auto_cleanup_mutex_release($cleanup_mutex);
-    wp_unschedule_event($watchdog,'hcdecor_automation_cleanup_watchdog');
-    if(empty($cleanup['limited'])) wp_clear_scheduled_hook('hcdecor_automation_cleanup_watchdog');
-    elseif(!wp_next_scheduled('hcdecor_automation_cleanup_tick')) wp_schedule_single_event(time()+60,'hcdecor_automation_cleanup_tick');
+    $released=hcdecor_auto_cleanup_mutex_release($cleanup_mutex);
+    if($released){
+        wp_unschedule_event($watchdog,'hcdecor_automation_cleanup_watchdog');
+        if(empty($cleanup['limited'])) wp_clear_scheduled_hook('hcdecor_automation_cleanup_watchdog');
+    }
+    if(!empty($cleanup['limited']) && !wp_next_scheduled('hcdecor_automation_cleanup_tick')) wp_schedule_single_event(time()+60,'hcdecor_automation_cleanup_tick');
 });
 
 add_action('hcdecor_automation_cleanup_watchdog',function(){
