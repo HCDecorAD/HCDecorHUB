@@ -151,7 +151,7 @@ function hcdecor_hub_dashboard_attention($s){
     }
     foreach((array)($h['issues']??[]) as $issue){
         $label=(string)$issue;
-        if(strpos($label,'Automation failed:')===0 || strpos($label,'Automation blocked:')===0) continue;
+        if(strpos($label,'Automation failed:')===0 || strpos($label,'Automation blocked:')===0 || strpos($label,'Stale processing jobs:')===0 || strpos($label,'Processing jobs missing claim token')===0) continue;
         $add('bad',$label,admin_url('admin.php?page=hcdecor-system-health'));
     }
     $review=(int)($c['job_status']['review']??0);
@@ -303,7 +303,7 @@ function hcdecor_hub_dashboard_page(){
         <div class="hchub-card"><div class="num"><?php echo (int)($vault_bulk['failed']??0);?></div><strong>Vault last sync failures</strong><br><small><?php echo esc_html((string)($s['vault_bulk_at']??'Never'));?></small></div>
         <div class="hchub-card"><div class="num"><?php echo (int)($inbox_result['imported']??0);?></div><strong>Inbox last import</strong><br><small><?php echo (int)($inbox_result['linked']??0);?> linked · <?php echo $inbox_unlinked;?> unlinked · <?php echo (int)($inbox_result['failed']??0);?> failed</small></div>
         <div class="hchub-card"><div class="num"><?php echo $backup_age===null?'—':(int)floor($backup_age/3600).'h';?></div><strong>Backup age</strong><br><small><?php echo esc_html((string)($s['backup_last']??'Never'));?></small></div>
-        <div class="hchub-card"><div class="num"><?php echo $worker_recovered;?></div><strong>Worker recoveries / 24h</strong><br><small><?php echo (int)($worker_reasons['missing_claim_token']??0);?> token · <?php echo (int)($worker_reasons['expired_lock']??0);?> lock · <?php echo (int)($s['health']['worker']['locks_expiring_2m']??0);?> expiring ≤2m</small></div>
+        <div class="hchub-card"><div class="num"><?php echo $worker_recovered;?></div><strong>Worker recoveries / 24h</strong><br><small><?php echo (int)($worker_reasons['missing_claim_token']??0);?> token · <?php echo (int)($worker_reasons['expired_lock']??0);?> lock · <?php echo (int)($worker_reasons['orphan_draft_claim']??0);?> orphan · <?php echo (int)($s['health']['worker']['locks_expiring_2m']??0);?> expiring ≤2m</small></div>
       </div>
 
       <div class="hchub-flow">
