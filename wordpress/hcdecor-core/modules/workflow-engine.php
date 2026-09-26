@@ -21,6 +21,7 @@ function hcdecor_workflow_set_status($job_id,$status,$note=''){
     $old=(string)get_post_meta($job_id,'hc_agent_status',true);
     update_post_meta($job_id,'hc_agent_status',$status);
     hcdecor_workflow_log($job_id,$status,$note?:($old.' → '.$status));
+    do_action('hcdecor_workflow_status_changed',$job_id,$old,$status);
     return true;
 }
 
