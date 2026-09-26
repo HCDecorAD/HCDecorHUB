@@ -421,3 +421,11 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
 .solution-tile:hover .solution-art img{transform:scale(1.035)}
 .solution-tile:after{background:linear-gradient(transparent 25%,rgba(4,6,7,.88))!important}
 @media(max-width:560px){.solution-art img{object-position:center}.solution-tile:first-child .solution-art img{object-position:55% center}}
+
+/* V5.2 project photography */
+.project{position:relative;overflow:hidden;isolation:isolate;background:#111!important}
+.project>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform .45s ease}
+.project:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(5,7,8,.08) 20%,rgba(5,7,8,.18) 48%,rgba(5,7,8,.92) 100%)}
+.project:hover>img{transform:scale(1.035)}
+.project h3,.project-symbol{position:relative;z-index:1}
+@media(max-width:560px){.project>img{object-position:center}.project{min-height:350px}.project.p3{min-height:275px}}
