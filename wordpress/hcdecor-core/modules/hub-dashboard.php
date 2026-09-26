@@ -244,6 +244,7 @@ function hcdecor_hub_dashboard_page(){
     $backup_age=$s['health']['backup']['age_seconds']??null;
     $vault_coverage=(int)($s['health']['project_vault']['coverage_percent']??0);
     $inbox_unlinked=(int)($s['health']['last_outcomes']['drive_inbox_unlinked']??0);
+    $worker_recovered=(int)($s['health']['worker']['recovered_24h']??0);
     ?>
     <div class="wrap hchub">
       <style>
@@ -300,6 +301,7 @@ function hcdecor_hub_dashboard_page(){
         <div class="hchub-card"><div class="num"><?php echo (int)($vault_bulk['failed']??0);?></div><strong>Vault last sync failures</strong><br><small><?php echo esc_html((string)($s['vault_bulk_at']??'Never'));?></small></div>
         <div class="hchub-card"><div class="num"><?php echo (int)($inbox_result['imported']??0);?></div><strong>Inbox last import</strong><br><small><?php echo (int)($inbox_result['linked']??0);?> linked · <?php echo $inbox_unlinked;?> unlinked · <?php echo (int)($inbox_result['failed']??0);?> failed</small></div>
         <div class="hchub-card"><div class="num"><?php echo $backup_age===null?'—':(int)floor($backup_age/3600).'h';?></div><strong>Backup age</strong><br><small><?php echo esc_html((string)($s['backup_last']??'Never'));?></small></div>
+        <div class="hchub-card"><div class="num"><?php echo $worker_recovered;?></div><strong>Worker recoveries / 24h</strong><br><small><?php echo (int)($s['health']['worker']['locks_expiring_2m']??0);?> lock(s) expiring ≤2m</small></div>
       </div>
 
       <div class="hchub-flow">
