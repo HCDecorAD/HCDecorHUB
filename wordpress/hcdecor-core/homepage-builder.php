@@ -29,13 +29,24 @@ $container('hc00002','hc-dark hc-services',[
 $container('hc00003','hc-dark hc-projects',[
   $heading('hc30001','DỰ ÁN','h6'),
   $heading('hc30002','Công trình & ý tưởng nổi bật','h2'),
-  $text('hc30003','<p id="du-an">Portfolio HCDecor sẽ được đồng bộ từ dữ liệu Dự án.</p>')
+  $container('hc30010','hc-project-grid',[
+    $container('hc30100','hc-project-card',[$heading('hc30101','Bảng hiệu','h3'),$text('hc30102','<p>Nhận diện thương hiệu · Mặt dựng · Biển quảng cáo</p>')]),
+    $container('hc30200','hc-project-card',[$heading('hc30201','Nội thất','h3'),$text('hc30202','<p>Không gian kinh doanh · Văn phòng · Nhà ở</p>')]),
+    $container('hc30300','hc-project-card',[$heading('hc30301','3D & Kiến trúc','h3'),$text('hc30302','<p>Phối cảnh · Concept · Giải pháp không gian</p>')])
+  ]),
+  $text('hc30003','<p id="du-an">Portfolio HCDecor được quản lý độc lập trong Website Data và có thể cập nhật mà không phá layout.</p>')
 ]),
 
 $container('hc00004','hc-dark hc-process',[
   $heading('hc40001','QUY TRÌNH','h6'),
   $heading('hc40002','Đơn giản · Rõ ràng · Hiệu quả','h2'),
-  $text('hc40003','<p>01 Tiếp nhận &nbsp;→&nbsp; 02 Khảo sát &nbsp;→&nbsp; 03 Thiết kế &nbsp;→&nbsp; 04 Thi công &nbsp;→&nbsp; 05 Bàn giao</p>')
+  $container('hc40010','hc-process-grid',[
+    $text('hc40101','<p><strong>01</strong><br>Tiếp nhận</p>'),
+    $text('hc40102','<p><strong>02</strong><br>Khảo sát</p>'),
+    $text('hc40103','<p><strong>03</strong><br>Thiết kế</p>'),
+    $text('hc40104','<p><strong>04</strong><br>Thi công</p>'),
+    $text('hc40105','<p><strong>05</strong><br>Bàn giao</p>')
+  ])
 ]),
 
 $container('hc00005','hc-dark hc-contact',[
