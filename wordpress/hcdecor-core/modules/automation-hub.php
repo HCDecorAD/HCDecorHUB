@@ -171,7 +171,7 @@ function hcdecor_auto_run_task($task_id){
         if(is_wp_error($r)) return hcdecor_auto_retry($task_id,$r->get_error_message());
     }
     elseif($type==='evergreen'){
-        if(empty($settings['evergreen_enabled'])){
+        if(empty($settings['evergreen_enabled']) || empty($settings['social_enabled'])){
             update_post_meta($task_id,'hc_auto_status','blocked');
             hcdecor_auto_log($task_id,'blocked','Evergreen automation is OFF');
             return false;
@@ -250,7 +250,7 @@ add_action('hcdecor_automation_tick',function(){
 
 add_action('hcdecor_evergreen_tick',function(){
     $s=hcdecor_auto_settings();
-    if(empty($s['enabled']) || empty($s['evergreen_enabled'])) return;
+    if(empty($s['enabled']) || empty($s['evergreen_enabled']) || empty($s['social_enabled'])) return;
     $days=max(7,(int)$s['evergreen_days']);
     $before=date('Y-m-d H:i:s',time()-$days*DAY_IN_SECONDS);
     $projects=get_posts([
@@ -279,6 +279,28 @@ add_action('admin_menu',function(){
     add_submenu_page('hcdecor-hub','Automation HUB','Automation HUB','manage_options','hcdecor-automation','hcdecor_automation_page',5);
 },28);
 
+function hcdecor_auto_block_pending_for_settings($settings,$limit=100){
+    $ids=get_posts([
+        'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>max(1,min(200,(int)$limit)),'fields'=>'ids',
+        'meta_query'=>[['key'=>'hc_auto_status','value'=>['queued','scheduled'],'compare'=>'IN']]
+    ]);
+    $blocked=0;
+    foreach($ids as $id){
+        $type=(string)get_post_meta($id,'hc_auto_type',true);
+        $reason='';
+        if(empty($settings['enabled'])) $reason='Automation HUB is OFF';
+        elseif($type==='social_publish' && empty($settings['social_enabled'])) $reason='Social outbound is OFF';
+        elseif($type==='webhook' && (empty($settings['webhook_enabled']) || empty($settings['webhook_url']))) $reason='Webhook outbound is OFF';
+        elseif($type==='evergreen' && (empty($settings['evergreen_enabled']) || empty($settings['social_enabled']))) $reason='Evergreen social outbound is OFF';
+        if($reason!==''){
+            update_post_meta($id,'hc_auto_status','blocked');
+            hcdecor_auto_log($id,'blocked',$reason.' after settings change');
+            $blocked++;
+        }
+    }
+    return $blocked;
+}
+
 add_action('admin_post_hcdecor_automation_settings',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_automation_settings');
@@ -295,7 +317,10 @@ add_action('admin_post_hcdecor_automation_settings',function(){
     ];
     // Do not allow social outbound without a configured webhook connector.
     if($new['social_enabled'] && (!$new['webhook_enabled'] || !$new['webhook_url'])) $new['social_enabled']=false;
+    // Evergreen only produces social outbound; never leave it enabled without social.
+    if($new['evergreen_enabled'] && !$new['social_enabled']) $new['evergreen_enabled']=false;
     update_option('hcdecor_automation_settings',$new,false);
+    hcdecor_auto_block_pending_for_settings($new,100);
     if(!$new['enabled']){
         wp_clear_scheduled_hook('hcdecor_automation_tick');
         wp_clear_scheduled_hook('hcdecor_evergreen_tick');
