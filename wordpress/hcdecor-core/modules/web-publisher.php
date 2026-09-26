@@ -32,7 +32,7 @@ function hcdecor_publish_preflight($job_id){
     $media=array_values(array_unique(array_filter(array_map('intval',(array)get_post_meta($job_id,'hc_media_ids',true)))));
     $media=array_values(array_filter($media,function($id){return get_post_type($id)==='attachment';}));
     $cover=(int)get_post_meta($job_id,'hc_cover_id',true);
-    if($cover && !in_array($cover,$media,true)) return new WP_Error('cover','Cover must belong to selected media.');
+    if($cover && (!in_array($cover,$media,true) || !wp_attachment_is_image($cover))) return new WP_Error('cover','Cover must be an image in selected media.');
     return ['project_id'=>$project,'media_ids'=>$media,'cover_id'=>$cover];
 }
 
@@ -101,6 +101,7 @@ function hcdecor_rollback_job_publish($job_id){
     update_post_meta($project,'hc_seo_meta',(string)($snapshot['seo_meta']??''));
     $cover=(int)($snapshot['cover']??0);
     if($cover && wp_attachment_is_image($cover)) set_post_thumbnail($project,$cover);
+    else delete_post_thumbnail($project);
     else delete_post_thumbnail($project);
 
     update_post_meta($job_id,'hc_agent_status','approved');
