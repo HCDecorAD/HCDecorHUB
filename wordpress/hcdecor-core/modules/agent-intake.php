@@ -45,9 +45,20 @@ add_action('hcdecor_ai_process_job',function($job_id){
     $status=(string)get_post_meta($job_id,'hc_agent_status',true);
     if($status!=='draft') return;
     if(!function_exists('hcdecor_ai_generate_job')) return;
-    if(function_exists('hcdecor_workflow_claim_job')){
-        $claim=hcdecor_workflow_claim_job($job_id,180,'Scheduled AI processing');
-        if(!$claim) return;
+    if(function_exists('hcdecor_workflow_finalize_claim')){
+        $now=time();
+        $claim_token=wp_generate_uuid4();
+        $mutex='hcdecor_claim_mutex_'.$job_id;
+        if(!add_option($mutex,['token'=>$claim_token,'at'=>$now],'',false)) return;
+        if(!add_post_meta($job_id,'hc_agent_claim_token',$claim_token,true)){
+            hcdecor_workflow_claim_mutex_release($job_id,$claim_token);
+            return;
+        }
+        if(!hcdecor_workflow_finalize_claim($job_id,$claim_token,$now,'Scheduled AI processing')){
+            hcdecor_workflow_clear_owned_claim($job_id,$claim_token,true);
+            return;
+        }
+        hcdecor_workflow_claim_mutex_release($job_id,$claim_token);
     }else{
         update_post_meta($job_id,'hc_agent_lock_until',time()+180);
         if(function_exists('hcdecor_workflow_set_status')){
