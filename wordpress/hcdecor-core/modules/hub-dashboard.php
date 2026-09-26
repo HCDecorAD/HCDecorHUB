@@ -247,8 +247,10 @@ function hcdecor_hub_dashboard_page(){
     $inbox_unlinked=(int)($s['health']['last_outcomes']['drive_inbox_unlinked']??0);
     $worker_recovered=(int)($s['health']['worker']['recovered_24h']??0);
     $worker_reasons=(array)($s['health']['worker']['recovery_reasons_24h']??[]);
+    $worker_recovery_limited=!empty($s['health']['worker']['recovery_scan_limited']);
     $auto_recovered=(int)($s['health']['automation']['recovered_24h']??0);
     $auto_recovery_reasons=(array)($s['health']['automation']['recovery_reasons_24h']??[]);
+    $auto_recovery_limited=!empty($s['health']['automation']['recovery_scan_limited']);
     $auto_settings_change=(array)($s['health']['automation']['settings_last_change']??[]);
     ?>
     <div class="wrap hchub">
@@ -300,13 +302,13 @@ function hcdecor_hub_dashboard_page(){
         <div class="hchub-card"><div class="num"><?php echo (int)$c['jobs'];?></div><strong>Content Jobs</strong><br><small><?php echo (int)$pipeline['review'];?> review · <?php echo (int)$pipeline['published'];?> published · <?php echo (int)$pipeline['failed'];?> failed</small></div>
         <div class="hchub-card"><div class="num"><?php echo (int)($throughput['published']??0);?></div><strong>Published / 7 days</strong><br><small><?php echo (int)($throughput['created']??0);?> jobs created · <?php echo (int)($throughput['output_ratio']??($throughput['publish_rate']??0));?>% output ratio</small></div>
         <div class="hchub-card"><div class="num"><?php echo !empty($auto_repair['schedules'])?count((array)$auto_repair['schedules']):0;?></div><strong>Auto-repaired crons</strong><br><small><?php echo esc_html((string)($auto_repair['at']??'No repair needed'));?></small></div>
-        <div class="hchub-card"><div class="num"><?php echo (int)($c['automation']['queued']+$c['automation']['scheduled']);?></div><strong>Automation</strong><br><small><?php echo (int)$c['automation']['failed'];?> failed · <?php echo $auto_recovered;?> recovered/24h · <?php echo (int)($auto_recovery_reasons['running_timeout']??0);?> timeout · <?php echo (int)($auto_recovery_reasons['missing_started_at']??0);?> no-start<?php if(!empty($auto_settings_change['blocked_tasks'])):?> · <?php echo (int)$auto_settings_change['blocked_tasks'];?> blocked on config<?php endif;?></small></div>
+        <div class="hchub-card"><div class="num"><?php echo (int)($c['automation']['queued']+$c['automation']['scheduled']);?></div><strong>Automation</strong><br><small><?php echo (int)$c['automation']['failed'];?> failed · <?php echo $auto_recovered;?><?php echo $auto_recovery_limited?'+':'';?> recovered/24h · <?php echo (int)($auto_recovery_reasons['running_timeout']??0);?> timeout · <?php echo (int)($auto_recovery_reasons['missing_started_at']??0);?> no-start<?php if(!empty($auto_settings_change['blocked_tasks'])):?> · <?php echo (int)$auto_settings_change['blocked_tasks'];?> blocked on config<?php endif;?></small></div>
         <div class="hchub-card"><div class="num"><?php echo $health_score;?>%</div><strong>System Health</strong><br><span class="hchub-badge <?php echo esc_attr(hcdecor_hub_dashboard_badge($health_state));?>"><?php echo esc_html(strtoupper($health_state));?></span></div>
         <div class="hchub-card"><div class="num"><?php echo $vault_coverage;?>%</div><strong>Project Vault coverage</strong><br><small><?php echo (int)$s['project_vault_synced'];?> manifests synced</small></div>
         <div class="hchub-card"><div class="num"><?php echo (int)($vault_bulk['failed']??0);?></div><strong>Vault last sync failures</strong><br><small><?php echo esc_html((string)($s['vault_bulk_at']??'Never'));?></small></div>
         <div class="hchub-card"><div class="num"><?php echo (int)($inbox_result['imported']??0);?></div><strong>Inbox last import</strong><br><small><?php echo (int)($inbox_result['linked']??0);?> linked · <?php echo $inbox_unlinked;?> unlinked · <?php echo (int)($inbox_result['failed']??0);?> failed</small></div>
         <div class="hchub-card"><div class="num"><?php echo $backup_age===null?'—':(int)floor($backup_age/3600).'h';?></div><strong>Backup age</strong><br><small><?php echo esc_html((string)($s['backup_last']??'Never'));?></small></div>
-        <div class="hchub-card"><div class="num"><?php echo $worker_recovered;?></div><strong>Worker recoveries / 24h</strong><br><small><?php echo (int)($worker_reasons['missing_claim_token']??0);?> token · <?php echo (int)($worker_reasons['expired_lock']??0);?> lock · <?php echo (int)($worker_reasons['orphan_draft_claim']??0);?> orphan · <?php echo (int)($s['health']['worker']['locks_expiring_2m']??0);?> expiring ≤2m</small></div>
+        <div class="hchub-card"><div class="num"><?php echo $worker_recovered;?><?php echo $worker_recovery_limited?'+':'';?></div><strong>Worker recoveries / 24h</strong><br><small><?php echo (int)($worker_reasons['missing_claim_token']??0);?> token · <?php echo (int)($worker_reasons['expired_lock']??0);?> lock · <?php echo (int)($worker_reasons['orphan_draft_claim']??0);?> orphan · <?php echo (int)($s['health']['worker']['locks_expiring_2m']??0);?> expiring ≤2m</small></div>
       </div>
 
       <div class="hchub-flow">
