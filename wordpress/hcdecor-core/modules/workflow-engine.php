@@ -58,7 +58,7 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     $owned=hcdecor_workflow_sweep_mutex_acquire();
     if(!$owned){
         if(!wp_next_scheduled('hcdecor_worker_mutex_sweep_tick')) wp_schedule_single_event(time()+15,'hcdecor_worker_mutex_sweep_tick');
-        return ['stale'=>0,'deleted'=>0,'limited'=>true,'busy'=>true];
+        return ['stale'=>0,'deleted'=>0,'limited'=>false,'busy'=>true];
     }
     $limit=max(1,min(100,(int)$limit));
     $cutoff=time()-120;
