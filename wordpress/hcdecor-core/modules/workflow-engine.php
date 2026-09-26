@@ -380,9 +380,11 @@ add_action('admin_post_hcdecor_review_action',function(){
         delete_post_meta($id,'hc_reviewed_by');
         delete_post_meta($id,'hc_reviewed_at');
         hcdecor_workflow_set_status($id,'draft','Retry requested by reviewer');
-        delete_post_meta($id,'hc_agent_lock_until');
-            delete_post_meta($id,'hc_agent_claim_token');
-        if(function_exists('wp_schedule_single_event')) wp_schedule_single_event(time()+3,'hcdecor_ai_process_job',[$id]);
+        hcdecor_workflow_clear_worker_claim($id,true,false);
+        $mutex_key='hcdecor_claim_mutex_'.$id;
+        $mutex=(array)get_option($mutex_key,[]);
+        if($mutex && (empty($mutex['at']) || (int)$mutex['at']<(time()-120))) hcdecor_workflow_claim_mutex_delete_if_same($mutex_key,$mutex);
+        if(function_exists('wp_schedule_single_event') && !wp_next_scheduled('hcdecor_ai_process_job',[$id])) wp_schedule_single_event(time()+3,'hcdecor_ai_process_job',[$id]);
     }
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-review&job='.$id.'&done=1')); exit;
 });
