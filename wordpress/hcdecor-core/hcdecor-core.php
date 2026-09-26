@@ -2,7 +2,7 @@
 /**
  * Plugin Name: HCDecor Core
  * Description: Data/API foundation and bootstrap for HCDecor HUB + Elementor.
- * Version: 0.3.0
+ * Version: 0.4.0
  * Author: HCDecor
  */
 if (!defined('ABSPATH')) exit;
@@ -166,3 +166,41 @@ add_action('rest_api_init',function(){
     }
   ]);
 });
+
+
+/* Phase 2B: navigation, lead intake, safe automation hooks */
+add_action('init',function(){
+  register_nav_menus(['hcdecor_primary'=>'HCDecor Primary']);
+  $menu=wp_get_nav_menu_object('HCDecor Primary');
+  if(!$menu){
+    $mid=wp_create_nav_menu('HCDecor Primary');
+    foreach([['Trang chủ','trang-chu'],['Giới thiệu','gioi-thieu'],['Dịch vụ','dich-vu-hcdecor'],['Dự án','du-an-hcdecor'],['Liên hệ','lien-he']] as $i){
+      $p=get_page_by_path($i[1]);
+      if($p) wp_update_nav_menu_item($mid,0,['menu-item-title'=>$i[0],'menu-item-object'=>'page','menu-item-object-id'=>$p->ID,'menu-item-type'=>'post_type','menu-item-status'=>'publish']);
+    }
+  }
+},30);
+
+function hcdecor_lead_schema(){
+  return ['name'=>'','phone'=>'','email'=>'','service'=>'','message'=>'','source'=>'website'];
+}
+add_action('rest_api_init',function(){
+  register_rest_route('hcdecor/v1','/lead-schema',[
+    'methods'=>'GET','permission_callback'=>'__return_true',
+    'callback'=>function(){return rest_ensure_response(['fields'=>hcdecor_lead_schema(),'outbound'=>false,'provider'=>'Fluent Forms']);}
+  ]);
+});
+
+add_action('wp_footer',function(){
+  if(!is_front_page()) return;
+  $s=hcdecor_site_data(); ?>
+  <header class="hc-site-header">
+    <a class="hc-brand" href="<?php echo esc_url(home_url('/')); ?>">HCDecor <span>HUB</span></a>
+    <nav class="hc-nav" aria-label="HCDecor"><?php wp_nav_menu(['theme_location'=>'hcdecor_primary','container'=>false,'fallback_cb'=>false]); ?></nav>
+    <div class="hc-header-actions"><a href="tel:<?php echo esc_attr($s['contact']['tel']); ?>">0888 821 842</a><a class="hc-lang" href="#" aria-label="Language">🇬🇧 EN</a></div>
+  </header>
+  <footer class="hc-site-footer">
+    <div><strong>HCDecor HUB</strong><p><?php echo esc_html($s['brand']['tagline']); ?></p></div>
+    <div><p><?php echo esc_html($s['contact']['address']); ?></p><a href="tel:<?php echo esc_attr($s['contact']['tel']); ?>">0888 821 842</a> · <a href="<?php echo esc_url($s['social']['zalo']); ?>">Zalo</a></div>
+  </footer>
+<?php },5);
