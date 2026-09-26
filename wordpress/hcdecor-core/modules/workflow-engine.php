@@ -55,7 +55,10 @@ function hcdecor_workflow_sweep_mutex_release($owned){
 function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     global $wpdb;
     $owned=hcdecor_workflow_sweep_mutex_acquire();
-    if(!$owned) return ['stale'=>0,'deleted'=>0,'limited'=>true,'busy'=>true];
+    if(!$owned){
+        if(!wp_next_scheduled('hcdecor_worker_mutex_sweep_tick')) wp_schedule_single_event(time()+15,'hcdecor_worker_mutex_sweep_tick');
+        return ['stale'=>0,'deleted'=>0,'limited'=>true,'busy'=>true];
+    }
     $limit=max(1,min(100,(int)$limit));
     $cutoff=time()-120;
     $last=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
