@@ -392,3 +392,14 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
  .project>h3{font-size:20px!important}
  .project-symbol{width:44px;height:44px;font-size:21px;border-radius:12px}
 }
+
+/* V4.9 visual illustration cards */
+.visual-cards .visual-card{position:relative!important;min-height:220px!important;padding:0!important;overflow:hidden!important;justify-content:flex-end!important;align-items:stretch!important;background:#111!important}
+.visual-card .card-art{position:absolute;inset:0;z-index:0}
+.visual-card .card-art svg{width:100%;height:100%;display:block;object-fit:cover}
+.visual-card:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(5,7,8,.92));z-index:1}
+.visual-cards .visual-card h3{position:relative;z-index:2;color:#fff!important;text-align:left;margin:0!important;padding:18px 20px!important;font-size:19px!important}
+@media(max-width:560px){
+ .visual-cards .visual-card{min-height:155px!important}
+ .visual-cards .visual-card h3{padding:13px 14px!important;font-size:15px!important}
+}
