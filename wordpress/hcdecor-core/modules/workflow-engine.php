@@ -347,8 +347,13 @@ add_action('rest_api_init',function(){
             $lock=(int)get_post_meta($id,'hc_agent_lock_until',true);
             if($lock<=0 || $lock<time()) return new WP_Error('lock','Job lock expired; retry from Review Center',['status'=>409]);
             if(!hcdecor_workflow_owned_claim_active($id,$token)) return new WP_Error('claim','Worker claim changed before saving failure',['status'=>409]);
+            $lifecycle=hcdecor_workflow_lifecycle_mutex_acquire($id,$token,30);
+            if(!$lifecycle) return new WP_Error('busy','Job lifecycle is already being finalized',['status'=>409]);
+            if(!hcdecor_workflow_owned_claim_active($id,$token)){ hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle); return new WP_Error('claim','Worker claim changed before failure update',['status'=>409]); }
             $msg=sanitize_text_field((string)$r->get_param('message'));
-            if(!hcdecor_workflow_finish_owned_claim($id,$token,'failed',$msg?:'Agent failed')) return new WP_Error('claim','Worker claim changed before failure update',['status'=>409]);
+            $finished=hcdecor_workflow_finish_owned_claim($id,$token,'failed',$msg?:'Agent failed');
+            hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle);
+            if(!$finished) return new WP_Error('claim','Worker claim changed before failure update',['status'=>409]);
             update_post_meta($id,'hc_agent_error',$msg);
             return rest_ensure_response(['ok'=>true,'id'=>$id,'status'=>'failed','outbound'=>false]);
         }
@@ -379,7 +384,11 @@ function hcdecor_workflow_recover_stale_jobs($limit=10){
             if($current_token!==$token || $current_lock!==$lock) continue;
             $note=$invalid_claim?'Worker claim token missing; safe retry available':'Processing lock expired; safe retry available';
             if($token!==''){
-                if(!hcdecor_workflow_finish_owned_claim($job->ID,$token,'failed',$note)) continue;
+                $lifecycle=hcdecor_workflow_lifecycle_mutex_acquire($job->ID,$token,30);
+                if(!$lifecycle) continue;
+                $finished=hcdecor_workflow_finish_owned_claim($job->ID,$token,'failed',$note);
+                hcdecor_workflow_lifecycle_mutex_release($job->ID,$lifecycle);
+                if(!$finished) continue;
             }else{
                 if((string)get_post_meta($job->ID,'hc_agent_status',true)!=='processing') continue;
                 if(!hcdecor_workflow_set_status($job->ID,'failed',$note)) continue;
