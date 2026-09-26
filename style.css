@@ -446,3 +446,20 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
  .project{min-height:280px!important}
  .project.p3{min-height:220px!important}
 }
+
+/* V6.1 desktop hero repair */
+@media(min-width:851px){
+ .hero{min-height:760px;padding-top:70px}
+ .hero-copy{padding-top:0!important}
+ .hero-copy .eyebrow{margin:0 0 18px}
+ .hero h1{font-size:clamp(58px,5.4vw,78px)!important;line-height:1.02!important;letter-spacing:-.045em!important;margin:0 0 22px!important;max-width:780px}
+ .hero h1 br{display:block}
+ .hero .lead{font-size:20px!important;line-height:1.5;max-width:850px;margin:0;color:#e1e4e6}
+ .hero .actions{margin-top:30px}
+ .hero-points{margin-top:48px!important}
+ .hero-bg:after{display:none!important}
+ .hero-photo:after{display:block!important;background:linear-gradient(90deg,rgba(5,7,8,.82) 0%,rgba(5,7,8,.55) 42%,rgba(5,7,8,.22) 72%,rgba(5,7,8,.16) 100%),linear-gradient(0deg,rgba(5,7,8,.34),transparent 55%)!important}
+ .hero-photo img{object-position:center 52%}
+ .nav{height:70px}
+ .nav .brand{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;font-size:20px}
+}
