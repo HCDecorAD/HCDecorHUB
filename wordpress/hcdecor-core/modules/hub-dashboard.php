@@ -116,6 +116,21 @@ function hcdecor_hub_dashboard_attention($s){
     return array_slice($items,0,8);
 }
 
+function hcdecor_hub_dashboard_readiness($s){
+    $h=(array)($s['health']??[]);
+    $checks=[
+        'Code sync'=>!empty($s['sync_version']),
+        'System health'=>(int)($h['score']??0)>=90,
+        'Drive Vault'=>!empty($s['drive']) && (string)($s['drive_test']??'')==='ok',
+        'AI provider'=>in_array((string)($h['ai']['openai']??'off'),['ok','configured'],true) || in_array((string)($h['ai']['gemini']??'off'),['ok','configured'],true),
+        'Web publisher'=>!empty($h['publisher']['ready']),
+        'Backup'=>!empty($h['backup']['ready']),
+        'Agent Bridge'=>!empty($h['bridge']['ready'])
+    ];
+    $ready=count(array_filter($checks));
+    return ['checks'=>$checks,'ready'=>$ready,'total'=>count($checks),'percent'=>(int)round(($ready/max(1,count($checks)))*100)];
+}
+
 function hcdecor_hub_dashboard_page(){
     if(!current_user_can('edit_posts')) return;
     $s=hcdecor_hub_dashboard_state();
@@ -127,6 +142,7 @@ function hcdecor_hub_dashboard_page(){
     $projects=get_posts(['post_type'=>'hc_project','post_status'=>['publish','draft'],'numberposts'=>7,'orderby'=>'modified','order'=>'DESC']);
     $social=!empty($s['automation']['social_enabled']);
     $attention=hcdecor_hub_dashboard_attention($s);
+    $readiness=hcdecor_hub_dashboard_readiness($s);
     ?>
     <div class="wrap hchub">
       <style>
@@ -148,7 +164,7 @@ function hcdecor_hub_dashboard_page(){
       .hchub-list small{display:block;color:#646970;margin-top:2px}.hchub-quick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
       .hchub-quick .button{min-height:40px;display:flex;align-items:center;justify-content:center;text-align:center}
       .hchub-safe{border-left:4px solid #72aee6;background:#f0f6fc;padding:11px;margin-top:12px}
-      .hchub-section{margin-top:14px}.hchub-attention a{display:flex;align-items:center;gap:8px;text-decoration:none;color:#1d2327;padding:9px 0;border-top:1px solid #eee}.hchub-attention a:first-child{border-top:0}.hchub-attention .hchub-badge{flex:0 0 auto}
+      .hchub-section{margin-top:14px}.hchub-ready{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.hchub-ready-item{display:flex;justify-content:space-between;gap:8px;padding:9px 10px;border:1px solid #eee;border-radius:10px}.hchub-attention a{display:flex;align-items:center;gap:8px;text-decoration:none;color:#1d2327;padding:9px 0;border-top:1px solid #eee}.hchub-attention a:first-child{border-top:0}.hchub-attention .hchub-badge{flex:0 0 auto}
       @media(max-width:1200px){.hchub-kpis{grid-template-columns:repeat(3,1fr)}.hchub-services{grid-template-columns:repeat(2,1fr)}}
       @media(max-width:900px){.hchub-main{grid-template-columns:1fr}.hchub-head{display:block}.hchub-actions{margin-top:10px}}
       @media(max-width:600px){.hchub{margin-right:10px}.hchub-kpis{grid-template-columns:1fr 1fr}.hchub-services{grid-template-columns:1fr}.hchub-quick{grid-template-columns:1fr}.hchub-flow{overflow:auto;flex-wrap:nowrap;padding-bottom:4px}.hchub-step{white-space:nowrap}.hchub .button{min-height:44px}}
@@ -256,6 +272,15 @@ function hcdecor_hub_dashboard_page(){
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-system-health'));?>">System Health</a>
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-data-backups'));?>">Data Backups</a>
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-restore-center'));?>">Restore Center</a>
+            </div>
+          </section>
+
+          <section class="hchub-panel hchub-section">
+            <h2>OPERATIONAL READINESS · <?php echo (int)$readiness['percent'];?>%</h2>
+            <div class="hchub-body hchub-ready">
+              <?php foreach($readiness['checks'] as $label=>$ok):?>
+                <div class="hchub-ready-item"><span><?php echo esc_html($label);?></span><span class="hchub-badge <?php echo $ok?'ok':'warn';?>"><?php echo $ok?'READY':'CHECK';?></span></div>
+              <?php endforeach;?>
             </div>
           </section>
 
