@@ -89,6 +89,25 @@ add_action('admin_post_hcdecor_hub_safe_maintenance',function(){
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-hub&maintenance=1')); exit;
 });
 
+
+add_action('admin_post_hcdecor_hub_sync_projects',function(){
+    if(!current_user_can('edit_posts')) wp_die('Forbidden');
+    check_admin_referer('hcdecor_hub_sync_projects');
+    $result=function_exists('hcdecor_project_vault_sync_all')?hcdecor_project_vault_sync_all(100):new WP_Error('vault','Project Vault unavailable.');
+    if(is_wp_error($result)) update_option('hcdecor_hub_action_error',$result->get_error_message(),false);
+    else delete_option('hcdecor_hub_action_error');
+    wp_safe_redirect(admin_url('admin.php?page=hcdecor-hub&hub_action=projects')); exit;
+});
+
+add_action('admin_post_hcdecor_hub_run_inbox',function(){
+    if(!current_user_can('upload_files')) wp_die('Forbidden');
+    check_admin_referer('hcdecor_hub_run_inbox');
+    $result=function_exists('hcdecor_drive_inbox_run')?hcdecor_drive_inbox_run():new WP_Error('inbox','Drive Inbox unavailable.');
+    if(is_wp_error($result)) update_option('hcdecor_hub_action_error',$result->get_error_message(),false);
+    else delete_option('hcdecor_hub_action_error');
+    wp_safe_redirect(admin_url('admin.php?page=hcdecor-hub&hub_action=inbox')); exit;
+});
+
 function hcdecor_hub_dashboard_badge($state){
     $state=(string)$state;
     if(in_array($state,['ok','healthy','connected','ready'],true)) return 'ok';
@@ -185,6 +204,7 @@ function hcdecor_hub_dashboard_page(){
       </div>
 
       <?php if(isset($_GET['maintenance'])):?><div class="notice notice-success inline"><p>Safe Maintenance đã chạy: sync + repair schedules + health snapshot.</p></div><?php endif;?>
+      <?php if(isset($_GET['hub_action'])): $hub_error=(string)get_option('hcdecor_hub_action_error','');?><div class="notice <?php echo $hub_error?'notice-error':'notice-success';?> inline"><p><?php echo esc_html($hub_error?:'Safe operation completed.');?></p></div><?php endif;?>
 
       <div class="hchub-kpis">
         <div class="hchub-card"><div class="num"><?php echo (int)$c['projects_publish'];?></div><strong>Projects Live</strong><br><small><?php echo (int)$c['projects_draft'];?> draft</small></div>
@@ -270,6 +290,8 @@ function hcdecor_hub_dashboard_page(){
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-drive-vault'));?>">Drive Vault</a>
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-automation'));?>">Automation HUB</a>
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-system-health'));?>">System Health</a>
+              <?php if(current_user_can('upload_files')):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_hub_run_inbox"><?php wp_nonce_field('hcdecor_hub_run_inbox');?><button class="button">Run Drive Inbox</button></form><?php endif;?>
+              <?php if(current_user_can('edit_posts')):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_hub_sync_projects"><?php wp_nonce_field('hcdecor_hub_sync_projects');?><button class="button">Sync Project Vault</button></form><?php endif;?>
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-data-backups'));?>">Data Backups</a>
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-restore-center'));?>">Restore Center</a>
             </div>
