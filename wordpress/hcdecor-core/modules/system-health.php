@@ -10,7 +10,7 @@ function hcdecor_health_required_modules(){
     return [
         'background-sync.php','content-operations.php','workflow-engine.php','ai-providers.php',
         'media-intelligence.php','agent-intake.php','ai-workspace.php','web-publisher.php',
-        'automation-hub.php','automation-recipes.php','drive-vault.php',
+        'automation-hub.php','automation-recipes.php','drive-vault.php','data-backup.php',
         'project-publishing.php','media-manager.php','admin-cleanup.php'
     ];
 }
@@ -61,6 +61,11 @@ function hcdecor_health_crons(){
             'hook'=>'hcdecor_evergreen_tick',
             'scheduled'=>(bool)wp_next_scheduled('hcdecor_evergreen_tick'),
             'next'=>(int)(wp_next_scheduled('hcdecor_evergreen_tick')?:0)
+        ],
+        'daily_backup'=>[
+            'hook'=>'hcdecor_backup_daily',
+            'scheduled'=>(bool)wp_next_scheduled('hcdecor_backup_daily'),
+            'next'=>(int)(wp_next_scheduled('hcdecor_backup_daily')?:0)
         ],
         'daily_health'=>[
             'hook'=>'hcdecor_health_daily_report',
@@ -145,6 +150,11 @@ function hcdecor_health_snapshot(){
         'content_queue'=>$queue,
         'bridge'=>['ready'=>$bridge!==''],
         'publisher'=>['ready'=>function_exists('hcdecor_publish_job_to_web')],
+        'backup'=>[
+            'last_at'=>(string)get_option('hcdecor_backup_last_at',''),
+            'error'=>(string)get_option('hcdecor_backup_last_error',''),
+            'ready'=>function_exists('hcdecor_backup_save')
+        ],
         'issues'=>$issues
     ];
 }
