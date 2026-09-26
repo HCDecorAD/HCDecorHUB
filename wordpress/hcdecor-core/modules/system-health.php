@@ -211,7 +211,7 @@ function hcdecor_health_snapshot(){
     if((int)($vault_bulk['failed']??0)>0 && $vault_bulk_ts && (current_time('timestamp')-$vault_bulk_ts)<=86400) $issues[]='Recent Project Vault bulk sync failed: '.(int)$vault_bulk['failed'];
     if(!empty($inbox_settings['enabled']) && (int)($inbox_result['failed']??0)>0) $issues[]='Last Drive Inbox run failed: '.(int)$inbox_result['failed'];
     $backup_running=(bool)get_transient('hcdecor_backup_running');
-    if($vault_stale>0) $issues[]='Project Vault stale: '.$vault_stale;
+    if($vault_stale>0) $issues[]='Project Vault stale: '.$vault_stale.($vault_synced>$vault_stale_scanned?' (first '.$vault_stale_scanned.' scanned)':'');
     if(!empty($inbox_settings['enabled']) && $inbox_ts===0) $issues[]='Drive Inbox has never completed';
     elseif(!empty($inbox_settings['enabled']) && $inbox_age>1800) $issues[]='Drive Inbox is stale (>30 min)';
     $recovered_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_query'=>[['key'=>'hc_agent_recovered_at','compare'=>'EXISTS']]]);
