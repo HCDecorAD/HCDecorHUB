@@ -43,6 +43,8 @@ echo HCDECOR HUB AUTO: READY
 echo.
 echo Website : http://hcdecor-hub.local/
 echo HUB     : http://hcdecor-hub.local/wp-admin/admin.php?page=hcdecor-hub
+echo AI Agent: http://hcdecor-hub.local/wp-admin/admin.php?page=hcdecor-agent
+echo AgentBridge: http://hcdecor-hub.local/wp-admin/admin.php?page=hcdecor-bridge
 echo Projects: http://hcdecor-hub.local/wp-admin/edit.php?post_type=hc_project
 echo Media   : http://hcdecor-hub.local/wp-admin/upload.php
 echo Leads   : http://hcdecor-hub.local/wp-admin/edit.php?post_type=hc_lead
