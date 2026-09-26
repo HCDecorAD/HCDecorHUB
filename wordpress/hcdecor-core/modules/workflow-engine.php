@@ -54,17 +54,25 @@ function hcdecor_workflow_claim_mutex_release($job_id,$claim_token){
     if($claim_token!=='' && (string)($mutex['token']??'')===$claim_token) delete_option($key);
 }
 
+function hcdecor_workflow_clear_owned_claim($job_id,$claim_token,$clear_claimed=true){
+    $job_id=(int)$job_id;
+    if($claim_token==='' || (string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token) return false;
+    hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed,false);
+    hcdecor_workflow_claim_mutex_release($job_id,$claim_token);
+    return true;
+}
+
 function hcdecor_workflow_finalize_claim($job_id,$claim_token,$now,$message='Agent claimed job'){
     $job_id=(int)$job_id;
     if($claim_token==='' || (string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token) return false;
     if((string)get_post_meta($job_id,'hc_agent_status',true)!=='draft'){
-        if((string)get_post_meta($job_id,'hc_agent_claim_token',true)===$claim_token) hcdecor_workflow_clear_worker_claim($job_id,true);
+        hcdecor_workflow_clear_owned_claim($job_id,$claim_token,true);
         return false;
     }
     update_post_meta($job_id,'hc_agent_claimed_at',current_time('mysql'));
     update_post_meta($job_id,'hc_agent_lock_until',(int)$now+600);
     if(hcdecor_workflow_set_status($job_id,'processing',$message)) return true;
-    if((string)get_post_meta($job_id,'hc_agent_claim_token',true)===$claim_token) hcdecor_workflow_clear_worker_claim($job_id,true);
+    hcdecor_workflow_clear_owned_claim($job_id,$claim_token,true);
     return false;
 }
 
