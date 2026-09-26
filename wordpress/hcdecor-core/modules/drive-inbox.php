@@ -66,6 +66,7 @@ function hcdecor_drive_inbox_link_project($attachment_id,$project_id){
     if(!has_post_thumbnail($project_id) && wp_attachment_is_image($attachment_id)){
         set_post_thumbnail($project_id,$attachment_id);
     }
+    do_action('hcdecor_project_data_changed',$project_id);
     return true;
 }
 
