@@ -129,7 +129,7 @@ function hcdecor_health_snapshot(){
     $bridge=(string)get_option('hcdecor_bridge_token','');
     $actionable_blocked=hcdecor_health_actionable_blocked_count();
     $auto_recovered_24h=0;
-    $auto_recovered_ids=get_posts(['post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_query'=>[['key'=>'hc_auto_recovered_at','compare'=>'EXISTS']]]);
+    $auto_recovered_ids=get_posts(['post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>100,'fields'=>'ids','meta_query'=>[['key'=>'hc_auto_recovered_at','value'=>wp_date('Y-m-d H:i:s',time()-DAY_IN_SECONDS),'compare'=>'>=','type'=>'DATETIME']]]);
     foreach($auto_recovered_ids as $aid){
         $at=strtotime((string)get_post_meta($aid,'hc_auto_recovered_at',true))?:0;
         if($at && $at>=time()-DAY_IN_SECONDS) $auto_recovered_24h++;
@@ -227,7 +227,7 @@ function hcdecor_health_snapshot(){
     if($vault_stale>0) $issues[]='Project Vault stale: '.$vault_stale.($vault_synced>$vault_stale_scanned?' (first '.$vault_stale_scanned.' scanned)':'');
     if(!empty($inbox_settings['enabled']) && $inbox_ts===0) $issues[]='Drive Inbox has never completed';
     elseif(!empty($inbox_settings['enabled']) && $inbox_age>1800) $issues[]='Drive Inbox is stale (>30 min)';
-    $recovered_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_query'=>[['key'=>'hc_agent_recovered_at','compare'=>'EXISTS']]]);
+    $recovered_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>100,'fields'=>'ids','meta_query'=>[['key'=>'hc_agent_recovered_at','value'=>wp_date('Y-m-d H:i:s',$now-DAY_IN_SECONDS),'compare'=>'>=','type'=>'DATETIME']]]);
     foreach($recovered_ids as $rid){
         $rt=strtotime((string)get_post_meta($rid,'hc_agent_recovered_at',true))?:0;
         if($rt && $rt>=($now-DAY_IN_SECONDS)){
