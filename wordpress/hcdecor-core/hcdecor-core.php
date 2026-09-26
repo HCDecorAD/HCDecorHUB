@@ -503,3 +503,52 @@ add_action('manage_hc_content_job_posts_custom_column',function($col,$id){
   if($col==='channels') echo esc_html(implode(' · ',(array)get_post_meta($id,'hc_channels',true)));
   if($col==='agent') echo '<strong>'.esc_html(get_post_meta($id,'hc_agent_status',true)?:'queued').'</strong>';
 },10,2);
+
+
+/* HCDECOR_CONTENT_STUDIO_V2: visual workspace + channel previews */
+add_action('admin_menu',function(){
+  add_submenu_page('hcdecor-hub','Studio Demo','Studio Demo','edit_posts','hcdecor-studio-v2','hcdecor_studio_v2_admin',0);
+},13);
+
+function hcdecor_studio_v2_admin(){
+  $projects=get_posts(['post_type'=>'hc_project','post_status'=>'publish','numberposts'=>20,'orderby'=>'modified','order'=>'DESC']);
+  $media=get_posts(['post_type'=>'attachment','post_status'=>'inherit','post_mime_type'=>'image','numberposts'=>18,'orderby'=>'date','order'=>'DESC']);
+  $jobs=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>6,'orderby'=>'date','order'=>'DESC']);
+  ?>
+  <div class="wrap" id="hcStudio2">
+  <style>
+  #hcStudio2{max-width:1380px;color:#17191c}.hcs-top{display:flex;justify-content:space-between;align-items:center;margin:12px 0 20px}.hcs-top h1{font-size:30px;margin:0}.hcs-safe{background:#17191c;color:#d9a15d;padding:9px 13px;border-radius:999px;font-weight:700}
+  .hcs-layout{display:grid;grid-template-columns:250px minmax(500px,1fr) 380px;gap:14px}.hcs-panel{background:#fff;border:1px solid #dcdcde;border-radius:14px;overflow:hidden}.hcs-title{padding:15px 17px;border-bottom:1px solid #eee;font-weight:700}.hcs-body{padding:14px}
+  .hcs-project{padding:11px;border:1px solid #e3e3e3;border-radius:9px;margin-bottom:8px;cursor:pointer}.hcs-project:hover,.hcs-project.active{border-color:#d59a55;background:#fff9f2}.hcs-project small{display:block;color:#777;margin-top:4px}
+  .hcs-media{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.hcs-media label{position:relative;cursor:pointer}.hcs-media img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;background:#eee}.hcs-media input{position:absolute;top:6px;left:6px}
+  .hcs-brief textarea{width:100%;min-height:120px}.hcs-actions{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.hcs-chip{border:1px solid #ddd;border-radius:999px;padding:7px 10px;background:#fff}
+  .hcs-preview{background:#f5f6f7;border-radius:11px;padding:14px;margin-bottom:10px}.hcs-preview strong{display:block;margin-bottom:8px}.hcs-preview p{margin:5px 0;color:#555}.hcs-cover{aspect-ratio:16/9;border-radius:9px;background:linear-gradient(135deg,#161a1f,#3b2a1a);display:flex;align-items:end;padding:15px;color:#fff;font-size:20px;font-weight:700}
+  .hcs-flow{display:flex;gap:6px;flex-wrap:wrap}.hcs-flow span{background:#17191c;color:#fff;padding:7px 9px;border-radius:7px;font-size:12px}.hcs-queue{margin-top:14px}.hcs-job{padding:9px 0;border-bottom:1px solid #eee}.hcs-job em{color:#b87932}
+  @media(max-width:1100px){.hcs-layout{grid-template-columns:220px 1fr}.hcs-layout>.hcs-panel:last-child{grid-column:1/-1}}@media(max-width:782px){.hcs-layout{grid-template-columns:1fr}.hcs-layout>.hcs-panel:last-child{grid-column:auto}}
+  </style>
+  <div class="hcs-top"><div><h1>HCDecor · Content Studio</h1><p>Biến Project + Media thành nội dung đa nền tảng.</p></div><span class="hcs-safe">DEMO · PUBLISH OFF</span></div>
+  <div class="hcs-layout">
+    <section class="hcs-panel"><div class="hcs-title">① PROJECT</div><div class="hcs-body">
+    <?php foreach($projects as $i=>$p): ?><div class="hcs-project <?php echo $i===0?'active':'';?>" data-project="<?php echo (int)$p->ID;?>"><strong><?php echo esc_html($p->post_title);?></strong><small><?php echo esc_html(wp_trim_words($p->post_excerpt,10));?></small></div><?php endforeach;?>
+    <a class="button" href="<?php echo esc_url(admin_url('post-new.php?post_type=hc_project'));?>">+ Project</a>
+    </div></section>
+    <section class="hcs-panel"><div class="hcs-title">② MEDIA + AI BRIEF</div><div class="hcs-body">
+      <div class="hcs-media"><?php if(!$media): ?><p>Chưa có ảnh.</p><?php endif; foreach($media as $m): $src=wp_get_attachment_image_url($m->ID,'medium'); if($src): ?><label><input type="checkbox" value="<?php echo (int)$m->ID;?>"><img src="<?php echo esc_url($src);?>"></label><?php endif; endforeach;?></div>
+      <p><a class="button" href="<?php echo esc_url(admin_url('media-new.php'));?>">+ Upload ảnh/video</a> <a class="button" href="<?php echo esc_url(admin_url('upload.php'));?>">Media Library</a></p>
+      <div class="hcs-brief"><textarea id="hcBrief" placeholder="Yêu cầu Agent: phân tích hình ảnh, chọn cover, viết bài dự án cho Web, caption Facebook, kịch bản TikTok/Reels..."></textarea></div>
+      <div class="hcs-actions"><button class="button button-primary" id="hcDemoGenerate">✦ Generate Demo</button><span class="hcs-chip">Web</span><span class="hcs-chip">Facebook</span><span class="hcs-chip">TikTok / Reels</span><span class="hcs-chip">YouTube</span></div>
+      <div class="hcs-flow"><span>ANALYZE MEDIA</span><span>SELECT COVER</span><span>WRITE</span><span>REVIEW</span><span>PREVIEW</span><span>PUBLISH</span></div>
+      <div class="hcs-queue"><h3>Content Queue</h3><?php foreach($jobs as $j): ?><div class="hcs-job"><strong><?php echo esc_html($j->post_title);?></strong><br><em><?php echo esc_html(get_post_meta($j->ID,'hc_agent_status',true)?:'queued');?></em></div><?php endforeach;?></div>
+    </div></section>
+    <aside class="hcs-panel"><div class="hcs-title">③ LIVE PREVIEW</div><div class="hcs-body">
+      <div class="hcs-preview"><strong>WEB · PROJECT</strong><div class="hcs-cover" id="hcCover">HCDecor Project Story</div><h2 id="hcWebTitle">Không gian được tạo nên từ ý tưởng</h2><p id="hcWebText">AI Agent sẽ tạo nội dung dự án từ brief và media đã chọn.</p></div>
+      <div class="hcs-preview"><strong>FACEBOOK</strong><p id="hcFb">Một dự án mới từ HCDecor — nơi thiết kế, vật liệu và thi công cùng kể một câu chuyện.</p><small>#HCDecor #ThietKe #ThiCong</small></div>
+      <div class="hcs-preview"><strong>TIKTOK / REELS</strong><p id="hcTk">Hook: Từ bản vẽ đến không gian thực tế trong 15 giây.</p><small>Cover → Before/After → Detail → CTA</small></div>
+      <p><button class="button" disabled>Publish — đang khóa</button></p>
+    </div></aside>
+  </div>
+  <script>
+  (function(){const root=document.getElementById('hcStudio2');root.querySelectorAll('.hcs-project').forEach(x=>x.onclick=()=>{root.querySelectorAll('.hcs-project').forEach(y=>y.classList.remove('active'));x.classList.add('active')});document.getElementById('hcDemoGenerate').onclick=function(){const b=document.getElementById('hcBrief').value.trim();const p=root.querySelector('.hcs-project.active strong');const name=p?p.textContent:'HCDecor Project';document.getElementById('hcWebTitle').textContent=name;document.getElementById('hcWebText').textContent=b||'Thiết kế được phát triển từ nhu cầu thực tế, tập trung vào nhận diện, công năng và trải nghiệm không gian.';document.getElementById('hcFb').textContent='✨ '+name+' — '+(b||'HCDecor biến ý tưởng thành trải nghiệm không gian rõ nét và có tính ứng dụng.');document.getElementById('hcTk').textContent='Hook: '+name+' — xem quá trình từ ý tưởng → thiết kế → hoàn thiện.';document.getElementById('hcCover').textContent=name;};})();
+  </script></div>
+  <?php
+}
