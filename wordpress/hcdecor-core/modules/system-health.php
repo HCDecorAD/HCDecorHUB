@@ -242,7 +242,7 @@ function hcdecor_health_snapshot(){
         if(!wp_next_scheduled('hcdecor_automation_cleanup_tick') && !wp_next_scheduled('hcdecor_automation_cleanup_watchdog') && !$automation_cleanup_running) $issues[]='Automation cleanup backlog has no scheduled continuation';
     }
     if($automation_cleanup_stale) $issues[]='Automation cleanup mutex is stale';
-    if($worker_mutex_sweep_fresh && !empty($worker_mutex_sweep['limited'])) $issues[]='Worker mutex sweep is bounded; additional mutex rows remain';
+    if($worker_mutex_sweep_fresh && !empty($worker_mutex_sweep['limited']) && !wp_next_scheduled('hcdecor_worker_mutex_sweep_tick')) $issues[]='Worker mutex sweep is bounded without scheduled continuation';
     if(empty($automation_last_change['cleanup_limited']) && wp_next_scheduled('hcdecor_automation_cleanup_watchdog')) $issues[]='Automation cleanup watchdog is orphaned';
     if($bridge==='') $issues[]='Agent Bridge token missing';
     if($drive_configured && $backup_ts===0) $issues[]='Backup has never completed';
@@ -358,7 +358,8 @@ function hcdecor_health_snapshot(){
             'recovery_reasons_24h'=>$recovery_reasons,
             'recovery_scan_limited'=>$worker_recovery_scan_limited,
             'mutex_sweep'=>$worker_mutex_sweep,
-            'mutex_sweep_fresh'=>$worker_mutex_sweep_fresh
+            'mutex_sweep_fresh'=>$worker_mutex_sweep_fresh,
+            'mutex_sweep_next'=>wp_next_scheduled('hcdecor_worker_mutex_sweep_tick')?:0
         ],
         'review_oldest_age_seconds'=>$oldest_review_age,
         'auto_repair'=>[
