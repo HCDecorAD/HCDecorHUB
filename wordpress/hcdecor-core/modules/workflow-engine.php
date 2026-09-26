@@ -399,9 +399,9 @@ add_action('rest_api_init',function(){
             if(!hcdecor_workflow_owned_claim_active($id,$token)){ hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle); return new WP_Error('claim','Worker claim changed before failure update',['status'=>409]); }
             $msg=sanitize_text_field((string)$r->get_param('message'));
             $finished=hcdecor_workflow_finish_owned_claim($id,$token,'failed',$msg?:'Agent failed');
+            if($finished) update_post_meta($id,'hc_agent_error',$msg);
             hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle);
             if(!$finished) return new WP_Error('claim','Worker claim changed before failure update',['status'=>409]);
-            update_post_meta($id,'hc_agent_error',$msg);
             return rest_ensure_response(['ok'=>true,'id'=>$id,'status'=>'failed','outbound'=>false]);
         }
     ]);
