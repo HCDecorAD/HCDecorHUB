@@ -133,6 +133,7 @@ function hcdecor_health_snapshot(){
     $stale_processing=0;
     $processing_without_token=0;
     $processing_lock_expiring=0;
+    $recovered_24h=0;
     $oldest_review_age=0;
     $review_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'review']);
     foreach($review_ids as $rid){
@@ -195,6 +196,12 @@ function hcdecor_health_snapshot(){
     $inbox_settings=function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[];
     if(!empty($inbox_settings['enabled']) && $inbox_ts===0) $issues[]='Drive Inbox has never completed';
     elseif(!empty($inbox_settings['enabled']) && $inbox_age>1800) $issues[]='Drive Inbox is stale (>30 min)';
+    $recovered_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_query'=>[['key'=>'hc_agent_recovered_at','compare'=>'EXISTS']]]);
+    foreach($recovered_ids as $rid){
+        $rt=strtotime((string)get_post_meta($rid,'hc_agent_recovered_at',true))?:0;
+        if($rt && $rt>=($now-DAY_IN_SECONDS)) $recovered_24h++;
+    }
+
     if($stale_processing>0) $issues[]='Stale processing jobs: '.$stale_processing;
     if($processing_without_token>0) $issues[]='Processing jobs missing claim token: '.$processing_without_token;
     if($oldest_review_age>86400) $issues[]='Review queue oldest item >24h';
@@ -265,7 +272,8 @@ function hcdecor_health_snapshot(){
         'stale_processing'=>$stale_processing,
         'worker'=>[
             'processing_without_token'=>$processing_without_token,
-            'locks_expiring_2m'=>$processing_lock_expiring
+            'locks_expiring_2m'=>$processing_lock_expiring,
+            'recovered_24h'=>$recovered_24h
         ],
         'review_oldest_age_seconds'=>$oldest_review_age,
         'auto_repair'=>[
