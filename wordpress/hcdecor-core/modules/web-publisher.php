@@ -18,13 +18,28 @@ function hcdecor_publish_snapshot($project_id){
     ];
 }
 
-function hcdecor_publish_job_to_web($job_id){
+function hcdecor_publish_preflight($job_id){
     $job_id=(int)$job_id;
     if(get_post_type($job_id)!=='hc_content_job') return new WP_Error('job','Invalid content job');
     if((string)get_post_meta($job_id,'hc_agent_status',true)!=='approved') return new WP_Error('status','Job must be approved first.');
-
     $project=(int)get_post_meta($job_id,'hc_project_id',true);
     if(!$project || get_post_type($project)!=='hc_project') return new WP_Error('project','Invalid project');
+    $title=trim((string)get_post_meta($job_id,'hc_web_title',true));
+    $body=trim((string)get_post_meta($job_id,'hc_web_body',true));
+    if($title==='') return new WP_Error('title','Web title is required.');
+    if($body==='') return new WP_Error('body','Web body is required.');
+    $media=array_values(array_unique(array_filter(array_map('intval',(array)get_post_meta($job_id,'hc_media_ids',true)))));
+    $media=array_values(array_filter($media,function($id){return get_post_type($id)==='attachment';}));
+    $cover=(int)get_post_meta($job_id,'hc_cover_id',true);
+    if($cover && !in_array($cover,$media,true)) return new WP_Error('cover','Cover must belong to selected media.');
+    return ['project_id'=>$project,'media_ids'=>$media,'cover_id'=>$cover];
+}
+
+function hcdecor_publish_job_to_web($job_id){
+    $job_id=(int)$job_id;
+    $preflight=hcdecor_publish_preflight($job_id);
+    if(is_wp_error($preflight)) return $preflight;
+    $project=(int)$preflight['project_id'];
 
     $snapshot=hcdecor_publish_snapshot($project);
     if(is_wp_error($snapshot)) return $snapshot;
