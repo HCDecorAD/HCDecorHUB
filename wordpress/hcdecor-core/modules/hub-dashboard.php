@@ -171,6 +171,7 @@ function hcdecor_hub_dashboard_attention($s){
     if(empty($h['automation']['settings_cleanup_limited']) && !empty($h['automation']['cleanup_watchdog_next'])) $add('warn','Automation cleanup watchdog is orphaned',admin_url('admin.php?page=hcdecor-system-health'));
     if(!empty($h['automation']['settings_cleanup_limited']) && empty($h['automation']['cleanup_next']) && empty($h['automation']['cleanup_watchdog_next']) && empty($h['automation']['cleanup_running'])) $add('bad','Automation cleanup backlog has no active continuation',admin_url('admin.php?page=hcdecor-system-health'));
     if(!empty($h['worker']['recovery_scan_limited'])) $add('warn','Worker recovery metric is bounded at 100+ / 24h',admin_url('admin.php?page=hcdecor-system-health'));
+    if(!empty($h['worker']['mutex_sweep_fresh']) && !empty($h['worker']['mutex_sweep']['limited'])) $add('warn','Worker mutex sweep is bounded; additional rows remain',admin_url('admin.php?page=hcdecor-system-health'));
     $unlinked=(int)($h['last_outcomes']['drive_inbox_unlinked']??0);
     if(!empty($s['inbox']['enabled']) && $unlinked>0) $add('warn',$unlinked.' imported media item(s) not linked to a Project',admin_url('admin.php?page=hcdecor-drive-inbox'));
     if(!empty($s['inbox']['enabled']) && !empty($h['inbox']['error'])) $add('bad','Drive Inbox: '.(string)$h['inbox']['error'],admin_url('admin.php?page=hcdecor-drive-inbox'));
@@ -253,6 +254,8 @@ function hcdecor_hub_dashboard_page(){
     $worker_recovered=(int)($s['health']['worker']['recovered_24h']??0);
     $worker_reasons=(array)($s['health']['worker']['recovery_reasons_24h']??[]);
     $worker_recovery_limited=!empty($s['health']['worker']['recovery_scan_limited']);
+    $worker_mutex_sweep=(array)($s['health']['worker']['mutex_sweep']??[]);
+    $worker_mutex_sweep_fresh=!empty($s['health']['worker']['mutex_sweep_fresh']);
     $auto_recovered=(int)($s['health']['automation']['recovered_24h']??0);
     $auto_recovery_reasons=(array)($s['health']['automation']['recovery_reasons_24h']??[]);
     $auto_recovery_limited=!empty($s['health']['automation']['recovery_scan_limited']);
