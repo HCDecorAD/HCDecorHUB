@@ -641,3 +641,24 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
  .lang-toggle{min-width:86px!important;height:46px!important;padding:0 14px!important;gap:8px!important}
  .lang-flag{font-size:20px}.lang-code{font-size:14px!important}
 }
+
+/* V6.8 unified dark production theme */
+:root{--hc-bg:#090b0d;--hc-panel:#111417;--hc-panel2:#161a1e;--hc-text:#f3f1ed;--hc-muted:#a6adb3;--hc-line:rgba(255,255,255,.10);--hc-gold:#d59a55}
+body,main{background:var(--hc-bg)!important;color:var(--hc-text)!important}
+.section,.section.light,#services,#process,.about{background:var(--hc-bg)!important;color:var(--hc-text)!important}
+.section.dark,#projects{background:#0c0f11!important}
+.section-title>span{background:transparent!important;border:0!important;border-radius:0!important;width:auto!important;height:auto!important;min-height:0!important;display:block!important;color:var(--hc-gold)!important;place-items:initial!important}
+.section-title h2,#services .section-title h2,#process .section-title h2,#projects .section-title h2{color:var(--hc-text)!important}
+.section-title p,#services .section-title p,#process .section-title p,#projects .section-title p,.about p,.about .muted{color:var(--hc-muted)!important}
+#process .steps div{background:var(--hc-panel)!important;border-color:var(--hc-line)!important;box-shadow:none!important}
+#process .steps h4{color:var(--hc-text)!important}
+#process .steps p{color:var(--hc-muted)!important}
+#process .steps b{background:#20252a!important;color:#e4aa65!important}
+.solution-tile,.project{border-color:var(--hc-line)!important}
+.about-metrics span{border-color:var(--hc-line)!important;background:var(--hc-panel)!important}
+.about-metrics b{color:var(--hc-text)!important}.about-metrics small{color:var(--hc-muted)!important}
+.band{background:#111417!important;border-top:1px solid var(--hc-line)!important;border-bottom:1px solid var(--hc-line)!important;color:#d6d9db!important}
+footer{background:#07090a!important;border-top:1px solid var(--hc-line)!important;color:var(--hc-text)!important}
+footer p,footer a,footer small,.copyright{color:var(--hc-muted)}
+footer b,footer strong{color:var(--hc-text)}
+@media(max-width:850px){.section-title>span{padding:0!important;background:transparent!important;border:0!important}}
