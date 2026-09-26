@@ -113,6 +113,12 @@ add_action('rest_api_init',function(){
                     continue;
                 }
                 if(!add_post_meta($j->ID,'hc_agent_claim_token',$claim_token,true)){
+                    $existing_token=(string)get_post_meta($j->ID,'hc_agent_claim_token',true);
+                    $existing_lock=(int)get_post_meta($j->ID,'hc_agent_lock_until',true);
+                    if($existing_token!=='' && $existing_lock<=$now){
+                        $claimed=strtotime((string)get_post_meta($j->ID,'hc_agent_claimed_at',true))?:0;
+                        if($claimed && $claimed<($now-120)) hcdecor_workflow_clear_worker_claim($j->ID,true);
+                    }
                     delete_option($mutex);
                     continue;
                 }
