@@ -435,6 +435,8 @@ function hcdecor_health_auto_repair_schedules(){
         if(hcdecor_workflow_claim_mutex_delete_if_same('hcdecor_worker_mutex_sweep_mutex',$worker_sweep_lock)){
             $cleanup_repairs[]='worker_mutex_sweep_lock';
             $worker_sweep_lock=[];
+        }else{
+            $worker_sweep_lock=(array)get_option('hcdecor_worker_mutex_sweep_mutex',[]);
         }
     }
     $worker_sweep_busy=!empty($worker_sweep_lock['at']) && (int)$worker_sweep_lock['at']>=(time()-30);
@@ -452,7 +454,7 @@ function hcdecor_health_auto_repair_schedules(){
     }elseif($worker_sweep_fresh && !empty($worker_sweep['limited']) && !$worker_sweep_next && !$worker_sweep_busy){
         wp_schedule_single_event(time()+15,'hcdecor_worker_mutex_sweep_tick');
         $cleanup_repairs[]='worker_mutex_sweep';
-    }elseif($worker_sweep_fresh && empty($worker_sweep['limited']) && $worker_sweep_next){
+    }elseif($worker_sweep_fresh && empty($worker_sweep['limited']) && $worker_sweep_next && !$worker_sweep_busy){
         wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
         $cleanup_repairs[]='worker_mutex_sweep_orphan';
     }
