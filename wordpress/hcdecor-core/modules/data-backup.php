@@ -26,7 +26,9 @@ function hcdecor_backup_project($p){
         'client'=>(string)get_post_meta($p->ID,'hc_client',true),
         'location'=>(string)get_post_meta($p->ID,'hc_location',true),
         'year'=>(string)get_post_meta($p->ID,'hc_year',true),
-        'summary'=>(string)get_post_meta($p->ID,'hc_summary',true)
+        'summary'=>(string)get_post_meta($p->ID,'hc_summary',true),
+        'drive_project_file_id'=>(string)get_post_meta($p->ID,'hc_drive_project_file_id',true),
+        'drive_project_url'=>(string)get_post_meta($p->ID,'hc_drive_project_url',true)
     ];
 }
 
