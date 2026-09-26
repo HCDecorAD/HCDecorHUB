@@ -145,6 +145,9 @@ function hcdecor_health_snapshot(){
     $vault_errors=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_error','meta_compare'=>'EXISTS','fields'=>'ids']))->found_posts;
     $vault_retrying=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_retry_count','meta_value'=>0,'meta_compare'=>'>','fields'=>'ids']))->found_posts;
     $backup_retry=(int)get_option('hcdecor_backup_retry_count',0);
+    $published_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'date_query'=>[['after'=>'7 days ago']],'meta_key'=>'hc_agent_status','meta_value'=>'published_web','fields'=>'ids']))->found_posts;
+    $created_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'date_query'=>[['after'=>'7 days ago']],'fields'=>'ids']))->found_posts;
+    $backup_cron=(int)(wp_next_scheduled('hcdecor_backup_daily')?:0);
     $vault_stale=0;
     $vault_ids=get_posts(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'numberposts'=>100,'fields'=>'ids','meta_key'=>'hc_drive_project_file_id','meta_compare'=>'EXISTS']);
     foreach($vault_ids as $pid){
@@ -168,6 +171,7 @@ function hcdecor_health_snapshot(){
     if($vault_errors>0) $issues[]='Project Vault errors: '.$vault_errors;
     if($vault_retrying>0) $issues[]='Project Vault retrying: '.$vault_retrying;
     if($backup_retry>0) $issues[]='Backup retrying: attempt '.$backup_retry;
+    if(!$backup_cron) $issues[]='Daily backup cron missing';
     if($vault_stale>0) $issues[]='Project Vault stale: '.$vault_stale;
     $inbox_settings=function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[];
     if(!empty($inbox_settings['enabled']) && $inbox_ts===0) $issues[]='Drive Inbox has never completed';
@@ -189,6 +193,7 @@ function hcdecor_health_snapshot(){
     if(!empty($inbox_settings['enabled']) && ($inbox_ts===0 || $inbox_age>1800)) $score-=5;
     if($stale_processing>0) $score-=min(10,$stale_processing*2);
     if($oldest_review_age>86400) $score-=5;
+    if(!$backup_cron) $score-=8;
     $score=max(0,min(100,$score));
 
     return [
@@ -240,6 +245,7 @@ function hcdecor_health_snapshot(){
         'content_queue'=>$queue,
         'stale_processing'=>$stale_processing,
         'review_oldest_age_seconds'=>$oldest_review_age,
+        'throughput_7d'=>['created'=>$created_7d,'published'=>$published_7d],
         'bridge'=>['ready'=>$bridge!==''],
         'publisher'=>['ready'=>function_exists('hcdecor_publish_job_to_web') && post_type_exists('hc_content_job') && post_type_exists('hc_project')],
         'restore'=>[
@@ -252,6 +258,7 @@ function hcdecor_health_snapshot(){
             'age_seconds'=>$backup_age,
             'fresh'=>$backup_ts>0 && $backup_age<=129600,
             'retry_count'=>$backup_retry,
+            'next_scheduled'=>$backup_cron,
             'error'=>(string)get_option('hcdecor_backup_last_error',''),
             'ready'=>function_exists('hcdecor_backup_save') && $drive_configured
         ],
