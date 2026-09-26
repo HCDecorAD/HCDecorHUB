@@ -222,8 +222,10 @@ add_action('hcdecor_project_vault_async_save',function($project_id){
 },10,1);
 
 add_action('hcdecor_after_web_publish',function($job_id,$project_id){
-    if(function_exists('hcdecor_drive_configured') && hcdecor_drive_configured()){
-        hcdecor_project_vault_save((int)$project_id,false);
+    $project_id=(int)$project_id;
+    if(!$project_id || !function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()) return;
+    if(!wp_next_scheduled('hcdecor_project_vault_async_save',[$project_id])){
+        wp_schedule_single_event(time()+10,'hcdecor_project_vault_async_save',[$project_id]);
     }
 },45,2);
 
