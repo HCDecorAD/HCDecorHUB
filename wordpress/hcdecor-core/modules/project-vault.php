@@ -117,6 +117,7 @@ function hcdecor_project_vault_save($project_id,$sync_media=true){
     update_post_meta($project_id,'hc_drive_project_url',esc_url_raw((string)($r['webViewLink']??'')));
     update_post_meta($project_id,'hc_drive_project_synced_at',current_time('mysql'));
     delete_post_meta($project_id,'hc_drive_project_error');
+    delete_post_meta($project_id,'hc_drive_project_retry_count');
     return $r;
 }
 
@@ -206,7 +207,18 @@ add_action('hcdecor_project_data_changed',function($project_id){
 },10,1);
 
 add_action('hcdecor_project_vault_async_save',function($project_id){
-    hcdecor_project_vault_save((int)$project_id,true);
+    $project_id=(int)$project_id;
+    $r=hcdecor_project_vault_save($project_id,true);
+    if(is_wp_error($r)){
+        $attempts=(int)get_post_meta($project_id,'hc_drive_project_retry_count',true)+1;
+        update_post_meta($project_id,'hc_drive_project_retry_count',$attempts);
+        update_post_meta($project_id,'hc_drive_project_error',$r->get_error_message());
+        if($attempts<3 && !wp_next_scheduled('hcdecor_project_vault_async_save',[$project_id])){
+            wp_schedule_single_event(time()+min(900,60*$attempts),'hcdecor_project_vault_async_save',[$project_id]);
+        }
+        return;
+    }
+    delete_post_meta($project_id,'hc_drive_project_retry_count');
 },10,1);
 
 add_action('hcdecor_after_web_publish',function($job_id,$project_id){
