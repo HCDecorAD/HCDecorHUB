@@ -32,7 +32,8 @@ function hcdecor_drive_default_folders(){
         'media_approved'=>'19PLqjuwPbbK_6xIhyunloISYzPLhwh6g',
         'jobs'=>'19GoViim4G1fOHvN2_DQ4uxdBfxT4ndRg',
         'logs'=>'1fuAtzdIH3hzUtArr3dl4r94WBeLRNNih',
-        'exports'=>'1ZASnBdvo2snkREvSzMuCSgS8hZX5dnWj'
+        'exports'=>'1ZASnBdvo2snkREvSzMuCSgS8hZX5dnWj',
+        'backups'=>'1-tNi0yUg9mNQuabzIRRYyigFM899EfHp'
     ];
 }
 
