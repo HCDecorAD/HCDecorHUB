@@ -121,6 +121,10 @@ function hcdecor_backup_save(){
     $snap=hcdecor_backup_snapshot();
     $name='HCDECOR-BACKUP-'.gmdate('Ymd-His').'.json';
     $json=wp_json_encode($snap,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
+    if(!is_string($json) || $json==='') return new WP_Error('backup_json','Không thể mã hóa backup.');
+    $snap['integrity']=['algorithm'=>'sha256','payload_hash'=>hash('sha256',$json)];
+    $json=wp_json_encode($snap,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
+    if(!is_string($json) || $json==='') return new WP_Error('backup_json','Không thể mã hóa backup integrity.');
     $r=hcdecor_drive_multipart('',$name,'application/json',$json,hcdecor_backup_folder_id());
     if(is_wp_error($r)){
         update_option('hcdecor_backup_last_error',$r->get_error_message(),false);
