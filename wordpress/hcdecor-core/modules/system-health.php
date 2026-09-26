@@ -235,7 +235,8 @@ function hcdecor_health_snapshot(){
     if(!$worker_mutex_sweep_ts && !empty($worker_mutex_sweep['at'])) $worker_mutex_sweep_ts=strtotime((string)$worker_mutex_sweep['at'])?:0;
     $worker_mutex_sweep_fresh=$worker_mutex_sweep_ts>=(time()-600);
     $automation_last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
-    $automation_cleanup_mutex=(int)get_option('hcdecor_automation_cleanup_mutex',0);
+    $automation_cleanup_raw=get_option('hcdecor_automation_cleanup_mutex',[]);
+    $automation_cleanup_mutex=is_array($automation_cleanup_raw)?(int)($automation_cleanup_raw['at']??0):(int)$automation_cleanup_raw;
     $automation_cleanup_running=$automation_cleanup_mutex>=(time()-120);
     $automation_cleanup_stale=$automation_cleanup_mutex>0 && !$automation_cleanup_running;
     if(!empty($automation_last_change['cleanup_limited'])){
@@ -427,16 +428,18 @@ function hcdecor_health_auto_repair_schedules(){
         wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
         $cleanup_repairs[]='worker_mutex_sweep_orphan';
     }
-    $cleanup_mutex=(int)get_option('hcdecor_automation_cleanup_mutex',0);
+    $cleanup_mutex_raw=get_option('hcdecor_automation_cleanup_mutex',[]);
+    $cleanup_mutex=is_array($cleanup_mutex_raw)?(int)($cleanup_mutex_raw['at']??0):(int)$cleanup_mutex_raw;
     if($cleanup_mutex && $cleanup_mutex<(time()-120)){
         $deleted=function_exists('hcdecor_auto_cleanup_mutex_delete_if_same')
-            ? hcdecor_auto_cleanup_mutex_delete_if_same($cleanup_mutex)
+            ? hcdecor_auto_cleanup_mutex_delete_if_same($cleanup_mutex_raw)
             : false;
         if($deleted){
             $cleanup_repairs[]='automation_cleanup_mutex';
             $cleanup_mutex=0;
         }else{
-            $cleanup_mutex=(int)get_option('hcdecor_automation_cleanup_mutex',0);
+            $cleanup_mutex_raw=get_option('hcdecor_automation_cleanup_mutex',[]);
+            $cleanup_mutex=is_array($cleanup_mutex_raw)?(int)($cleanup_mutex_raw['at']??0):(int)$cleanup_mutex_raw;
         }
     }
     $cleanup_running=$cleanup_mutex>=(time()-120);
