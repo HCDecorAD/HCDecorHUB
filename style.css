@@ -332,3 +332,33 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
 /* V4.6 Contact — compact, action-first */
 .contact-block{gap:14px!important}.contact-primary{display:flex;gap:9px;flex-wrap:wrap}.contact-phone,.contact-zalo{display:flex;align-items:center;gap:9px;min-width:145px;padding:10px 12px;border:1px solid #ffffff16;border-radius:12px;background:#ffffff05}.contact-phone strong,.contact-zalo strong{display:block;color:#f2f2f2;font-size:14px}.contact-phone small,.contact-zalo small{display:block;margin-top:2px;color:#899198;font-size:10px}.contact-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:9px;background:#b8783222;color:#e2aa68;font-size:17px}.contact-zalo img{width:34px;height:34px;object-fit:contain;border-radius:8px}.contact-address{display:flex;align-items:flex-start;gap:8px;color:#aeb5bb;font-size:13px;line-height:1.45;max-width:390px}.contact-address>span:first-child{color:#d59a55;font-size:17px;line-height:1}.contact-block .social-links{margin-top:0}.contact-block .social-links a{padding:6px 9px;font-size:11px}
 @media(max-width:560px){footer{padding-top:34px!important}.footer-grid{gap:24px!important}.contact-block{gap:12px!important}.contact-primary{display:grid;grid-template-columns:1fr 1fr;width:100%}.contact-phone,.contact-zalo{min-width:0;padding:9px 10px}.contact-address{font-size:12px;padding-right:48px}.contact-block .social-links{display:flex;flex-wrap:nowrap;overflow-x:auto;padding:2px 48px 4px 0!important;scrollbar-width:none}.contact-block .social-links::-webkit-scrollbar{display:none}.contact-block .social-links a{flex:0 0 auto}.contact-block .zalo-contact{display:none!important}}
+
+
+/* V4.7 Approved visual-first UI consolidation */
+.service-visual{width:54px;height:54px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(145deg,#17110d,#b87832);color:#f3d29b;font-size:26px;box-shadow:inset 0 1px #fff2,0 10px 24px #5f35181c}.visual-cards article{position:relative;overflow:hidden}.visual-cards article:after{content:"";position:absolute;width:120px;height:120px;right:-48px;top:-48px;border-radius:50%;background:radial-gradient(circle,#d59a551c,transparent 68%)}.visual-cards h3{position:relative;z-index:1}.visual-cards p{position:relative;z-index:1}
+#process>.wrap>.eyebrow{display:block;width:max-content;margin:0 0 12px;color:#9b6a34;font-size:12px;line-height:1;letter-spacing:.28em}
+#process>.wrap>h2{margin:0 0 24px;white-space:nowrap}
+@media(max-width:850px){
+ .section-head>p{max-width:540px!important}
+ .visual-cards article{display:grid;grid-template-columns:54px 1fr;grid-template-rows:auto auto;column-gap:16px;align-items:center}
+ .visual-cards .service-visual{grid-row:1/3}
+ .visual-cards article h3{margin:0 0 5px!important}
+ .visual-cards article p{margin:0!important}
+ #services .cards article{min-height:128px!important;padding:18px!important}
+ #process>.wrap>h2{font-size:clamp(25px,7.2vw,31px)!important;line-height:1.08!important;letter-spacing:-.035em!important}
+ .project:after{content:"↔  Vuốt để xem";position:absolute;top:14px;right:15px;color:#ffffff72;font-size:10px;letter-spacing:.04em;z-index:2}
+ .project-grid .project:not(:first-child):after{display:none}
+}
+@media(max-width:560px){
+ .section-head>p{display:none}
+ .visual-cards{padding-bottom:6px!important}
+ #services .cards article{flex-basis:88%!important}
+ .service-visual{width:50px;height:50px;font-size:24px;border-radius:14px}
+ .visual-cards article{grid-template-columns:50px 1fr;column-gap:14px}
+ #process>.wrap>h2{font-size:24px!important;white-space:nowrap!important;margin-bottom:18px!important}
+ #process>.wrap>.eyebrow{font-size:11px!important;margin-bottom:10px!important}
+ .project div{bottom:18px}
+ .project p{margin-bottom:0}
+ .portfolio-note{display:none}
+ .mobile-contact-dock{opacity:.92}
+}
