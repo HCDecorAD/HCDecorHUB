@@ -30,8 +30,9 @@ echo [PASS] Homepage ID %HOME_ID%
 call wp eval "$s=['trang-chu','gioi-thieu','dich-vu-hcdecor','du-an-hcdecor','lien-he']; foreach($s as $x){if(!get_page_by_path($x)){fwrite(STDERR,'Missing page '.$x.PHP_EOL);exit(1);}}" || goto :fail
 echo [PASS] Required pages
 
-call wp eval "$s=['Bang hieu'=>'Bảng hiệu','Noi that'=>'Nội thất','3D'=>'3D & Phối cảnh','Kien truc'=>'Kiến trúc']; foreach($s as $label=>$x){if(!get_page_by_title($x,OBJECT,'hc_service')){fwrite(STDERR,'Missing service '.$label.PHP_EOL);exit(1);}}" || goto :fail
-echo [PASS] Services
+call wp eval "$items=[['Bảng hiệu','Thiết kế và thi công bảng hiệu, mặt dựng và nhận diện không gian.'],['Nội thất','Thiết kế và triển khai nội thất theo nhu cầu sử dụng thực tế.'],['3D & Phối cảnh','Phối cảnh 3D giúp hình dung phương án trước khi triển khai.'],['Kiến trúc','Giải pháp kiến trúc cân bằng thẩm mỹ, công năng và khả năng thi công.']]; foreach($items as $i){if(!get_page_by_title($i[0],OBJECT,'hc_service')){wp_insert_post(['post_type'=>'hc_service','post_status'=>'publish','post_title'=>$i[0],'post_excerpt'=>$i[1],'post_content'=>$i[1]]);}}" || goto :fail
+call wp eval "$n=wp_count_posts('hc_service')->publish; if($n<4){fwrite(STDERR,'Services count: '.$n.PHP_EOL);exit(1);}" || goto :fail
+echo [PASS] Services seeded and validated
 
 call wp eval "$r=rest_do_request('/hcdecor/v1/site'); if($r->is_error() || $r->get_status()!==200){exit(1);} echo 'REST 200'.PHP_EOL;" || goto :fail
 echo [PASS] REST API
