@@ -171,7 +171,12 @@ add_action('hcdecor_drive_inbox_analyze_media',function($attachment_id){
 },10,1);
 
 add_action('init',function(){
-    if(!wp_next_scheduled('hcdecor_drive_inbox_tick')) wp_schedule_event(time()+120,'hcdecor_5min','hcdecor_drive_inbox_tick');
+    $s=hcdecor_drive_inbox_settings();
+    if(!empty($s['enabled'])){
+        if(!wp_next_scheduled('hcdecor_drive_inbox_tick')) wp_schedule_event(time()+120,'hcdecor_5min','hcdecor_drive_inbox_tick');
+    }else{
+        wp_clear_scheduled_hook('hcdecor_drive_inbox_tick');
+    }
 },76);
 
 add_action('hcdecor_drive_inbox_tick',function(){
