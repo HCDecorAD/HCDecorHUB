@@ -122,6 +122,22 @@ add_action('rest_api_init',function(){
                             update_post_meta($j->ID,'hc_agent_recovered_at',current_time('mysql'));
                             update_post_meta($j->ID,'hc_agent_recovery_reason','orphan_draft_claim');
                             hcdecor_workflow_log($j->ID,'draft','Recovered orphan worker claim during claim contention');
+                            if(add_post_meta($j->ID,'hc_agent_claim_token',$claim_token,true)){
+                                update_post_meta($j->ID,'hc_agent_claimed_at',current_time('mysql'));
+                                update_post_meta($j->ID,'hc_agent_lock_until',$now+600);
+                                if(hcdecor_workflow_set_status($j->ID,'processing','Agent claimed recovered job')){
+                                    delete_option($mutex);
+                                    return rest_ensure_response([
+                                        'id'=>$j->ID,'title'=>$j->post_title,'brief'=>$j->post_content,
+                                        'project_id'=>(int)get_post_meta($j->ID,'hc_project_id',true),
+                                        'channels'=>(array)get_post_meta($j->ID,'hc_channels',true),
+                                        'media_ids'=>(array)get_post_meta($j->ID,'hc_media_ids',true),
+                                        'cover_id'=>(int)get_post_meta($j->ID,'hc_cover_id',true),
+                                        'status'=>'processing','claim_token'=>$claim_token,'outbound'=>false
+                                    ]);
+                                }
+                                hcdecor_workflow_clear_worker_claim($j->ID,true);
+                            }
                         }
                     }
                     delete_option($mutex);
