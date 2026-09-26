@@ -149,9 +149,13 @@ add_action('admin_post_hcdecor_review_action',function(){
         if(is_wp_error($published)) wp_die($published->get_error_message());
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-review&job='.$id.'&published=1')); exit;
     }elseif($action==='changes'){
+        delete_post_meta($id,'hc_reviewed_by');
+        delete_post_meta($id,'hc_reviewed_at');
         hcdecor_workflow_set_status($id,'draft','Returned for changes');
         update_post_meta($id,'hc_review_note',$note);
     }elseif($action==='retry' && (string)get_post_meta($id,'hc_agent_status',true)==='failed'){
+        delete_post_meta($id,'hc_reviewed_by');
+        delete_post_meta($id,'hc_reviewed_at');
         hcdecor_workflow_set_status($id,'draft','Retry requested by reviewer');
         delete_post_meta($id,'hc_agent_lock_until');
         if(function_exists('wp_schedule_single_event')) wp_schedule_single_event(time()+3,'hcdecor_ai_process_job',[$id]);
