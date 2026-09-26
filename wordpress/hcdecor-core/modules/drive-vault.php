@@ -412,6 +412,20 @@ add_action('admin_menu',function(){
     add_submenu_page('hcdecor-hub','Drive Vault','Drive Vault','manage_options','hcdecor-drive-vault','hcdecor_drive_vault_page',6);
 },29);
 
+
+add_action('admin_post_hcdecor_drive_save_connect',function(){
+    if(!current_user_can('manage_options')) wp_die('Forbidden');
+    check_admin_referer('hcdecor_drive_save_connect');
+    $client_id=trim((string)wp_unslash($_POST['client_id']??''));
+    $client_secret=trim((string)wp_unslash($_POST['client_secret']??''));
+    if($client_id!=='') update_option('hcdecor_drive_client_id',$client_id,false);
+    if($client_secret!=='') update_option('hcdecor_drive_client_secret',$client_secret,false);
+    if(hcdecor_drive_secret('client_id')==='' || hcdecor_drive_secret('client_secret')===''){
+        wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&oauth_missing=1')); exit;
+    }
+    wp_redirect(hcdecor_drive_oauth_connect_url()); exit;
+});
+
 add_action('admin_post_hcdecor_drive_settings',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_drive_settings');
@@ -525,32 +539,41 @@ function hcdecor_drive_vault_page(){
         <section style="background:#fff;border:1px solid #ddd;border-radius:12px;padding:18px">
           <h2>Google Drive Connection</h2>
           <p><strong><?php echo hcdecor_drive_configured()?($status==='ok'?'CONNECTED':'CONFIGURED'):'NOT CONNECTED';?></strong><?php if($msg):?> · <?php echo esc_html($msg);?><?php endif;?></p>
+
+          <div style="background:#f6f7f7;border:1px solid #dcdcde;border-radius:10px;padding:12px;margin:12px 0">
+            <strong>Bước 1 · Google OAuth</strong>
+            <p style="margin:6px 0 0">Tạo OAuth Client kiểu <strong>Web application</strong> và thêm Redirect URI này:</p>
+            <code style="display:block;word-break:break-all;margin-top:6px"><?php echo esc_html(hcdecor_drive_oauth_redirect_uri());?></code>
+          </div>
+
           <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
-            <input type="hidden" name="action" value="hcdecor_drive_settings"><?php wp_nonce_field('hcdecor_drive_settings');?>
-            <p><label>OAuth Client ID</label><input class="widefat" type="password" name="client_id" autocomplete="new-password" placeholder="<?php echo hcdecor_drive_secret('client_id')?'Đã lưu · nhập mới để thay':'';?>"></p>
-            <p><label>OAuth Client Secret</label><input class="widefat" type="password" name="client_secret" autocomplete="new-password" placeholder="<?php echo hcdecor_drive_secret('client_secret')?'Đã lưu · nhập mới để thay':'';?>"></p>
-            <p><label>Refresh Token</label><input class="widefat" type="password" name="refresh_token" autocomplete="new-password" placeholder="<?php echo hcdecor_drive_secret('refresh_token')?'Đã lưu · nhập mới để thay':'';?>"></p>
-            <p><button class="button button-primary">Lưu kết nối</button> <label><input type="checkbox" name="clear_auth" value="1"> Xóa auth</label></p>
+            <input type="hidden" name="action" value="hcdecor_drive_save_connect"><?php wp_nonce_field('hcdecor_drive_save_connect');?>
+            <p><label><strong>OAuth Client ID</strong></label><input class="widefat" type="password" name="client_id" autocomplete="new-password" placeholder="<?php echo hcdecor_drive_secret('client_id')?'Đã lưu · nhập mới để thay':'Dán Client ID';?>"></p>
+            <p><label><strong>OAuth Client Secret</strong></label><input class="widefat" type="password" name="client_secret" autocomplete="new-password" placeholder="<?php echo hcdecor_drive_secret('client_secret')?'Đã lưu · nhập mới để thay':'Dán Client Secret';?>"></p>
+            <p><button class="button button-primary">Lưu & Connect Google Drive</button></p>
           </form>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
+
+          <?php if(hcdecor_drive_secret('refresh_token')!==''):?>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
             <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
               <input type="hidden" name="action" value="hcdecor_drive_test"><?php wp_nonce_field('hcdecor_drive_test');?>
               <button class="button">Test Drive</button>
             </form>
-            <?php if(hcdecor_drive_secret('client_id')!=='' && hcdecor_drive_secret('client_secret')!==''):?>
-            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
-              <input type="hidden" name="action" value="hcdecor_drive_oauth_start"><?php wp_nonce_field('hcdecor_drive_oauth_start');?>
-              <button class="button button-primary">Connect Google Drive</button>
-            </form>
-            <?php endif;?>
-            <?php if(hcdecor_drive_secret('refresh_token')!==''):?>
             <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
               <input type="hidden" name="action" value="hcdecor_drive_disconnect"><?php wp_nonce_field('hcdecor_drive_disconnect');?>
               <button class="button">Disconnect</button>
             </form>
-            <?php endif;?>
           </div>
-          <p><strong>OAuth Redirect URI</strong><br><code style="word-break:break-all"><?php echo esc_html(hcdecor_drive_oauth_redirect_uri());?></code></p>
+          <?php endif;?>
+
+          <details style="margin-top:12px"><summary>Advanced / Manual token</summary>
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>" style="margin-top:10px">
+              <input type="hidden" name="action" value="hcdecor_drive_settings"><?php wp_nonce_field('hcdecor_drive_settings');?>
+              <p><label>Refresh Token</label><input class="widefat" type="password" name="refresh_token" autocomplete="new-password" placeholder="<?php echo hcdecor_drive_secret('refresh_token')?'Đã lưu · nhập mới để thay':'Manual only';?>"></p>
+              <p><button class="button">Lưu manual token</button> <label><input type="checkbox" name="clear_auth" value="1"> Xóa auth</label></p>
+            </form>
+          </details>
+
           <?php $connected_email=(string)get_option('hcdecor_drive_connected_email',''); if($connected_email):?><p><strong>Google account:</strong> <?php echo esc_html($connected_email);?></p><?php endif;?>
           <hr><p><strong>Root Vault</strong><br><code><?php echo esc_html($folders['root']);?></code></p>
           <p><a class="button" target="_blank" rel="noopener" href="<?php echo esc_url('https://drive.google.com/drive/folders/'.$folders['root']);?>">Open Google Drive Vault</a></p>
