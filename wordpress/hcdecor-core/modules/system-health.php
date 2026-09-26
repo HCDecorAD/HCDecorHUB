@@ -150,7 +150,10 @@ function hcdecor_health_snapshot(){
     $vault_retrying=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_retry_count','meta_value'=>0,'meta_compare'=>'>','fields'=>'ids']))->found_posts;
     $backup_retry=(int)get_option('hcdecor_backup_retry_count',0);
     $vault_bulk=(array)get_option('hcdecor_project_vault_bulk_last_result',[]);
+    $vault_bulk_at=(string)get_option('hcdecor_project_vault_bulk_last_at','');
+    $vault_bulk_ts=$vault_bulk_at!==''?(strtotime($vault_bulk_at)?:0):0;
     $inbox_result=(array)get_option('hcdecor_drive_inbox_last_result',[]);
+    $inbox_unlinked=max(0,(int)($inbox_result['imported']??0)-(int)($inbox_result['linked']??0));
     $published_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'date_query'=>[['column'=>'post_modified','after'=>'7 days ago']],'meta_key'=>'hc_agent_status','meta_value'=>'published_web','fields'=>'ids']))->found_posts;
     $created_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'date_query'=>[['after'=>'7 days ago']],'fields'=>'ids']))->found_posts;
     $backup_cron=(int)(wp_next_scheduled('hcdecor_backup_daily')?:0);
@@ -179,7 +182,7 @@ function hcdecor_health_snapshot(){
     if($vault_errors>0) $issues[]='Project Vault errors: '.$vault_errors;
     if($vault_retrying>0) $issues[]='Project Vault retrying: '.$vault_retrying;
     if($backup_retry>0) $issues[]='Backup retrying: attempt '.$backup_retry;
-    if((int)($vault_bulk['failed']??0)>0) $issues[]='Last Project Vault bulk sync failed: '.(int)$vault_bulk['failed'];
+    if((int)($vault_bulk['failed']??0)>0 && $vault_bulk_ts && (current_time('timestamp')-$vault_bulk_ts)<=86400) $issues[]='Recent Project Vault bulk sync failed: '.(int)$vault_bulk['failed'];
     if(!empty($inbox_settings['enabled']) && (int)($inbox_result['failed']??0)>0) $issues[]='Last Drive Inbox run failed: '.(int)$inbox_result['failed'];
     $backup_running=(bool)get_transient('hcdecor_backup_running');
     if($backup_running) $issues[]='Backup currently running';
@@ -262,7 +265,9 @@ function hcdecor_health_snapshot(){
         ],
         'last_outcomes'=>[
             'project_vault_bulk'=>$vault_bulk,
-            'drive_inbox'=>$inbox_result
+            'project_vault_bulk_at'=>$vault_bulk_at,
+            'drive_inbox'=>$inbox_result,
+            'drive_inbox_unlinked'=>$inbox_unlinked
         ],
         'throughput_7d'=>[
             'created'=>$created_7d,
