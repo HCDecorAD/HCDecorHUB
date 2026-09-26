@@ -243,9 +243,11 @@ function hcdecor_restore_settings($backup){
 
     if(!empty($s['automation']) && is_array($s['automation'])){
         $current=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
-        foreach(['enabled','social_enabled','evergreen_enabled'] as $k){
+        foreach(['enabled','evergreen_enabled'] as $k){
             if(array_key_exists($k,$s['automation'])) $current[$k]=(bool)$s['automation'][$k];
         }
+        // Never re-enable external publishing during disaster recovery.
+        $current['social_enabled']=false;
         foreach(['evergreen_days','max_attempts','retry_minutes'] as $k){
             if(array_key_exists($k,$s['automation'])) $current[$k]=(int)$s['automation'][$k];
         }
