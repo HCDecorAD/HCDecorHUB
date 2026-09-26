@@ -10,7 +10,7 @@ function hcdecor_health_required_modules(){
     return [
         'background-sync.php','content-operations.php','workflow-engine.php','ai-providers.php',
         'media-intelligence.php','agent-intake.php','ai-workspace.php','web-publisher.php',
-        'automation-hub.php','automation-recipes.php','drive-vault.php','drive-inbox.php','data-backup.php','data-restore.php',
+        'automation-hub.php','automation-recipes.php','drive-vault.php','drive-inbox.php','project-vault.php','data-backup.php','data-restore.php',
         'project-publishing.php','media-manager.php','admin-cleanup.php'
     ];
 }
@@ -146,6 +146,10 @@ function hcdecor_health_snapshot(){
             'configured'=>$drive_configured,
             'status'=>$drive_configured?($drive_test?:'configured'):'off',
             'email'=>(string)get_option('hcdecor_drive_connected_email','')
+        ],
+        'project_vault'=>[
+            'ready'=>function_exists('hcdecor_project_vault_save'),
+            'synced_projects'=>(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_file_id','fields'=>'ids']))->found_posts
         ],
         'inbox'=>[
             'settings'=>function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[],
