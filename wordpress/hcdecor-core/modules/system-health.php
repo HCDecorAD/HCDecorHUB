@@ -314,7 +314,8 @@ function hcdecor_health_snapshot(){
             'social_enabled'=>!empty($auto_settings['social_enabled']),
             'queue'=>$auto,
             'actionable_blocked'=>$actionable_blocked,
-            'recovered_24h'=>$auto_recovered_24h
+            'recovered_24h'=>$auto_recovered_24h,
+            'settings_last_change'=>(array)get_option('hcdecor_automation_settings_last_change',[])
         ],
         'content_queue'=>$queue,
         'stale_processing'=>$stale_processing,
