@@ -37,6 +37,7 @@ curl.exe -fL "%BASE%/hcdecor-core/modules/system-health.php?v=%V%" -o "%P%\modul
 curl.exe -fL "%BASE%/hcdecor-core/modules/background-sync.php?v=%V%" -o "%P%\modules\background-sync.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/project-publishing.php?v=%V%" -o "%P%\modules\project-publishing.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/media-manager.php?v=%V%" -o "%P%\modules\media-manager.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/hub-dashboard.php?v=%V%" -o "%P%\modules\hub-dashboard.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/admin-cleanup.php?v=%V%" -o "%P%\modules\admin-cleanup.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 move /y "%P%\hcdecor-core.php.new" "%P%\hcdecor-core.php" >nul
 move /y "%P%\homepage-builder.php.new" "%P%\homepage-builder.php" >nul
@@ -59,6 +60,7 @@ move /y "%P%\modules\system-health.php.new" "%P%\modules\system-health.php" >nul
 move /y "%P%\modules\background-sync.php.new" "%P%\modules\background-sync.php" >nul
 move /y "%P%\modules\project-publishing.php.new" "%P%\modules\project-publishing.php" >nul
 move /y "%P%\modules\media-manager.php.new" "%P%\modules\media-manager.php" >nul
+move /y "%P%\modules\hub-dashboard.php.new" "%P%\modules\hub-dashboard.php" >nul
 move /y "%P%\modules\admin-cleanup.php.new" "%P%\modules\admin-cleanup.php" >nul
 echo [OK] Source Sync
 
@@ -94,6 +96,7 @@ echo [OK] Project Vault
 echo [OK] Data Backups
 echo [OK] Restore Center
 echo [OK] System Health
+echo [OK] HUB V2 Dashboard
 echo [SAFE] External publishing remains OFF
 
 echo.
@@ -109,7 +112,7 @@ echo ==================================================
 exit /b 0
 
 :syncfail
-del /q "%P%\hcdecor-core.php.new" "%P%\homepage-builder.php.new" "%P%\assets\hcdecor-homepage.css.new" "%P%\modules\content-operations.php.new" "%P%\modules\workflow-engine.php.new" "%P%\modules\ai-providers.php.new" "%P%\modules\media-intelligence.php.new" "%P%\modules\agent-intake.php.new" "%P%\modules\ai-workspace.php.new" "%P%\modules\web-publisher.php.new" "%P%\modules\automation-hub.php.new" "%P%\modules\automation-recipes.php.new" "%P%\modules\drive-vault.php.new" "%P%\modules\drive-inbox.php.new" "%P%\modules\project-vault.php.new" "%P%\modules\data-backup.php.new" "%P%\modules\data-restore.php.new" "%P%\modules\system-health.php.new" "%P%\modules\background-sync.php.new" "%P%\modules\project-publishing.php.new" "%P%\modules\media-manager.php.new" "%P%\modules\admin-cleanup.php.new" >nul 2>&1
+del /q "%P%\hcdecor-core.php.new" "%P%\homepage-builder.php.new" "%P%\assets\hcdecor-homepage.css.new" "%P%\modules\content-operations.php.new" "%P%\modules\workflow-engine.php.new" "%P%\modules\ai-providers.php.new" "%P%\modules\media-intelligence.php.new" "%P%\modules\agent-intake.php.new" "%P%\modules\ai-workspace.php.new" "%P%\modules\web-publisher.php.new" "%P%\modules\automation-hub.php.new" "%P%\modules\automation-recipes.php.new" "%P%\modules\drive-vault.php.new" "%P%\modules\drive-inbox.php.new" "%P%\modules\project-vault.php.new" "%P%\modules\data-backup.php.new" "%P%\modules\data-restore.php.new" "%P%\modules\system-health.php.new" "%P%\modules\background-sync.php.new" "%P%\modules\project-publishing.php.new" "%P%\modules\media-manager.php.new" "%P%\modules\hub-dashboard.php.new" "%P%\modules\admin-cleanup.php.new" >nul 2>&1
 echo [WARN] Source Sync failed. Existing local files kept intact.
 goto :continue_after_sync
 
