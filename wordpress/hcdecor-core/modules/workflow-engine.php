@@ -40,9 +40,16 @@ add_action('init',function(){
 },60);
 
 function hcdecor_workflow_claim_mutex_delete_if_same($key,$observed){
-    $current=(array)get_option($key,[]);
-    if(!$current || $current!==$observed) return false;
-    return delete_option($key);
+    global $wpdb;
+    $key=(string)$key;
+    if($key==='' || !$observed) return false;
+    $serialized=maybe_serialize($observed);
+    $deleted=$wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name=%s AND option_value=%s",$key,$serialized));
+    if($deleted){
+        wp_cache_delete($key,'options');
+        wp_cache_delete('alloptions','options');
+    }
+    return $deleted===1;
 }
 
 function hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed=true,$clear_mutex=true){
