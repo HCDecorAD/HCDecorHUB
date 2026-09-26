@@ -9,10 +9,10 @@ $button=function($id,$label,$url)use($mk){return $mk($id,'button',['text'=>$labe
 $container=function($id,$class,$els,$settings=[])use(&$container){return ['id'=>$id,'elType'=>'container','settings'=>array_merge(['css_classes'=>$class,'content_width'=>'boxed'], $settings),'elements'=>$els];};
 
 $data=[
-$container('hc00001','hc-dark hc-hero',[
+$container('hc00001','hc-dark hc-hero hc-demo-hero',[
   $heading('hc10001','HCDECOR · HUB','h6'),
   $heading('hc10002','Ý tưởng tạo nên<br><span style="color:#d59a55">không gian khác biệt.</span>','h1'),
-  $text('hc10003','<p>Thiết kế · Thi công bảng hiệu · Nội thất · 3D & Phối cảnh · Kiến trúc</p>'),
+  $text('hc10003','<p class="hc-kicker">ONE HUB · DESIGN → BUILD → GROW</p><p>Thiết kế · Thi công bảng hiệu · Nội thất · 3D & Phối cảnh · Kiến trúc</p>'),
   $button('hc10004','Xem dự án','#du-an'),
   $button('hc10005','Liên hệ ngay','tel:+84888821842')
 ],['min_height'=>['unit'=>'vh','size'=>82]]),
@@ -49,8 +49,20 @@ $container('hc00004','hc-dark hc-process',[
   ])
 ]),
 
+$container('hc00006','hc-dark hc-hub-demo',[
+  $heading('hc60001','HCDECOR HUB','h6'),
+  $heading('hc60002','Một trung tâm để vận hành toàn bộ hệ sinh thái','h2'),
+  $container('hc60010','hc-hub-grid',[
+    $container('hc60100','hc-hub-card',[$heading('hc60101','01 · Website','h3'),$text('hc60102','<p>Elementor visual builder · Website Data · Portfolio động</p>')]),
+    $container('hc60200','hc-hub-card',[$heading('hc60201','02 · Lead','h3'),$text('hc60202','<p>Form báo giá · Khách hàng · Trạng thái xử lý</p>')]),
+    $container('hc60300','hc-hub-card',[$heading('hc60301','03 · Content','h3'),$text('hc60302','<p>Dự án → nội dung → thư viện media → social-ready</p>')]),
+    $container('hc60400','hc-hub-card',[$heading('hc60401','04 · Automation','h3'),$text('hc60402','<p>Webhook-ready · lịch tác vụ · kiểm tra an toàn trước publish</p>')])
+  ]),
+  $button('hc60003','Yêu cầu báo giá','#bao-gia')
+]),
 $container('hc00005','hc-dark hc-contact',[
   $heading('hc50001','Bắt đầu dự án cùng HCDecor','h2'),
+  $text('hc50000','<p id="bao-gia" class="hc-contact-label">TƯ VẤN · KHẢO SÁT · BÁO GIÁ</p>'),
   $text('hc50002','<p>231D An Dương Vương, P. An Lạc, Tp.HCM, Việt Nam<br>0888 821 842</p>'),
   $button('hc50003','Gọi HCDecor','tel:+84888821842'),
   $button('hc50004','Zalo','https://zalo.me/quangcaohocuong')
