@@ -34,9 +34,9 @@ function hcdecor_connector_registry(){
             'actions'=>['publish_video','update_description']
         ],
         'drive'=>[
-            'label'=>'Google Drive',
-            'status'=>'not_configured',
-            'actions'=>['archive_media','export_package']
+            'label'=>'Google Drive Vault',
+            'status'=>function_exists('hcdecor_drive_configured')&&hcdecor_drive_configured()?'connected':'not_configured',
+            'actions'=>['save_job','load_job','archive_media','save_prompt','export_package']
         ]
     ]);
 }
@@ -58,6 +58,14 @@ function hcdecor_recipe_defaults(){
             'trigger'=>'content_approved',
             'conditions'=>[],
             'actions'=>[['type'=>'publish_web']]
+        ],
+        [
+            'id'=>'review_to_drive',
+            'name'=>'AI Review → Save Drive Vault',
+            'enabled'=>true,
+            'trigger'=>'content_review',
+            'conditions'=>[],
+            'actions'=>[['type'=>'save_drive']]
         ],
         [
             'id'=>'web_to_social_queue',
@@ -134,6 +142,11 @@ function hcdecor_recipe_execute_action($action,$context){
         $prepared=hcdecor_auto_prepare_social($project,$job);
         if(is_wp_error($prepared)) return $prepared;
         return hcdecor_auto_enqueue('social_publish',$prepared,time(),'recipe:social:'.$project.':'.$job);
+    }
+    if($type==='save_drive'){
+        $job=(int)($context['job_id']??0);
+        if(!$job || !function_exists('hcdecor_drive_save_job')) return new WP_Error('drive','Drive Vault unavailable');
+        return hcdecor_drive_save_job($job,true);
     }
     if($type==='send_webhook'){
         if(!function_exists('hcdecor_auto_enqueue')) return new WP_Error('automation','Automation queue unavailable');
@@ -221,3 +234,14 @@ add_action('admin_footer',function(){
       </div></section>
     </div><?php
 },50);
+
+
+add_action('hcdecor_workflow_status_changed',function($job_id,$old,$status){
+    if($status==='review'){
+        do_action('hcdecor_recipe_fire','content_review',[
+            'job_id'=>(int)$job_id,
+            'project_id'=>(int)get_post_meta($job_id,'hc_project_id',true),
+            'status'=>$status
+        ]);
+    }
+},35,3);
