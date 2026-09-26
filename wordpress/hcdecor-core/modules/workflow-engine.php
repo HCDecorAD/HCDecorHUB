@@ -39,8 +39,23 @@ function hcdecor_workflow_set_status($job_id,$status,$note=''){
     return true;
 }
 
+function hcdecor_workflow_sweep_mutex_acquire(){
+    $key='hcdecor_worker_mutex_sweep_mutex'; $now=time();
+    $held=(array)get_option($key,[]);
+    if($held && !empty($held['at']) && (int)$held['at']>=($now-30)) return false;
+    if($held && !hcdecor_workflow_claim_mutex_delete_if_same($key,$held)) return false;
+    $owned=['token'=>wp_generate_uuid4(),'at'=>$now];
+    return add_option($key,$owned,'','no')?$owned:false;
+}
+
+function hcdecor_workflow_sweep_mutex_release($owned){
+    return is_array($owned) && !empty($owned['token'])?hcdecor_workflow_claim_mutex_delete_if_same('hcdecor_worker_mutex_sweep_mutex',$owned):false;
+}
+
 function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     global $wpdb;
+    $owned=hcdecor_workflow_sweep_mutex_acquire();
+    if(!$owned) return ['stale'=>0,'deleted'=>0,'limited'=>true,'busy'=>true];
     $limit=max(1,min(100,(int)$limit));
     $cutoff=time()-120;
     $last=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
@@ -74,7 +89,8 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     $next=wp_next_scheduled('hcdecor_worker_mutex_sweep_tick');
     if($continue && !$next) wp_schedule_single_event(time()+30,'hcdecor_worker_mutex_sweep_tick');
     elseif(!$continue && $next) wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
-    return ['stale'=>$stale,'deleted'=>$deleted,'limited'=>$continue];
+    hcdecor_workflow_sweep_mutex_release($owned);
+    return ['stale'=>$stale,'deleted'=>$deleted,'limited'=>$continue,'busy'=>false];
 }
 
 add_action('init',function(){
