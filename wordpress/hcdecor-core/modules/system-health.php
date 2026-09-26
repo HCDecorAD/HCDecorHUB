@@ -120,6 +120,11 @@ function hcdecor_health_snapshot(){
     $auto_settings=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
     $bridge=(string)get_option('hcdecor_bridge_token','');
     $actionable_blocked=hcdecor_health_actionable_blocked_count();
+    $backup_last=(string)get_option('hcdecor_backup_last_at','');
+    $backup_ts=$backup_last!==''?strtotime($backup_last):0;
+    $backup_age=$backup_ts?max(0,current_time('timestamp')-$backup_ts):null;
+    $project_total=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'fields'=>'ids']))->found_posts;
+    $vault_synced=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_file_id','fields'=>'ids']))->found_posts;
 
     $issues=[];
     foreach($modules as $name=>$ok) if(!$ok) $issues[]='Missing module: '.$name;
@@ -130,6 +135,9 @@ function hcdecor_health_snapshot(){
     if($auto['failed']>0) $issues[]='Automation failed: '.$auto['failed'];
     if($actionable_blocked>0) $issues[]='Automation blocked: '.$actionable_blocked;
     if($bridge==='') $issues[]='Agent Bridge token missing';
+    if($drive_configured && $backup_ts===0) $issues[]='Backup has never completed';
+    elseif($drive_configured && $backup_age>129600) $issues[]='Backup is stale (>36h)';
+    if($drive_configured && $project_total>0 && $vault_synced<$project_total) $issues[]='Project Vault pending: '.($project_total-$vault_synced);
 
     $score=100;
     $score-=count(array_filter($modules,function($v){return !$v;}))*8;
@@ -138,6 +146,8 @@ function hcdecor_health_snapshot(){
     if($drive_configured && $drive_test==='error') $score-=10;
     if($auto['failed']>0) $score-=min(15,$auto['failed']*3);
     if($actionable_blocked>0) $score-=min(10,$actionable_blocked*2);
+    if($drive_configured && ($backup_ts===0 || $backup_age>129600)) $score-=8;
+    if($drive_configured && $project_total>0 && $vault_synced<$project_total) $score-=min(8,$project_total-$vault_synced);
     $score=max(0,min(100,$score));
 
     return [
@@ -165,7 +175,9 @@ function hcdecor_health_snapshot(){
         ],
         'project_vault'=>[
             'ready'=>function_exists('hcdecor_project_vault_save'),
-            'synced_projects'=>(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_file_id','fields'=>'ids']))->found_posts
+            'total_projects'=>$project_total,
+            'synced_projects'=>$vault_synced,
+            'pending_projects'=>max(0,$project_total-$vault_synced)
         ],
         'inbox'=>[
             'settings'=>function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[],
@@ -188,7 +200,9 @@ function hcdecor_health_snapshot(){
             'error'=>(string)get_option('hcdecor_restore_last_error','')
         ],
         'backup'=>[
-            'last_at'=>(string)get_option('hcdecor_backup_last_at',''),
+            'last_at'=>$backup_last,
+            'age_seconds'=>$backup_age,
+            'fresh'=>$backup_ts>0 && $backup_age<=129600,
             'error'=>(string)get_option('hcdecor_backup_last_error',''),
             'ready'=>function_exists('hcdecor_backup_save') && $drive_configured
         ],
