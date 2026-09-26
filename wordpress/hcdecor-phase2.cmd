@@ -44,8 +44,19 @@ echo [PASS] Elementor homepage rebuilt
 call wp eval "if(class_exists('\\Elementor\\Plugin')){\\Elementor\\Plugin::$instance->files_manager->clear_cache();echo 'CACHE_OK';}" >>"%LOG%" 2>&1
 echo [PASS] Elementor cache checkpoint
 
-call wp eval "$a=rest_do_request('/hcdecor/v1/site');$b=rest_do_request('/hcdecor/v1/content');$c=rest_do_request('/hcdecor/v1/phase2');if($a->get_status()!=200||$b->get_status()!=200||$c->get_status()!=200)exit(31);if(wp_count_posts('hc_service')->publish<4)exit(32);$p=(int)get_option('page_on_front');$d=get_post_meta($p,'_elementor_data',true);if(!$d||strlen($d)<500)exit(33);echo 'VALID';" >>"%LOG%" 2>&1 || goto :fail
-echo [PASS] REST + Services + Homepage
+echo [AUTO] Final validation
+call wp eval "$a=rest_do_request('/hcdecor/v1/site');if($a->get_status()!=200)exit(31);echo 'SITE_OK';" >>"%LOG%" 2>&1 || goto :fail_site_rest
+echo [PASS] REST site
+call wp eval "$b=rest_do_request('/hcdecor/v1/content');if($b->get_status()!=200)exit(32);echo 'CONTENT_OK';" >>"%LOG%" 2>&1 || goto :fail_content_rest
+echo [PASS] REST content
+call wp eval "$c=rest_do_request('/hcdecor/v1/phase2');if($c->get_status()!=200)exit(33);echo 'PHASE2_OK';" >>"%LOG%" 2>&1 || goto :fail_phase2_rest
+echo [PASS] REST phase2
+call wp post list --post_type=hc_service --post_status=publish --format=count >"%TEMP%\hcdecor-service-count.txt" 2>>"%LOG%" || goto :fail_services
+set /p SERVICE_COUNT=<"%TEMP%\hcdecor-service-count.txt"
+if !SERVICE_COUNT! LSS 4 goto :fail_services
+echo [PASS] Services count !SERVICE_COUNT!
+call wp eval "$p=(int)get_option('page_on_front');$d=get_post_meta($p,'_elementor_data',true);if(!$p||!$d||strlen($d)<500)exit(34);echo 'HOME_OK';" >>"%LOG%" 2>&1 || goto :fail_home
+echo [PASS] Homepage Elementor data
 
 echo [SAFE] Outbound webhooks remain DISABLED until endpoint authorization.
 echo [SAFE] Outbound webhooks remain DISABLED >>"%LOG%"
@@ -65,6 +76,21 @@ echo [FAIL] HCDecor content type validation
 echo [FAIL] HCDecor content type validation >>"%LOG%"
 echo See: %LOG%
 exit /b 1
+:fail_site_rest
+echo [FAIL] REST /hcdecor/v1/site
+goto :fail
+:fail_content_rest
+echo [FAIL] REST /hcdecor/v1/content
+goto :fail
+:fail_phase2_rest
+echo [FAIL] REST /hcdecor/v1/phase2
+goto :fail
+:fail_services
+echo [FAIL] Service count
+goto :fail
+:fail_home
+echo [FAIL] Homepage Elementor data
+goto :fail
 :need_shell
 echo [FAIL] Run inside LocalWP Site Shell.
 exit /b 2
