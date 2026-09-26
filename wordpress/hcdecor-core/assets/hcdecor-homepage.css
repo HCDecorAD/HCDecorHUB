@@ -19,3 +19,11 @@
 .hc-process-grid strong{font-size:28px;color:#d59a55}
 @media(max-width:1024px){.hc-project-grid{grid-template-columns:1fr 1fr}.hc-process-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:767px){.hc-project-grid,.hc-process-grid{grid-template-columns:1fr}.hc-project-card{min-height:210px}.hc-process-grid .elementor-widget-text-editor{min-height:auto}}
+
+/* v3 design tokens: single source for Elementor visual system */
+:root{--hc-bg:#090b0d;--hc-panel:#111417;--hc-panel-2:#171b1f;--hc-text:#f3f1ed;--hc-muted:#a6adb3;--hc-gold:#d59a55;--hc-line:rgba(255,255,255,.12);--hc-radius:18px;--hc-space:clamp(64px,8vw,112px);--hc-max:1240px}
+.hc-dark{background:var(--hc-bg)!important;color:var(--hc-text)!important}
+.hc-hero,.hc-services,.hc-projects,.hc-process,.hc-contact{padding-block:var(--hc-space)}
+.hc-hero>*,.hc-services>*,.hc-projects>*,.hc-process>*,.hc-contact>*{max-width:var(--hc-max);width:100%;margin-inline:auto}
+.hc-services h6,.hc-projects h6,.hc-process h6{color:var(--hc-gold)!important}
+.hc-project-card,.hc-service-grid h3,.hc-process-grid .elementor-widget-text-editor{border-color:var(--hc-line)!important;border-radius:var(--hc-radius);background:var(--hc-panel)!important}
