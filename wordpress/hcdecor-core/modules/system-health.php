@@ -123,6 +123,9 @@ function hcdecor_health_snapshot(){
     $backup_last=(string)get_option('hcdecor_backup_last_at','');
     $backup_ts=$backup_last!==''?strtotime($backup_last):0;
     $backup_age=$backup_ts?max(0,current_time('timestamp')-$backup_ts):null;
+    $inbox_last=(string)get_option('hcdecor_drive_inbox_last_at','');
+    $inbox_ts=$inbox_last!==''?strtotime($inbox_last):0;
+    $inbox_age=$inbox_ts?max(0,current_time('timestamp')-$inbox_ts):null;
     $project_total=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'fields'=>'ids']))->found_posts;
     $vault_synced=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_file_id','fields'=>'ids']))->found_posts;
 
@@ -138,6 +141,9 @@ function hcdecor_health_snapshot(){
     if($drive_configured && $backup_ts===0) $issues[]='Backup has never completed';
     elseif($drive_configured && $backup_age>129600) $issues[]='Backup is stale (>36h)';
     if($drive_configured && $project_total>0 && $vault_synced<$project_total) $issues[]='Project Vault pending: '.($project_total-$vault_synced);
+    $inbox_settings=function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[];
+    if(!empty($inbox_settings['enabled']) && $inbox_ts===0) $issues[]='Drive Inbox has never completed';
+    elseif(!empty($inbox_settings['enabled']) && $inbox_age>1800) $issues[]='Drive Inbox is stale (>30 min)';
 
     $score=100;
     $score-=count(array_filter($modules,function($v){return !$v;}))*8;
@@ -148,6 +154,7 @@ function hcdecor_health_snapshot(){
     if($actionable_blocked>0) $score-=min(10,$actionable_blocked*2);
     if($drive_configured && ($backup_ts===0 || $backup_age>129600)) $score-=8;
     if($drive_configured && $project_total>0 && $vault_synced<$project_total) $score-=min(8,$project_total-$vault_synced);
+    if(!empty($inbox_settings['enabled']) && ($inbox_ts===0 || $inbox_age>1800)) $score-=5;
     $score=max(0,min(100,$score));
 
     return [
@@ -180,8 +187,10 @@ function hcdecor_health_snapshot(){
             'pending_projects'=>max(0,$project_total-$vault_synced)
         ],
         'inbox'=>[
-            'settings'=>function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[],
-            'last_at'=>(string)get_option('hcdecor_drive_inbox_last_at',''),
+            'settings'=>$inbox_settings,
+            'last_at'=>$inbox_last,
+            'age_seconds'=>$inbox_age,
+            'fresh'=>$inbox_ts>0 && $inbox_age<=1800,
             'last_result'=>(array)get_option('hcdecor_drive_inbox_last_result',[]),
             'error'=>(string)get_option('hcdecor_drive_inbox_last_error','')
         ],
