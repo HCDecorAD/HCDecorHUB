@@ -26,6 +26,7 @@ curl.exe -fL "%BASE%/hcdecor-core/modules/agent-intake.php?v=%V%" -o "%P%\module
 curl.exe -fL "%BASE%/hcdecor-core/modules/web-publisher.php?v=%V%" -o "%P%\modules\web-publisher.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/automation-hub.php?v=%V%" -o "%P%\modules\automation-hub.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/automation-recipes.php?v=%V%" -o "%P%\modules\automation-recipes.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/drive-vault.php?v=%V%" -o "%P%\modules\drive-vault.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/background-sync.php?v=%V%" -o "%P%\modules\background-sync.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/project-publishing.php?v=%V%" -o "%P%\modules\project-publishing.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/media-manager.php?v=%V%" -o "%P%\modules\media-manager.php.new" >>"%LOG%" 2>&1 || goto :syncfail
@@ -41,6 +42,7 @@ move /y "%P%\modules\agent-intake.php.new" "%P%\modules\agent-intake.php" >nul
 move /y "%P%\modules\web-publisher.php.new" "%P%\modules\web-publisher.php" >nul
 move /y "%P%\modules\automation-hub.php.new" "%P%\modules\automation-hub.php" >nul
 move /y "%P%\modules\automation-recipes.php.new" "%P%\modules\automation-recipes.php" >nul
+move /y "%P%\modules\drive-vault.php.new" "%P%\modules\drive-vault.php" >nul
 move /y "%P%\modules\background-sync.php.new" "%P%\modules\background-sync.php" >nul
 move /y "%P%\modules\project-publishing.php.new" "%P%\modules\project-publishing.php" >nul
 move /y "%P%\modules\media-manager.php.new" "%P%\modules\media-manager.php" >nul
@@ -72,6 +74,7 @@ echo [OK] Content Operations
 echo [OK] Media Manager
 echo [OK] Automation HUB
  echo [OK] Recipe Engine
+echo [OK] Drive Vault
 echo [SAFE] External publishing remains OFF
 
 echo.
