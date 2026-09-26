@@ -552,3 +552,44 @@ function hcdecor_studio_v2_admin(){
   </script></div>
   <?php
 }
+
+
+/* HCDECOR_CONTENT_STUDIO_V3: persistent drafts + channel variants */
+add_action('admin_post_hcdecor_studio_save',function(){
+  check_admin_referer('hcdecor_studio_save');
+  if(!current_user_can('edit_posts')) wp_die('Forbidden');
+  $pid=(int)($_POST['project_id']??0);
+  $media=array_values(array_filter(array_map('intval',(array)($_POST['media_ids']??[]))));
+  $brief=sanitize_textarea_field(wp_unslash($_POST['brief']??''));
+  $title=sanitize_text_field(wp_unslash($_POST['web_title']??''));
+  $web=sanitize_textarea_field(wp_unslash($_POST['web_text']??''));
+  $fb=sanitize_textarea_field(wp_unslash($_POST['facebook_text']??''));
+  $tk=sanitize_textarea_field(wp_unslash($_POST['tiktok_text']??''));
+  $id=wp_insert_post(['post_type'=>'hc_content_job','post_status'=>'publish','post_title'=>'Studio · '.($pid?get_the_title($pid):'Content').' · '.current_time('Y-m-d H:i'),'post_content'=>$brief]);
+  if(!is_wp_error($id)){
+    update_post_meta($id,'hc_project_id',$pid); update_post_meta($id,'hc_media_ids',$media);
+    update_post_meta($id,'hc_agent_status','review'); update_post_meta($id,'hc_outbound',false);
+    update_post_meta($id,'hc_web_title',$title); update_post_meta($id,'hc_web_text',$web);
+    update_post_meta($id,'hc_facebook_text',$fb); update_post_meta($id,'hc_tiktok_text',$tk);
+  }
+  wp_safe_redirect(admin_url('admin.php?page=hcdecor-studio-v2&saved=1')); exit;
+});
+add_action('admin_footer',function(){
+  if(!isset($_GET['page'])||$_GET['page']!=='hcdecor-studio-v2') return; ?>
+  <script>
+  (function(){
+    const root=document.getElementById('hcStudio2'); if(!root)return;
+    const btn=document.getElementById('hcDemoGenerate'); if(!btn)return;
+    const save=document.createElement('button'); save.className='button button-primary'; save.textContent='Save to Content Queue'; save.style.marginLeft='8px';
+    btn.parentNode.appendChild(save);
+    save.onclick=function(e){e.preventDefault();
+      const form=document.createElement('form');form.method='post';form.action='<?php echo esc_js(admin_url('admin-post.php')); ?>';
+      const fields={action:'hcdecor_studio_save',_wpnonce:'<?php echo esc_js(wp_create_nonce('hcdecor_studio_save')); ?>',project_id:(root.querySelector('.hcs-project.active')||{}).dataset?.project||0,brief:(document.getElementById('hcBrief')||{}).value||'',web_title:(document.getElementById('hcWebTitle')||{}).textContent||'',web_text:(document.getElementById('hcWebText')||{}).textContent||'',facebook_text:(document.getElementById('hcFb')||{}).textContent||'',tiktok_text:(document.getElementById('hcTk')||{}).textContent||''};
+      Object.entries(fields).forEach(([k,v])=>{const i=document.createElement('input');i.type='hidden';i.name=k;i.value=v;form.appendChild(i)});
+      root.querySelectorAll('.hcs-media input:checked').forEach(x=>{const i=document.createElement('input');i.type='hidden';i.name='media_ids[]';i.value=x.value;form.appendChild(i)});
+      document.body.appendChild(form);form.submit();
+    };
+    root.querySelectorAll('.hcs-preview p,.hcs-preview h2').forEach(x=>{x.contentEditable='true';x.title='Click để chỉnh trực tiếp';});
+  })();
+  </script><?php
+});
