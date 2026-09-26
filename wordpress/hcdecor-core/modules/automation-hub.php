@@ -285,18 +285,23 @@ add_action('admin_menu',function(){
 },28);
 
 function hcdecor_auto_block_pending_for_settings($settings,$limit=100){
-    $blocked=0; $scanned=0; $remaining=max(1,min(500,(int)$limit));
+    $blocked=0; $scanned=0; $remaining=max(1,min(500,(int)$limit)); $after_id=0;
     while($remaining>0){
         $batch=min(100,$remaining);
         $ids=get_posts([
             'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>$batch,'fields'=>'ids',
-            'meta_query'=>[['key'=>'hc_auto_status','value'=>['queued','scheduled'],'compare'=>'IN']],
+            'meta_query'=>[
+                'relation'=>'AND',
+                ['key'=>'hc_auto_status','value'=>['queued','scheduled'],'compare'=>'IN'],
+                ['key'=>'_edit_last','compare'=>'NOT EXISTS']
+            ],
             'orderby'=>'ID','order'=>'ASC'
         ]);
         if(!$ids) break;
-        $changed=0;
+        $progress=false;
         foreach($ids as $id){
-            $scanned++;
+            if($id<=$after_id) continue;
+            $progress=true; $after_id=$id; $scanned++; $remaining--;
             $type=(string)get_post_meta($id,'hc_auto_type',true);
             $reason='';
             if(empty($settings['enabled'])) $reason='Automation HUB is OFF';
@@ -306,12 +311,17 @@ function hcdecor_auto_block_pending_for_settings($settings,$limit=100){
             if($reason!==''){
                 update_post_meta($id,'hc_auto_status','blocked');
                 hcdecor_auto_log($id,'blocked',$reason.' after settings change');
-                $blocked++; $changed++;
+                $blocked++;
+            }else{
+                update_post_meta($id,'_edit_last',0);
             }
+            if($remaining<=0) break;
         }
-        $remaining-=count($ids);
-        if(count($ids)<$batch || $changed===0) break;
+        if(!$progress || count($ids)<$batch) break;
     }
+    // Remove temporary scan markers; they are not operational state.
+    $marked=get_posts(['post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>500,'fields'=>'ids','meta_key'=>'_edit_last','meta_value'=>0]);
+    foreach($marked as $id) delete_post_meta($id,'_edit_last');
     return ['blocked'=>$blocked,'scanned'=>$scanned,'limited'=>$remaining<=0];
 }
 
