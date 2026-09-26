@@ -24,8 +24,8 @@ function hcdecor_agent_create_job($project_id,$media_ids=[],$brief=''){
     update_post_meta($id,'hc_project_id',$project_id);
     update_post_meta($id,'hc_media_ids',$media_ids);
     if($media_ids){
-        $cover=(int)$media_ids[0]; $best=-1;
-        foreach($media_ids as $mid){$score=(int)get_post_meta($mid,'hc_ai_cover_score',true); if($score>$best){$best=$score;$cover=(int)$mid;}}
+        $recommended=(int)get_post_meta($project_id,'hc_ai_recommended_cover_id',true);
+        $cover=($recommended && in_array($recommended,$media_ids,true))?$recommended:(int)$media_ids[0];
         update_post_meta($id,'hc_cover_id',$cover);
     }
     update_post_meta($id,'hc_channels',['web','facebook','tiktok','youtube']);
