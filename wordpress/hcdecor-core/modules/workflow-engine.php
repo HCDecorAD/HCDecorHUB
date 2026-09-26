@@ -43,24 +43,37 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     global $wpdb;
     $limit=max(1,min(100,(int)$limit));
     $cutoff=time()-120;
-    $rows=$wpdb->get_col($wpdb->prepare("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s ORDER BY option_id ASC LIMIT %d",$wpdb->esc_like('hcdecor_claim_mutex_').'%', $limit+1));
+    $last=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
+    $cursor=max(0,(int)($last['cursor']??0));
+    $like=$wpdb->esc_like('hcdecor_claim_mutex_').'%';
+    $rows=$wpdb->get_results($wpdb->prepare("SELECT option_id,option_name FROM {$wpdb->options} WHERE option_name LIKE %s AND option_id>%d ORDER BY option_id ASC LIMIT %d",$like,$cursor,$limit+1));
+    $wrapped=false;
+    if(!$rows && $cursor>0){
+        $cursor=0; $wrapped=true;
+        $rows=$wpdb->get_results($wpdb->prepare("SELECT option_id,option_name FROM {$wpdb->options} WHERE option_name LIKE %s ORDER BY option_id ASC LIMIT %d",$like,$limit+1));
+    }
     $limited=count($rows)>$limit;
     $rows=array_slice((array)$rows,0,$limit);
-    $stale=0; $deleted=0;
-    foreach($rows as $name){
+    $stale=0; $deleted=0; $next_cursor=$cursor;
+    foreach($rows as $row){
+        $next_cursor=max($next_cursor,(int)$row->option_id);
+        $name=(string)$row->option_name;
         $mutex=(array)get_option($name,[]);
         if(empty($mutex['at']) || (int)$mutex['at']<$cutoff){
             $stale++;
             if(hcdecor_workflow_claim_mutex_delete_if_same($name,$mutex)) $deleted++;
         }
     }
+    $more_after=$limited || (!$wrapped && $next_cursor>0 && (bool)$wpdb->get_var($wpdb->prepare("SELECT option_id FROM {$wpdb->options} WHERE option_name LIKE %s AND option_id>%d ORDER BY option_id ASC LIMIT 1",$like,$next_cursor)));
+    $continue=$more_after;
+    $stored_cursor=$continue?$next_cursor:0;
     update_option('hcdecor_worker_mutex_sweep_last',[
-        'at'=>current_time('mysql'),'ts'=>time(),'scanned'=>count($rows),'stale'=>$stale,'deleted'=>$deleted,'limited'=>$limited
+        'at'=>current_time('mysql'),'ts'=>time(),'scanned'=>count($rows),'stale'=>$stale,'deleted'=>$deleted,'limited'=>$continue,'cursor'=>$stored_cursor,'wrapped'=>$wrapped
     ],false);
     $next=wp_next_scheduled('hcdecor_worker_mutex_sweep_tick');
-    if($limited && !$next) wp_schedule_single_event(time()+30,'hcdecor_worker_mutex_sweep_tick');
-    elseif(!$limited && $next) wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
-    return compact('stale','deleted','limited');
+    if($continue && !$next) wp_schedule_single_event(time()+30,'hcdecor_worker_mutex_sweep_tick');
+    elseif(!$continue && $next) wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
+    return ['stale'=>$stale,'deleted'=>$deleted,'limited'=>$continue];
 }
 
 add_action('init',function(){
