@@ -225,3 +225,38 @@ function hcdecor_hub_admin(){
   echo '<p><strong>Dự án:</strong> '.intval($projects).' &nbsp; <strong>Media:</strong> '.intval($media).' &nbsp; <strong>Báo giá:</strong> '.intval($quotes).'</p>';
   echo '<p><a class="button button-primary" href="'.esc_url(admin_url('post-new.php?post_type=hc_project')).'">+ Tạo dự án</a> <a class="button" href="'.esc_url(admin_url('upload.php')).'">Upload hình ảnh</a> <a class="button" href="'.esc_url(admin_url('post-new.php?post_type=hc_quote')).'">+ Tạo báo giá</a></p></div>';
 }
+
+
+/* HCDECOR_MASTER_AUTO_V1: demo data + HUB workflow */
+add_action('init',function(){
+  register_post_type('hc_lead',[
+    'labels'=>['name'=>'Khách hàng / Lead','singular_name'=>'Lead','add_new_item'=>'Thêm Lead'],
+    'public'=>false,'show_ui'=>true,'menu_icon'=>'dashicons-groups',
+    'supports'=>['title','editor','custom-fields']
+  ]);
+},12);
+
+function hcdecor_master_seed_demo(){
+  if(get_option('hcdecor_master_demo_v1')==='done') return;
+  $projects=[
+    ['Demo · Bảng hiệu showroom','Concept nhận diện mặt dựng và bảng hiệu.','Bảng hiệu'],
+    ['Demo · Không gian nội thất','Concept nội thất kinh doanh hiện đại.','Nội thất'],
+    ['Demo · Phối cảnh kiến trúc','Phối cảnh 3D và giải pháp kiến trúc.','3D & Phối cảnh']
+  ];
+  foreach($projects as $x){
+    if(!get_page_by_title($x[0],OBJECT,'hc_project')){
+      $id=wp_insert_post(['post_type'=>'hc_project','post_status'=>'publish','post_title'=>$x[0],'post_excerpt'=>$x[1],'post_content'=>$x[1]]);
+      if($id && !is_wp_error($id)) update_post_meta($id,'hc_demo_category',$x[2]);
+    }
+  }
+  if(!get_page_by_title('Demo Lead · Khách hàng mẫu',OBJECT,'hc_lead')){
+    $id=wp_insert_post(['post_type'=>'hc_lead','post_status'=>'publish','post_title'=>'Demo Lead · Khách hàng mẫu','post_content'=>'Nhu cầu: tư vấn bảng hiệu / nội thất']);
+    if($id&&!is_wp_error($id)){update_post_meta($id,'hc_status','new');update_post_meta($id,'hc_source','website-demo');}
+  }
+  if(post_type_exists('hc_quote') && !get_page_by_title('Demo Báo giá · Q-001',OBJECT,'hc_quote')){
+    $id=wp_insert_post(['post_type'=>'hc_quote','post_status'=>'publish','post_title'=>'Demo Báo giá · Q-001','post_content'=>'Hạng mục demo · trạng thái Draft']);
+    if($id&&!is_wp_error($id)) update_post_meta($id,'hc_status','draft');
+  }
+  update_option('hcdecor_master_demo_v1','done');
+}
+add_action('init','hcdecor_master_seed_demo',60);
