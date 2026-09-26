@@ -463,3 +463,31 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
  .nav{height:70px}
  .nav .brand{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;font-size:20px}
 }
+
+/* V6.2 Process redesign — clearer hierarchy */
+#process{background:#f4f1eb}
+#process>.wrap>.eyebrow{display:inline-flex!important;align-items:center;min-height:30px;padding:0 12px!important;margin:0 0 16px!important;border:1px solid #c88b4938;border-radius:999px;background:#fff8ef!important;color:#9a642c!important;font:800 11px/1 Inter,system-ui,sans-serif!important;letter-spacing:.22em!important}
+#process>.wrap>h2{margin:0 0 34px!important;max-width:760px;white-space:normal!important;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif!important;font-size:clamp(36px,4vw,54px)!important;font-weight:750!important;line-height:1.06!important;letter-spacing:-.045em!important;color:#171717}
+#process .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:0;border:0}
+#process .steps div{position:relative;min-height:190px;padding:24px 20px;border:1px solid #dcd6cc;border-radius:16px;background:#fff;box-shadow:0 10px 30px rgba(38,27,16,.045)}
+#process .steps div:after{content:"";position:absolute;left:20px;right:20px;bottom:0;height:3px;border-radius:3px 3px 0 0;background:#d59a55;opacity:.7}
+#process .steps b{display:flex;width:38px;height:38px;align-items:center;justify-content:center;margin-bottom:28px;border-radius:50%;background:#171717;color:#e2aa68;font:800 12px/1 Inter,system-ui,sans-serif}
+#process .steps h4{margin:0 0 10px;font:750 17px/1.25 Inter,system-ui,sans-serif;color:#171717}
+#process .steps p{margin:0;font:400 14px/1.5 Inter,system-ui,sans-serif;color:#70767b}
+@media(max-width:850px){
+ #process>.wrap>.eyebrow{margin-bottom:14px!important}
+ #process>.wrap>h2{font-size:32px!important;margin-bottom:24px!important}
+ #process .steps{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+ #process .steps:before{display:none!important}
+ #process .steps div{min-height:0!important;padding:18px 18px 18px 70px!important;border:1px solid #dcd6cc!important;border-radius:14px!important;background:#fff!important}
+ #process .steps div:before{display:none!important}
+ #process .steps div:after{left:0;top:14px;bottom:14px;width:3px;height:auto;right:auto}
+ #process .steps b{display:flex!important;position:absolute;left:18px;top:18px;width:36px;height:36px;margin:0}
+ #process .steps h4{font-size:17px!important;margin:0 0 5px!important}
+ #process .steps p{font-size:14px!important}
+}
+@media(max-width:560px){
+ #process>.wrap>h2{font-size:28px!important;line-height:1.08!important}
+ #process .steps div{padding:16px 14px 16px 64px!important}
+ #process .steps b{left:14px;top:16px}
+}
