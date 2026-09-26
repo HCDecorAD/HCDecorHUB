@@ -670,6 +670,7 @@ function hcdecor_drive_vault_page(){
           <?php $connected_email=(string)get_option('hcdecor_drive_connected_email',''); if($connected_email):?><p><strong>Google account:</strong> <?php echo esc_html($connected_email);?></p><?php endif;?>
           <hr><p><strong>Root Vault</strong><br><code><?php echo esc_html($folders['root']);?></code></p>
           <p><a class="button" target="_blank" rel="noopener" href="<?php echo esc_url('https://drive.google.com/drive/folders/'.$folders['root']);?>">Open Google Drive Vault</a></p>
+          <p><a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-drive-inbox'));?>">Drive Inbox Automation</a></p>
         </section>
         <section>
           <div style="background:#fff;border:1px solid #ddd;border-radius:12px;padding:18px;margin-bottom:14px">
