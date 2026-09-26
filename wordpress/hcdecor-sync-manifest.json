@@ -1,10 +1,10 @@
 {
-  "version": "2026.09.27.139",
+  "version": "2026.09.27.140",
   "files": [
     {
       "path": "hcdecor-core.php",
       "url": "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/hcdecor-core.php",
-      "git_sha1": "bc4b84cf337f31482dbc3e3551264dabab9fb4e2"
+      "git_sha1": "c5204be69cd37f9a93a5f9b2573011f824ecf1eb"
     },
     {
       "path": "homepage-builder.php",
