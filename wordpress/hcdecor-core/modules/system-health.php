@@ -154,7 +154,14 @@ function hcdecor_health_snapshot(){
     }
     $processing_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'processing']);
     $draft_orphan_claims=0;
-    $draft_claim_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'draft']);
+    $draft_claim_ids=get_posts([
+        'post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids',
+        'meta_query'=>[
+            'relation'=>'AND',
+            ['key'=>'hc_agent_status','value'=>'draft'],
+            ['key'=>'hc_agent_claim_token','compare'=>'EXISTS']
+        ]
+    ]);
     $now=time();
     foreach($draft_claim_ids as $did){
         $token=(string)get_post_meta($did,'hc_agent_claim_token',true);
