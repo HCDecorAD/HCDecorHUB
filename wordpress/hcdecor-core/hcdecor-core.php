@@ -99,3 +99,5 @@ add_action('after_setup_theme',function(){
 add_action('wp_head',function(){
   echo '<meta name="theme-color" content="#090b0d">';
 },1);
+
+add_filter('show_admin_bar',function($show){return is_admin()?$show:false;});
