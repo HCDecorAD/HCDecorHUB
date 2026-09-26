@@ -116,7 +116,10 @@ function hcdecor_backup_snapshot(){
 }
 
 function hcdecor_backup_save(){
+    if(get_transient('hcdecor_backup_running')) return new WP_Error('busy','Backup already running.');
+    set_transient('hcdecor_backup_running',1,15*MINUTE_IN_SECONDS);
     if(!function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()){
+        delete_transient('hcdecor_backup_running');
         update_option('hcdecor_backup_last_error','Drive Vault chưa kết nối.',false);
         return new WP_Error('drive','Drive Vault chưa kết nối.');
     }
@@ -126,17 +129,20 @@ function hcdecor_backup_save(){
     $json=wp_json_encode($snap,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
     if(!is_string($json) || $json===''){
         update_option('hcdecor_backup_last_error','Không thể mã hóa backup.',false);
+        delete_transient('hcdecor_backup_running');
         return new WP_Error('backup_json','Không thể mã hóa backup.');
     }
     $snap['integrity']=['algorithm'=>'sha256','payload_hash'=>hash('sha256',$json)];
     $json=wp_json_encode($snap,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
     if(!is_string($json) || $json===''){
         update_option('hcdecor_backup_last_error','Không thể mã hóa backup integrity.',false);
+        delete_transient('hcdecor_backup_running');
         return new WP_Error('backup_json','Không thể mã hóa backup integrity.');
     }
     $r=hcdecor_drive_multipart('',$name,'application/json',$json,hcdecor_backup_folder_id());
     if(is_wp_error($r)){
         update_option('hcdecor_backup_last_error',$r->get_error_message(),false);
+        delete_transient('hcdecor_backup_running');
         return $r;
     }
     update_option('hcdecor_backup_last_at',current_time('mysql'),false);
@@ -144,6 +150,7 @@ function hcdecor_backup_save(){
     update_option('hcdecor_backup_last_url',esc_url_raw((string)($r['webViewLink']??'')),false);
     update_option('hcdecor_backup_last_counts',$snap['counts'],false);
     delete_option('hcdecor_backup_last_error');
+    delete_transient('hcdecor_backup_running');
     return $r;
 }
 
