@@ -21,7 +21,7 @@ curl.exe -fL "%BASE%/hcdecor-core/homepage-builder.php?v=%V%" -o "%P%\homepage-b
 curl.exe -fL "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%V%" -o "%P%\assets\hcdecor-homepage.css.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/content-operations.php?v=%V%" -o "%P%\modules\content-operations.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/workflow-engine.php?v=%V%" -o "%P%\modules\workflow-engine.php.new" >>"%LOG%" 2>&1 || goto :syncfail
-curl.exe -fL "%BASE%/hcdecor-core/modules/ai-providers.php?v=%V%" -o "%P%\modules\ai-providers.php.new" "%P%\modules\agent-intake.php.new" "%P%\modules\web-publisher.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/ai-providers.php?v=%V%" -o "%P%\modules\ai-providers.php.new" "%P%\modules\media-intelligence.php.new" "%P%\modules\agent-intake.php.new" "%P%\modules\web-publisher.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/agent-intake.php?v=%V%" -o "%P%\modules\agent-intake.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/web-publisher.php?v=%V%" -o "%P%\modules\web-publisher.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/background-sync.php?v=%V%" -o "%P%\modules\background-sync.php.new" >>"%LOG%" 2>&1 || goto :syncfail
@@ -34,6 +34,7 @@ move /y "%P%\assets\hcdecor-homepage.css.new" "%P%\assets\hcdecor-homepage.css" 
 move /y "%P%\modules\content-operations.php.new" "%P%\modules\content-operations.php" >nul
 move /y "%P%\modules\workflow-engine.php.new" "%P%\modules\workflow-engine.php" >nul
 move /y "%P%\modules\ai-providers.php.new" "%P%\modules\ai-providers.php" >nul
+move /y "%P%\modules\media-intelligence.php.new" "%P%\modules\media-intelligence.php" >nul
 move /y "%P%\modules\agent-intake.php.new" "%P%\modules\agent-intake.php" >nul
 move /y "%P%\modules\web-publisher.php.new" "%P%\modules\web-publisher.php" >nul
 move /y "%P%\modules\background-sync.php.new" "%P%\modules\background-sync.php" >nul
