@@ -231,6 +231,8 @@ function hcdecor_health_snapshot(){
     if($auto['failed']>0) $issues[]='Automation failed: '.$auto['failed'];
     if($actionable_blocked>0) $issues[]='Automation blocked: '.$actionable_blocked;
     $worker_mutex_sweep=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
+    $worker_mutex_sweep_ts=!empty($worker_mutex_sweep['at'])?(strtotime((string)$worker_mutex_sweep['at'])?:0):0;
+    $worker_mutex_sweep_fresh=$worker_mutex_sweep_ts>=(current_time('timestamp')-600);
     $automation_last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
     $automation_cleanup_mutex=(int)get_option('hcdecor_automation_cleanup_mutex',0);
     $automation_cleanup_running=$automation_cleanup_mutex>=(time()-120);
@@ -240,7 +242,7 @@ function hcdecor_health_snapshot(){
         if(!wp_next_scheduled('hcdecor_automation_cleanup_tick') && !wp_next_scheduled('hcdecor_automation_cleanup_watchdog') && !$automation_cleanup_running) $issues[]='Automation cleanup backlog has no scheduled continuation';
     }
     if($automation_cleanup_stale) $issues[]='Automation cleanup mutex is stale';
-    if(!empty($worker_mutex_sweep['limited'])) $issues[]='Worker mutex sweep is bounded; additional mutex rows remain';
+    if($worker_mutex_sweep_fresh && !empty($worker_mutex_sweep['limited'])) $issues[]='Worker mutex sweep is bounded; additional mutex rows remain';
     if(empty($automation_last_change['cleanup_limited']) && wp_next_scheduled('hcdecor_automation_cleanup_watchdog')) $issues[]='Automation cleanup watchdog is orphaned';
     if($bridge==='') $issues[]='Agent Bridge token missing';
     if($drive_configured && $backup_ts===0) $issues[]='Backup has never completed';
@@ -355,7 +357,8 @@ function hcdecor_health_snapshot(){
             'recovered_24h'=>$recovered_24h,
             'recovery_reasons_24h'=>$recovery_reasons,
             'recovery_scan_limited'=>$worker_recovery_scan_limited,
-            'mutex_sweep'=>$worker_mutex_sweep
+            'mutex_sweep'=>$worker_mutex_sweep,
+            'mutex_sweep_fresh'=>$worker_mutex_sweep_fresh
         ],
         'review_oldest_age_seconds'=>$oldest_review_age,
         'auto_repair'=>[
