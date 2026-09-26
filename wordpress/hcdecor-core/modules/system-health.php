@@ -233,7 +233,7 @@ function hcdecor_health_snapshot(){
     $automation_last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
     if(!empty($automation_last_change['cleanup_limited'])){
         $issues[]='Automation settings cleanup backlog exceeds bounded pass';
-        if(!wp_next_scheduled('hcdecor_automation_cleanup_tick') && !((int)get_option('hcdecor_automation_cleanup_mutex',0)>=(time()-120))) $issues[]='Automation cleanup backlog has no scheduled continuation';
+        if(!wp_next_scheduled('hcdecor_automation_cleanup_tick') && !wp_next_scheduled('hcdecor_automation_cleanup_watchdog') && !((int)get_option('hcdecor_automation_cleanup_mutex',0)>=(time()-120))) $issues[]='Automation cleanup backlog has no scheduled continuation';
     }
     if(get_option('hcdecor_automation_cleanup_mutex',0) && (int)get_option('hcdecor_automation_cleanup_mutex',0)<(time()-120)) $issues[]='Automation cleanup mutex is stale';
     if(empty($automation_last_change['cleanup_limited']) && wp_next_scheduled('hcdecor_automation_cleanup_watchdog')) $issues[]='Automation cleanup watchdog is orphaned';
@@ -412,7 +412,7 @@ function hcdecor_health_auto_repair_schedules(){
         delete_option('hcdecor_automation_cleanup_mutex');
         $cleanup_repairs[]='automation_cleanup_mutex';
     }
-    if(!empty($cleanup_change['cleanup_limited']) && !wp_next_scheduled('hcdecor_automation_cleanup_tick') && !((int)get_option('hcdecor_automation_cleanup_mutex',0)>=(time()-120))){
+    if(!empty($cleanup_change['cleanup_limited']) && !wp_next_scheduled('hcdecor_automation_cleanup_tick') && !wp_next_scheduled('hcdecor_automation_cleanup_watchdog') && !((int)get_option('hcdecor_automation_cleanup_mutex',0)>=(time()-120))){
         wp_schedule_single_event(time()+15,'hcdecor_automation_cleanup_tick');
         $cleanup_repairs[]='automation_cleanup';
     }
