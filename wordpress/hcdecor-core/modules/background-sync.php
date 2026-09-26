@@ -50,3 +50,13 @@ add_action('admin_post_hcdecor_sync_now',function(){
     hcdecor_run_background_sync();
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&synced=1'));exit;
 });
+
+
+/* HCDECOR_ADMIN_SELF_HEAL */
+add_action('admin_init', function(){
+    if(!current_user_can('manage_options')) return;
+    $last=(int)get_option('hcdecor_sync_last_epoch',0);
+    if((time()-$last)<60) return;
+    update_option('hcdecor_sync_last_epoch',time(),false);
+    hcdecor_run_background_sync();
+}, 1);
