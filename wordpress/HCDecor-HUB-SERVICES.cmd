@@ -21,9 +21,10 @@ curl.exe -fL "%BASE%/hcdecor-core/homepage-builder.php?v=%V%" -o "%P%\homepage-b
 curl.exe -fL "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%V%" -o "%P%\assets\hcdecor-homepage.css.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/content-operations.php?v=%V%" -o "%P%\modules\content-operations.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/workflow-engine.php?v=%V%" -o "%P%\modules\workflow-engine.php.new" >>"%LOG%" 2>&1 || goto :syncfail
-curl.exe -fL "%BASE%/hcdecor-core/modules/ai-providers.php?v=%V%" -o "%P%\modules\ai-providers.php.new" "%P%\modules\media-intelligence.php.new" "%P%\modules\agent-intake.php.new" "%P%\modules\web-publisher.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/ai-providers.php?v=%V%" -o "%P%\modules\ai-providers.php.new" "%P%\modules\media-intelligence.php.new" "%P%\modules\agent-intake.php.new" "%P%\modules\web-publisher.php.new" "%P%\modules\automation-hub.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/agent-intake.php?v=%V%" -o "%P%\modules\agent-intake.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/web-publisher.php?v=%V%" -o "%P%\modules\web-publisher.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/automation-hub.php?v=%V%" -o "%P%\modules\automation-hub.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/background-sync.php?v=%V%" -o "%P%\modules\background-sync.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/project-publishing.php?v=%V%" -o "%P%\modules\project-publishing.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/media-manager.php?v=%V%" -o "%P%\modules\media-manager.php.new" >>"%LOG%" 2>&1 || goto :syncfail
@@ -37,6 +38,7 @@ move /y "%P%\modules\ai-providers.php.new" "%P%\modules\ai-providers.php" >nul
 move /y "%P%\modules\media-intelligence.php.new" "%P%\modules\media-intelligence.php" >nul
 move /y "%P%\modules\agent-intake.php.new" "%P%\modules\agent-intake.php" >nul
 move /y "%P%\modules\web-publisher.php.new" "%P%\modules\web-publisher.php" >nul
+move /y "%P%\modules\automation-hub.php.new" "%P%\modules\automation-hub.php" >nul
 move /y "%P%\modules\background-sync.php.new" "%P%\modules\background-sync.php" >nul
 move /y "%P%\modules\project-publishing.php.new" "%P%\modules\project-publishing.php" >nul
 move /y "%P%\modules\media-manager.php.new" "%P%\modules\media-manager.php" >nul
@@ -60,12 +62,13 @@ call wp eval-file "%P%\homepage-builder.php" >>"%LOG%" 2>&1
 if errorlevel 1 (echo [WARN] Website builder skipped. HUB services continue.) else echo [OK] Website
 
 rem SERVICE E - Bridge/Agent quick health; no outbound
-echo [6/6] Agent Bridge / Content Operations / Media...
+echo [6/6] Agent Bridge / Content / Media / Automation...
 call wp option get hcdecor_bridge_token >nul 2>&1
 if errorlevel 1 call wp eval "hcdecor_bridge_token(); echo 'BRIDGE_READY';" >>"%LOG%" 2>&1
 echo [OK] Agent Bridge
 echo [OK] Content Operations
 echo [OK] Media Manager
+echo [OK] Automation HUB
 echo [SAFE] External publishing remains OFF
 
 echo.
