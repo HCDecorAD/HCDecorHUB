@@ -144,7 +144,7 @@ function hcdecor_health_snapshot(){
     $processing_without_token=0;
     $processing_lock_expiring=0;
     $recovered_24h=0;
-    $recovery_reasons=['missing_claim_token'=>0,'expired_lock'=>0];
+    $recovery_reasons=['missing_claim_token'=>0,'expired_lock'=>0,'orphan_draft_claim'=>0];
     $oldest_review_age=0;
     $review_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'review']);
     foreach($review_ids as $rid){
