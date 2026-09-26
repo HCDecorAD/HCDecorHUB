@@ -126,6 +126,14 @@ function hcdecor_health_snapshot(){
     $inbox_last=(string)get_option('hcdecor_drive_inbox_last_at','');
     $inbox_ts=$inbox_last!==''?strtotime($inbox_last):0;
     $inbox_age=$inbox_ts?max(0,current_time('timestamp')-$inbox_ts):null;
+    $stale_processing=0;
+    $processing_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'processing']);
+    $now=time();
+    foreach($processing_ids as $pid){
+        $lock=(int)get_post_meta($pid,'hc_agent_lock_until',true);
+        $claimed=strtotime((string)get_post_meta($pid,'hc_agent_claimed_at',true))?:0;
+        if(($lock>0 && $lock<$now) || ($lock<=0 && $claimed>0 && $claimed<($now-900))) $stale_processing++;
+    }
     $project_total=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'fields'=>'ids']))->found_posts;
     $vault_synced=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_file_id','fields'=>'ids']))->found_posts;
 
@@ -144,6 +152,7 @@ function hcdecor_health_snapshot(){
     $inbox_settings=function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[];
     if(!empty($inbox_settings['enabled']) && $inbox_ts===0) $issues[]='Drive Inbox has never completed';
     elseif(!empty($inbox_settings['enabled']) && $inbox_age>1800) $issues[]='Drive Inbox is stale (>30 min)';
+    if($stale_processing>0) $issues[]='Stale processing jobs: '.$stale_processing;
 
     $score=100;
     $score-=count(array_filter($modules,function($v){return !$v;}))*8;
@@ -155,6 +164,7 @@ function hcdecor_health_snapshot(){
     if($drive_configured && ($backup_ts===0 || $backup_age>129600)) $score-=8;
     if($drive_configured && $project_total>0 && $vault_synced<$project_total) $score-=min(8,$project_total-$vault_synced);
     if(!empty($inbox_settings['enabled']) && ($inbox_ts===0 || $inbox_age>1800)) $score-=5;
+    if($stale_processing>0) $score-=min(10,$stale_processing*2);
     $score=max(0,min(100,$score));
 
     return [
@@ -201,6 +211,7 @@ function hcdecor_health_snapshot(){
             'actionable_blocked'=>$actionable_blocked
         ],
         'content_queue'=>$queue,
+        'stale_processing'=>$stale_processing,
         'bridge'=>['ready'=>$bridge!==''],
         'publisher'=>['ready'=>function_exists('hcdecor_publish_job_to_web') && post_type_exists('hc_content_job') && post_type_exists('hc_project')],
         'restore'=>[
