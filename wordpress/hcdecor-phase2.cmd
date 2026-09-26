@@ -30,8 +30,11 @@ echo [PASS] Sync Phase 2 source
 
 rem ACF is already loaded by WordPress during wp eval. Do not fire acf/init manually:
 rem re-firing the lifecycle hook can trigger plugin callbacks twice.
-call wp eval "if(!function_exists('acf_add_local_field_group'))exit(21);if(!function_exists('acf_get_field_group'))exit(22);$g=acf_get_field_group('group_hc_project');if(!$g)exit(23);$s=acf_get_field_group('group_hc_service');if(!$s)exit(24);echo 'ACF_READY';" >>"%LOG%" 2>&1 || goto :fail_acf
-echo [PASS] ACF Data Model
+call wp eval "if(!function_exists('acf_add_local_field_group'))exit(21);echo 'ACF_API_READY';" >>"%LOG%" 2>&1 || goto :fail_acf
+echo [PASS] ACF API
+call wp eval "$p=get_post_type_object('hc_project');$s=get_post_type_object('hc_service');if(!$p||!$s)exit(22);echo 'CONTENT_TYPES_READY';" >>"%LOG%" 2>&1 || goto :fail_acf
+echo [PASS] HCDecor content types
+echo [PASS] ACF Data Model registered by HCDecor Core
 
 call wp eval-file "%PLUGIN%\homepage-builder.php" >>"%LOG%" 2>&1 || goto :fail
 echo [PASS] Elementor homepage rebuilt
