@@ -321,7 +321,8 @@ function hcdecor_health_snapshot(){
             'actionable_blocked'=>$actionable_blocked,
             'recovered_24h'=>$auto_recovered_24h,
             'recovery_reasons_24h'=>$auto_recovery_reasons,
-            'settings_last_change'=>(array)get_option('hcdecor_automation_settings_last_change',[])
+            'settings_last_change'=>(array)get_option('hcdecor_automation_settings_last_change',[]),
+            'settings_cleanup_limited'=>!empty(((array)get_option('hcdecor_automation_settings_last_change',[]))['cleanup_limited'])
         ],
         'content_queue'=>$queue,
         'stale_processing'=>$stale_processing,
