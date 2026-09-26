@@ -75,3 +75,72 @@ a:focus-visible,button:focus-visible{outline:2px solid #d6b16b;outline-offset:3p
 }
 
 .hub-entry{display:inline-flex;margin-top:10px;color:#d9b56d!important;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none}.hub-entry:hover{text-decoration:underline}
+
+/* V4 Bronze Luxury — mobile-first refinement */
+:root{--bronze:#b87832;--copper:#d59a55;--champagne:#f0c985;--bronze-deep:#5f3518;--ink:#080a0c;--ivory:#f4efe7}
+body{background:#080a0c}
+.nav{background:linear-gradient(90deg,#080a0cf2,#17100bf0);border-bottom:1px solid #b8783245}
+.brand span,.eyebrow,.cards b,.steps b,.about-metrics b{color:var(--copper)}
+.cta{background:linear-gradient(115deg,#9a5b25 0%,#e3ad63 45%,#9b5b25 100%);background-size:220% 100%;color:#120b06;border:1px solid #f0c98580;box-shadow:inset 0 1px #fff4,0 8px 28px #8c4c1f25}
+.ghost{border-color:#b8783270}.hero h1 em{background:linear-gradient(105deg,#9d5d28,#f0c985 46%,#b87532);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-bg{background:radial-gradient(circle at 76% 42%,#7a431a30,transparent 32%),linear-gradient(110deg,#07090b 0%,#0b0d0f 48%,#17100c 100%)}
+.hero-bg:after,.hero-art,.building,.horizon{border-color:#b8783260}.band{background:linear-gradient(100deg,#70401d,#d59a55 48%,#70401d)}
+.light{background:#f2eee8}.dark,.about{background:linear-gradient(145deg,#090c0f,#11100e)}
+.cards article{border-color:#b8783238;box-shadow:0 10px 30px #3b24100a}
+.project{border-color:#b8783238}
+.project-filters button:hover,.project-filters button.active{border-color:var(--copper);color:var(--copper)}
+footer{background:linear-gradient(150deg,#07090b,#100c09)}
+@media(max-width:850px){
+ body{padding-bottom:0}
+ .wrap{width:min(100% - 36px,1180px)}
+ .nav{height:72px;padding:0 22px}
+ .brand{font-size:18px;letter-spacing:-.02em}
+ .menu-toggle{width:42px;height:42px;border-color:#b8783255;border-radius:10px;color:#e8c18a}
+ .hero{min-height:660px;padding-top:72px}
+ .hero-copy{padding-top:30px;padding-bottom:38px}
+ .media-label{display:none}
+ .hero-art{right:-34%;top:18%;width:100%;height:67%;opacity:.32}
+ .eyebrow{font-size:10px;letter-spacing:.3em}
+ .hero h1{font-size:clamp(39px,11vw,54px);line-height:1.01;letter-spacing:-.045em;margin:14px 0 22px;max-width:620px}
+ .lead{font-size:17px;line-height:1.48;max-width:580px}
+ .actions{margin-top:26px;gap:10px}
+ .actions .cta,.actions .ghost{padding:14px 20px;min-width:190px;text-align:center;border-radius:10px}
+ .hero-points{margin-top:30px;gap:10px 18px;font-size:10px;letter-spacing:.1em}
+ .section{padding:64px 0}
+ .section-head{gap:18px;margin-bottom:26px}
+ .section-head h2,.section h2{font-size:clamp(32px,8.5vw,43px);line-height:1.06;letter-spacing:-.035em}
+ .section-head>p{font-size:15px;line-height:1.55}
+ .cards{gap:12px}
+ .cards article{min-height:0;padding:24px 22px;border-radius:14px}
+ .cards article h3{font-size:21px;margin:10px 0}
+ .cards article p{font-size:15px;line-height:1.5}
+ .project-grid{gap:12px}
+ .project{height:340px;border-radius:14px}
+ .project h3{font-size:23px}
+ .steps{margin-top:24px;border-top-color:#b8783240}
+ .steps div{padding:22px 18px;min-height:145px;border-color:#b8783230}
+ .steps h4{font-size:18px;margin:14px 0 8px}
+ .split{gap:32px}
+ .about-metrics span{border-color:#b8783240;background:#b8783208}
+ .mobile-contact-dock{right:12px;bottom:18px;gap:9px}
+ .mobile-contact-dock a{width:48px;height:48px;border:1px solid #d59a55;box-shadow:0 7px 24px #0009,0 0 12px #b8783220}
+ .mobile-contact-dock svg{width:23px;height:23px}
+ .quick-zalo img{width:45px;height:45px}
+}
+@media(max-width:560px){
+ .wrap{width:calc(100% - 32px)}
+ .hero{min-height:630px}
+ .hero h1{font-size:40px}
+ .lead{font-size:16px}
+ .actions{align-items:stretch}
+ .actions .cta,.actions .ghost{width:100%;min-width:0}
+ .hero-points{display:grid;grid-template-columns:1fr 1fr}
+ .section{padding:54px 0}
+ .section-head h2,.section h2{font-size:34px}
+ .cards,.project-grid,.steps{grid-template-columns:1fr}
+ .project{height:300px}
+ .about-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+ .about-metrics span{min-width:0;padding:12px 10px}
+ .footer-grid{gap:30px}
+ .social-links{padding-right:56px}
+}
