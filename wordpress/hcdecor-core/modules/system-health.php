@@ -11,7 +11,7 @@ function hcdecor_health_required_modules(){
         'background-sync.php','content-operations.php','workflow-engine.php','ai-providers.php',
         'media-intelligence.php','agent-intake.php','ai-workspace.php','web-publisher.php',
         'automation-hub.php','automation-recipes.php','drive-vault.php','drive-inbox.php','project-vault.php','data-backup.php','data-restore.php',
-        'project-publishing.php','media-manager.php','admin-cleanup.php'
+        'project-publishing.php','media-manager.php','hub-dashboard.php','admin-cleanup.php'
     ];
 }
 
