@@ -8,7 +8,7 @@
 {"@context":"https://schema.org","@type":"ProfessionalService","name":"HCDecor Studio","url":"https://hcdecorhub.vercel.app/","telephone":"+84888821842","address":{"@type":"PostalAddress","streetAddress":"231D An Dương Vương","addressLocality":"P. An Lạc, Tp.HCM","addressCountry":"VN"},"areaServed":"Ho Chi Minh City, Viet Nam","description":"Thiết kế, thi công bảng hiệu, nội thất, phối cảnh 3D và Media AI.","sameAs":["https://www.facebook.com/hocuong1979/","https://www.tiktok.com/@quangcaohocuong","https://www.youtube.com/@HoCuongPre","https://zalo.me/quangcaohocuong"]}
 </script>
 <link rel="stylesheet" href="style.css">
-</head>
+<style id="admin-design-vars">body{font-family:var(--admin-font,inherit);font-size:var(--admin-body,inherit)}h1{font-size:var(--admin-heading,inherit)!important}.cta,.eyebrow,.brand span{color:var(--admin-accent,#d59a55)}.section{padding-top:var(--admin-gap,72px);padding-bottom:var(--admin-gap,72px)}.solution-tile,.project{border-radius:var(--admin-radius,16px)}body{--admin-text:#f5f5f3}body.admin-preview-theme{background:var(--admin-bg,#090d11);color:var(--admin-text,#f5f5f3)}</style></head>
 <body><a class="skip-link" href="#main-content">Bỏ qua đến nội dung chính</a>
 <header class="nav">
   <a class="brand" href="#home"><span>HC</span> HCDecor Studio</a>
@@ -83,7 +83,7 @@
 <script>
 (function(){
  function applyAdmin(s){
-  if(!s)return;
+  if(!s)return;var r=document.documentElement;if(s.fontFamily)r.style.setProperty('--admin-font',s.fontFamily);if(s.headingSize)r.style.setProperty('--admin-heading',s.headingSize+'px');if(s.bodySize)r.style.setProperty('--admin-body',s.bodySize+'px');if(s.accentColor)r.style.setProperty('--admin-accent',s.accentColor);if(s.textColor)r.style.setProperty('--admin-text',s.textColor);if(s.bgColor)r.style.setProperty('--admin-bg',s.bgColor);if(s.radius)r.style.setProperty('--admin-radius',s.radius+'px');if(s.sectionGap)r.style.setProperty('--admin-gap',s.sectionGap+'px');
   var main=document.querySelector('main'), ids=['home','services','projects','process','about'];
   (s.order||ids).forEach(function(id){var el=document.getElementById(id);if(el&&main)main.appendChild(el)});
   Object.entries(s.visible||{}).forEach(function(e){var el=document.getElementById(e[0]);if(el)el.style.display=e[1]?'':'none'});
@@ -91,7 +91,7 @@
   document.querySelectorAll('#services .solution-art img').forEach(function(img,i){if(s.serviceImages&&s.serviceImages[i])img.src=s.serviceImages[i]});
   document.querySelectorAll('#projects .project>img').forEach(function(img,i){if(s.projectImages&&s.projectImages[i])img.src=s.projectImages[i]});
  }
- if(new URLSearchParams(location.search).has('adminPreview')){try{applyAdmin(JSON.parse(localStorage.getItem('hcdecor-admin-v5')||'null'))}catch(e){}}
+ if(new URLSearchParams(location.search).has('adminPreview')){document.body.classList.add('admin-preview-theme');try{applyAdmin(JSON.parse(localStorage.getItem('hcdecor-admin-v5')||'null'))}catch(e){}}
  addEventListener('message',function(e){if(e.origin!==location.origin||!e.data)return;if(e.data.type==='hcdecor-preview')applyAdmin(e.data.state);if(e.data.type==='hcdecor-select'){parent.postMessage(e.data,location.origin)}});if(new URLSearchParams(location.search).has('adminPreview')){document.addEventListener('click',function(e){var el=e.target.closest('#home h1,#home .lead,#home .actions .cta,#services h2,#services .solution-tile,#projects h2,#projects .project,#process h2,#about h2,#about .split>div:last-child p');if(!el)return;e.preventDefault();e.stopPropagation();var sec=el.closest('section');parent.postMessage({type:'hcdecor-select',section:sec&&sec.id,text:el.textContent.trim()},location.origin);document.querySelectorAll('.hc-edit-selected').forEach(function(x){x.classList.remove('hc-edit-selected')});el.classList.add('hc-edit-selected')},true)}
 })();
 </script>
