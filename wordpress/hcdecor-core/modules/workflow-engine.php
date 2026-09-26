@@ -20,6 +20,16 @@ function hcdecor_workflow_set_status($job_id,$status,$note=''){
     if(!in_array($status,$allowed,true)) return false;
     $old=(string)get_post_meta($job_id,'hc_agent_status',true);
     if($old===$status) return true;
+    $transitions=[
+        ''=>['draft'],
+        'draft'=>['processing'],
+        'processing'=>['review','failed'],
+        'review'=>['approved','draft'],
+        'approved'=>['published_web'],
+        'published_web'=>['approved'],
+        'failed'=>['draft']
+    ];
+    if(!in_array($status,(array)($transitions[$old]??[]),true)) return false;
     update_post_meta($job_id,'hc_agent_status',$status);
     update_post_meta($job_id,'hc_status_changed_at',current_time('mysql'));
     if($status==='review') update_post_meta($job_id,'hc_review_entered_at',current_time('mysql'));
