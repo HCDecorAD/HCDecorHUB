@@ -60,7 +60,8 @@ add_action('admin_post_hcdecor_ops_create', function(){
     ]);
     if(is_wp_error($id)) wp_die($id->get_error_message());
     update_post_meta($id,'hc_project_id',$project);
-    update_post_meta($id,'hc_agent_status','draft');
+    if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($id,'draft','Created from Content Operations');
+    else update_post_meta($id,'hc_agent_status','draft');
     hcdecor_ops_save_fields($id,$_POST);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$id.'&created=1')); exit;
 });
@@ -72,7 +73,10 @@ add_action('admin_post_hcdecor_ops_save', function(){
     wp_update_post(['ID'=>$id,'post_content'=>sanitize_textarea_field(wp_unslash($_POST['brief']??''))]);
     hcdecor_ops_save_fields($id,$_POST);
     $status=sanitize_key($_POST['agent_status']??'draft');
-    if(array_key_exists($status,hcdecor_ops_statuses())) update_post_meta($id,'hc_agent_status',$status);
+    $current=(string)get_post_meta($id,'hc_agent_status',true);
+    if($status!==$current){
+        if(!function_exists('hcdecor_workflow_set_status') || !hcdecor_workflow_set_status($id,$status,'Status changed from Content Operations')) wp_die('Invalid workflow status transition.');
+    }
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$id.'&saved=1')); exit;
 });
 
@@ -112,7 +116,7 @@ add_action('rest_api_init',function(){
                 $p=$r->get_json_params()?:[];
                 if(isset($p['brief'])) wp_update_post(['ID'=>$id,'post_content'=>sanitize_textarea_field($p['brief'])]);
                 hcdecor_ops_save_fields($id,$p);
-                if(isset($p['agent_status'])){ $agent_status=sanitize_key($p['agent_status']); $agent_allowed=['draft','processing','review','failed']; if(!in_array($agent_status,$agent_allowed,true)) return new WP_Error('status','Agent cannot approve or publish jobs',['status'=>403]); update_post_meta($id,'hc_agent_status',$agent_status); }
+                if(isset($p['agent_status'])){ $agent_status=sanitize_key($p['agent_status']); $agent_allowed=['draft','processing','review','failed']; if(!in_array($agent_status,$agent_allowed,true)) return new WP_Error('status','Agent cannot approve or publish jobs',['status'=>403]); $current=(string)get_post_meta($id,'hc_agent_status',true); if($agent_status!==$current && (!function_exists('hcdecor_workflow_set_status') || !hcdecor_workflow_set_status($id,$agent_status,'Status changed through operations API'))) return new WP_Error('transition','Invalid workflow status transition',['status'=>409]); }
             }
             $post=get_post($id);
             $data=['id'=>$id,'title'=>$post->post_title,'brief'=>$post->post_content,'project_id'=>(int)hcdecor_ops_get($id,'project_id'),'status'=>hcdecor_ops_get($id,'agent_status','draft'),'media_ids'=>(array)hcdecor_ops_get($id,'media_ids',[]),'cover_id'=>(int)hcdecor_ops_get($id,'cover_id'),'channels'=>(array)hcdecor_ops_get($id,'channels',[]),'outbound'=>false];
