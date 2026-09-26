@@ -108,12 +108,11 @@ add_action('rest_api_init',function(){
                     delete_option($mutex);
                     continue;
                 }
-                update_post_meta($j->ID,'hc_agent_claimed_at',current_time('mysql'));
                 if(!add_post_meta($j->ID,'hc_agent_claim_token',$claim_token,true)){
-                    delete_post_meta($j->ID,'hc_agent_claimed_at');
                     delete_option($mutex);
                     continue;
                 }
+                update_post_meta($j->ID,'hc_agent_claimed_at',current_time('mysql'));
                 update_post_meta($j->ID,'hc_agent_lock_until',$now+600);
                 if(!hcdecor_workflow_set_status($j->ID,'processing','Agent claimed job')){
                     hcdecor_workflow_clear_worker_claim($j->ID,true);
