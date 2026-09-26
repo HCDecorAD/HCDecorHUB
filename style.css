@@ -296,3 +296,28 @@ footer{background:linear-gradient(150deg,#07090b,#100c09)}
   .steps:before{left:18px}
   .steps div:before{width:38px;height:38px}
 }
+
+
+/* V4.5 Process heading polish */
+@media(max-width:850px){
+  #process .section-head .eyebrow{
+    width:max-content!important;
+    padding:0!important;
+    margin:0 0 12px!important;
+    background:transparent!important;
+    color:#b77a3f!important;
+    font-size:12px!important;
+    line-height:1!important;
+    letter-spacing:.28em!important;
+  }
+  #process .section-head h2{
+    white-space:nowrap!important;
+    font-size:clamp(25px,7.2vw,31px)!important;
+    line-height:1.08!important;
+    letter-spacing:-.035em!important;
+    margin:0 0 18px!important;
+  }
+}
+@media(max-width:390px){
+  #process .section-head h2{font-size:24px!important;letter-spacing:-.04em!important}
+}
