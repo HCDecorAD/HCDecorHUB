@@ -138,7 +138,9 @@ function hcdecor_media_ai_apply_project_recommendations($project_id){
     $ranked=[];
     foreach($media as $mid){
         if(get_post_type($mid)!=='attachment') continue;
-        $ranked[]=['id'=>$mid,'score'=>(int)get_post_meta($mid,'hc_ai_cover_score',true)];
+        $analyzed=(string)get_post_meta($mid,'hc_ai_analyzed_at',true);
+        $score=$analyzed!==''?(int)get_post_meta($mid,'hc_ai_cover_score',true):-1;
+        $ranked[]=['id'=>$mid,'score'=>$score,'analyzed'=>$analyzed!==''?1:0];
         $alt=(string)get_post_meta($mid,'hc_ai_alt',true);
         $caption=(string)get_post_meta($mid,'hc_ai_caption',true);
         if($alt!=='' && get_post_meta($mid,'_wp_attachment_image_alt',true)==='') update_post_meta($mid,'_wp_attachment_image_alt',$alt);
@@ -146,7 +148,7 @@ function hcdecor_media_ai_apply_project_recommendations($project_id){
         if($post && $caption!=='' && trim((string)$post->post_excerpt)==='') wp_update_post(['ID'=>$mid,'post_excerpt'=>$caption]);
     }
     if(!$ranked) return new WP_Error('media','No valid project media.');
-    usort($ranked,function($a,$b){return $b['score']<=>$a['score'];});
+    usort($ranked,function($a,$b){ if($a['analyzed']!==$b['analyzed']) return $b['analyzed']<=>$a['analyzed']; return $b['score']<=>$a['score']; });
     $cover=(int)$ranked[0]['id'];
     update_post_meta($project_id,'hc_ai_recommended_cover_id',$cover);
     update_post_meta($project_id,'hc_ai_media_rank',array_column($ranked,'id'));
