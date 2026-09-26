@@ -273,7 +273,8 @@ function hcdecor_auto_cleanup_mutex_state($raw=null){
 function hcdecor_auto_cleanup_mutex_acquire(){
     $key='hcdecor_automation_cleanup_mutex'; $now=time();
     $state=hcdecor_auto_cleanup_mutex_state();
-    if($state['at'] && $state['at']<($now-120)){
+    $invalid_array=is_array($state['raw']) && $state['raw'] && (empty($state['token']) || !$state['at']);
+    if($invalid_array || ($state['at'] && $state['at']<($now-120))){
         if(!hcdecor_auto_cleanup_mutex_delete_if_same($state['raw'])) return false;
         $state=['token'=>'','at'=>0,'raw'=>[]];
     }
