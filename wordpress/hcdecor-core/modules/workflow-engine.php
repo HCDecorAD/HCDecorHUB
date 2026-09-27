@@ -349,16 +349,25 @@ add_action('rest_api_init',function(){
                     if($existing_token!=='' && $existing_lock<=$now){
                         $claimed=strtotime((string)get_post_meta($j->ID,'hc_agent_claimed_at',true))?:0;
                         if($claimed && $claimed<($now-120)){
-                            hcdecor_workflow_clear_worker_claim($j->ID,true,false);
-                            update_post_meta($j->ID,'hc_agent_recovered_at',current_time('mysql'));
-                            update_post_meta($j->ID,'hc_agent_recovery_reason','orphan_draft_claim');
-                            hcdecor_workflow_log($j->ID,'draft','Recovered orphan worker claim during claim contention');
-                            if(add_post_meta($j->ID,'hc_agent_claim_token',$claim_token,true)){
-                                if(hcdecor_workflow_finalize_claim($j->ID,$claim_token,$now,'Agent claimed recovered job')){
-                                    hcdecor_workflow_claim_mutex_release($j->ID,$claim_token);
-                                    return hcdecor_workflow_claim_response($j,$claim_token);
+                            $lifecycle=hcdecor_workflow_lifecycle_mutex_acquire($j->ID,$existing_token,30);
+                            if($lifecycle){
+                                $still_orphan=(string)get_post_meta($j->ID,'hc_agent_status',true)==='draft'
+                                    && (string)get_post_meta($j->ID,'hc_agent_claim_token',true)===$existing_token
+                                    && (int)get_post_meta($j->ID,'hc_agent_lock_until',true)<=$now;
+                                if($still_orphan){
+                                    hcdecor_workflow_clear_worker_claim($j->ID,true,false);
+                                    update_post_meta($j->ID,'hc_agent_recovered_at',current_time('mysql'));
+                                    update_post_meta($j->ID,'hc_agent_recovery_reason','orphan_draft_claim');
+                                    hcdecor_workflow_log($j->ID,'draft','Recovered orphan worker claim during claim contention');
                                 }
-                                hcdecor_workflow_clear_owned_claim($j->ID,$claim_token,true);
+                                hcdecor_workflow_lifecycle_mutex_release($j->ID,$lifecycle);
+                                if($still_orphan && add_post_meta($j->ID,'hc_agent_claim_token',$claim_token,true)){
+                                    if(hcdecor_workflow_finalize_claim($j->ID,$claim_token,$now,'Agent claimed recovered job')){
+                                        hcdecor_workflow_claim_mutex_release($j->ID,$claim_token);
+                                        return hcdecor_workflow_claim_response($j,$claim_token);
+                                    }
+                                    hcdecor_workflow_clear_owned_claim($j->ID,$claim_token,true);
+                                }
                             }
                         }
                     }
