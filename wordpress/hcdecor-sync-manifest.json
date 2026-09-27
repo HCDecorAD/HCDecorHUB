@@ -1,5 +1,5 @@
 {
-  "version": "2026.09.27.173",
+  "version": "2026.09.27.174",
   "files": [
     {
       "path": "hcdecor-core.php",
@@ -89,7 +89,7 @@
     {
       "path": "modules/system-health.php",
       "url": "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/system-health.php",
-      "git_sha1": "319980724eaaa78c15ca50e7ce0f5c69580b61a1"
+      "git_sha1": "fa1c3cb94592b52a40526afd985e4b8f1bb23b1f"
     },
     {
       "path": "modules/data-backup.php",
