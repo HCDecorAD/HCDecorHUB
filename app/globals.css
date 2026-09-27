@@ -30,3 +30,5 @@ html[data-theme="dark"] .formPage input,html[data-theme="dark"] .formPage select
 html[data-theme="dark"] .siteHero h1{color:#f2f4f7}
 html[data-theme="dark"] .siteHero p,html[data-theme="dark"] .siteCards p,html[data-theme="dark"] .opsCards p,html[data-theme="dark"] .opsPanel p,html[data-theme="dark"] .adminTop p{color:#98a2b3}
 html[data-theme="dark"] .realStat span,html[data-theme="dark"] .guard span{color:#98a2b3}
+
+.deployPanel{max-width:900px}.deployMain{margin:18px 0;padding:12px 18px;cursor:pointer}.deployMain:disabled{opacity:.45;cursor:not-allowed}.deployResult{margin-top:16px;padding:14px;border-radius:10px;border:1px solid #dfe6ef}.deployResult.success{background:#effbf4;border-color:#bfe8cf}.deployResult.failed{background:#fff4f2;border-color:#f3c4bd}.deployResult pre{white-space:pre-wrap;font-size:10px;overflow:auto;margin-bottom:0}html[data-theme="dark"] .deployResult.success{background:#10251a;border-color:#245d3c}html[data-theme="dark"] .deployResult.failed{background:#2b1717;border-color:#633333}
