@@ -485,3 +485,19 @@ foreach (['background-sync.php','workflow-engine.php','content-operations.php','
     $hcdecor_module_path = plugin_dir_path(__FILE__) . 'modules/' . $hcdecor_module;
     if (is_readable($hcdecor_module_path)) require_once $hcdecor_module_path;
 }
+
+
+/* HCDECOR_ELEMENTOR_HOME_SELF_HEAL */
+add_action('admin_init',function(){
+  if(!current_user_can('manage_options')) return;
+  if(!did_action('elementor/loaded') && !class_exists('Elementor\\Plugin')) return;
+  $id=(int)get_option('page_on_front');
+  if(!$id || get_post_meta($id,'_elementor_edit_mode',true)==='builder') return;
+  $builder=plugin_dir_path(__FILE__).'homepage-builder.php';
+  if(is_readable($builder)){
+    ob_start();
+    try{ include $builder; update_option('hcdecor_elementor_home_restored_at',current_time('mysql')); }
+    catch(Throwable $e){ update_option('hcdecor_elementor_home_restore_error',$e->getMessage()); }
+    ob_end_clean();
+  }
+},40);
