@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) exit;
  * HCDecor managed background sync.
  * Pulls only files declared in the public manifest, verifies Git blob SHA, writes atomically.
  */
-define('HCDECOR_SYNC_MANIFEST','https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-sync-manifest.json');
+if (!defined('HCDECOR_SYNC_MANIFEST')) define('HCDECOR_SYNC_MANIFEST','https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-sync-manifest.json');
 
 add_filter('cron_schedules',function($s){$s['hcdecor_5min']=['interval'=>300,'display'=>'HCDecor every 5 minutes'];return $s;});
 add_action('init',function(){if(!wp_next_scheduled('hcdecor_background_sync'))wp_schedule_event(time()+60,'hcdecor_5min','hcdecor_background_sync');});
