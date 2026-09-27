@@ -1,5 +1,5 @@
 {
-  "version": "2026.09.27.171",
+  "version": "2026.09.27.172",
   "files": [
     {
       "path": "hcdecor-core.php",
@@ -79,7 +79,7 @@
     {
       "path": "modules/drive-vault.php",
       "url": "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/drive-vault.php",
-      "git_sha1": "1c9f32610408029d0cb4cd745e897fdc772d869e"
+      "git_sha1": "fd504d5c1037970e7dd7fc4854bc00c71675811b"
     },
     {
       "path": "modules/ai-workspace.php",
