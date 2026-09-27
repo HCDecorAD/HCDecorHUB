@@ -394,8 +394,12 @@ add_action('rest_api_init',function(){
             $lifecycle=hcdecor_workflow_lifecycle_mutex_acquire($id,$token,30);
             if(!$lifecycle) return new WP_Error('busy','Job completion is already being finalized',['status'=>409]);
             if(!hcdecor_workflow_owned_claim_active($id,$token)){ hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle); return new WP_Error('claim','Worker claim changed before saving completion',['status'=>409]); }
+            if(!function_exists('hcdecor_ops_save_fields')){
+                hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle);
+                return new WP_Error('dependency','Content Operations save handler unavailable',['status'=>503]);
+            }
             $p=$r->get_json_params()?:[];
-            if(function_exists('hcdecor_ops_save_fields')) hcdecor_ops_save_fields($id,$p);
+            hcdecor_ops_save_fields($id,$p);
             if(!hcdecor_workflow_owned_claim_active($id,$token)){ hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle); return new WP_Error('claim','Worker claim changed after saving completion',['status'=>409]); }
             if(!hcdecor_workflow_finish_owned_claim($id,$token,'review','Agent completed generation')){ hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle); return new WP_Error('claim','Worker claim changed before completion',['status'=>409]); }
             hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle);
