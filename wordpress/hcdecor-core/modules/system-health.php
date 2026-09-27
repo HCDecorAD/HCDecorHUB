@@ -236,7 +236,9 @@ function hcdecor_health_snapshot(){
     $worker_mutex_sweep_fresh=$worker_mutex_sweep_ts>=(time()-600);
     $worker_sweep_mutex_raw=get_option('hcdecor_worker_mutex_sweep_mutex',[]);
     $worker_sweep_mutex_at=is_array($worker_sweep_mutex_raw)?(int)($worker_sweep_mutex_raw['at']??0):(int)$worker_sweep_mutex_raw;
-    $worker_sweep_mutex_stale=$worker_sweep_mutex_at>0 && $worker_sweep_mutex_at<(time()-30);
+    $worker_sweep_mutex_invalid=(is_array($worker_sweep_mutex_raw) && $worker_sweep_mutex_raw && (empty($worker_sweep_mutex_raw['token']) || !$worker_sweep_mutex_at))
+        || (!is_array($worker_sweep_mutex_raw) && $worker_sweep_mutex_raw!==false && $worker_sweep_mutex_raw!=='' && $worker_sweep_mutex_at<=0);
+    $worker_sweep_mutex_stale=$worker_sweep_mutex_invalid || ($worker_sweep_mutex_at>0 && $worker_sweep_mutex_at<(time()-30));
     $automation_last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
     $automation_cleanup_raw=get_option('hcdecor_automation_cleanup_mutex',[]);
     $automation_cleanup_mutex=is_array($automation_cleanup_raw)?(int)($automation_cleanup_raw['at']??0):(int)$automation_cleanup_raw;
