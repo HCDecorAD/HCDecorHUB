@@ -1,0 +1,1 @@
+export default function P(){return <main className="adminSub"><a href="/admin">← Admin</a><small>SYSTEM HEALTH</small><h1>Health Center</h1><div className="subActions"><a href="/api/health">Mở Health API</a><a href="/api/cms/status">CMS Status</a><a href="/api/publish/status">Publish Status</a></div></main>}
