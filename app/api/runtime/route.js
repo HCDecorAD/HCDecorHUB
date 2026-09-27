@@ -1,0 +1,2 @@
+import {runtimeCapabilities} from "../../../lib/data/store";
+export async function GET(){const c=runtimeCapabilities();return Response.json({ok:true,capabilities:c,policy:{fakePersistence:false,reviewRequired:true,socialDeferred:true},routes:{website:"/",hub:"/hub",admin:"/admin",contact:"/contact",leads:"/admin/leads",projects:"/hub/projects"}})}
