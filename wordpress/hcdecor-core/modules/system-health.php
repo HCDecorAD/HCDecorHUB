@@ -475,6 +475,10 @@ function hcdecor_health_auto_repair_schedules(){
         if($cursor===0){
             wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
             $cleanup_repairs[]='worker_mutex_sweep_orphan';
+        }else{
+            wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
+            wp_schedule_single_event(time()+15,'hcdecor_worker_mutex_sweep_tick');
+            $cleanup_repairs[]='worker_mutex_sweep_cursor_resume';
         }
     }
     $cleanup_mutex_raw=get_option('hcdecor_automation_cleanup_mutex',[]);
