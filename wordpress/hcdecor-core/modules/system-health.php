@@ -435,7 +435,9 @@ function hcdecor_health_auto_repair_schedules(){
     $worker_sweep_fresh=$worker_sweep_ts>=(time()-600);
     $worker_sweep_lock_raw=get_option('hcdecor_worker_mutex_sweep_mutex',[]);
     $worker_sweep_lock_at=is_array($worker_sweep_lock_raw)?(int)($worker_sweep_lock_raw['at']??0):(int)$worker_sweep_lock_raw;
-    if($worker_sweep_lock_at && $worker_sweep_lock_at<(time()-30) && function_exists('hcdecor_workflow_claim_mutex_delete_if_same')){
+    $worker_sweep_lock_invalid=(is_array($worker_sweep_lock_raw) && $worker_sweep_lock_raw && (empty($worker_sweep_lock_raw['token']) || !$worker_sweep_lock_at))
+        || (!is_array($worker_sweep_lock_raw) && $worker_sweep_lock_raw!==false && $worker_sweep_lock_raw!=='' && $worker_sweep_lock_at<=0);
+    if(($worker_sweep_lock_invalid || ($worker_sweep_lock_at && $worker_sweep_lock_at<(time()-30))) && function_exists('hcdecor_workflow_claim_mutex_delete_if_same')){
         if(hcdecor_workflow_claim_mutex_delete_if_same('hcdecor_worker_mutex_sweep_mutex',$worker_sweep_lock_raw)){
             $cleanup_repairs[]='worker_mutex_sweep_lock';
             $worker_sweep_lock_raw=[];
