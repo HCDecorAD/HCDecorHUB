@@ -1,1 +1,1 @@
-import "./globals.css";export const metadata={title:"HCDecor HUB",description:"HCDecor operations command center"};export default function RootLayout({children}){return <html lang="vi"><head><link rel="stylesheet" href="/hub-clean.css"/></head><body>{children}</body></html>}
+import "./globals.css";export const metadata={title:"HCDecor HUB",description:"HCDecor Content Operations"};export default function RootLayout({children}){return <html lang="vi"><head><link rel="stylesheet" href="/hub-v5.css"/></head><body>{children}</body></html>}
