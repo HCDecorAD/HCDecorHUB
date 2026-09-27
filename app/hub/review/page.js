@@ -1,0 +1,1 @@
+import {HubShell,PageCards} from "../../../components/HubShell";export default function P(){return <HubShell title="Review Center"><PageCards items={[["REVIEW","Required","Duyệt trước Publish."],["READY","Approved only","Chỉ nội dung đã duyệt được chuyển tiếp."],["PUBLISH","Web Publish","Mở trang xuất bản.","/hub/publish"]]}/></HubShell>}
