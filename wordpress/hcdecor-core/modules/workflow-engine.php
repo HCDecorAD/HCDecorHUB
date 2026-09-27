@@ -81,10 +81,6 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     $lifecycle_like=$wpdb->esc_like('hcdecor_lifecycle_mutex_').'%';
     $rows=$wpdb->get_results($wpdb->prepare("SELECT option_id,option_name FROM {$wpdb->options} WHERE (option_name LIKE %s OR option_name LIKE %s) AND option_id>%d ORDER BY option_id ASC LIMIT %d",$claim_like,$lifecycle_like,$cursor,$limit+1));
     $wrapped=false;
-    if(!$rows && $cursor>0){
-        $cursor=0; $wrapped=true;
-        $rows=$wpdb->get_results($wpdb->prepare("SELECT option_id,option_name FROM {$wpdb->options} WHERE (option_name LIKE %s OR option_name LIKE %s) ORDER BY option_id ASC LIMIT %d",$claim_like,$lifecycle_like,$limit+1));
-    }
     $limited=count($rows)>$limit;
     $rows=array_slice((array)$rows,0,$limit);
     $stale=0; $deleted=0; $lifecycle_scanned=0; $next_cursor=$cursor;
@@ -100,15 +96,9 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
             if(hcdecor_workflow_claim_mutex_delete_if_same($name,$observed)) $deleted++;
         }
     }
-    $more_after=$limited || (!$wrapped && $next_cursor>0 && (bool)$wpdb->get_var($wpdb->prepare("SELECT option_id FROM {$wpdb->options} WHERE (option_name LIKE %s OR option_name LIKE %s) AND option_id>%d ORDER BY option_id ASC LIMIT 1",$claim_like,$lifecycle_like,$next_cursor)));
+    $more_after=$limited || ($next_cursor>0 && (bool)$wpdb->get_var($wpdb->prepare("SELECT option_id FROM {$wpdb->options} WHERE (option_name LIKE %s OR option_name LIKE %s) AND option_id>%d ORDER BY option_id ASC LIMIT 1",$claim_like,$lifecycle_like,$next_cursor)));
     $continue=$more_after;
-    if(!$wrapped && !$more_after && $cursor>0){
-        $before=(bool)$wpdb->get_var($wpdb->prepare("SELECT option_id FROM {$wpdb->options} WHERE (option_name LIKE %s OR option_name LIKE %s) AND option_id<=%d ORDER BY option_id ASC LIMIT 1",$claim_like,$lifecycle_like,$cursor));
-        if($before) $continue=true;
-    }
-    if($wrapped && !$limited) $continue=false;
     $stored_cursor=$continue?$next_cursor:0;
-    if(!$rows) $stored_cursor=0;
     update_option('hcdecor_worker_mutex_sweep_last',[
         'at'=>current_time('mysql'),'ts'=>time(),'scanned'=>count($rows),'lifecycle_scanned'=>$lifecycle_scanned,'stale'=>$stale,'deleted'=>$deleted,'limited'=>$continue,'cursor'=>$stored_cursor,'wrapped'=>$wrapped
     ],false);
