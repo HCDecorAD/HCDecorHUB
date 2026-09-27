@@ -1,5 +1,5 @@
 {
-  "version": "2026.09.27.189",
+  "version": "2026.09.27.190",
   "files": [
     {
       "path": "hcdecor-core.php",
@@ -69,7 +69,7 @@
     {
       "path": "modules/social-connectors.php",
       "url": "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/social-connectors.php",
-      "git_sha1": "a673dc10952de20f2414963f30eecd080a080854"
+      "git_sha1": "78151330491e2253dadcea497cdf570a945ca094"
     },
     {
       "path": "modules/automation-hub.php",
