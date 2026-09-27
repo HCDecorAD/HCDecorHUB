@@ -72,11 +72,11 @@ add_action('admin_post_hcdecor_ops_save', function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
     $id=(int)($_POST['job_id']??0); check_admin_referer('hcdecor_ops_save_'.$id);
     if(get_post_type($id)!=='hc_content_job') wp_die('Invalid job');
-    wp_update_post(['ID'=>$id,'post_content'=>sanitize_textarea_field(wp_unslash($_POST['brief']??''))]);
-    hcdecor_ops_save_fields($id,$_POST);
     $status=sanitize_key($_POST['agent_status']??'');
     $current=(string)get_post_meta($id,'hc_agent_status',true);
     if($status!=='' && $status!==$current) wp_die('Workflow status is read-only here. Use Review Center or worker lifecycle actions.');
+    wp_update_post(['ID'=>$id,'post_content'=>sanitize_textarea_field(wp_unslash($_POST['brief']??''))]);
+    hcdecor_ops_save_fields($id,$_POST);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$id.'&saved=1')); exit;
 });
 
@@ -114,9 +114,9 @@ add_action('rest_api_init',function(){
             $id=(int)$r['id']; if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
             if($r->get_method()==='POST'){
                 $p=$r->get_json_params()?:[];
+                if(isset($p['agent_status'])){ $agent_status=sanitize_key($p['agent_status']); $current=(string)get_post_meta($id,'hc_agent_status',true); if($agent_status!==$current) return new WP_Error('status_read_only','Workflow status is read-only on this endpoint; use worker lifecycle routes',['status'=>409]); }
                 if(isset($p['brief'])) wp_update_post(['ID'=>$id,'post_content'=>sanitize_textarea_field($p['brief'])]);
                 hcdecor_ops_save_fields($id,$p);
-                if(isset($p['agent_status'])){ $agent_status=sanitize_key($p['agent_status']); $current=(string)get_post_meta($id,'hc_agent_status',true); if($agent_status!==$current) return new WP_Error('status_read_only','Workflow status is read-only on this endpoint; use worker lifecycle routes',['status'=>409]); }
             }
             $post=get_post($id);
             $data=['id'=>$id,'title'=>$post->post_title,'brief'=>$post->post_content,'project_id'=>(int)hcdecor_ops_get($id,'project_id'),'status'=>hcdecor_ops_get($id,'agent_status','draft'),'media_ids'=>(array)hcdecor_ops_get($id,'media_ids',[]),'cover_id'=>(int)hcdecor_ops_get($id,'cover_id'),'channels'=>(array)hcdecor_ops_get($id,'channels',[]),'outbound'=>false];
