@@ -469,9 +469,19 @@ function hcdecor_workflow_recover_stale_jobs($limit=10){
                 hcdecor_workflow_lifecycle_mutex_release($job->ID,$lifecycle);
                 if(!$finished) continue;
             }else{
-                if((string)get_post_meta($job->ID,'hc_agent_status',true)!=='processing') continue;
-                if(!hcdecor_workflow_set_status($job->ID,'failed',$note)) continue;
-                hcdecor_workflow_clear_worker_claim($job->ID,true);
+                $lifecycle=hcdecor_workflow_lifecycle_mutex_acquire($job->ID,'recovery-'.$job->ID,30);
+                if(!$lifecycle) continue;
+                $current_status=(string)get_post_meta($job->ID,'hc_agent_status',true);
+                $current_token=(string)get_post_meta($job->ID,'hc_agent_claim_token',true);
+                $current_lock=(int)get_post_meta($job->ID,'hc_agent_lock_until',true);
+                if($current_status!=='processing' || $current_token!=='' || $current_lock!==$lock){
+                    hcdecor_workflow_lifecycle_mutex_release($job->ID,$lifecycle);
+                    continue;
+                }
+                $finished=hcdecor_workflow_set_status($job->ID,'failed',$note);
+                if($finished) hcdecor_workflow_clear_worker_claim($job->ID,true,false);
+                hcdecor_workflow_lifecycle_mutex_release($job->ID,$lifecycle);
+                if(!$finished) continue;
             }
             update_post_meta($job->ID,'hc_agent_recovered_at',current_time('mysql'));
             update_post_meta($job->ID,'hc_agent_recovery_reason',$invalid_claim?'missing_claim_token':'expired_lock');
