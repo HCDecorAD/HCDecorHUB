@@ -1,0 +1,1 @@
+import {HubShell,PageCards} from "../../../components/HubShell";export default function P(){return <HubShell title="Content"><PageCards items={[["DRAFT","Soạn nội dung","Tạo nội dung theo Project."],["REVIEW","Chờ duyệt","Đưa nội dung sang Review.","/hub/review"],["CALENDAR","Lên lịch","Quản lý lịch nội dung.","/hub/calendar"]]}/></HubShell>}
