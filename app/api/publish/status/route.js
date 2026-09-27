@@ -1,0 +1,1 @@
+export async function GET(){const authenticated=Boolean(process.env.HCDECOR_WP_API_TOKEN);return Response.json({provider:"wordpress.com",mode:authenticated?"authenticated":"demo-readonly",reviewRequired:true,publishEnabled:authenticated,socialEnabled:false,rollback:true});}
