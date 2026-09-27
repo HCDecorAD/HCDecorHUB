@@ -494,7 +494,9 @@ function hcdecor_health_auto_repair_schedules(){
             $cleanup_mutex=is_array($cleanup_mutex_raw)?(int)($cleanup_mutex_raw['at']??0):(int)$cleanup_mutex_raw;
         }
     }
-    $cleanup_running=$cleanup_mutex>=(time()-120);
+    $cleanup_mutex_invalid=(is_array($cleanup_mutex_raw) && $cleanup_mutex_raw && (empty($cleanup_mutex_raw['token']) || !$cleanup_mutex))
+        || (!is_array($cleanup_mutex_raw) && $cleanup_mutex_raw!==false && $cleanup_mutex_raw!=='' && $cleanup_mutex<=0);
+    $cleanup_running=!$cleanup_mutex_invalid && $cleanup_mutex>=(time()-120);
     if(!empty($cleanup_change['cleanup_limited']) && !wp_next_scheduled('hcdecor_automation_cleanup_tick') && !wp_next_scheduled('hcdecor_automation_cleanup_watchdog') && !$cleanup_running){
         wp_schedule_single_event(time()+15,'hcdecor_automation_cleanup_tick');
         $cleanup_repairs[]='automation_cleanup';
