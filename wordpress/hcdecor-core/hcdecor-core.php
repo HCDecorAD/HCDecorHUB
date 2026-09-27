@@ -477,7 +477,7 @@ function hcdecor_bridge_admin(){
 }
 
 /* HCDECOR_PRODUCTION_MODULES */
-foreach (['background-sync.php','workflow-engine.php','content-operations.php','ai-providers.php','media-intelligence.php','agent-intake.php','ai-workspace.php','web-publisher.php','social-connectors.php','social-manager.php','automation-hub.php','automation-recipes.php','drive-vault.php','drive-inbox.php','project-vault.php','data-backup.php','data-restore.php','system-health.php','project-publishing.php','media-manager.php','hub-dashboard.php','admin-cleanup.php'] as $hcdecor_module) {
+foreach (['background-sync.php','workflow-engine.php','content-operations.php','ai-providers.php','media-intelligence.php','agent-intake.php','ai-workspace.php','web-publisher.php','social-connectors.php','social-manager.php','hub-suite.php','automation-hub.php','automation-recipes.php','drive-vault.php','drive-inbox.php','project-vault.php','data-backup.php','data-restore.php','system-health.php','project-publishing.php','media-manager.php','hub-dashboard.php','admin-cleanup.php'] as $hcdecor_module) {
     $hcdecor_module_path = plugin_dir_path(__FILE__) . 'modules/' . $hcdecor_module;
     if (is_readable($hcdecor_module_path)) require_once $hcdecor_module_path;
 }
