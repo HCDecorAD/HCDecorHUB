@@ -232,6 +232,11 @@ function hcdecor_workflow_lifecycle_mutex_acquire($job_id,$claim_token,$ttl=30){
     $held_raw=get_option($key,[]);
     $held=is_array($held_raw)?$held_raw:[];
     $held_at=(int)($held['at']??0);
+    $invalid=is_array($held_raw) && $held_raw && (empty($held['token']) || empty($held['claim_token']) || !$held_at);
+    if($invalid){
+        if(!hcdecor_workflow_claim_mutex_delete_if_same($key,$held_raw)) return false;
+        $held_raw=[]; $held=[]; $held_at=0;
+    }
     if($held_at && $held_at>=($now-$ttl)) return false;
     if($held_raw!==false && $held_raw!==[] && $held_raw!=='' && !hcdecor_workflow_claim_mutex_delete_if_same($key,$held_raw)) return false;
     $owned=['token'=>wp_generate_uuid4(),'claim_token'=>$claim_token,'at'=>$now];
