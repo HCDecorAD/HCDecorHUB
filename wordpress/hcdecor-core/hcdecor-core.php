@@ -393,7 +393,7 @@ add_action('admin_post_hcdecor_create_content_job',function(){
   check_admin_referer('hcdecor_agent_job'); if(!current_user_can('edit_posts')) wp_die('Forbidden');
   $pid=(int)($_POST['project_id']??0); $brief=sanitize_textarea_field(wp_unslash($_POST['brief']??'')); $channels=array_values(array_intersect((array)($_POST['channels']??[]),['web','facebook','tiktok','youtube']));
   $id=wp_insert_post(['post_type'=>'hc_content_job','post_status'=>'publish','post_title'=>'AI Job · '.($pid?get_the_title($pid):'Content').' · '.current_time('Y-m-d H:i'),'post_content'=>$brief]);
-  if($id&&!is_wp_error($id)){update_post_meta($id,'hc_project_id',$pid);update_post_meta($id,'hc_channels',$channels);update_post_meta($id,'hc_agent_status','draft');update_post_meta($id,'hc_outbound',false);}
+  if($id&&!is_wp_error($id)){update_post_meta($id,'hc_project_id',$pid);update_post_meta($id,'hc_channels',$channels);if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($id,'draft','Created from AI Agent'); else update_post_meta($id,'hc_agent_status','draft');update_post_meta($id,'hc_outbound',false);}
   wp_safe_redirect(admin_url('admin.php?page=hcdecor-agent')); exit;
 });
 
@@ -450,7 +450,7 @@ add_action('rest_api_init',function(){
       $id=wp_insert_post(['post_type'=>'hc_content_job','post_status'=>'publish','post_title'=>'Bridge Job · '.($pid?get_the_title($pid):'Content').' · '.current_time('Y-m-d H:i'),'post_content'=>$brief]);
       if(is_wp_error($id)) return $id;
       update_post_meta($id,'hc_project_id',$pid); update_post_meta($id,'hc_channels',$channels);
-      update_post_meta($id,'hc_agent_status','draft'); update_post_meta($id,'hc_outbound',false);
+      if(function_exists('hcdecor_workflow_set_status')) hcdecor_workflow_set_status($id,'draft','Created through Agent Bridge'); else update_post_meta($id,'hc_agent_status','draft'); update_post_meta($id,'hc_outbound',false);
       return rest_ensure_response(['ok'=>true,'id'=>$id,'outbound'=>false]);
     }
   ]);
