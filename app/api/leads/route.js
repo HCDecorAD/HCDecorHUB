@@ -1,4 +1,3 @@
-import {runtimeCapabilities} from "../../../lib/data/store";
-export async function GET(){const c=runtimeCapabilities();return Response.json({ok:true,storage:c.leadWrite?"durable":"unavailable",writeEnabled:c.leadWrite,message:c.leadWrite?"Lead storage ready":"Chưa có durable Lead storage; không tạo dữ liệu giả."})}
-export async function POST(request){const c=runtimeCapabilities();if(!c.leadWrite)return Response.json({ok:false,error:"durable_storage_required",message:"Lead chưa được lưu vì backend ghi dữ liệu thật chưa được cấu hình."},{status:503});
-return Response.json({ok:false,error:"adapter_not_implemented"},{status:501})}
+import {crmRuntime} from "../../../lib/crm/config";
+export async function GET(){const r=crmRuntime();return Response.json({ok:true,storage:"google-sheets",writeEnabled:r.writeEnabled,projectProvisionEnabled:r.projectProvisionEnabled,message:r.writeEnabled?"Lead write runtime ready":"Google Sheets write credential chưa được cấu hình trên server."})}
+export async function POST(){const r=crmRuntime();if(!r.writeEnabled)return Response.json({ok:false,error:"crm_write_not_configured",message:"Không ghi Lead: cần Google Sheets API credential server-side."},{status:503});return Response.json({ok:false,error:"writer_pending_activation",message:"Credential đã được nhận diện nhưng writer chưa kích hoạt."},{status:501})}

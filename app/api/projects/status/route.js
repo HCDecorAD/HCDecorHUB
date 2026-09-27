@@ -1,0 +1,1 @@
+import {crmRuntime} from "../../../../lib/crm/config";export async function GET(){const r=crmRuntime();return Response.json({ok:true,storage:"google-sheets+drive",createEnabled:r.projectProvisionEnabled,flow:"Qualified Lead -> Project ID -> Drive Folder -> Projects row",fakeWrites:false})}
