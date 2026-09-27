@@ -24,6 +24,10 @@ add_action('admin_post_hcdecor_social_test',function(){
     update_option('hcdecor_social_test_'.$channel,['ok'=>$ok,'at'=>current_time('mysql'),'message'=>$ok?'Credentials are configured; ready for live API adapter.':'Connector credentials are incomplete.'],false);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-social-connectors&tested='.$channel));exit;
 });
+function hcdecor_social_connection_state($channel){
+    $s=hcdecor_social_settings();$ready=hcdecor_social_ready($channel,$s);$test=(array)get_option('hcdecor_social_test_'.$channel,[]);
+    return ['configured'=>$ready,'tested'=>!empty($test['ok']),'tested_at'=>(string)($test['at']??''),'state'=>$ready?(!empty($test['ok'])?'ready':'configured'):'disconnected'];
+}
 add_action('admin_post_hcdecor_social_save',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_social_save');
@@ -82,4 +86,4 @@ function hcdecor_social_connectors_page(){
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0"><?php foreach(hcdecor_social_channels() as $key=>$label):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_social_test"><input type="hidden" name="channel" value="<?php echo esc_attr($key);?>"><?php wp_nonce_field('hcdecor_social_test_'.$key);?><button class="button">Test <?php echo esc_html($label);?></button></form><?php endforeach;?></div><div class="hcs-flow"><strong>Publishing Flow</strong><div class="hcs-steps"><span class="hcs-step">Project</span><span class="hcs-step">AI Content</span><span class="hcs-step">Review</span><span class="hcs-step">Facebook</span><span class="hcs-step">TikTok</span><span class="hcs-step">YouTube</span><span class="hcs-step">Analytics</span></div></div>
     </div><?php
 }
-add_action('rest_api_init',function(){register_rest_route('hcdecor/v1','/social/status',['methods'=>'GET','permission_callback'=>'hcdecor_ops_bridge_auth','callback'=>function(){$s=hcdecor_social_settings();return rest_ensure_response(['facebook'=>hcdecor_social_ready('facebook',$s),'tiktok'=>hcdecor_social_ready('tiktok',$s),'youtube'=>hcdecor_social_ready('youtube',$s),'updated_at'=>(string)get_option('hcdecor_social_connectors_updated_at','')]);}]);});
+add_action('rest_api_init',function(){register_rest_route('hcdecor/v1','/social/status',['methods'=>'GET','permission_callback'=>'hcdecor_ops_bridge_auth','callback'=>function(){$s=hcdecor_social_settings();return rest_ensure_response(['facebook'=>hcdecor_social_connection_state('facebook'),'tiktok'=>hcdecor_social_connection_state('tiktok'),'youtube'=>hcdecor_social_connection_state('youtube'),'updated_at'=>(string)get_option('hcdecor_social_connectors_updated_at','')]);}]);});
