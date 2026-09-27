@@ -33,7 +33,11 @@ function hcdecor_workflow_set_status($job_id,$status,$note=''){
         'failed'=>['draft']
     ];
     if(!in_array($status,(array)($transitions[$old]??[]),true)) return false;
-    update_post_meta($job_id,'hc_agent_status',$status);
+    if($old===''){
+        if(!add_post_meta($job_id,'hc_agent_status',$status,true)) return false;
+    }elseif(!update_post_meta($job_id,'hc_agent_status',$status,$old)){
+        return false;
+    }
     update_post_meta($job_id,'hc_status_changed_at',current_time('mysql'));
     if($status==='review') update_post_meta($job_id,'hc_review_entered_at',current_time('mysql'));
     elseif($old==='review') delete_post_meta($job_id,'hc_review_entered_at');
