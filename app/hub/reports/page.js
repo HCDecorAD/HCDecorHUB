@@ -1,0 +1,1 @@
+import {HubShell,PageCards} from "../../../components/HubShell";export default function P(){return <HubShell title="Reports / Logs"><PageCards items={[["SYSTEM","Health API","Trạng thái runtime.","/api/health"],["ADMIN","Health Center","Trang kiểm tra hệ thống.","/admin/health"],["PUBLISH","Status API","Trạng thái xuất bản.","/api/publish/status"]]}/></HubShell>}
