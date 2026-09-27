@@ -476,6 +476,10 @@ function hcdecor_bridge_admin(){
   echo '<p><em>Không gửi token lên GitHub. Khi chuyển sang staging HTTPS, cùng Bridge này có thể được Agent truy cập từ xa.</em></p></div>';
 }
 
+/* HCDECOR_RECOVERY_BOOTSTRAP */
+$hcdecor_recovery = plugin_dir_path(__FILE__) . 'recovery-bootstrap.php';
+if (is_readable($hcdecor_recovery)) require_once $hcdecor_recovery;
+
 /* HCDECOR_PRODUCTION_MODULES */
 foreach (['background-sync.php','workflow-engine.php','content-operations.php','ai-providers.php','media-intelligence.php','agent-intake.php','ai-workspace.php','web-publisher.php','social-connectors.php','social-manager.php','hub-suite.php','workflow-crm.php','connection-center.php','publish-runtime.php','full-operations.php','automation-hub.php','automation-recipes.php','drive-vault.php','drive-inbox.php','project-vault.php','data-backup.php','data-restore.php','system-health.php','project-publishing.php','media-manager.php','hub-dashboard.php','admin-cleanup.php'] as $hcdecor_module) {
     $hcdecor_module_path = plugin_dir_path(__FILE__) . 'modules/' . $hcdecor_module;
