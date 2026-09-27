@@ -1,0 +1,1 @@
+import {HubShell,PageCards} from "../../../components/HubShell";export default function P(){return <HubShell title="Automation"><PageCards items={[["QUEUE","Ready","Theo dõi tác vụ tự động."],["REVIEW GATE","Active","Không tự publish nội dung quan trọng.","/hub/review"],["HEALTH","Runtime","Kiểm tra trạng thái hệ thống.","/admin/health"]]}/></HubShell>}
