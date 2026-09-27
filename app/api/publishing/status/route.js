@@ -1,0 +1,1 @@
+export async function GET(){return Response.json({ok:true,mode:"demo",pipeline:["source","adapt","review","schedule","queue","publish","log"],externalPublish:{enabled:false,reason:"OAuth/API chưa cấu hình"},storage:{demo:"browser-localStorage",production:"pending durable backend"}})}
