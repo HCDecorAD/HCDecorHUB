@@ -452,7 +452,9 @@ function hcdecor_health_auto_repair_schedules(){
             $worker_sweep_lock_at=is_array($worker_sweep_lock_raw)?(int)($worker_sweep_lock_raw['at']??0):(int)$worker_sweep_lock_raw;
         }
     }
-    $worker_sweep_busy=$worker_sweep_lock_at>=(time()-30);
+    $worker_sweep_lock_invalid=(is_array($worker_sweep_lock_raw) && $worker_sweep_lock_raw && (empty($worker_sweep_lock_raw['token']) || !$worker_sweep_lock_at))
+        || (!is_array($worker_sweep_lock_raw) && $worker_sweep_lock_raw!==false && $worker_sweep_lock_raw!=='' && $worker_sweep_lock_at<=0);
+    $worker_sweep_busy=!$worker_sweep_lock_invalid && $worker_sweep_lock_at>=(time()-30);
     $worker_sweep_next_valid=$worker_sweep_next>=(time()-60) && $worker_sweep_next<=(time()+300);
     if(!$worker_sweep_fresh && !$worker_sweep_next_valid && !$worker_sweep_busy){
         if($worker_sweep_next) wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
