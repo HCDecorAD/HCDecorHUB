@@ -1,0 +1,1 @@
+import {HubShell,PageCards} from "../../../components/HubShell";export default function P(){return <HubShell title="AI Providers"><PageCards items={[["AGENT","Demo Ready","Agent adapter sẵn sàng."],["CONTENT","Draft workflow","Kết quả AI phải qua Review.","/hub/content"],["AUTOMATION","Queue","Chuyển sang hàng đợi xử lý.","/hub/automation"]]}/></HubShell>}
