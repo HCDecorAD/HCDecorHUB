@@ -113,8 +113,12 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
         'at'=>current_time('mysql'),'ts'=>time(),'scanned'=>count($rows),'lifecycle_scanned'=>$lifecycle_scanned,'stale'=>$stale,'deleted'=>$deleted,'limited'=>$continue,'cursor'=>$stored_cursor,'wrapped'=>$wrapped
     ],false);
     $next=wp_next_scheduled('hcdecor_worker_mutex_sweep_tick');
-    if($continue && !$next) wp_schedule_single_event(time()+30,'hcdecor_worker_mutex_sweep_tick');
-    elseif(!$continue && $next) wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
+    if($continue){
+        if(!$next || $next<(time()-60) || $next>(time()+120)){
+            if($next) wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
+            wp_schedule_single_event(time()+30,'hcdecor_worker_mutex_sweep_tick');
+        }
+    }elseif($next) wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
     $released=hcdecor_workflow_sweep_mutex_release($owned);
     if(!$released){
         $current=get_option('hcdecor_worker_mutex_sweep_mutex',[]);
