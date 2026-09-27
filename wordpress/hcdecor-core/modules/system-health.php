@@ -473,7 +473,8 @@ function hcdecor_health_auto_repair_schedules(){
     }
     $cleanup_mutex_raw=get_option('hcdecor_automation_cleanup_mutex',[]);
     $cleanup_mutex=is_array($cleanup_mutex_raw)?(int)($cleanup_mutex_raw['at']??0):(int)$cleanup_mutex_raw;
-    if($cleanup_mutex && $cleanup_mutex<(time()-120)){
+    $cleanup_mutex_invalid=is_array($cleanup_mutex_raw) && $cleanup_mutex_raw && (empty($cleanup_mutex_raw['token']) || !$cleanup_mutex);
+    if($cleanup_mutex_invalid || ($cleanup_mutex && $cleanup_mutex<(time()-120))){
         $deleted=function_exists('hcdecor_auto_cleanup_mutex_delete_if_same')
             ? hcdecor_auto_cleanup_mutex_delete_if_same($cleanup_mutex_raw)
             : false;
