@@ -130,7 +130,9 @@ add_action('init',function(){
     $last_ts=(int)($last['ts']??0);
     if(!$last_ts && !empty($last['at'])) $last_ts=strtotime((string)$last['at'])?:0;
     if($last_ts && $last_ts>=time()-30) return;
-    if(wp_next_scheduled('hcdecor_worker_mutex_sweep_tick')) return;
+    $next=wp_next_scheduled('hcdecor_worker_mutex_sweep_tick');
+    if($next && $next>=(time()-60)) return;
+    if($next) wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
     hcdecor_workflow_sweep_claim_mutexes(100);
 },60);
 add_action('hcdecor_worker_mutex_sweep_tick',function(){ hcdecor_workflow_sweep_claim_mutexes(100); });
