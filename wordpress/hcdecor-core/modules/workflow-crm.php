@@ -22,8 +22,8 @@ add_action('admin_post_hcdecor_ops_to_lead',function(){
  }
  wp_safe_redirect(admin_url('admin.php?page=hcdecor-ops')); exit;
 });
-add_action('admin_menu',function(){ add_submenu_page('hcdecor-hub','Workflow & CRM','Workflow & CRM','edit_posts','hcdecor-ops','hcdecor_ops_page',7); },31);
-function hcdecor_ops_page(){
+add_action('admin_menu',function(){ add_submenu_page('hcdecor-hub','Workflow & CRM','Workflow & CRM','edit_posts','hcdecor-ops','hcdecor_crm_page',7); },31);
+function hcdecor_crm_page(){
  if(!current_user_can('edit_posts')) return; $flows=hcdecor_ops_flows(); $inbox=hcdecor_ops_inbox(); $counts=wp_count_posts('hc_lead'); $leads=isset($counts->publish)?(int)$counts->publish:0;
  echo '<div class="wrap"><h1>Workflow & CRM</h1><p>Workflow foundation - Unified Inbox - Lead Pipeline</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">';
  echo '<section style="background:#fff;padding:16px"><h2>Workflow Builder</h2><form method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="hcdecor_ops_flow_save">'; wp_nonce_field('hcdecor_ops_flow_save');
