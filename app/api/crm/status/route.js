@@ -1,0 +1,1 @@
+import {CRM,crmRuntime} from "../../../../lib/crm/config";export async function GET(){const r=crmRuntime();return Response.json({ok:true,storage:"google-sheets",sheetConfigured:r.configured,writeEnabled:r.writeEnabled,projectProvisionEnabled:r.projectProvisionEnabled,tabs:[CRM.leadsTab,CRM.projectsTab],policy:{fakeWrites:false,secretsServerSideOnly:true}})}
