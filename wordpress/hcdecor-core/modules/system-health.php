@@ -254,8 +254,9 @@ function hcdecor_health_snapshot(){
     if($worker_sweep_mutex_stale) $issues[]='Worker mutex sweep execution lock is stale';
     $worker_sweep_next=(int)(wp_next_scheduled('hcdecor_worker_mutex_sweep_tick')?:0);
     $worker_sweep_next_valid=$worker_sweep_next>=(time()-60) && $worker_sweep_next<=(time()+300);
-    if(!$worker_mutex_sweep_fresh && !$worker_sweep_next_valid && !$worker_sweep_mutex_at) $issues[]='Worker mutex sweep audit is stale without valid refresh';
-    if($worker_mutex_sweep_fresh && !empty($worker_mutex_sweep['limited']) && !$worker_sweep_next_valid) $issues[]='Worker mutex sweep is bounded without valid continuation';
+    $worker_sweep_mutex_running=!$worker_sweep_mutex_stale && $worker_sweep_mutex_at>=(time()-30);
+    if(!$worker_mutex_sweep_fresh && !$worker_sweep_next_valid && !$worker_sweep_mutex_running) $issues[]='Worker mutex sweep audit is stale without valid refresh';
+    if($worker_mutex_sweep_fresh && !empty($worker_mutex_sweep['limited']) && !$worker_sweep_next_valid && !$worker_sweep_mutex_running) $issues[]='Worker mutex sweep is bounded without valid continuation';
     if(empty($automation_last_change['cleanup_limited']) && wp_next_scheduled('hcdecor_automation_cleanup_watchdog')) $issues[]='Automation cleanup watchdog is orphaned';
     if($bridge==='') $issues[]='Agent Bridge token missing';
     if($drive_configured && $backup_ts===0) $issues[]='Backup has never completed';
