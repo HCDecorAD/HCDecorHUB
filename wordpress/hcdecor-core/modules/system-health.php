@@ -242,8 +242,10 @@ function hcdecor_health_snapshot(){
     $automation_last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
     $automation_cleanup_raw=get_option('hcdecor_automation_cleanup_mutex',[]);
     $automation_cleanup_mutex=is_array($automation_cleanup_raw)?(int)($automation_cleanup_raw['at']??0):(int)$automation_cleanup_raw;
-    $automation_cleanup_running=$automation_cleanup_mutex>=(time()-120);
-    $automation_cleanup_stale=$automation_cleanup_mutex>0 && !$automation_cleanup_running;
+    $automation_cleanup_invalid=(is_array($automation_cleanup_raw) && $automation_cleanup_raw && (empty($automation_cleanup_raw['token']) || !$automation_cleanup_mutex))
+        || (!is_array($automation_cleanup_raw) && $automation_cleanup_raw!==false && $automation_cleanup_raw!=='' && $automation_cleanup_mutex<=0);
+    $automation_cleanup_running=!$automation_cleanup_invalid && $automation_cleanup_mutex>=(time()-120);
+    $automation_cleanup_stale=$automation_cleanup_invalid || ($automation_cleanup_mutex>0 && !$automation_cleanup_running);
     if(!empty($automation_last_change['cleanup_limited'])){
         $issues[]='Automation settings cleanup backlog exceeds bounded pass';
         if(!wp_next_scheduled('hcdecor_automation_cleanup_tick') && !wp_next_scheduled('hcdecor_automation_cleanup_watchdog') && !$automation_cleanup_running) $issues[]='Automation cleanup backlog has no scheduled continuation';
