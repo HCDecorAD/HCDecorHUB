@@ -1,0 +1,1 @@
+import {HubShell,PageCards} from "../../../components/HubShell";export default function P(){return <HubShell title="Social Accounts"><PageCards items={[["FACEBOOK","Deferred","OAuth/API ở giai đoạn cuối."],["TIKTOK","Deferred","Chưa kết nối."],["YOUTUBE","Deferred","Chưa kết nối."],["INTEGRATIONS","Admin","Quản lý kết nối.","/admin/integrations"]]}/></HubShell>}
