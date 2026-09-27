@@ -1,0 +1,1 @@
+export default function P(){return <main className="adminSub"><a href="/admin">← Admin</a><small>CONFIGURATION</small><h1>Settings</h1><section className="opsPanel"><h2>Project ID</h2><p>HC-YYYY-XXXX · Legacy mapping ON.</p></section><section className="opsPanel"><h2>Safety</h2><p>Review required · Secrets không lưu trong GitHub · Social deferred.</p></section></main>}
