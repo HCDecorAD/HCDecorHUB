@@ -150,6 +150,11 @@ function hcdecor_backup_save(){
         delete_transient('hcdecor_backup_running');
         return new WP_Error('backup_json','Không thể mã hóa backup integrity.');
     }
+    if(strlen($json)>25*1024*1024){
+        update_option('hcdecor_backup_last_error','Backup exceeds the 25 MB restore limit.',false);
+        delete_transient('hcdecor_backup_running');
+        return new WP_Error('backup_size','Backup exceeds the 25 MB restore limit.');
+    }
     $r=hcdecor_drive_multipart('',$name,'application/json',$json,hcdecor_backup_folder_id());
     if(is_wp_error($r)){
         update_option('hcdecor_backup_last_error',$r->get_error_message(),false);

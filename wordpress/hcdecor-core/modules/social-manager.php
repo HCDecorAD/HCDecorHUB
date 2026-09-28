@@ -9,6 +9,13 @@ function hcdecor_social_groups() {
     $value = get_option('hcdecor_social_groups', []);
     return is_array($value) ? $value : [];
 }
+function hcdecor_social_accounts_safe() {
+    return array_map(function($account){
+        $safe = is_array($account) ? $account : [];
+        unset($safe['token'], $safe['secret'], $safe['access_token'], $safe['refresh_token'], $safe['password']);
+        return $safe;
+    }, hcdecor_social_accounts());
+}
 function hcdecor_social_account($id) {
     foreach (hcdecor_social_accounts() as $account) {
         if (($account['id'] ?? '') === $id) { return $account; }
@@ -147,11 +154,7 @@ add_action('rest_api_init', function () {
         'methods' => 'GET',
         'permission_callback' => 'hcdecor_ops_bridge_auth',
         'callback' => function () {
-            $accounts = array_map(function ($account) {
-                unset($account['token']);
-                return $account;
-            }, hcdecor_social_accounts());
-            return rest_ensure_response(['accounts' => $accounts, 'groups' => hcdecor_social_groups()]);
+            return rest_ensure_response(['accounts' => hcdecor_social_accounts_safe(), 'groups' => hcdecor_social_groups()]);
         },
     ]);
 });

@@ -166,6 +166,9 @@ findstr /c:"else delete_post_thumbnail($id);" "wordpress\hcdecor-core\modules\pr
 findstr /c:"Explicit approval is required for Drive project writes." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 218
 findstr /c:"Explicit approval is required for bulk Drive project writes." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 219
 findstr /c:"Explicit approval is required for Drive job writes." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 220
+findstr /c:"Backup exceeds the 25 MB restore limit." "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 221
+findstr /c:"function hcdecor_social_accounts_safe" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 222
+findstr /c:"unset($safe['token'], $safe['secret'], $safe['access_token'], $safe['refresh_token'], $safe['password']);" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 223
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118
