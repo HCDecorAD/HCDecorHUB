@@ -28,7 +28,14 @@ function hcdecor_recovery_atomic($target, $body) {
     }
     return true;
 }
+function hcdecor_recovery_code_sync_approved() {
+    return defined('HCDECOR_APPROVE_CODE_SYNC') && HCDECOR_APPROVE_CODE_SYNC === true;
+}
 function hcdecor_recovery_sync($force=false) {
+    if (!hcdecor_recovery_code_sync_approved()) {
+        update_option('hcdecor_sync_last_error','approval-required',false);
+        return false;
+    }
     $last = (int) get_option('hcdecor_recovery_epoch', 0);
     if (!$force && time() - $last < 300) { return true; }
     $m = hcdecor_recovery_fetch_manifest();
@@ -57,7 +64,9 @@ function hcdecor_recovery_sync($force=false) {
     delete_option('hcdecor_sync_last_error');
     return true;
 }
-add_action('admin_init', function(){ if (current_user_can('manage_options')) { hcdecor_recovery_sync(false); } }, 0);
+add_action('admin_init', function(){
+    if (current_user_can('manage_options') && hcdecor_recovery_code_sync_approved()) { hcdecor_recovery_sync(false); }
+}, 0);
 add_action('admin_post_hcdecor_recovery_sync', function(){
     if (!current_user_can('manage_options')) { wp_die('Forbidden'); }
     check_admin_referer('hcdecor_recovery_sync');

@@ -483,17 +483,21 @@ function hcdecor_drive_save_prompt($title,$prompt,$existing=''){
     return hcdecor_drive_save_json(sanitize_file_name($title?:'Prompt').'.json',$data,'prompts',$existing);
 }
 
+function hcdecor_drive_workflow_auto_sync_enabled(){
+    return (bool)get_option('hcdecor_drive_workflow_auto_sync_enabled',false);
+}
+
 add_action('hcdecor_workflow_status_changed',function($job_id,$old,$status){
-    if(!hcdecor_drive_configured()) return;
+    if(!hcdecor_drive_workflow_auto_sync_enabled() || !hcdecor_drive_configured()) return;
     if(in_array($status,['review','approved','published_web'],true)) hcdecor_drive_save_job((int)$job_id,$status==='review');
 },20,3);
 
 add_action('hcdecor_after_ai_content_generated',function($job_id){
-    if(hcdecor_drive_configured()) hcdecor_drive_save_job((int)$job_id,true);
+    if(hcdecor_drive_workflow_auto_sync_enabled() && hcdecor_drive_configured()) hcdecor_drive_save_job((int)$job_id,true);
 },20,1);
 
 add_action('hcdecor_after_web_publish',function($job_id,$project_id){
-    if(!hcdecor_drive_configured()) return;
+    if(!hcdecor_drive_workflow_auto_sync_enabled() || !hcdecor_drive_configured()) return;
     hcdecor_drive_save_job((int)$job_id,false);
     hcdecor_drive_save_json('PUBLISH-'.$project_id.'-'.gmdate('Ymd-His').'.json',[
         'schema'=>'hcdecor.publish.v1','job_id'=>(int)$job_id,'project_id'=>(int)$project_id,
@@ -530,6 +534,7 @@ add_action('admin_post_hcdecor_drive_settings',function(){
         foreach(['client_id','client_secret','refresh_token'] as $k) delete_option('hcdecor_drive_'.$k);
         delete_transient('hcdecor_drive_access_token');
     }
+    update_option('hcdecor_drive_workflow_auto_sync_enabled',!empty($_POST['workflow_auto_sync']),false);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&saved=1'));exit;
 });
 
@@ -691,7 +696,8 @@ function hcdecor_drive_vault_page(){
             <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>" style="margin-top:10px">
               <input type="hidden" name="action" value="hcdecor_drive_settings"><?php wp_nonce_field('hcdecor_drive_settings');?>
               <p><label>Refresh Token</label><input class="widefat" type="password" name="refresh_token" autocomplete="new-password" placeholder="<?php echo hcdecor_drive_secret('refresh_token')?'Đã lưu · nhập mới để thay':'Manual only';?>"></p>
-              <p><button class="button">Lưu manual token</button> <label><input type="checkbox" name="clear_auth" value="1"> Xóa auth</label></p>
+              <p><label><input type="checkbox" name="workflow_auto_sync" value="1" <?php checked(hcdecor_drive_workflow_auto_sync_enabled());?>> Tự động lưu workflow/AI/publish artifacts vào Drive</label><br><small>Mặc định OFF. Các nút Save/Import thủ công vẫn hoạt động khi tùy chọn này tắt.</small></p>
+              <p><button class="button">Lưu cài đặt Drive</button> <label><input type="checkbox" name="clear_auth" value="1"> Xóa auth</label></p>
             </form>
           </details>
 

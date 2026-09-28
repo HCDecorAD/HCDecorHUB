@@ -72,6 +72,10 @@ findstr /c:"cross_origin_mutation_blocked" "lib\request-guard.js" >nul || exit /
 findstr /c:"cross_site_mutation_blocked" "lib\request-guard.js" >nul || exit /b 99
 findstr /c:"'permission_callback'=>'hcdecor_ops_bridge_auth'" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 100
 findstr /c:"hcdecor_bridge_auth" "wordpress\hcdecor-core\modules\media-manager.php" >nul && exit /b 101
+findstr /c:"HCDECOR_APPROVE_CODE_SYNC" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 102
+findstr /c:"hcdecor_recovery_code_sync_approved" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 103
+findstr /c:"hcdecor_drive_workflow_auto_sync_enabled" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 104
+findstr /c:"hcdecor_drive_workflow_auto_sync_enabled',false" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 105
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\setup-hcdecor.cmd" >nul || exit /b 54
