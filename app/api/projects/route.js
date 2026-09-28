@@ -1,7 +1,9 @@
 import {crmRuntime} from "../../../lib/crm/config";
 import {appendProject,createProjectFolder,deleteDriveFile,newProjectId} from "../../../lib/crm/google";
+import {requireSameOriginMutation} from "../../../lib/request-guard";
 const clean=v=>typeof v==="string"?v.trim():"";
 export async function POST(req){
+ const blocked=requireSameOriginMutation(req);if(blocked)return blocked;
  const r=crmRuntime();if(!r.projectProvisionEnabled)return Response.json({ok:false,error:"project_runtime_not_configured"},{status:503});
  let d={};try{d=await req.json()}catch{return Response.json({ok:false,error:"invalid_json"},{status:400})}
  const client=clean(d.client);if(!client)return Response.json({ok:false,error:"client_required"},{status:400});

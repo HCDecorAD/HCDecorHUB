@@ -66,6 +66,10 @@ findstr /c:"hc_workspace_drive_save_requested_at" "wordpress\hcdecor-core\module
 findstr /c:"requires_credentials" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 93
 findstr /c:"hcdecor_health_required_schedules" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 94
 findstr /c:"required=hcdecor_health_required_schedules" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 95
+findstr /c:"requireSameOriginMutation" "app\api\projects\route.js" >nul || exit /b 96
+findstr /c:"requireSameOriginMutation" "app\api\projects\normalize\route.js" >nul || exit /b 97
+findstr /c:"cross_origin_mutation_blocked" "lib\request-guard.js" >nul || exit /b 98
+findstr /c:"cross_site_mutation_blocked" "lib\request-guard.js" >nul || exit /b 99
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\setup-hcdecor.cmd" >nul || exit /b 54

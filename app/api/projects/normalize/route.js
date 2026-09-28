@@ -1,2 +1,3 @@
 import { migrateLegacyProjectId } from "../../../../lib/project-id";
-export async function POST(request){try{const body=await request.json();const result=migrateLegacyProjectId(body.projectId);if(!result)return Response.json({ok:false,error:"invalid_project_id"},{status:400});return Response.json({ok:true,...result,policy:"non-destructive-alias"});}catch{return Response.json({ok:false,error:"invalid_request"},{status:400});}}
+import { requireSameOriginMutation } from "../../../../lib/request-guard";
+export async function POST(request){const blocked=requireSameOriginMutation(request);if(blocked)return blocked;try{const body=await request.json();const result=migrateLegacyProjectId(body.projectId);if(!result)return Response.json({ok:false,error:"invalid_project_id"},{status:400});return Response.json({ok:true,...result,policy:"non-destructive-alias"});}catch{return Response.json({ok:false,error:"invalid_request"},{status:400});}}
