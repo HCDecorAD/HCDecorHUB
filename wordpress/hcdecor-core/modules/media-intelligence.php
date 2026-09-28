@@ -66,7 +66,7 @@ function hcdecor_media_ai_call_openai($attachment_id){
         'text'=>['format'=>['type'=>'json_schema','name'=>'hcdecor_media_analysis','strict'=>true,'schema'=>hcdecor_media_ai_schema()]]
     ];
     $r=wp_safe_remote_post('https://api.openai.com/v1/responses',[
-        'timeout'=>90,'headers'=>['Authorization'=>'Bearer '.$key,'Content-Type'=>'application/json'],
+        'timeout'=>90,'redirection'=>0,'headers'=>['Authorization'=>'Bearer '.$key,'Content-Type'=>'application/json'],
         'body'=>wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)
     ]);
     if(is_wp_error($r)) return $r;
@@ -93,6 +93,7 @@ function hcdecor_media_ai_call_gemini($attachment_id){
     ];
     $r=wp_safe_remote_post('https://generativelanguage.googleapis.com/v1beta/interactions',[
         'timeout'=>90,
+        'redirection'=>0,
         'headers'=>['x-goog-api-key'=>$key,'Content-Type'=>'application/json','Api-Revision'=>'2026-05-20'],
         'body'=>wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)
     ]);

@@ -226,6 +226,13 @@ findstr /c:"$clip($d['job']['brief']??'',20000)" "wordpress\hcdecor-core\modules
 findstr /c:"mb_substr($prompt,0,20000)" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 283
 findstr /c:"hcdecor_drive_active_prompt_title',$active_title" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 284
 findstr /c:"hcdecor_restore_clip($s['active_prompt'],20000,true)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 285
+findstr /c:"function hcdecor_conn_safe_endpoint" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 286
+findstr /c:"has_secret" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 287
+findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 288
+findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 289
+findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 290
+findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 291
+findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 292
 findstr /c:"mb_substr($note,0,5000)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 273
 findstr /c:"$clip($project->post_content,30000)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 274
 findstr /c:"array_slice((array)get_post_meta($job_id,'hc_media_ids',true),0,12)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 275

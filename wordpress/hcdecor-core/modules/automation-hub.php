@@ -113,6 +113,7 @@ function hcdecor_auto_webhook($event,$payload){
     if(!is_string($encoded) || strlen($encoded)>256*1024) return new WP_Error('payload_size','Webhook payload exceeds 256 KB.');
     $r=wp_safe_remote_post($url,[
         'timeout'=>20,
+        'redirection'=>0,
         'headers'=>['Content-Type'=>'application/json','X-HCDecor-Event'=>$event],
         'body'=>$encoded
     ]);
