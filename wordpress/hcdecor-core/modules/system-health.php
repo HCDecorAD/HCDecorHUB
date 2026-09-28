@@ -129,7 +129,7 @@ function hcdecor_health_snapshot(){
     $ai_ready=function_exists('hcdecor_ai_available') && (hcdecor_ai_available('openai') || hcdecor_ai_available('gemini'));
     $cron_required=['background_sync'=>(bool)get_option('hcdecor_background_sync_enabled',false),'ai_worker'=>(bool)get_option('hcdecor_ai_worker_enabled',false) && $ai_ready,'backup'=>(bool)get_option('hcdecor_backup_schedule_enabled',false),'health_report'=>true];
     $cron_required['automation']=!empty($auto_settings['enabled']);
-    $cron_required['evergreen']=!empty($auto_settings['evergreen_enabled']);
+    $cron_required['evergreen']=!empty($auto_settings['enabled']) && !empty($auto_settings['evergreen_enabled']);
     $cron_required['drive_inbox']=!empty($inbox_settings['enabled']);
     $bridge_configured=function_exists('hcdecor_ops_bridge_configured')?hcdecor_ops_bridge_configured():((string)get_option('hcdecor_bridge_token','')!=='');
     $actionable_blocked=hcdecor_health_actionable_blocked_count();

@@ -81,6 +81,7 @@ findstr /c:"wp_safe_remote_post('https://generativelanguage.googleapis.com" "wor
 findstr /c:"wp_safe_remote_request" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 128
 findstr /c:"!=='hc_project'" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 124
 findstr /c:"evergreen_enabled" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 125
+findstr /c:"cron_required['evergreen']" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 137
 findstr /c:"hcdecor_sync_trusted_raw_url" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 112
 findstr /c:"raw.githubusercontent.com" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 113
 findstr /c:"wp_safe_remote_get(HCDECOR_SYNC_MANIFEST" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 114
