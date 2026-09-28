@@ -543,7 +543,8 @@ add_action('admin_post_hcdecor_review_action',function(){
         hcdecor_workflow_clear_worker_claim($id,true,false);
         hcdecor_workflow_set_status($id,'draft','Returned for changes');
         update_post_meta($id,'hc_review_note',$note);
-        if(function_exists('wp_schedule_single_event') && !wp_next_scheduled('hcdecor_ai_process_job',[$id])) wp_schedule_single_event(time()+3,'hcdecor_ai_process_job',[$id]);
+        $ai_ready=function_exists('hcdecor_ai_available') && (hcdecor_ai_available('openai') || hcdecor_ai_available('gemini'));
+        if($ai_ready && function_exists('wp_schedule_single_event') && !wp_next_scheduled('hcdecor_ai_process_job',[$id])) wp_schedule_single_event(time()+3,'hcdecor_ai_process_job',[$id]);
     }elseif($action==='retry' && (string)get_post_meta($id,'hc_agent_status',true)==='failed'){
         wp_clear_scheduled_hook('hcdecor_ai_process_job',[$id]);
         delete_post_meta($id,'hc_reviewed_by');
@@ -556,7 +557,8 @@ add_action('admin_post_hcdecor_review_action',function(){
         $observed=get_option($mutex_key,[]);
         $mutex_at=is_array($observed)?(int)($observed['at']??0):(int)$observed;
         if($observed && (!$mutex_at || $mutex_at<(time()-120))) hcdecor_workflow_claim_mutex_delete_if_same($mutex_key,$observed);
-        if(function_exists('wp_schedule_single_event') && !wp_next_scheduled('hcdecor_ai_process_job',[$id])) wp_schedule_single_event(time()+3,'hcdecor_ai_process_job',[$id]);
+        $ai_ready=function_exists('hcdecor_ai_available') && (hcdecor_ai_available('openai') || hcdecor_ai_available('gemini'));
+        if($ai_ready && function_exists('wp_schedule_single_event') && !wp_next_scheduled('hcdecor_ai_process_job',[$id])) wp_schedule_single_event(time()+3,'hcdecor_ai_process_job',[$id]);
     }
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-review&job='.$id.'&done=1')); exit;
 });

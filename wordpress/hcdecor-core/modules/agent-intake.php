@@ -38,7 +38,8 @@ function hcdecor_agent_create_job($project_id,$media_ids=[],$brief=''){
         return new WP_Error('workflow','Unable to initialize content job workflow.');
     }
     update_post_meta($id,'hc_outbound',false);
-    if(function_exists('wp_schedule_single_event') && !wp_next_scheduled('hcdecor_ai_process_job',[$id])) wp_schedule_single_event(time()+5,'hcdecor_ai_process_job',[$id]);
+    $ai_ready=function_exists('hcdecor_ai_available') && (hcdecor_ai_available('openai') || hcdecor_ai_available('gemini'));
+    if($ai_ready && function_exists('wp_schedule_single_event') && !wp_next_scheduled('hcdecor_ai_process_job',[$id])) wp_schedule_single_event(time()+5,'hcdecor_ai_process_job',[$id]);
     return $id;
 }
 
