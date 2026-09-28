@@ -535,8 +535,22 @@ function hcdecor_health_auto_repair_schedules(){
     return true;
 }
 
+function hcdecor_health_required_schedules(){
+    $auto=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
+    $inbox=function_exists('hcdecor_drive_inbox_settings')?(array)hcdecor_drive_inbox_settings():[];
+    $ai_ready=function_exists('hcdecor_ai_available') && (hcdecor_ai_available('openai') || hcdecor_ai_available('gemini'));
+    return [
+        'background_sync'=>(bool)get_option('hcdecor_background_sync_enabled',false),
+        'ai_worker'=>(bool)get_option('hcdecor_ai_worker_enabled',false) && $ai_ready,
+        'automation'=>!empty($auto['enabled']),
+        'evergreen'=>!empty($auto['enabled']) && !empty($auto['evergreen_enabled']),
+        'drive_inbox'=>!empty($inbox['enabled']),
+        'backup'=>(bool)get_option('hcdecor_backup_schedule_enabled',false),
+        'health_report'=>true
+    ];
+}
 function hcdecor_health_repair_schedules($required=null){
-    if(!is_array($required)) $required=['background_sync'=>true,'ai_worker'=>true,'automation'=>true,'evergreen'=>true,'drive_inbox'=>true,'backup'=>true,'health_report'=>true];
+    if(!is_array($required)) $required=hcdecor_health_required_schedules();
     if(!empty($required['background_sync']) && !wp_next_scheduled('hcdecor_background_sync')) wp_schedule_event(time()+60,'hcdecor_5min','hcdecor_background_sync');
     if(!empty($required['ai_worker']) && !wp_next_scheduled('hcdecor_ai_worker_tick')) wp_schedule_event(time()+30,'hcdecor_1min','hcdecor_ai_worker_tick');
     if(!empty($required['automation']) && !wp_next_scheduled('hcdecor_automation_tick')) wp_schedule_event(time()+20,'hcdecor_1min','hcdecor_automation_tick');

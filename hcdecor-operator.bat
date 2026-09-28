@@ -63,7 +63,9 @@ findstr /c:"'live_health'=>" "wordpress\hcdecor-core\modules\system-health.php" 
 findstr /c:"'id'=>'project_to_ai'" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 90
 findstr /c:"'id'=>'review_to_drive'" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 91
 findstr /c:"hc_workspace_drive_save_requested_at" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 92
-findstr /c:"'config_state'=>$configured?'configured':'requires_credentials'" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 93
+findstr /c:"requires_credentials" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 93
+findstr /c:"hcdecor_health_required_schedules" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 94
+findstr /c:"required=hcdecor_health_required_schedules" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 95
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\setup-hcdecor.cmd" >nul || exit /b 54
