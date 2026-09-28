@@ -18,12 +18,20 @@ function hcdecor_drive_inbox_settings(){
     return wp_parse_args(is_array($saved)?$saved:[],$defaults);
 }
 
+function hcdecor_drive_inbox_safe_text($value,$limit=500){
+    $text=function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($value):sanitize_text_field((string)$value);
+    return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
+}
 function hcdecor_drive_inbox_log($event,$data=[]){
+    $safe=[];
+    foreach(array_slice((array)$data,0,12,true) as $key=>$value){
+        $safe[sanitize_key((string)$key)]=is_scalar($value)?hcdecor_drive_inbox_safe_text($value,500):'';
+    }
     $log=(array)get_option('hcdecor_drive_inbox_log',[]);
     $log[]=[
         'time'=>current_time('mysql'),
         'event'=>sanitize_key($event),
-        'data'=>map_deep((array)$data,'sanitize_text_field')
+        'data'=>$safe
     ];
     if(count($log)>100) $log=array_slice($log,-100);
     update_option('hcdecor_drive_inbox_log',$log,false);
@@ -98,7 +106,7 @@ function hcdecor_drive_inbox_scan($limit=null){
     $limit=max(1,min(50,$limit));
     $files=hcdecor_drive_list($folder,$limit);
     if(is_wp_error($files)){
-        update_option('hcdecor_drive_inbox_last_error',$files->get_error_message(),false);
+        update_option('hcdecor_drive_inbox_last_error',hcdecor_drive_inbox_safe_text($files->get_error_message()),false);
         return $files;
     }
 
@@ -212,18 +220,18 @@ add_action('admin_post_hcdecor_drive_inbox_settings',function(){
 });
 
 add_action('admin_post_hcdecor_drive_inbox_scan',function(){
-    if(!current_user_can('upload_files')) wp_die('Forbidden');
+    if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_drive_inbox_scan');
     $r=hcdecor_drive_inbox_scan();
     if(is_wp_error($r)){
-        update_option('hcdecor_drive_inbox_last_error',$r->get_error_message(),false);
+        update_option('hcdecor_drive_inbox_last_error',hcdecor_drive_inbox_safe_text($r->get_error_message()),false);
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-inbox&failed=1')); exit;
     }
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-inbox&scanned=1')); exit;
 });
 
 add_action('admin_menu',function(){
-    add_submenu_page('hcdecor-hub','Drive Inbox','Drive Inbox','upload_files','hcdecor-drive-inbox','hcdecor_drive_inbox_page',4);
+    add_submenu_page('hcdecor-hub','Drive Inbox','Drive Inbox','manage_options','hcdecor-drive-inbox','hcdecor_drive_inbox_page',4);
 },27);
 
 add_action('rest_api_init',function(){
@@ -253,7 +261,7 @@ add_action('rest_api_init',function(){
 });
 
 function hcdecor_drive_inbox_page(){
-    if(!current_user_can('upload_files')) return;
+    if(!current_user_can('manage_options')) return;
     $s=hcdecor_drive_inbox_settings();
     $last=(array)get_option('hcdecor_drive_inbox_last_result',[]);
     $last_at=(string)get_option('hcdecor_drive_inbox_last_at','');

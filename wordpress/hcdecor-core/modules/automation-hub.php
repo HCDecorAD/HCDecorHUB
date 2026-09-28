@@ -109,10 +109,12 @@ function hcdecor_auto_webhook($event,$payload){
     $url=esc_url_raw($s['webhook_url']);
     if(!$url || !function_exists('hcdecor_conn_public_https') || !hcdecor_conn_public_https($url)) return new WP_Error('url','Webhook URL must be public HTTPS.');
     $body=['event'=>$event,'site'=>home_url('/'),'time'=>current_time('mysql'),'payload'=>$payload];
+    $encoded=wp_json_encode($body,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+    if(!is_string($encoded) || strlen($encoded)>256*1024) return new WP_Error('payload_size','Webhook payload exceeds 256 KB.');
     $r=wp_safe_remote_post($url,[
         'timeout'=>20,
         'headers'=>['Content-Type'=>'application/json','X-HCDecor-Event'=>$event],
-        'body'=>wp_json_encode($body,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)
+        'body'=>$encoded
     ]);
     if(is_wp_error($r)) return $r;
     $code=(int)wp_remote_retrieve_response_code($r);
@@ -220,6 +222,7 @@ function hcdecor_auto_run_task($task_id){
 
     update_post_meta($task_id,'hc_auto_status','done');
     update_post_meta($task_id,'hc_auto_done_at',current_time('mysql'));
+    wp_update_post(['ID'=>$task_id,'post_content'=>wp_json_encode(['completed'=>true,'type'=>$type,'completed_at'=>current_time('mysql')])]);
     delete_post_meta($task_id,'hc_auto_last_error');
     hcdecor_auto_log($task_id,'done',$type);
     return true;
@@ -457,6 +460,8 @@ add_action('admin_post_hcdecor_automation_retry',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     $id=(int)($_POST['task_id']??0); check_admin_referer('hcdecor_automation_retry_'.$id);
     if(get_post_type($id)!=='hc_automation_task') wp_die('Invalid task');
+    $current_status=(string)get_post_meta($id,'hc_auto_status',true);
+    if(!in_array($current_status,['failed','blocked'],true)) wp_die('Only failed or blocked automation tasks can be retried.');
     $s=hcdecor_auto_settings();
     if(empty($s['enabled'])) wp_die('Automation HUB is disabled.');
     $type=(string)get_post_meta($id,'hc_auto_type',true);

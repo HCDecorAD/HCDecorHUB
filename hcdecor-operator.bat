@@ -194,6 +194,12 @@ findstr /c:"Explicit production publish approval is required." "wordpress\hcdeco
 findstr /c:"name=\"production_approved\" value=\"1\" required" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 246
 findstr /c:"Explicit production publish approval is required." "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 247
 findstr /c:"name=\"production_approved\" value=\"1\"" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 248
+findstr /c:"function hcdecor_drive_inbox_safe_text" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 249
+findstr /c:"add_submenu_page('hcdecor-hub','Drive Inbox','Drive Inbox','manage_options'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 250
+findstr /c:"Webhook payload exceeds 256 KB." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 251
+findstr /c:"Only failed or blocked automation tasks can be retried." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 252
+findstr /c:"'completed'=>true,'type'=>$type" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 253
+findstr /c:"mb_substr($caption, 0, 10000)" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 254
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

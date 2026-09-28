@@ -83,6 +83,7 @@ add_action('admin_post_hcdecor_social_bulk_publish', function () {
     $media_raw = sanitize_text_field(wp_unslash($_POST['media_ids'] ?? ''));
     $media = array_slice(array_values(array_filter(array_unique(array_map('intval', preg_split('/[\s,]+/', $media_raw))), function($id){ return get_post_type($id)==='attachment'; })), 0, 60);
     $caption = sanitize_textarea_field(wp_unslash($_POST['caption'] ?? ''));
+    $caption = function_exists('mb_substr') ? mb_substr($caption, 0, 10000) : substr($caption, 0, 10000);
     $when = sanitize_text_field(wp_unslash($_POST['run_at'] ?? ''));
     $run = $when ? strtotime($when) : time();
     if ($when !== '' && $run === false) { wp_die('Invalid social publish schedule.'); }
