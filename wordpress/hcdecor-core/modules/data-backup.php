@@ -26,9 +26,7 @@ function hcdecor_backup_project($p){
         'client'=>(string)get_post_meta($p->ID,'hc_client',true),
         'location'=>(string)get_post_meta($p->ID,'hc_location',true),
         'year'=>(string)get_post_meta($p->ID,'hc_year',true),
-        'summary'=>(string)get_post_meta($p->ID,'hc_summary',true),
-        'drive_project_file_id'=>(string)get_post_meta($p->ID,'hc_drive_project_file_id',true),
-        'drive_project_url'=>(string)get_post_meta($p->ID,'hc_drive_project_url',true)
+        'summary'=>(string)get_post_meta($p->ID,'hc_summary',true)
     ];
 }
 
@@ -50,9 +48,7 @@ function hcdecor_backup_job($p){
         'ai_provider'=>(string)get_post_meta($p->ID,'hc_ai_provider',true),
         'ai_model'=>(string)get_post_meta($p->ID,'hc_ai_model',true),
         'content'=>$fields,
-        'workflow_log'=>(array)get_post_meta($p->ID,'hc_workflow_log',true),
-        'drive_file_id'=>(string)get_post_meta($p->ID,'hc_drive_job_file_id',true),
-        'drive_url'=>(string)get_post_meta($p->ID,'hc_drive_job_url',true)
+        'workflow_log'=>(array)get_post_meta($p->ID,'hc_workflow_log',true)
     ];
 }
 
@@ -66,7 +62,6 @@ function hcdecor_backup_media($p){
         'mime'=>(string)get_post_mime_type($id),
         'alt'=>(string)get_post_meta($id,'_wp_attachment_image_alt',true),
         'drive_file_id'=>(string)get_post_meta($id,'hc_drive_file_id',true),
-        'drive_url'=>(string)get_post_meta($id,'hc_drive_url',true),
         'ai_summary'=>(string)get_post_meta($id,'hc_ai_summary',true),
         'ai_alt'=>(string)get_post_meta($id,'hc_ai_alt',true),
         'ai_caption'=>(string)get_post_meta($id,'hc_ai_caption',true),
@@ -226,8 +221,7 @@ add_action('rest_api_init',function(){
         'callback'=>function(){
             return rest_ensure_response([
                 'last_at'=>(string)get_option('hcdecor_backup_last_at',''),
-                'last_file_id'=>(string)get_option('hcdecor_backup_last_file_id',''),
-                'last_url'=>(string)get_option('hcdecor_backup_last_url',''),
+                'has_backup_file'=>(bool)get_option('hcdecor_backup_last_file_id',''),
                 'counts'=>(array)get_option('hcdecor_backup_last_counts',[]),
                 'error'=>(string)get_option('hcdecor_backup_last_error',''),
                 'next'=>(int)(wp_next_scheduled('hcdecor_backup_daily')?:0)

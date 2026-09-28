@@ -99,6 +99,13 @@ findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || e
 findstr /c:"'ok'=>'TEST OK'" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 120
 findstr /c:"em.configured" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 121
 findstr /c:"delete_option('hcdecor_ai_'.$p.'_tested_at')" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 119
+findstr /c:"has_backup_file" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 130
+findstr /c:"drive_project_file_id" "wordpress\hcdecor-core\modules\data-backup.php" >nul && exit /b 134
+findstr /c:"hc_drive_job_file_id" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 135
+findstr /c:"'hc_drive_file_id'=>'drive_file_id'" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 136
+findstr /c:"hcdecor_runtime_safe_jobs" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 131
+findstr /c:"hcdecor_runtime_prune" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 132
+findstr /c:"crypto.randomBytes(3)" "lib\crm\google.js" >nul || exit /b 133
 for %%F in (HCDecor-HUB-SERVICES.cmd HCDecor-HUB-START.cmd HCDecor-HUB-SYNC.cmd HCDecor-HUB-WATCH.cmd HCDecor-HUB-AUTO.cmd hcdecor-auto.cmd hcdecor-demo.cmd hcdecor-phase2.cmd hcdecor-phase2b.cmd) do findstr /c:"HCDECOR_APPROVE_CODE_SYNC" "wordpress\%%F" >nul || exit /b 106
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53

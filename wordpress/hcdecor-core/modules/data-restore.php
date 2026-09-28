@@ -203,8 +203,6 @@ function hcdecor_restore_jobs($backup,$project_map,$media_map){
             update_post_meta($id,'hc_workflow_log',map_deep($j['workflow_log'],'sanitize_text_field'));
         }
 
-        if(!empty($j['drive_file_id'])) update_post_meta($id,'hc_drive_job_file_id',sanitize_text_field((string)$j['drive_file_id']));
-        if(!empty($j['drive_url'])) update_post_meta($id,'hc_drive_job_url',esc_url_raw((string)$j['drive_url']));
     }
 
     return ['created'=>$created,'updated'=>$updated];
@@ -226,8 +224,6 @@ function hcdecor_restore_media_metadata($backup,$media_map){
 
         update_post_meta($id,'_wp_attachment_image_alt',sanitize_text_field((string)($m['alt']??'')));
         foreach([
-            'hc_drive_file_id'=>'drive_file_id',
-            'hc_drive_url'=>'drive_url',
             'hc_ai_summary'=>'ai_summary',
             'hc_ai_alt'=>'ai_alt',
             'hc_ai_caption'=>'ai_caption',
