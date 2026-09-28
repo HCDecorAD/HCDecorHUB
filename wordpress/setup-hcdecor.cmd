@@ -5,6 +5,11 @@ echo == HCDecor Windows bootstrap ==
 call wp core is-installed || goto :fail
 echo [PASS] WordPress
 
+if not "%HCDECOR_APPROVE_SITE_CONFIG_WRITE%"=="1" (
+  echo [BLOCKED] Set HCDECOR_APPROVE_SITE_CONFIG_WRITE=1 before bootstrap site/config/data writes.
+  goto :fail
+)
+
 call wp theme install hello-elementor --activate >nul 2>&1
 call wp theme is-active hello-elementor || goto :fail
 call wp plugin activate elementor >nul 2>&1

@@ -52,28 +52,21 @@ call :say "Activate HCDecor Core"
 call wp plugin activate hcdecor-core >>"%LOG%" 2>&1 || goto :fail_core
 echo [PASS] Activate HCDecor Core
 
-call :say "Site name"
-call wp option update blogname "HCDecor HUB" >>"%LOG%" 2>&1 || goto :fail_site
-echo [PASS] Site name
-
-call :say "Permalink"
-call wp option update permalink_structure "/%%postname%%/" >>"%LOG%" 2>&1 || goto :fail_permalink
-echo [PASS] Permalink
-
-call :say "Flush rewrite"
-call wp rewrite flush >>"%LOG%" 2>&1 || goto :fail_rewrite
-echo [PASS] Flush rewrite
-
-for /f "delims=" %%I in ('call wp eval "$p=get_page_by_path('trang-chu'); echo $p?$p->ID:'';"') do set "HOME_ID=%%I"
-if not defined HOME_ID goto :fail_home
-
-call :say "Set static homepage"
-call wp option update show_on_front page >>"%LOG%" 2>&1 || goto :fail_static
-echo [PASS] Set static homepage
-
-call :say "Assign homepage"
-call wp option update page_on_front !HOME_ID! >>"%LOG%" 2>&1 || goto :fail_assign
-echo [PASS] Assign homepage
+call :say "Site configuration write gate"
+if "%HCDECOR_APPROVE_SITE_CONFIG_WRITE%"=="1" (
+  call wp option update blogname "HCDecor HUB" >>"%LOG%" 2>&1 || goto :fail_site
+  call wp option update permalink_structure "/%%postname%%/" >>"%LOG%" 2>&1 || goto :fail_permalink
+  call wp rewrite flush >>"%LOG%" 2>&1 || goto :fail_rewrite
+  for /f "delims=" %%I in ('call wp eval "$p=get_page_by_path('trang-chu'); echo $p?$p->ID:'';"') do set "HOME_ID=%%I"
+  if not defined HOME_ID goto :fail_home
+  call wp option update show_on_front page >>"%LOG%" 2>&1 || goto :fail_static
+  call wp option update page_on_front !HOME_ID! >>"%LOG%" 2>&1 || goto :fail_assign
+  echo [PASS] Explicitly approved site configuration writes
+) else (
+  for /f "delims=" %%I in ('call wp eval "$p=get_page_by_path('trang-chu'); echo $p?$p->ID:'';"') do set "HOME_ID=%%I"
+  if not defined HOME_ID goto :fail_home
+  echo [SAFE] Site name, permalink and homepage assignment unchanged.
+)
 
 call :say "Homepage production write gate"
 if "%HCDECOR_APPROVE_HOMEPAGE_WRITE%"=="1" (
