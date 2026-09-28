@@ -25,6 +25,7 @@ findstr /c:"HCDECOR_APPROVE_HOMEPAGE_WRITE" "wordpress\hcdecor-core\homepage-bui
 findstr /c:"HCDECOR_APPROVE_HOMEPAGE_WRITE" "wordpress\hcdecor-core\hcdecor-core.php" >nul || exit /b 48
 findstr /c:"'post_status'=>'draft'" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 49
 findstr /c:"approve_public_projects" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 50
+findstr /c:"HCDECOR_APPROVE_CODE_SYNC" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 56
 findstr /c:"live_health" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 51
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53

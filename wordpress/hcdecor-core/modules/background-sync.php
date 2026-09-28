@@ -28,6 +28,10 @@ function hcdecor_sync_atomic($target,$body){
     return true;
 }
 function hcdecor_run_background_sync(){
+    if(!defined('HCDECOR_APPROVE_CODE_SYNC') || HCDECOR_APPROVE_CODE_SYNC !== true){
+        update_option('hcdecor_sync_last_error','approval-required');
+        return false;
+    }
     $r=wp_remote_get(HCDECOR_SYNC_MANIFEST,['timeout'=>15,'headers'=>['Cache-Control'=>'no-cache']]);
     if(is_wp_error($r)||wp_remote_retrieve_response_code($r)!==200){update_option('hcdecor_sync_last_error','manifest');return false;}
     $m=json_decode(wp_remote_retrieve_body($r),true);
