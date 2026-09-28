@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0.0",
+  "updated_at": "2026-09-28",
+  "workspaces": [
+    {
+      "workspace_id": "hcdecor",
+      "site_id": "HCDECOR",
+      "name": "HCDecor",
+      "modules": [
+        "website",
+        "crm",
+        "projects",
+        "media",
+        "content",
+        "publishing",
+        "agents",
+        "reports",
+        "audit"
+      ]
+    },
+    {
+      "workspace_id": "gsc-senior",
+      "site_id": "GSC",
+      "name": "GSC Senior Living & Wellness",
+      "modules": [
+        "website",
+        "digital_twin",
+        "hotspots",
+        "media",
+        "leads",
+        "content",
+        "reports"
+      ]
+    },
+    {
+      "workspace_id": "amo-nguyen",
+      "site_id": "AMO",
+      "name": "AMO Nguyen",
+      "modules": [
+        "website",
+        "catalog",
+        "inventory",
+        "orders",
+        "customers",
+        "media",
+        "content",
+        "publishing",
+        "reports"
+      ]
+    }
+  ]
+}
