@@ -192,6 +192,7 @@ function hcdecor_health_snapshot(){
         if(($lock>0 && $lock<$now) || ($lock<=0 && $claimed>0 && $claimed<($now-900))) $stale_processing++;
     }
     $project_total=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'fields'=>'ids']))->found_posts;
+    $vault_auto_sync=function_exists('hcdecor_project_vault_auto_sync_enabled')?hcdecor_project_vault_auto_sync_enabled():(bool)get_option('hcdecor_project_vault_auto_sync_enabled',false);
     $vault_synced=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_file_id','fields'=>'ids']))->found_posts;
     $vault_errors=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_error','meta_compare'=>'EXISTS','fields'=>'ids']))->found_posts;
     $vault_retrying=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_retry_count','meta_value'=>0,'meta_compare'=>'>','fields'=>'ids']))->found_posts;
@@ -262,12 +263,12 @@ function hcdecor_health_snapshot(){
     if(!$bridge_configured) $issues[]='Agent Bridge token missing';
     if($drive_configured && $backup_ts===0) $issues[]='Backup has never completed';
     elseif($drive_configured && $backup_age>129600) $issues[]='Backup is stale (>36h)';
-    if($drive_configured && $project_total>0 && $vault_synced<$project_total) $issues[]='Project Vault pending: '.($project_total-$vault_synced);
-    if($vault_errors>0) $issues[]='Project Vault errors: '.$vault_errors;
+    if($vault_auto_sync && $drive_configured && $project_total>0 && $vault_synced<$project_total) $issues[]='Project Vault pending: '.($project_total-$vault_synced);
+    if($vault_auto_sync && $vault_errors>0) $issues[]='Project Vault errors: '.$vault_errors;
     if((int)($vault_bulk['failed']??0)>0 && $vault_bulk_ts && (current_time('timestamp')-$vault_bulk_ts)<=86400) $issues[]='Recent Project Vault bulk sync failed: '.(int)$vault_bulk['failed'];
     if(!empty($inbox_settings['enabled']) && (int)($inbox_result['failed']??0)>0) $issues[]='Last Drive Inbox run failed: '.(int)$inbox_result['failed'];
     $backup_running=(bool)get_transient('hcdecor_backup_running');
-    if($vault_stale>0) $issues[]='Project Vault stale: '.$vault_stale.($vault_synced>$vault_stale_scanned?' (first '.$vault_stale_scanned.' scanned)':'');
+    if($vault_auto_sync && $vault_stale>0) $issues[]='Project Vault stale: '.$vault_stale.($vault_synced>$vault_stale_scanned?' (first '.$vault_stale_scanned.' scanned)':'');
     if(!empty($inbox_settings['enabled']) && $inbox_ts===0) $issues[]='Drive Inbox has never completed';
     elseif(!empty($inbox_settings['enabled']) && $inbox_age>1800) $issues[]='Drive Inbox is stale (>30 min)';
     $recovered_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>101,'fields'=>'ids','meta_query'=>[['key'=>'hc_agent_recovered_at','value'=>wp_date('Y-m-d H:i:s',$now-DAY_IN_SECONDS),'compare'=>'>=','type'=>'DATETIME']],'meta_key'=>'hc_agent_recovered_at','orderby'=>'meta_value','order'=>'DESC']);
@@ -295,9 +296,9 @@ function hcdecor_health_snapshot(){
     if($auto['failed']>0) $score-=min(15,$auto['failed']*3);
     if($actionable_blocked>0) $score-=min(10,$actionable_blocked*2);
     if($drive_configured && ($backup_ts===0 || $backup_age>129600)) $score-=8;
-    if($drive_configured && $project_total>0 && $vault_synced<$project_total) $score-=min(8,$project_total-$vault_synced);
-    if($vault_errors>0) $score-=min(10,$vault_errors*2);
-    if($vault_stale>0) $score-=min(8,$vault_stale);
+    if($vault_auto_sync && $drive_configured && $project_total>0 && $vault_synced<$project_total) $score-=min(8,$project_total-$vault_synced);
+    if($vault_auto_sync && $vault_errors>0) $score-=min(10,$vault_errors*2);
+    if($vault_auto_sync && $vault_stale>0) $score-=min(8,$vault_stale);
     if(!empty($inbox_settings['enabled']) && ($inbox_ts===0 || $inbox_age>1800)) $score-=5;
     if($stale_processing>0) $score-=min(10,$stale_processing*2);
     if($processing_without_token>0) $score-=min(8,$processing_without_token*2);
@@ -325,11 +326,13 @@ function hcdecor_health_snapshot(){
         ],
         'drive'=>[
             'configured'=>$drive_configured,
-            'status'=>$drive_configured?($drive_test?:'configured'):'off',
+            'config_state'=>$drive_configured?'configured':'requires_credentials',
+            'live_health'=>!$drive_configured?'not_checked':($drive_test==='ok'?'healthy':($drive_test==='error'?'unreachable':'not_checked')),
             'email'=>(string)get_option('hcdecor_drive_connected_email','')
         ],
         'project_vault'=>[
             'ready'=>function_exists('hcdecor_project_vault_save'),
+            'auto_sync_enabled'=>$vault_auto_sync,
             'total_projects'=>$project_total,
             'synced_projects'=>$vault_synced,
             'pending_projects'=>max(0,$project_total-$vault_synced),
@@ -629,7 +632,7 @@ function hcdecor_system_health_page(){
         <section class="hch-card"><h2>Core Services</h2><ul class="hch-list">
           <li>OpenAI: <strong><?php echo esc_html(strtoupper($h['ai']['openai']));?></strong></li>
           <li>Gemini: <strong><?php echo esc_html(strtoupper($h['ai']['gemini']));?></strong></li>
-          <li>Drive Vault: <strong><?php echo esc_html(strtoupper($h['drive']['status']));?></strong></li>
+          <li>Drive Vault config: <strong><?php echo esc_html(strtoupper($h['drive']['config_state']));?></strong> · live: <strong><?php echo esc_html(strtoupper($h['drive']['live_health']));?></strong></li>
           <li>Agent Bridge: <strong><?php echo $h['bridge']['ready']?'READY':'MISSING';?></strong></li>
           <li>Web Publisher: <strong><?php echo $h['publisher']['ready']?'READY':'MISSING';?></strong></li>
           <li>Social outbound: <strong><?php echo $h['automation']['social_enabled']?'ON':'OFF';?></strong></li>

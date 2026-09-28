@@ -55,6 +55,11 @@ findstr /c:"hc_last_publish_approved_by" "wordpress\hcdecor-core\modules\web-pub
 findstr /c:"delete_post_meta($job_id,'hc_publish_approved_by')" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 82
 findstr /c:"'approved_by'=>$approval_by" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 83
 findstr /c:"delete_post_meta($id,'hc_publish_approved_by')" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 84
+findstr /c:"hcdecor_project_vault_auto_sync_enabled" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 85
+findstr /c:"hcdecor_project_vault_auto_sync_enabled()) return;" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 86
+findstr /c:"wp_clear_scheduled_hook('hcdecor_project_vault_async_save')" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 87
+findstr /c:"requires_credentials" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 88
+findstr /c:"'live_health'=>" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 89
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\setup-hcdecor.cmd" >nul || exit /b 54

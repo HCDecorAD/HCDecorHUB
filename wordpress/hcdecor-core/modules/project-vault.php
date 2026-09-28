@@ -191,7 +191,13 @@ function hcdecor_project_vault_import($file_id){
     return $id;
 }
 
+function hcdecor_project_vault_auto_sync_enabled(){ return (bool)get_option('hcdecor_project_vault_auto_sync_enabled',false); }
+add_action('init',function(){
+    if(!hcdecor_project_vault_auto_sync_enabled()) wp_clear_scheduled_hook('hcdecor_project_vault_async_save');
+},76);
+
 add_action('save_post_hc_project',function($post_id,$post,$update){
+    if(!hcdecor_project_vault_auto_sync_enabled()) return;
     if(wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) return;
     if(!function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()) return;
     if(!wp_next_scheduled('hcdecor_project_vault_async_save',[$post_id])){
@@ -200,6 +206,7 @@ add_action('save_post_hc_project',function($post_id,$post,$update){
 },30,3);
 
 add_action('hcdecor_project_data_changed',function($project_id){
+    if(!hcdecor_project_vault_auto_sync_enabled()) return;
     $project_id=(int)$project_id;
     if(!$project_id || get_post_type($project_id)!=='hc_project') return;
     if(!function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()) return;
@@ -209,6 +216,7 @@ add_action('hcdecor_project_data_changed',function($project_id){
 },10,1);
 
 add_action('hcdecor_project_vault_async_save',function($project_id){
+    if(!hcdecor_project_vault_auto_sync_enabled()) return;
     $project_id=(int)$project_id;
     $r=hcdecor_project_vault_save($project_id,true);
     if(is_wp_error($r)){
@@ -225,6 +233,7 @@ add_action('hcdecor_project_vault_async_save',function($project_id){
 },10,1);
 
 add_action('hcdecor_after_web_publish',function($job_id,$project_id){
+    if(!hcdecor_project_vault_auto_sync_enabled()) return;
     $project_id=(int)$project_id;
     if(!$project_id || !function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()) return;
     if(!wp_next_scheduled('hcdecor_project_vault_async_save',[$project_id])){
@@ -291,6 +300,15 @@ add_action('admin_post_hcdecor_project_vault_import',function(){
     wp_safe_redirect(admin_url('post.php?post='.(int)$r.'&action=edit&drive_loaded=1')); exit;
 });
 
+add_action('admin_post_hcdecor_project_vault_settings',function(){
+    if(!current_user_can('manage_options')) wp_die('Forbidden');
+    check_admin_referer('hcdecor_project_vault_settings');
+    $enabled=!empty($_POST['auto_sync']);
+    update_option('hcdecor_project_vault_auto_sync_enabled',$enabled,false);
+    if(!$enabled) wp_clear_scheduled_hook('hcdecor_project_vault_async_save');
+    wp_safe_redirect(admin_url('admin.php?page=hcdecor-project-vault&settings_saved=1')); exit;
+});
+
 add_action('admin_menu',function(){
     add_submenu_page('hcdecor-hub','Project Vault','Project Vault','edit_posts','hcdecor-project-vault','hcdecor_project_vault_page',4);
 },26);
@@ -339,6 +357,13 @@ function hcdecor_project_vault_page(){
       <h1>HCDecor Project Vault</h1>
       <p>WordPress Project ↔ Google Drive <strong>01_PROJECTS</strong>. Project JSON giữ metadata và Drive File ID của media.</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
+        <?php if(current_user_can('manage_options')):?>
+        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
+          <input type="hidden" name="action" value="hcdecor_project_vault_settings"><?php wp_nonce_field('hcdecor_project_vault_settings');?>
+          <label style="margin-right:8px"><input type="checkbox" name="auto_sync" value="1" <?php checked(hcdecor_project_vault_auto_sync_enabled());?>> Background auto-sync to Drive</label>
+          <button class="button">Save Auto-sync</button>
+        </form>
+        <?php endif;?>
         <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
           <input type="hidden" name="action" value="hcdecor_project_vault_sync_all"><?php wp_nonce_field('hcdecor_project_vault_sync_all');?>
           <button class="button button-primary">Sync All Projects → Drive</button>
