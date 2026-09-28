@@ -49,9 +49,7 @@ add_action('rest_api_init',function(){
     }]);
 });
 
-add_action('init',function(){
-    if(get_option('hcdecor_project_page_v1')) return;
-    $page=get_page_by_path('du-an-hcdecor');
-    if($page && trim((string)$page->post_content)==='') wp_update_post(['ID'=>$page->ID,'post_content'=>'[hcdecor_project_grid limit="24"]']);
-    update_option('hcdecor_project_page_v1',1,false);
-},30);
+/*
+ * Production page bootstrap is intentionally not automatic.
+ * Creating/updating public page content requires an explicit, nonce-protected admin action.
+ */

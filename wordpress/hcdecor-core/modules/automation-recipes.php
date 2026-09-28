@@ -54,7 +54,7 @@ function hcdecor_recipe_defaults(){
         [
             'id'=>'approved_to_web',
             'name'=>'Approved → Publish Web',
-            'enabled'=>true,
+            'enabled'=>false,
             'trigger'=>'content_approved',
             'conditions'=>[],
             'actions'=>[['type'=>'publish_web']]
@@ -70,7 +70,7 @@ function hcdecor_recipe_defaults(){
         [
             'id'=>'web_to_social_queue',
             'name'=>'Web Published → Social Queue',
-            'enabled'=>true,
+            'enabled'=>false,
             'trigger'=>'web_published',
             'conditions'=>[],
             'actions'=>[['type'=>'enqueue_social']]

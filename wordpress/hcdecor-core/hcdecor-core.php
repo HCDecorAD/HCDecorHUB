@@ -1,5 +1,8 @@
 <?php
 if (!defined('ABSPATH')) exit;
+if (!defined('HCDECOR_APPROVE_HOMEPAGE_WRITE') || HCDECOR_APPROVE_HOMEPAGE_WRITE !== true) {
+    throw new Exception('Homepage production write blocked: explicit HCDECOR_APPROVE_HOMEPAGE_WRITE=true approval is required.');
+}
 $id=(int)get_option('page_on_front');
 if(!$id) throw new Exception('No front page');
 $mk=function($id,$widget,$settings){return ['id'=>$id,'elType'=>'widget','widgetType'=>$widget,'settings'=>$settings,'elements'=>[]];};

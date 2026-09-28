@@ -86,6 +86,7 @@ add_action('admin_post_hcdecor_social_bulk_publish', function () {
             'caption' => $caption,
             'media_ids' => $media,
             'status' => 'ready',
+            'production_approved' => true,
         ];
         $result = function_exists('hcdecor_auto_enqueue')
             ? hcdecor_auto_enqueue('social_publish', $payload, $run, 'bulk:' . $batch . ':' . $id)

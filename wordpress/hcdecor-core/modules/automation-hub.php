@@ -161,6 +161,11 @@ function hcdecor_auto_run_task($task_id){
         if(is_wp_error($r)) return hcdecor_auto_retry($task_id,$r->get_error_message());
     }
     elseif($type==='social_publish'){
+        if(empty($payload['production_approved'])){
+            update_post_meta($task_id,'hc_auto_status','blocked');
+            hcdecor_auto_log($task_id,'blocked','Production approval is required for social outbound');
+            return false;
+        }
         if(empty($settings['social_enabled'])){
             update_post_meta($task_id,'hc_auto_status','blocked');
             hcdecor_auto_log($task_id,'blocked','Social outbound is OFF');

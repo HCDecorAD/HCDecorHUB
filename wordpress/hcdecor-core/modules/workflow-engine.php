@@ -528,6 +528,8 @@ add_action('admin_post_hcdecor_review_action',function(){
         update_post_meta($id,'hc_reviewed_at',current_time('mysql'));
         if($note!=='') update_post_meta($id,'hc_review_note',$note);
         hcdecor_workflow_set_status($id,'approved','Approved by reviewer');
+        update_post_meta($id,'hc_publish_approved_by',get_current_user_id());
+        update_post_meta($id,'hc_publish_approved_at',current_time('mysql'));
         if(!function_exists('hcdecor_publish_job_to_web')) wp_die('Web publisher unavailable');
         $published=hcdecor_publish_job_to_web($id);
         if(is_wp_error($published)) wp_die($published->get_error_message());
@@ -536,6 +538,8 @@ add_action('admin_post_hcdecor_review_action',function(){
         if((string)get_post_meta($id,'hc_agent_status',true)!=='review') wp_die('Job is not ready to return for changes.');
         delete_post_meta($id,'hc_reviewed_by');
         delete_post_meta($id,'hc_reviewed_at');
+        delete_post_meta($id,'hc_publish_approved_by');
+        delete_post_meta($id,'hc_publish_approved_at');
         hcdecor_workflow_clear_worker_claim($id,true,false);
         hcdecor_workflow_set_status($id,'draft','Returned for changes');
         update_post_meta($id,'hc_review_note',$note);
@@ -544,6 +548,8 @@ add_action('admin_post_hcdecor_review_action',function(){
         wp_clear_scheduled_hook('hcdecor_ai_process_job',[$id]);
         delete_post_meta($id,'hc_reviewed_by');
         delete_post_meta($id,'hc_reviewed_at');
+        delete_post_meta($id,'hc_publish_approved_by');
+        delete_post_meta($id,'hc_publish_approved_at');
         hcdecor_workflow_set_status($id,'draft','Retry requested by reviewer');
         hcdecor_workflow_clear_worker_claim($id,true,false);
         $mutex_key='hcdecor_claim_mutex_'.$id;

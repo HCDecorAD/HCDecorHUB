@@ -84,6 +84,8 @@ add_action('admin_post_hcdecor_ops_publish_web', function(){
     if(!current_user_can('publish_posts')) wp_die('Forbidden');
     $id=(int)($_POST['job_id']??0); check_admin_referer('hcdecor_ops_publish_'.$id);
     if(get_post_type($id)!=='hc_content_job') wp_die('Invalid job');
+    update_post_meta($id,'hc_publish_approved_by',get_current_user_id());
+    update_post_meta($id,'hc_publish_approved_at',current_time('mysql'));
     if(!function_exists('hcdecor_publish_job_to_web')) wp_die('Web publisher unavailable');
     $r=hcdecor_publish_job_to_web($id);
     if(is_wp_error($r)) wp_die($r->get_error_message());
