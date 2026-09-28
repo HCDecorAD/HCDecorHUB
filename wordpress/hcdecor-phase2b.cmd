@@ -13,10 +13,9 @@ call wp core is-installed >>"%LOG%" 2>&1 || goto :fail
 for %%P in (elementor hcdecor-core advanced-custom-fields fluentform wp-webhooks) do call wp plugin is-active %%P >>"%LOG%" 2>&1 || goto :fail
 echo [PASS] Phase 2 prerequisites
 
-curl.exe -fL "%BASE%/hcdecor-core.php?v=%STAMP%" -o "%P%\hcdecor-core.php" >>"%LOG%" 2>&1 || goto :fail
-curl.exe -fL "%BASE%/homepage-builder.php?v=%STAMP%" -o "%P%\homepage-builder.php" >>"%LOG%" 2>&1 || goto :fail
-curl.exe -fL "%BASE%/assets/hcdecor-homepage.css?v=%STAMP%" -o "%P%\assets\hcdecor-homepage.css" >>"%LOG%" 2>&1 || goto :fail
-echo [PASS] Phase 2B source synced
+call "%~dp0HCDecor-HUB-SERVICES.cmd"
+if errorlevel 1 goto :fail
+echo [PASS] Phase 2B source synced through safe service manager
 
 rem hcdecor-core creates the primary menu during normal WordPress init.
 rem Do not manually fire init again from WP-CLI; it can duplicate lifecycle callbacks.

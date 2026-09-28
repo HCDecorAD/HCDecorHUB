@@ -22,10 +22,9 @@ for %%P in (elementor hcdecor-core advanced-custom-fields fluentform wp-webhooks
 call wp theme is-active hello-elementor >>"%LOG%" 2>&1 || goto :fail
 echo [PASS] Hello Elementor
 
-echo [AUTO] Sync HCDecor Core Phase 2
-curl.exe -fL "%BASE%/hcdecor-core/hcdecor-core.php?v=%STAMP%" -o "%PLUGIN%\hcdecor-core.php" >>"%LOG%" 2>&1 || goto :fail
-curl.exe -fL "%BASE%/hcdecor-core/homepage-builder.php?v=%STAMP%" -o "%PLUGIN%\homepage-builder.php" >>"%LOG%" 2>&1 || goto :fail
-curl.exe -fL "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%STAMP%" -o "%PLUGIN%\assets\hcdecor-homepage.css" >>"%LOG%" 2>&1 || goto :fail
+echo [AUTO] Sync HCDecor Core Phase 2 through safe service manager
+call "%~dp0HCDecor-HUB-SERVICES.cmd"
+if errorlevel 1 goto :fail
 echo [PASS] Sync Phase 2 source
 
 rem ACF is already loaded by WordPress during wp eval. Do not fire acf/init manually:

@@ -12,6 +12,12 @@ where wp >nul 2>&1 || goto :need_shell
 call wp core is-installed >>"%LOG%" 2>&1 || goto :fail
 echo [AUTO] WordPress ready
 
+if not "%HCDECOR_APPROVE_SITE_CONFIG_WRITE%"=="1" (
+  echo [BLOCKED] MASTER AUTO changes plugins, theme and rewrite configuration.
+  echo Set HCDECOR_APPROVE_SITE_CONFIG_WRITE=1 only for an explicitly approved local/bootstrap run.
+  exit /b 3
+)
+
 for %%X in (elementor advanced-custom-fields fluentform wp-webhooks hcdecor-core) do (
  call wp plugin is-installed %%X >nul 2>&1
  if errorlevel 1 call wp plugin install %%X --activate >>"%LOG%" 2>&1
@@ -22,16 +28,12 @@ if errorlevel 1 call wp theme install hello-elementor >>"%LOG%" 2>&1
 call wp theme activate hello-elementor >>"%LOG%" 2>&1
 echo [AUTO] Platform ready
 
-if not exist "%P%\assets" mkdir "%P%\assets"
-curl.exe -fL "%BASE%/hcdecor-core/hcdecor-core.php?v=%V%" -o "%P%\hcdecor-core.php" >>"%LOG%" 2>&1 || goto :fail
-curl.exe -fL "%BASE%/hcdecor-core/homepage-builder.php?v=%V%" -o "%P%\homepage-builder.php" >>"%LOG%" 2>&1 || goto :fail
-curl.exe -fL "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%V%" -o "%P%\assets\hcdecor-homepage.css" >>"%LOG%" 2>&1 || goto :fail
-echo [AUTO] HUB source synced
+call "%~dp0HCDecor-HUB-SERVICES.cmd"
+if errorlevel 1 goto :fail
+echo [AUTO] HUB source synced through manifest-complete service manager
 
-call wp plugin deactivate hcdecor-core >>"%LOG%" 2>&1
-call wp plugin activate hcdecor-core >>"%LOG%" 2>&1 || goto :fail
-call wp eval "do_action('init'); echo 'MIGRATE_OK';" >>"%LOG%" 2>&1
-echo [AUTO] Data model + demo seed ready
+call wp plugin is-active hcdecor-core >>"%LOG%" 2>&1 || goto :fail
+echo [AUTO] HCDecor Core active; normal WordPress lifecycle owns migrations/init
 
 if "%HCDECOR_APPROVE_HOMEPAGE_WRITE%"=="1" (
   call wp eval "define('HCDECOR_APPROVE_HOMEPAGE_WRITE',true); require '%P%/homepage-builder.php';" >>"%LOG%" 2>&1 || goto :fail

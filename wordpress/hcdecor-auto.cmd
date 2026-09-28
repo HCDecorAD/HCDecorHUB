@@ -40,17 +40,14 @@ call wp theme is-active hello-elementor >>"%LOG%" 2>&1
 if errorlevel 1 goto :fail_hello
 echo [PASS] Check Hello Elementor
 
-if not exist "%PLUGIN%" mkdir "%PLUGIN%"
-if not exist "%ASSETS%" mkdir "%ASSETS%"
+call :say "Sync HCDecor Core through manifest-complete service manager"
+call "%~dp0HCDecor-HUB-SERVICES.cmd"
+if errorlevel 1 goto :fail_core
+echo [PASS] HCDecor Core source sync
 
-call :download "%BASE%/hcdecor-core/hcdecor-core.php?v=%STAMP%" "%PLUGIN%\hcdecor-core.php"
-call :download "%BASE%/hcdecor-core/homepage-builder.php?v=%STAMP%" "%PLUGIN%\homepage-builder.php"
-call :download "%BASE%/hcdecor-core/assets/hcdecor-elementor.css?v=%STAMP%" "%ASSETS%\hcdecor-elementor.css"
-call :download "%BASE%/hcdecor-core/assets/hcdecor-homepage.css?v=%STAMP%" "%ASSETS%\hcdecor-homepage.css"
-
-call :say "Activate HCDecor Core"
-call wp plugin activate hcdecor-core >>"%LOG%" 2>&1 || goto :fail_core
-echo [PASS] Activate HCDecor Core
+call :say "Verify HCDecor Core"
+call wp plugin is-active hcdecor-core >>"%LOG%" 2>&1 || goto :fail_core
+echo [PASS] HCDecor Core active
 
 call :say "Site configuration write gate"
 if "%HCDECOR_APPROVE_SITE_CONFIG_WRITE%"=="1" (

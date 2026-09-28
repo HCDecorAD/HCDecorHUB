@@ -6,10 +6,9 @@ set "BASE=https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/
 set "P=wp-content\plugins\hcdecor-core"
 set "V=demo-%RANDOM%%RANDOM%"
 where wp >nul 2>&1 || (echo [FAIL] Open LocalWP Site Shell & exit /b 2)
-echo [DEMO] Sync visual source...
-curl.exe -fL "%BASE%/hcdecor-core.php?v=%V%" -o "%P%\hcdecor-core.php" >nul 2>&1 || goto :fail
-curl.exe -fL "%BASE%/homepage-builder.php?v=%V%" -o "%P%\homepage-builder.php" >nul 2>&1 || goto :fail
-curl.exe -fL "%BASE%/assets/hcdecor-homepage.css?v=%V%" -o "%P%\assets\hcdecor-homepage.css" >nul 2>&1 || goto :fail
+echo [DEMO] Sync source through safe service manager...
+call "%~dp0HCDecor-HUB-SERVICES.cmd"
+if errorlevel 1 goto :fail
 echo [DEMO] Homepage write gate...
 if "%HCDECOR_APPROVE_HOMEPAGE_WRITE%"=="1" (
   call wp eval "define('HCDECOR_APPROVE_HOMEPAGE_WRITE',true); require '%P%/homepage-builder.php';" >nul 2>&1 || goto :fail
