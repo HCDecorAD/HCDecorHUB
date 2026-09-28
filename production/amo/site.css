@@ -1,0 +1,1 @@
+:root{--paper:#f4f0e9;--ink:#171717}html{scroll-behavior:smooth}body{margin:0}img{max-width:100%;height:auto}a,button{min-height:44px;touch-action:manipulation}@media(max-width:760px){.amo-grid{grid-template-columns:repeat(2,1fr)!important}}@media(max-width:420px){.amo-grid{grid-template-columns:1fr!important}}
