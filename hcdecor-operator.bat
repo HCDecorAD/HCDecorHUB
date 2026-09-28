@@ -44,6 +44,9 @@ findstr /c:"Backup integrity metadata is required." "wordpress\hcdecor-core\modu
 findstr /c:"hcdecor_ai_worker_enabled() && function_exists('hcdecor_ai_available')" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 71
 findstr /c:"hcdecor_ai_worker_enabled()) return;" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 72
 findstr /c:"AI worker master switch is disabled." "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 73
+findstr /c:"if(empty($settings['enabled'])) return [];" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 74
+findstr /c:"$current['webhook_enabled']=false;" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 75
+findstr /c:"$current['evergreen_enabled']=false;" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 76
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\setup-hcdecor.cmd" >nul || exit /b 54

@@ -163,6 +163,8 @@ function hcdecor_recipe_execute_action($action,$context){
 }
 
 function hcdecor_recipe_fire($trigger,$context=[]){
+    $settings=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
+    if(empty($settings['enabled'])) return [];
     $runs=[];
     foreach(hcdecor_recipes() as $recipe){
         if(!hcdecor_recipe_matches($recipe,$trigger,$context)) continue;

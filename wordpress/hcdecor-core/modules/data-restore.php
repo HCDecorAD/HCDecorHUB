@@ -259,11 +259,11 @@ function hcdecor_restore_settings($backup){
 
     if(!empty($s['automation']) && is_array($s['automation'])){
         $current=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
-        foreach(['enabled','evergreen_enabled'] as $k){
-            if(array_key_exists($k,$s['automation'])) $current[$k]=(bool)$s['automation'][$k];
-        }
-        // Never re-enable external publishing during disaster recovery.
+        // Disaster recovery restores configuration values but never re-enables background or outbound automation.
+        $current['enabled']=false;
         $current['social_enabled']=false;
+        $current['webhook_enabled']=false;
+        $current['evergreen_enabled']=false;
         foreach(['evergreen_days','max_attempts','retry_minutes'] as $k){
             if(array_key_exists($k,$s['automation'])) $current[$k]=(int)$s['automation'][$k];
         }
