@@ -30,10 +30,19 @@ function hcdecor_recovery_atomic($target, $body) {
     $tmp = $target . '.hcnew';
     if (file_put_contents($tmp, $body, LOCK_EX) === false) { return false; }
     @chmod($tmp, 0644);
-    if (!@rename($tmp, $target)) {
-        @unlink($target);
-        if (!@rename($tmp, $target)) { @unlink($tmp); return false; }
+    $backup = '';
+    if (file_exists($target)) {
+        $backup = $target . '.hcbak';
+        @unlink($backup);
+        if (!@copy($target, $backup)) { @unlink($tmp); return false; }
+        if (!@unlink($target)) { @unlink($backup); @unlink($tmp); return false; }
     }
+    if (!@rename($tmp, $target)) {
+        @unlink($tmp);
+        if ($backup !== '' && file_exists($backup)) { if (!@rename($backup, $target)) { @copy($backup, $target); } }
+        return false;
+    }
+    if ($backup !== '' && file_exists($backup)) { @unlink($backup); }
     return true;
 }
 function hcdecor_recovery_code_sync_approved() {

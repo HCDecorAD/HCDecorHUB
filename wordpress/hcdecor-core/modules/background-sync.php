@@ -23,8 +23,18 @@ function hcdecor_sync_atomic($target,$body){
     $tmp=$target.'.tmp-'.wp_generate_password(6,false,false);
     if(file_put_contents($tmp,$body,LOCK_EX)===false) return false;
     @chmod($tmp,0644);
-    if(file_exists($target) && !@unlink($target)){@unlink($tmp);return false;}
-    if(!@rename($tmp,$target)){@unlink($tmp);return false;}
+    $backup='';
+    if(file_exists($target)){
+        $backup=$target.'.bak-'.wp_generate_password(6,false,false);
+        if(!@copy($target,$backup)){@unlink($tmp);return false;}
+        if(!@unlink($target)){@unlink($backup);@unlink($tmp);return false;}
+    }
+    if(!@rename($tmp,$target)){
+        @unlink($tmp);
+        if($backup!=='' && file_exists($backup)){ if(!@rename($backup,$target)) @copy($backup,$target); }
+        return false;
+    }
+    if($backup!=='' && file_exists($backup)) @unlink($backup);
     return true;
 }
 function hcdecor_sync_trusted_raw_url($url,$rel=''){
