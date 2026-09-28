@@ -178,6 +178,9 @@ findstr /c:"function hcdecor_ai_safe_error" "wordpress\hcdecor-core\modules\ai-p
 findstr /c:"$default['enabled']=false;" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 230
 findstr /c:"update_option('hcdecor_automation_recipes',$recipes,false);" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 231
 findstr /c:"current_user_can('manage_options')" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 232
+findstr /c:"Drive Inbox is disabled." "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 233
+findstr /c:"AI worker master switch is disabled." "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 234
+findstr /c:"array_slice(array_values(array_filter(array_unique(array_map('intval'" "wordpress\hcdecor-core\modules\project-publishing.php" >nul || exit /b 235
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

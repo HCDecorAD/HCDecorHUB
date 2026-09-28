@@ -43,8 +43,8 @@ add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/projects-public',['methods'=>'GET','permission_callback'=>'__return_true','callback'=>function(){
         $posts=get_posts(['post_type'=>'hc_project','post_status'=>'publish','numberposts'=>50,'orderby'=>'modified','order'=>'DESC']);
         return rest_ensure_response(array_map(function($p){
-            $media=(array)get_post_meta($p->ID,'hc_project_gallery',true);
-            return ['id'=>$p->ID,'title'=>$p->post_title,'excerpt'=>$p->post_excerpt,'url'=>get_permalink($p),'featured'=>get_the_post_thumbnail_url($p->ID,'large')?:null,'media'=>array_values(array_filter(array_map(function($id){return wp_get_attachment_url((int)$id);},$media)))];
+            $media=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)get_post_meta($p->ID,'hc_project_gallery',true))),function($id){ return get_post_type($id)==='attachment'; })),0,60);
+            return ['id'=>$p->ID,'title'=>$p->post_title,'excerpt'=>$p->post_excerpt,'url'=>get_permalink($p),'featured'=>get_the_post_thumbnail_url($p->ID,'large')?:null,'media'=>array_values(array_filter(array_map(function($id){return wp_get_attachment_url($id);},$media)))];
         },$posts));
     }]);
 });

@@ -106,6 +106,7 @@ function hcdecor_media_ai_call_gemini($attachment_id){
 
 function hcdecor_media_ai_analyze($attachment_id){
     $attachment_id=(int)$attachment_id;
+    if(!function_exists('hcdecor_ai_worker_enabled') || !hcdecor_ai_worker_enabled()) return new WP_Error('ai_disabled','AI worker master switch is disabled.');
     if(get_post_type($attachment_id)!=='attachment') return new WP_Error('media','Invalid media.');
     $errors=[];
     $order=function_exists('hcdecor_ai_provider_order')?hcdecor_ai_provider_order():['openai','gemini'];

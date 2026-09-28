@@ -244,6 +244,8 @@ add_action('rest_api_init',function(){
         'methods'=>'POST',
         'permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(){
+            $settings=hcdecor_drive_inbox_settings();
+            if(empty($settings['enabled'])) return new WP_Error('inbox_disabled','Drive Inbox is disabled.',['status'=>503]);
             $r=hcdecor_drive_inbox_scan();
             return is_wp_error($r)?$r:rest_ensure_response($r);
         }
