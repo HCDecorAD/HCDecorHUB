@@ -53,11 +53,7 @@ add_action('admin_post_hcdecor_media_meta',function(){
 add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/media',[
         'methods'=>'GET',
-        'permission_callback'=>function($r){
-            if(function_exists('hcdecor_ops_bridge_auth')) return hcdecor_ops_bridge_auth();
-            if(function_exists('hcdecor_bridge_auth')) return hcdecor_bridge_auth($r);
-            return false;
-        },
+        'permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
             $limit=max(1,min(100,(int)($r->get_param('limit')?:50)));
             $items=get_posts(['post_type'=>'attachment','post_status'=>'inherit','post_mime_type'=>['image','video'],'numberposts'=>$limit,'orderby'=>'date','order'=>'DESC']);
