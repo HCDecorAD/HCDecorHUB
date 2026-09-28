@@ -1,0 +1,1 @@
+window.HCDECOR_SOCIAL={facebook:'',tiktok:'',youtube:'',zalo:'https://zalo.me/quangcaohocuong'};
