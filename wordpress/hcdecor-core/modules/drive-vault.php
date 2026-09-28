@@ -354,17 +354,29 @@ function hcdecor_drive_save_job($job_id,$sync_media=true){
 function hcdecor_drive_file_meta($file_id){
     $file_id=preg_replace('/[^A-Za-z0-9_-]/','',(string)$file_id);
     if(!$file_id) return new WP_Error('file','Invalid Drive file ID.');
-    $fields=rawurlencode('id,name,mimeType,size,modifiedTime,webViewLink,thumbnailLink,description');
+    $fields=rawurlencode('id,name,mimeType,size,modifiedTime,webViewLink,thumbnailLink,description,parents');
     $r=hcdecor_drive_request('GET','https://www.googleapis.com/drive/v3/files/'.rawurlencode($file_id).'?fields='.$fields);
     if(is_wp_error($r)) return $r;
     $d=json_decode($r['body'],true);
     return is_array($d)?$d:new WP_Error('drive_json','Drive metadata invalid.');
 }
 
+function hcdecor_drive_file_in_managed_folders($meta,$allowed_keys){
+    if(!is_array($meta)) return false;
+    $parents=array_values(array_filter(array_map('strval',(array)($meta['parents']??[]))));
+    if(!$parents) return false;
+    $folders=hcdecor_drive_folders();
+    foreach((array)$allowed_keys as $key){ $id=(string)($folders[$key]??''); if($id!=='' && in_array($id,$parents,true)) return true; }
+    return false;
+}
+
 function hcdecor_drive_import_media($file_id){
     $meta=hcdecor_drive_file_meta($file_id);
     if(is_wp_error($meta)) return $meta;
+    if(!hcdecor_drive_file_in_managed_folders($meta,['media_input','media_ai','media_approved'])) return new WP_Error('scope','Drive media file is outside managed HCDecor folders.');
     $mime=(string)($meta['mimeType']??'');
+    $size=(int)($meta['size']??0);
+    if($size<=0 || $size>50*1024*1024) return new WP_Error('size','Drive media file must be between 1 byte and 50 MB.');
     if(strpos($mime,'image/')!==0 && strpos($mime,'video/')!==0){
         return new WP_Error('mime','Chỉ import image/video từ Drive.');
     }
@@ -402,6 +414,10 @@ function hcdecor_drive_import_media($file_id){
 }
 
 function hcdecor_drive_load_prompt($file_id){
+    $meta=hcdecor_drive_file_meta($file_id);
+    if(is_wp_error($meta)) return $meta;
+    if(!hcdecor_drive_file_in_managed_folders($meta,['prompts'])) return new WP_Error('scope','Drive prompt file is outside the managed prompts folder.');
+    if((int)($meta['size']??0)>1024*1024) return new WP_Error('size','Drive prompt file exceeds 1 MB.');
     $body=hcdecor_drive_download($file_id);
     if(is_wp_error($body)) return $body;
     $d=json_decode($body,true);
@@ -423,6 +439,10 @@ function hcdecor_drive_download($file_id){
 }
 
 function hcdecor_drive_import_job($file_id){
+    $meta=hcdecor_drive_file_meta($file_id);
+    if(is_wp_error($meta)) return $meta;
+    if(!hcdecor_drive_file_in_managed_folders($meta,['content_draft','content_review','content_approved','content_published'])) return new WP_Error('scope','Drive job file is outside managed content folders.');
+    if((int)($meta['size']??0)>2*1024*1024) return new WP_Error('size','Drive job file exceeds 2 MB.');
     $body=hcdecor_drive_download($file_id);
     if(is_wp_error($body)) return $body;
     $d=json_decode($body,true);

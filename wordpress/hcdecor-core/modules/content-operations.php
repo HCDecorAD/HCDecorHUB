@@ -75,6 +75,7 @@ add_action('admin_post_hcdecor_ops_save', function(){
     $status=sanitize_key($_POST['agent_status']??'');
     $current=(string)get_post_meta($id,'hc_agent_status',true);
     if($status!=='' && $status!==$current) wp_die('Workflow status is read-only here. Use Review Center or worker lifecycle actions.');
+    if(in_array($current,['approved','published_web'],true)) wp_die('Approved or published jobs are immutable here. Return the job for changes and review again.');
     wp_update_post(['ID'=>$id,'post_content'=>sanitize_textarea_field(wp_unslash($_POST['brief']??''))]);
     hcdecor_ops_save_fields($id,$_POST);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$id.'&saved=1')); exit;
@@ -115,6 +116,8 @@ add_action('rest_api_init',function(){
         'callback'=>function(WP_REST_Request $r){
             $id=(int)$r['id']; if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
             if($r->get_method()==='POST'){
+                $current=(string)get_post_meta($id,'hc_agent_status',true);
+                if(in_array($current,['approved','published_web'],true)) return new WP_Error('immutable','Approved or published jobs must be returned for changes before editing',['status'=>409]);
                 $p=$r->get_json_params()?:[];
                 if(isset($p['agent_status'])){ $agent_status=sanitize_key($p['agent_status']); $current=(string)get_post_meta($id,'hc_agent_status',true); if($agent_status!==$current) return new WP_Error('status_read_only','Workflow status is read-only on this endpoint; use worker lifecycle routes',['status'=>409]); }
                 if(isset($p['brief'])) wp_update_post(['ID'=>$id,'post_content'=>sanitize_textarea_field($p['brief'])]);
