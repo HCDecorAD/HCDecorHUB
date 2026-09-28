@@ -1,0 +1,11 @@
+{
+  "schema_version":"1.0.0",
+  "dashboard":{
+    "title":"HCDecor HUB",
+    "subtitle":"Multi-Business AI Command Center",
+    "primary_modules":["websites","projects","crm","media","content","publishing","agents","reports","integrations","audit"],
+    "sites":["HCDECOR","GSC","AMO"]
+  },
+  "command_flow":["resolve-workspace","resolve-site","check-registry","check-permission","plan","preview","approve-if-required","execute","verify","audit"],
+  "production_guard":{"publish":true,"delete":true,"manage":true,"deploy":true}
+}
