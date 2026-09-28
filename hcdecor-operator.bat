@@ -206,6 +206,9 @@ findstr /c:"'numberposts'=>2001" "wordpress\hcdecor-core\modules\data-backup.php
 findstr /c:"'numberposts'=>5001" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 258
 findstr /c:"'numberposts'=>10001" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 259
 findstr /c:"if(is_wp_error($snap))" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 260
+findstr /c:"array_slice((array)($d['tags']??[]),0,30)" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 261
+findstr /c:"$clip($d['summary']??'',5000,true)" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 262
+findstr /c:"hcdecor_ai_safe_error($msg)" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 263
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

@@ -114,11 +114,17 @@ function hcdecor_media_ai_analyze($attachment_id){
         $r=$provider==='openai'?hcdecor_media_ai_call_openai($attachment_id):hcdecor_media_ai_call_gemini($attachment_id);
         if(is_wp_error($r)){ $errors[]=$provider.': '.(function_exists('hcdecor_ai_safe_error')?hcdecor_ai_safe_error($r->get_error_message()):sanitize_text_field($r->get_error_message())); continue; }
         $d=$r['data'];
-        update_post_meta($attachment_id,'hc_ai_summary',sanitize_textarea_field($d['summary']??''));
-        update_post_meta($attachment_id,'hc_ai_alt',sanitize_text_field($d['alt']??''));
-        update_post_meta($attachment_id,'hc_ai_caption',sanitize_textarea_field($d['caption']??''));
-        update_post_meta($attachment_id,'hc_ai_tags',array_values(array_filter(array_map('sanitize_text_field',(array)($d['tags']??[])))));
-        update_post_meta($attachment_id,'hc_ai_visual_type',sanitize_text_field($d['visual_type']??''));
+        $clip=function($value,$limit,$textarea=false){
+            $text=$textarea?sanitize_textarea_field((string)$value):sanitize_text_field((string)$value);
+            return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
+        };
+        update_post_meta($attachment_id,'hc_ai_summary',$clip($d['summary']??'',5000,true));
+        update_post_meta($attachment_id,'hc_ai_alt',$clip($d['alt']??'',500));
+        update_post_meta($attachment_id,'hc_ai_caption',$clip($d['caption']??'',5000,true));
+        $tags=[];
+        foreach(array_slice((array)($d['tags']??[]),0,30) as $tag){ if(is_scalar($tag)){ $tag=$clip($tag,100); if($tag!=='') $tags[]=$tag; } }
+        update_post_meta($attachment_id,'hc_ai_tags',array_values(array_unique($tags)));
+        update_post_meta($attachment_id,'hc_ai_visual_type',$clip($d['visual_type']??'',500));
         update_post_meta($attachment_id,'hc_ai_cover_score',max(0,min(100,(int)($d['cover_score']??0))));
         update_post_meta($attachment_id,'hc_ai_provider',sanitize_key($r['provider']));
         update_post_meta($attachment_id,'hc_ai_analyzed_at',current_time('mysql'));
@@ -126,6 +132,7 @@ function hcdecor_media_ai_analyze($attachment_id){
         return $r;
     }
     $msg=implode(' | ',$errors);
+    $msg=function_exists('hcdecor_ai_safe_error')?hcdecor_ai_safe_error($msg):sanitize_text_field($msg);
     update_post_meta($attachment_id,'hc_ai_error',$msg);
     return new WP_Error('ai_failed',$msg?:'No AI provider available.');
 }
