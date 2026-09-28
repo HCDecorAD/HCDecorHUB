@@ -1,0 +1,1 @@
+window.GSC_CONFIG=Object.freeze({host:'https://gscsenior.hcdecorhub.com',locales:['vi','en','ko','ja'],defaultLocale:'vi',routes:{home:'/',amenities:'/tien-ich/',contact:'/lien-he/',en:'/gsc-en/',ko:'/gsc-ko/',ja:'/gsc-ja/'},hotspots:11});
