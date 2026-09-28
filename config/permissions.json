@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "actions": ["view","create","edit","delete","approve","publish","export","manage"],
+  "roles": {
+    "owner": {"scope":"all","actions":["view","create","edit","delete","approve","publish","export","manage"]},
+    "admin": {"scope":"assigned-workspaces","actions":["view","create","edit","delete","approve","publish","export","manage"]},
+    "editor": {"scope":"assigned-sites","actions":["view","create","edit","export"]},
+    "approver": {"scope":"assigned-sites","actions":["view","edit","approve","export"]},
+    "publisher": {"scope":"assigned-sites","actions":["view","approve","publish","export"]},
+    "viewer": {"scope":"assigned-sites","actions":["view","export"]}
+  },
+  "agent_defaults": {
+    "orchestrator":["view","create","edit","export"],
+    "developer":["view","create","edit","export"],
+    "design":["view","create","edit","export"],
+    "content":["view","create","edit","export"],
+    "media":["view","create","edit","export"],
+    "publishing":["view","create","edit","export"],
+    "crm":["view","create","edit","export"],
+    "report":["view","export"]
+  },
+  "restricted_actions": ["delete","publish","manage"],
+  "rule": "Restricted actions require an explicit role grant for the exact workspace/site/module."
+}
