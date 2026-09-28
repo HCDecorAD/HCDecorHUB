@@ -1,0 +1,1 @@
+window.HCDECOR_CONFIG=Object.freeze({host:'https://hcdecorhub.com',projects:{gsc:'https://gscsenior.hcdecorhub.com',amo:'https://amonnguyen.hcdecorhub.com'},routes:{services:'/dich-vu/',projects:'/du-an/',about:'/gioi-thieu/',contact:'/lien-he/'},social:{zalo:'https://zalo.me/quangcaohocuong'}});
