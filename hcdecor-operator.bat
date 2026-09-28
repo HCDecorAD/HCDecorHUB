@@ -149,6 +149,10 @@ findstr /c:"Evergreen social publishing requires fresh explicit production appro
 findstr /c:"function hcdecor_runtime_approval_fresh" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 201
 findstr /c:"15*MINUTE_IN_SECONDS" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 202
 findstr /c:"'live_health'=>" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 203
+findstr /c:"Production publish approval expired; approve again." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 204
+findstr /c:"array_slice($j['workflow_log'],-100)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 205
+findstr /c:"!wp_attachment_is_image($cover)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 206
+findstr /c:"Project Vault import requires a JSON file." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 207
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

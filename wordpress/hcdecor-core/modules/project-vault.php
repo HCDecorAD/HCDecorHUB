@@ -140,6 +140,8 @@ function hcdecor_project_vault_import($file_id){
     $meta=hcdecor_drive_file_meta($file_id);
     if(is_wp_error($meta)) return $meta;
     if(!hcdecor_drive_file_in_managed_folders($meta,['projects'])) return new WP_Error('scope','Project Vault file is outside the managed projects folder.');
+    $mime=strtolower((string)($meta['mimeType']??''));
+    if(!in_array($mime,['application/json','text/json','text/plain'],true)) return new WP_Error('mime','Project Vault import requires a JSON file.');
     $size=(int)($meta['size']??0);
     if($size<=0 || $size>2*1024*1024) return new WP_Error('size','Project Vault file must be between 1 byte and 2 MB.');
     $body=hcdecor_drive_download($file_id);

@@ -204,6 +204,7 @@ function hcdecor_restore_jobs($backup,$project_map,$media_map){
 
         $cover_old=(int)($j['cover_id']??0);
         $cover=(int)($media_map[$cover_old]??0);
+        if(!$cover || !in_array($cover,$media,true) || !wp_attachment_is_image($cover)) $cover=0;
         update_post_meta($id,'hc_cover_id',$cover);
 
         if(function_exists('hcdecor_ops_save_fields')){
@@ -214,7 +215,19 @@ function hcdecor_restore_jobs($backup,$project_map,$media_map){
         update_post_meta($id,'hc_ai_model',sanitize_text_field((string)($j['ai_model']??'')));
 
         if(!empty($j['workflow_log']) && is_array($j['workflow_log'])){
-            update_post_meta($id,'hc_workflow_log',map_deep($j['workflow_log'],'sanitize_text_field'));
+            $workflow_log=[];
+            foreach(array_slice($j['workflow_log'],-100) as $entry){
+                if(!is_array($entry)) continue;
+                $workflow_log[]=[
+                    'time'=>sanitize_text_field((string)($entry['time']??'')),
+                    'event'=>sanitize_key((string)($entry['event']??'')),
+                    'note'=>sanitize_text_field((string)($entry['note']??'')),
+                    'user'=>(int)($entry['user']??0)
+                ];
+            }
+            update_post_meta($id,'hc_workflow_log',$workflow_log);
+        }else{
+            delete_post_meta($id,'hc_workflow_log');
         }
 
     }

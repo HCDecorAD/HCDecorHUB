@@ -38,7 +38,15 @@ function hcdecor_publish_preflight($job_id){
     if(!function_exists('hcdecor_workflow_set_status')) return new WP_Error('workflow','Workflow engine unavailable.');
     if((string)get_post_meta($job_id,'hc_agent_status',true)!=='approved') return new WP_Error('status','Job must be approved first.');
     if(!(int)get_post_meta($job_id,'hc_reviewed_by',true) || !(string)get_post_meta($job_id,'hc_reviewed_at',true)) return new WP_Error('review','Reviewer audit is required before publish.');
-    if(!(int)get_post_meta($job_id,'hc_publish_approved_by',true) || !(string)get_post_meta($job_id,'hc_publish_approved_at',true)) return new WP_Error('approval','Explicit production publish approval is required.');
+    $approval_by=(int)get_post_meta($job_id,'hc_publish_approved_by',true);
+    $approval_at=(string)get_post_meta($job_id,'hc_publish_approved_at',true);
+    $approval_ts=$approval_at!==''?(strtotime($approval_at)?:0):0;
+    if(!$approval_by || !$approval_ts) return new WP_Error('approval','Explicit production publish approval is required.');
+    if($approval_ts<time()-15*MINUTE_IN_SECONDS){
+        delete_post_meta($job_id,'hc_publish_approved_by');
+        delete_post_meta($job_id,'hc_publish_approved_at');
+        return new WP_Error('approval_expired','Production publish approval expired; approve again.');
+    }
     $project=(int)get_post_meta($job_id,'hc_project_id',true);
     if(!$project || get_post_type($project)!=='hc_project') return new WP_Error('project','Invalid project');
     $title=trim((string)get_post_meta($job_id,'hc_web_title',true));
