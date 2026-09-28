@@ -1,47 +1,45 @@
 {
-  "schema_version": "1.0.0",
-  "updated_at": "2026-09-28",
-  "policy": {
-    "source_of_truth": "This registry must be read before automation targets a website.",
-    "production_changes": "preview-or-staging-first",
-    "secrets": "environment-only"
-  },
-  "sites": [
-    {
-      "site_id": "HCDECOR",
-      "workspace_id": "hcdecor",
-      "name": "HCDecor HUB",
-      "production_url": "https://hcdecorhub.com",
-      "platform": "wordpress-elementor",
-      "repository": "HCDecorAD/HCDecorHUB",
-      "deployment_authority": "WordPress",
-      "status": "production",
-      "legacy": {
-        "vercel_frontend": "archive-reference-only",
-        "note": "Do not treat hcdecorhub.vercel.app as production."
-      }
-    },
-    {
-      "site_id": "GSC",
-      "workspace_id": "gsc-senior",
-      "name": "GSC Senior Living & Wellness",
-      "production_url": "https://gscsenior.vercel.app",
-      "platform": "vercel",
-      "repository": "HCDecorAD/GSC",
-      "deployment_authority": "GitHub main -> Vercel",
-      "status": "production"
-    },
-    {
-      "site_id": "AMO",
-      "workspace_id": "amo-nguyen",
-      "name": "AMO Nguyen",
-      "production_url": "https://amonguyen.vercel.app",
-      "platform": "vercel",
-      "repository": "HCDecorAD/AMONguyen",
-      "deployment_authority": "GitHub -> Vercel",
-      "status": "production",
-      "needs_owner_input": [],
-      "source_status": "repository-discovered"
-    }
-  ]
+    "schema_version":  "1.0.0",
+    "updated_at":  "2026-09-28",
+    "policy":  {
+                   "source_of_truth":  "This registry must be read before automation targets a website.",
+                   "production_changes":  "preview-or-staging-first",
+                   "secrets":  "environment-only"
+               },
+    "sites":  [
+                  {
+                      "site_id":  "HCDECOR",
+                      "workspace_id":  "hcdecor",
+                      "name":  "HCDecor HUB",
+                      "production_url":  "https://hcdecorhub.com",
+                      "platform":  "wordpress-elementor",
+                      "repository":  "HCDecorAD/HCDecorHUB",
+                      "deployment_authority":  "WordPress",
+                      "status":  "production"
+                  },
+                  {
+                      "site_id":  "GSC",
+                      "workspace_id":  "gsc-senior",
+                      "name":  "GSC Senior Living \u0026 Wellness",
+                      "production_url":  "https://gscsenior.vercel.app",
+                      "platform":  "vercel",
+                      "repository":  "HCDecorAD/GSC",
+                      "deployment_authority":  "GitHub main -\u003e Vercel",
+                      "status":  "production"
+                  },
+                  {
+                      "site_id":  "AMO",
+                      "workspace_id":  "amo-nguyen",
+                      "name":  "AMO Nguyen",
+                      "production_url":  "https://amonguyen.vercel.app",
+                      "platform":  "vercel",
+                      "repository":  "HCDecorAD/AMONguyen",
+                      "deployment_authority":  "GitHub -\u003e Vercel",
+                      "status":  "production",
+                      "needs_owner_input":  [
+
+                                            ],
+                      "source_status":  "repository-discovered"
+                  }
+              ]
 }
