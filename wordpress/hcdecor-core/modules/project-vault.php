@@ -156,12 +156,16 @@ function hcdecor_project_vault_import($file_id){
     $source_status=in_array(($project['status']??''),['publish','draft','private'],true)?$project['status']:'draft';
 
     // Drive imports are staging operations. Never publish directly from imported data.
+    $clip=function($value,$limit,$html=false){
+        $text=$html?wp_kses_post((string)$value):sanitize_textarea_field((string)$value);
+        return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
+    };
     $post=[
         'post_type'=>'hc_project',
         'post_status'=>'draft',
-        'post_title'=>sanitize_text_field((string)($project['title']??'Imported Project')),
-        'post_excerpt'=>sanitize_textarea_field((string)($project['excerpt']??'')),
-        'post_content'=>wp_kses_post((string)($project['content']??''))
+        'post_title'=>$clip($project['title']??'Imported Project',300),
+        'post_excerpt'=>$clip($project['excerpt']??'',5000),
+        'post_content'=>$clip($project['content']??'',100000,true)
     ];
     if($id) $post['ID']=$id;
     $r=$id?wp_update_post($post,true):wp_insert_post($post,true);
@@ -172,7 +176,7 @@ function hcdecor_project_vault_import($file_id){
         'hc_client'=>'client','hc_location'=>'location','hc_year'=>'year',
         'hc_summary'=>'summary','hc_seo_meta'=>'seo_meta'
     ] as $meta=>$key){
-        if(array_key_exists($key,$project)) update_post_meta($id,$meta,sanitize_textarea_field((string)$project[$key]));
+        if(array_key_exists($key,$project)) update_post_meta($id,$meta,$clip($project[$key],$key==='summary'?10000:2000));
     }
 
     $gallery=[];
@@ -196,7 +200,8 @@ function hcdecor_project_vault_import($file_id){
     }
 
     if(taxonomy_exists('hc_project_type') && !empty($project['types'])){
-        wp_set_object_terms($id,array_map('sanitize_title',(array)$project['types']),'hc_project_type',false);
+        $types=array_values(array_filter(array_map('sanitize_title',array_slice((array)$project['types'],0,30))));
+        wp_set_object_terms($id,$types,'hc_project_type',false);
     }
 
     update_post_meta($id,'hc_drive_project_file_id',$file_id);

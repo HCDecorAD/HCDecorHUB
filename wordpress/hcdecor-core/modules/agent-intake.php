@@ -18,7 +18,7 @@ function hcdecor_agent_create_job($project_id,$media_ids=[],$brief=''){
         'post_type'=>'hc_content_job',
         'post_status'=>'publish',
         'post_title'=>'AI · '.get_the_title($project_id).' · '.current_time('Y-m-d H:i'),
-        'post_content'=>sanitize_textarea_field($brief)
+        'post_content'=>function_exists('hcdecor_ops_limit_text')?hcdecor_ops_limit_text($brief,20000):(function_exists('mb_substr')?mb_substr(sanitize_textarea_field($brief),0,20000):substr(sanitize_textarea_field($brief),0,20000))
     ]);
     if(is_wp_error($id)) return $id;
     update_post_meta($id,'hc_project_id',$project_id);

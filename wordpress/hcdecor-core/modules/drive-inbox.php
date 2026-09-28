@@ -251,11 +251,14 @@ add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/drive/inbox/scan',[
         'methods'=>'POST',
         'permission_callback'=>'hcdecor_ops_bridge_auth',
-        'callback'=>function(){
+        'callback'=>function(WP_REST_Request $r){
             $settings=hcdecor_drive_inbox_settings();
             if(empty($settings['enabled'])) return new WP_Error('inbox_disabled','Drive Inbox is disabled.',['status'=>503]);
-            $r=hcdecor_drive_inbox_scan();
-            return is_wp_error($r)?$r:rest_ensure_response($r);
+            if((!empty($settings['auto_analyze']) || !empty($settings['auto_link_project'])) && !rest_sanitize_boolean($r->get_param('production_approved'))){
+                return new WP_Error('approval','Explicit approval is required for Drive Inbox mutation or AI side effects.',['status'=>403]);
+            }
+            $result=hcdecor_drive_inbox_scan();
+            return is_wp_error($result)?$result:rest_ensure_response($result);
         }
     ]);
 });

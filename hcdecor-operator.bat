@@ -209,6 +209,15 @@ findstr /c:"if(is_wp_error($snap))" "wordpress\hcdecor-core\modules\data-backup.
 findstr /c:"array_slice((array)($d['tags']??[]),0,30)" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 261
 findstr /c:"$clip($d['summary']??'',5000,true)" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 262
 findstr /c:"hcdecor_ai_safe_error($msg)" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 263
+findstr /c:"function_exists('hcdecor_drive_inbox_scan')?hcdecor_drive_inbox_scan()" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 264
+findstr /c:"admin_post_hcdecor_hub_run_inbox" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 265
+findstr /c:"Explicit approval is required for Drive Inbox mutation or AI side effects." "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 266
+findstr /c:"hcdecor_ops_limit_text(wp_unslash($_POST['brief']??''),20000)" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 267
+findstr /c:"hcdecor_ops_limit_text(is_scalar($p['brief'])?(string)$p['brief']:'',20000)" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 268
+findstr /c:"$clip($project['content']??'',100000,true)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 269
+findstr /c:"array_slice((array)$project['types'],0,30)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 270
+findstr /c:"hcdecor_ops_limit_text($brief,20000)" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 271
+findstr /c:"hcdecor_ops_limit_text(wp_unslash($_POST['brief']??''),20000)" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 272
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

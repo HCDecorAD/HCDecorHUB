@@ -69,7 +69,7 @@ add_action('admin_post_hcdecor_ops_create', function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
     check_admin_referer('hcdecor_ops_create');
     $project=(int)($_POST['project_id']??0);
-    $brief=sanitize_textarea_field(wp_unslash($_POST['brief']??''));
+    $brief=hcdecor_ops_limit_text(wp_unslash($_POST['brief']??''),20000);
     if(!$project || get_post_type($project)!=='hc_project' || !current_user_can('edit_post',$project)) wp_die('Invalid project');
     $id=wp_insert_post([
         'post_type'=>'hc_content_job','post_status'=>'publish',
@@ -94,7 +94,7 @@ add_action('admin_post_hcdecor_ops_save', function(){
     $current=(string)get_post_meta($id,'hc_agent_status',true);
     if($status!=='' && $status!==$current) wp_die('Workflow status is read-only here. Use Review Center or worker lifecycle actions.');
     if(in_array($current,['approved','published_web'],true)) wp_die('Approved or published jobs are immutable here. Return the job for changes and review again.');
-    wp_update_post(['ID'=>$id,'post_content'=>sanitize_textarea_field(wp_unslash($_POST['brief']??''))]);
+    wp_update_post(['ID'=>$id,'post_content'=>hcdecor_ops_limit_text(wp_unslash($_POST['brief']??''),20000)]);
     hcdecor_ops_save_fields($id,$_POST);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$id.'&saved=1')); exit;
 });
@@ -161,7 +161,7 @@ add_action('rest_api_init',function(){
                 if(in_array($current,['approved','published_web'],true)) return new WP_Error('immutable','Approved or published jobs must be returned for changes before editing',['status'=>409]);
                 $p=$r->get_json_params()?:[];
                 if(isset($p['agent_status'])){ $agent_status=sanitize_key($p['agent_status']); $current=(string)get_post_meta($id,'hc_agent_status',true); if($agent_status!==$current) return new WP_Error('status_read_only','Workflow status is read-only on this endpoint; use worker lifecycle routes',['status'=>409]); }
-                if(isset($p['brief'])) wp_update_post(['ID'=>$id,'post_content'=>sanitize_textarea_field($p['brief'])]);
+                if(isset($p['brief'])) wp_update_post(['ID'=>$id,'post_content'=>hcdecor_ops_limit_text(is_scalar($p['brief'])?(string)$p['brief']:'',20000)]);
                 hcdecor_ops_save_fields($id,$p);
             }
             $post=get_post($id);

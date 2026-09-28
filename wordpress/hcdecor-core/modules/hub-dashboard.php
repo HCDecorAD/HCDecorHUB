@@ -94,16 +94,16 @@ add_action('admin_post_hcdecor_hub_sync_projects',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_hub_sync_projects');
     $result=function_exists('hcdecor_project_vault_sync_all')?hcdecor_project_vault_sync_all(100):new WP_Error('vault','Project Vault unavailable.');
-    if(is_wp_error($result)) update_option('hcdecor_hub_action_error',$result->get_error_message(),false);
+    if(is_wp_error($result)) update_option('hcdecor_hub_action_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($result->get_error_message()):sanitize_text_field($result->get_error_message()),false);
     else delete_option('hcdecor_hub_action_error');
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-hub&hub_action=projects')); exit;
 });
 
 add_action('admin_post_hcdecor_hub_run_inbox',function(){
-    if(!current_user_can('upload_files')) wp_die('Forbidden');
+    if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_hub_run_inbox');
-    $result=function_exists('hcdecor_drive_inbox_run')?hcdecor_drive_inbox_run():new WP_Error('inbox','Drive Inbox unavailable.');
-    if(is_wp_error($result)) update_option('hcdecor_hub_action_error',$result->get_error_message(),false);
+    $result=function_exists('hcdecor_drive_inbox_scan')?hcdecor_drive_inbox_scan():new WP_Error('inbox','Drive Inbox unavailable.');
+    if(is_wp_error($result)) update_option('hcdecor_hub_action_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($result->get_error_message()):sanitize_text_field($result->get_error_message()),false);
     else delete_option('hcdecor_hub_action_error');
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-hub&hub_action=inbox')); exit;
 });
@@ -114,7 +114,7 @@ add_action('admin_post_hcdecor_hub_backup_now',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_hub_backup_now');
     $result=function_exists('hcdecor_backup_save')?hcdecor_backup_save():new WP_Error('backup','Backup unavailable.');
-    if(is_wp_error($result)) update_option('hcdecor_hub_action_error',$result->get_error_message(),false);
+    if(is_wp_error($result)) update_option('hcdecor_hub_action_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($result->get_error_message()):sanitize_text_field($result->get_error_message()),false);
     else delete_option('hcdecor_hub_action_error');
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-hub&hub_action=backup')); exit;
 });
