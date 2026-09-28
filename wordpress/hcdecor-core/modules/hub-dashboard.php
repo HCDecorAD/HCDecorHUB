@@ -75,11 +75,8 @@ add_action('admin_post_hcdecor_hub_safe_maintenance',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_hub_safe_maintenance');
 
-    $result=['sync'=>null,'schedules'=>null,'health'=>null,'time'=>current_time('mysql')];
+    $result=['schedules'=>null,'health'=>null,'time'=>current_time('mysql')];
 
-    if(function_exists('hcdecor_run_background_sync')){
-        $result['sync']=(bool)hcdecor_run_background_sync();
-    }
     if(function_exists('hcdecor_health_repair_schedules')){
         $result['schedules']=hcdecor_health_repair_schedules();
     }

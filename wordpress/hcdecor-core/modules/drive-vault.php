@@ -613,7 +613,7 @@ add_action('rest_api_init',function(){
             return rest_ensure_response([
                 'configured'=>hcdecor_drive_configured(),
                 'connected'=>!is_wp_error($test),
-                'folders'=>hcdecor_drive_folders(),
+                'managed_folder_count'=>count(hcdecor_drive_folders()),
                 'error'=>is_wp_error($test)?$test->get_error_message():''
             ]);
         }
