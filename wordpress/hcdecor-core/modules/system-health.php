@@ -127,7 +127,7 @@ function hcdecor_health_snapshot(){
     $cron_required['automation']=!empty($auto_settings['enabled']);
     $cron_required['evergreen']=!empty($auto_settings['evergreen_enabled']);
     $cron_required['drive_inbox']=!empty($inbox_settings['enabled']);
-    $bridge=(string)get_option('hcdecor_bridge_token','');
+    $bridge_configured=function_exists('hcdecor_ops_bridge_configured')?hcdecor_ops_bridge_configured():((string)get_option('hcdecor_bridge_token','')!=='');
     $actionable_blocked=hcdecor_health_actionable_blocked_count();
     $auto_recovered_24h=0;
     $auto_recovery_reasons=['running_timeout'=>0,'missing_started_at'=>0];
@@ -259,7 +259,7 @@ function hcdecor_health_snapshot(){
     if(!$worker_mutex_sweep_fresh && !$worker_sweep_next_valid && !$worker_sweep_mutex_running) $issues[]='Worker mutex sweep audit is stale without valid refresh';
     if($worker_mutex_sweep_fresh && !empty($worker_mutex_sweep['limited']) && !$worker_sweep_next_valid && !$worker_sweep_mutex_running) $issues[]='Worker mutex sweep is bounded without valid continuation';
     if(empty($automation_last_change['cleanup_limited']) && wp_next_scheduled('hcdecor_automation_cleanup_watchdog')) $issues[]='Automation cleanup watchdog is orphaned';
-    if($bridge==='') $issues[]='Agent Bridge token missing';
+    if(!$bridge_configured) $issues[]='Agent Bridge token missing';
     if($drive_configured && $backup_ts===0) $issues[]='Backup has never completed';
     elseif($drive_configured && $backup_age>129600) $issues[]='Backup is stale (>36h)';
     if($drive_configured && $project_total>0 && $vault_synced<$project_total) $issues[]='Project Vault pending: '.($project_total-$vault_synced);

@@ -47,6 +47,10 @@ findstr /c:"AI worker master switch is disabled." "wordpress\hcdecor-core\module
 findstr /c:"if(empty($settings['enabled'])) return [];" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 74
 findstr /c:"$current['webhook_enabled']=false;" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 75
 findstr /c:"$current['evergreen_enabled']=false;" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 76
+findstr /c:"defined('HCDECOR_OPS_API_TOKEN')" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 77
+findstr /c:"current_user_can('manage_options')" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 78
+findstr /c:"HTTP_AUTHORIZATION" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 79
+findstr /c:"hcdecor_ops_bridge_configured" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 80
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\setup-hcdecor.cmd" >nul || exit /b 54
