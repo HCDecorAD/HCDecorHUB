@@ -1,0 +1,14 @@
+{
+  "schema_version":"1.0.0",
+  "checks":{
+    "registry":["all-site-ids-unique","production-url-present","repository-authority-known"],
+    "security":["no-secrets-in-source","restricted-actions-guarded"],
+    "frontend":["mobile","tablet","desktop","navigation","external-links"],
+    "release":["rollback-present","preview-verified","production-url-verified","audit-written"]
+  },
+  "site_specific":{
+    "GSC":["11-hotspots","videos-1-to-10","hotspot-11-no-video","mobile-landscape-video-close"],
+    "AMO":["no-fake-commerce","four-footwear-categories","responsive"],
+    "HCDECOR":["wordpress-authority","elementor-compatible","public-ui-not-command-center-only"]
+  }
+}
