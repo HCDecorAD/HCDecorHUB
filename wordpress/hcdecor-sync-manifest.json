@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.052",
+    "version":  "2026.09.29.053",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -94,7 +94,7 @@
                   {
                       "path":  "modules/full-operations.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/full-operations.php",
-                      "git_sha1":  "54489e78f11bd70a7afac5a0f229b2842a423684"
+                      "git_sha1":  "3ab9a372158a8cde23c9ace96a47c14e1a5cb133"
                   },
                   {
                       "path":  "modules/connection-center.php",
@@ -109,17 +109,17 @@
                   {
                       "path":  "modules/automation-hub.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/automation-hub.php",
-                      "git_sha1":  "cc6bd6c7a3fcf2456bc6ba2c9d52d93d7ff3dba6"
+                      "git_sha1":  "3f22d42851043ca077446d8bc46a86ae0f5cc6a7"
                   },
                   {
                       "path":  "modules/automation-recipes.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/automation-recipes.php",
-                      "git_sha1":  "a91252ce62f8635302d0871f0acf156a00f63073"
+                      "git_sha1":  "e7aa7baa67d2c6889726c7f0d3b67143b3055a59"
                   },
                   {
                       "path":  "modules/drive-vault.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/drive-vault.php",
-                      "git_sha1":  "d2d2c65f11f49a526b0c5ebc89fd2bd65c3d1d97"
+                      "git_sha1":  "ff4cd2daffa5b370d0610a726156d83bb613be7a"
                   },
                   {
                       "path":  "modules/ai-workspace.php",
@@ -129,7 +129,7 @@
                   {
                       "path":  "modules/system-health.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/system-health.php",
-                      "git_sha1":  "7787779b871c34639db5c018411dca074984485a"
+                      "git_sha1":  "6c9d92f3d150d1b51cae9c5974c7083e6153c484"
                   },
                   {
                       "path":  "modules/data-backup.php",

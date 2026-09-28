@@ -83,7 +83,7 @@ findstr /c:"managed_folder_count" "wordpress\hcdecor-core\modules\drive-vault.ph
 findstr /c:"hcdecor_run_background_sync" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul && exit /b 139
 findstr /c:"!=='hc_project'" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 124
 findstr /c:"evergreen_enabled" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 125
-findstr /c:"cron_required['evergreen']" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 137
+findstr /c:"function hcdecor_health_required_schedules" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 137
 findstr /c:"hcdecor_sync_trusted_raw_url" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 112
 findstr /c:".bak-" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 140
 findstr /c:".hcbak" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 141
@@ -97,7 +97,7 @@ findstr /c:"array_intersect(['web','facebook','tiktok','youtube']" "wordpress\hc
 findstr /c:"hcdecor_drive_workflow_auto_sync_enabled',false" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 105
 findstr /c:"Automatic Drive workflow sync is disabled." "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 107
 findstr /c:"hcdecor_conn_public_https($new['webhook_url'])" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 108
-findstr /c:"Explicit production approval is required to retry social publishing." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 161
+findstr /c:"Explicit production approval is required to retry outbound delivery." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 161
 findstr /c:"production_approval_consumed_at" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 165
 findstr /c:"Social outbound attempted; fresh production approval is required before retry." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 166
 findstr /c:"Invalid workflow trigger" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 167
@@ -135,6 +135,14 @@ findstr /c:"current_user_can('edit_post',$id)" "wordpress\hcdecor-core\modules\m
 findstr /c:"delete_option('hcdecor_social_test_'.$channel)" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 187
 findstr /c:"delete_transient('hcdecor_drive_access_token')" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 188
 findstr /c:"delete_option('hcdecor_drive_tested_at')" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 189
+findstr /c:"Fresh production approval is required for webhook outbound" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 190
+findstr /c:"Webhook outbound attempted; fresh production approval is required before retry." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 191
+findstr /c:"Explicit production approval is required for recipe webhook delivery." "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 192
+findstr /c:"$outbound_context=$context;" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 193
+findstr /c:"hcdecor_full_audit_sanitize" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 194
+findstr /c:"return '[REDACTED]'" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 195
+findstr /c:"$cron_required=hcdecor_health_required_schedules();" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 196
+findstr /c:"$required=hcdecor_health_required_schedules();" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 197
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

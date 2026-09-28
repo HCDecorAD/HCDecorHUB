@@ -155,9 +155,15 @@ function hcdecor_recipe_execute_action($action,$context){
     }
     if($type==='send_webhook'){
         if(!function_exists('hcdecor_auto_enqueue')) return new WP_Error('automation','Automation queue unavailable');
+        if(empty($context['production_approved'])) return new WP_Error('approval','Explicit production approval is required for recipe webhook delivery.');
+        $outbound_context=$context;
+        unset($outbound_context['production_approved'],$outbound_context['production_approved_by'],$outbound_context['production_approved_at']);
         return hcdecor_auto_enqueue('webhook',[
             'event'=>(string)($action['event']??'hcdecor.recipe'),
-            'data'=>$context
+            'data'=>$outbound_context,
+            'production_approved'=>true,
+            'production_approved_by'=>(int)($context['production_approved_by']??get_current_user_id()),
+            'production_approved_at'=>(string)($context['production_approved_at']??current_time('mysql'))
         ],time());
     }
     return new WP_Error('action','Unknown recipe action: '.$type);

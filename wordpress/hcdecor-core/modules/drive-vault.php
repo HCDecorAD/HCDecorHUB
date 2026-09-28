@@ -138,6 +138,7 @@ add_action('admin_post_hcdecor_drive_disconnect',function(){
     delete_option('hcdecor_drive_connected_at');
     delete_option('hcdecor_drive_test_status');
     delete_option('hcdecor_drive_test_message');
+    delete_option('hcdecor_drive_tested_at');
     delete_transient('hcdecor_drive_access_token');
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&disconnected=1')); exit;
 });

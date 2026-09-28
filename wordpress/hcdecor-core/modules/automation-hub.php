@@ -157,8 +157,22 @@ function hcdecor_auto_run_task($task_id){
             hcdecor_auto_log($task_id,'blocked','Webhook outbound is OFF');
             return false;
         }
+        if(empty($payload['production_approved'])){
+            update_post_meta($task_id,'hc_auto_status','blocked');
+            hcdecor_auto_log($task_id,'blocked','Fresh production approval is required for webhook outbound');
+            return false;
+        }
+        // Webhook approval is one-shot: consume before the request because a network failure can be ambiguous.
+        $payload['production_approved']=false;
+        $payload['production_approval_consumed_at']=current_time('mysql');
+        wp_update_post(['ID'=>$task_id,'post_content'=>wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)]);
         $r=hcdecor_auto_webhook((string)($payload['event']??'hcdecor.event'),(array)($payload['data']??[]));
-        if(is_wp_error($r)) return hcdecor_auto_retry($task_id,$r->get_error_message());
+        if(is_wp_error($r)){
+            update_post_meta($task_id,'hc_auto_status','failed');
+            update_post_meta($task_id,'hc_auto_last_error',sanitize_text_field($r->get_error_message()));
+            hcdecor_auto_log($task_id,'failed','Webhook outbound attempted; fresh production approval is required before retry.');
+            return false;
+        }
     }
     elseif($type==='social_publish'){
         if(empty($payload['production_approved'])){
@@ -349,15 +363,8 @@ add_action('hcdecor_evergreen_tick',function(){
 });
 
 add_action('hcdecor_after_web_publish',function($job_id,$project_id){
-    $s=hcdecor_auto_settings();
-    if(empty($s['enabled'])) return;
-    if(!empty($s['social_enabled'])){
-        $prepared=hcdecor_auto_prepare_social($project_id,$job_id);
-        if(!is_wp_error($prepared)) hcdecor_auto_enqueue('social_publish',$prepared,time()+60,'social:publish:'.$job_id);
-    }
-    if(!empty($s['webhook_enabled']) && !empty($s['webhook_url'])){
-        hcdecor_auto_enqueue('webhook',['event'=>'hcdecor.web_published','data'=>['job_id'=>$job_id,'project_id'=>$project_id,'url'=>get_permalink($project_id)]],time(),'webhook:web:'.$job_id);
-    }
+    // Social and webhook delivery are separate production actions.
+    // Do not enqueue outbound tasks merely because Web publishing completed; each requires fresh explicit approval.
 },10,2);
 
 add_action('admin_menu',function(){
@@ -451,8 +458,8 @@ add_action('admin_post_hcdecor_automation_retry',function(){
     if(empty($s['enabled'])) wp_die('Automation HUB is disabled.');
     $type=(string)get_post_meta($id,'hc_auto_type',true);
     if($type==='social_publish' && empty($s['social_enabled'])) wp_die('Social outbound is disabled.');
-    if($type==='social_publish'){
-        if((string)($_POST['production_approved']??'')!=='1') wp_die('Explicit production approval is required to retry social publishing.');
+    if(in_array($type,['social_publish','webhook'],true)){
+        if((string)($_POST['production_approved']??'')!=='1') wp_die('Explicit production approval is required to retry outbound delivery.');
         $payload=hcdecor_auto_payload($id);
         $payload['production_approved']=true;
         $payload['production_approved_by']=get_current_user_id();
