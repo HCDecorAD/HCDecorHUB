@@ -51,6 +51,7 @@ add_action('admin_post_hcdecor_workspace_create',function(){
     if($channels) update_post_meta($job,'hc_channels',$channels);
 
     if(!empty($_POST['save_drive']) && function_exists('hcdecor_drive_configured') && hcdecor_drive_configured()){
+        update_post_meta($job,'hc_workspace_drive_save_requested_at',time());
         wp_schedule_single_event(time()+90,'hcdecor_workspace_drive_save',[(int)$job]);
     }
 
@@ -59,8 +60,12 @@ add_action('admin_post_hcdecor_workspace_create',function(){
 });
 
 add_action('hcdecor_workspace_drive_save',function($job_id){
+    $job_id=(int)$job_id;
+    $requested_at=(int)get_post_meta($job_id,'hc_workspace_drive_save_requested_at',true);
+    if(!$requested_at || $requested_at<(time()-900)) return;
+    delete_post_meta($job_id,'hc_workspace_drive_save_requested_at');
     if(function_exists('hcdecor_drive_save_job') && function_exists('hcdecor_drive_configured') && hcdecor_drive_configured()){
-        hcdecor_drive_save_job((int)$job_id,true);
+        hcdecor_drive_save_job($job_id,true);
     }
 },10,1);
 

@@ -46,7 +46,7 @@ function hcdecor_recipe_defaults(){
         [
             'id'=>'project_to_ai',
             'name'=>'Project + Media → HUB Agent',
-            'enabled'=>true,
+            'enabled'=>false,
             'trigger'=>'project_media_ready',
             'conditions'=>[['field'=>'media_count','op'=>'>','value'=>0]],
             'actions'=>[['type'=>'create_content_job'],['type'=>'run_ai']]
@@ -62,7 +62,7 @@ function hcdecor_recipe_defaults(){
         [
             'id'=>'review_to_drive',
             'name'=>'AI Review → Save Drive Vault',
-            'enabled'=>true,
+            'enabled'=>false,
             'trigger'=>'content_review',
             'conditions'=>[],
             'actions'=>[['type'=>'save_drive']]

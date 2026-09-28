@@ -90,9 +90,13 @@ function hcdecor_health_modules(){
 }
 
 function hcdecor_health_provider($provider){
-    if(!function_exists('hcdecor_ai_available') || !hcdecor_ai_available($provider)) return 'off';
+    $configured=function_exists('hcdecor_ai_available') && hcdecor_ai_available($provider);
     $test=(string)get_option('hcdecor_ai_'.$provider.'_test_status','');
-    return $test==='ok'?'ok':($test==='error'?'error':'configured');
+    return [
+        'configured'=>$configured,
+        'config_state'=>$configured?'configured':'requires_credentials',
+        'live_health'=>!$configured?'not_checked':($test==='ok'?'healthy':($test==='error'?'unreachable':'not_checked'))
+    ];
 }
 
 function hcdecor_health_actionable_blocked_count(){
@@ -227,8 +231,8 @@ function hcdecor_health_snapshot(){
     $issues=[];
     foreach($modules as $name=>$ok) if(!$ok) $issues[]='Missing module: '.$name;
     foreach($crons as $name=>$x) if(!empty($cron_required[$name]) && !$x['scheduled']) $issues[]='Cron missing: '.$name;
-    if(hcdecor_health_provider('openai')==='error') $issues[]='OpenAI test error';
-    if(hcdecor_health_provider('gemini')==='error') $issues[]='Gemini test error';
+    if(hcdecor_health_provider('openai')['live_health']==='unreachable') $issues[]='OpenAI test error';
+    if(hcdecor_health_provider('gemini')['live_health']==='unreachable') $issues[]='Gemini test error';
     if($drive_configured && $drive_test==='error') $issues[]='Google Drive connection error';
     if($auto['failed']>0) $issues[]='Automation failed: '.$auto['failed'];
     if($actionable_blocked>0) $issues[]='Automation blocked: '.$actionable_blocked;
@@ -291,7 +295,7 @@ function hcdecor_health_snapshot(){
     $score=100;
     $score-=count(array_filter($modules,function($v){return !$v;}))*8;
     $score-=count(array_filter($crons,function($v,$name)use($cron_required){return !empty($cron_required[$name]) && !$v['scheduled'];},ARRAY_FILTER_USE_BOTH))*5;
-    if(in_array('error',[hcdecor_health_provider('openai'),hcdecor_health_provider('gemini')],true)) $score-=10;
+    if(in_array('unreachable',[hcdecor_health_provider('openai')['live_health'],hcdecor_health_provider('gemini')['live_health']],true)) $score-=10;
     if($drive_configured && $drive_test==='error') $score-=10;
     if($auto['failed']>0) $score-=min(15,$auto['failed']*3);
     if($actionable_blocked>0) $score-=min(10,$actionable_blocked*2);
@@ -630,8 +634,8 @@ function hcdecor_system_health_page(){
 
       <div class="hch-cols">
         <section class="hch-card"><h2>Core Services</h2><ul class="hch-list">
-          <li>OpenAI: <strong><?php echo esc_html(strtoupper($h['ai']['openai']));?></strong></li>
-          <li>Gemini: <strong><?php echo esc_html(strtoupper($h['ai']['gemini']));?></strong></li>
+          <li>OpenAI config: <strong><?php echo esc_html(strtoupper($h['ai']['openai']['config_state']));?></strong> · live: <strong><?php echo esc_html(strtoupper($h['ai']['openai']['live_health']));?></strong></li>
+          <li>Gemini config: <strong><?php echo esc_html(strtoupper($h['ai']['gemini']['config_state']));?></strong> · live: <strong><?php echo esc_html(strtoupper($h['ai']['gemini']['live_health']));?></strong></li>
           <li>Drive Vault config: <strong><?php echo esc_html(strtoupper($h['drive']['config_state']));?></strong> · live: <strong><?php echo esc_html(strtoupper($h['drive']['live_health']));?></strong></li>
           <li>Agent Bridge: <strong><?php echo $h['bridge']['ready']?'READY':'MISSING';?></strong></li>
           <li>Web Publisher: <strong><?php echo $h['publisher']['ready']?'READY':'MISSING';?></strong></li>
