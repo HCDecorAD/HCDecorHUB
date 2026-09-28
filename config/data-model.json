@@ -1,0 +1,19 @@
+{
+  "schema_version":"1.0.0",
+  "entities":{
+    "workspace":{"required":["workspace_id","name","status"]},
+    "website":{"required":["site_id","workspace_id","name","production_url","platform","status"]},
+    "project":{"required":["project_id","workspace_id","site_id","name","status","created_at","updated_at"]},
+    "lead":{"required":["lead_id","workspace_id","source","status","created_at"]},
+    "media":{"required":["media_id","workspace_id","project_id","type","source","status"]},
+    "content":{"required":["content_id","workspace_id","site_id","type","status","created_at","updated_at"]},
+    "agent_run":{"required":["run_id","workspace_id","site_id","agent","action","status","created_at"]},
+    "audit_event":{"schema_ref":"config/audit-schema.json"}
+  },
+  "status_sets":{
+    "project":["draft","active","review","completed","archived"],
+    "lead":["new","qualified","contacted","won","lost"],
+    "content":["draft","review","approved","published","archived"],
+    "agent_run":["planned","preview","approved","running","verified","failed","rolled_back"]
+  }
+}
