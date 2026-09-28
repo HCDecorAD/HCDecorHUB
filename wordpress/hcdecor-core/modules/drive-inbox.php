@@ -73,7 +73,7 @@ function hcdecor_drive_inbox_link_project($attachment_id,$project_id){
     update_post_meta($attachment_id,'hc_project_id',$project_id);
 
     $gallery=(array)get_post_meta($project_id,'hc_project_gallery',true);
-    $gallery=array_values(array_unique(array_filter(array_map('intval',array_merge($gallery,[$attachment_id])))));
+    $gallery=array_slice(array_values(array_filter(array_unique(array_map('intval',array_merge($gallery,[$attachment_id]))),function($id){ return get_post_type($id)==='attachment'; })),0,60);
     update_post_meta($project_id,'hc_project_gallery',$gallery);
     update_post_meta($project_id,'hc_gallery_ids',$gallery);
 

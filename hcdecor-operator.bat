@@ -157,6 +157,15 @@ findstr /c:"array_unique(array_map('intval',(array)($snapshot['gallery']" "wordp
 findstr /c:"if($thumb && wp_attachment_is_image($thumb))" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 209
 findstr /c:"never restore executable recipe structures raw" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 210
 findstr /c:"$default['enabled']=false;" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 211
+findstr /c:"array_slice((array)$v,-500,null,true)" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 212
+findstr /c:" Enabled</label>" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 213
+findstr /c:"checked> Enabled" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul && exit /b 217
+findstr /c:"array_slice(array_values(array_filter(array_unique(array_merge" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 214
+findstr /c:"array_slice(array_values(array_filter(array_unique(array_map('intval',array_merge" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 215
+findstr /c:"else delete_post_thumbnail($id);" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 216
+findstr /c:"Explicit approval is required for Drive project writes." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 218
+findstr /c:"Explicit approval is required for bulk Drive project writes." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 219
+findstr /c:"Explicit approval is required for Drive job writes." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 220
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

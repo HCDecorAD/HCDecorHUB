@@ -653,6 +653,7 @@ add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/drive/jobs/(?P<id>\d+)/save',[
         'methods'=>'POST','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
+            if(!rest_sanitize_boolean($r->get_param('production_approved'))) return new WP_Error('approval','Explicit approval is required for Drive job writes.',['status'=>403]);
             $res=hcdecor_drive_save_job((int)$r['id'],true);
             return is_wp_error($res)?$res:rest_ensure_response($res);
         }

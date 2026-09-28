@@ -19,7 +19,7 @@ add_action('admin_post_hcdecor_media_assign',function(){
     $ids=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)($_POST['media_ids']??[]))),function($id){ return get_post_type($id)==='attachment' && current_user_can('edit_post',$id); })),0,60);
     if(!$project || get_post_type($project)!=='hc_project' || !current_user_can('edit_post',$project)) wp_die('Invalid project');
     $existing=(array)get_post_meta($project,'hc_project_gallery',true);
-    $merged=array_values(array_unique(array_merge(array_map('intval',$existing),$ids)));
+    $merged=array_slice(array_values(array_filter(array_unique(array_merge(array_map('intval',$existing),$ids)),function($id){ return get_post_type($id)==='attachment'; })),0,60);
     update_post_meta($project,'hc_project_gallery',$merged);
     update_post_meta($project,'hc_gallery_ids',$merged);
     if(!has_post_thumbnail($project) && !empty($ids[0]) && wp_attachment_is_image($ids[0])) set_post_thumbnail($project,$ids[0]);

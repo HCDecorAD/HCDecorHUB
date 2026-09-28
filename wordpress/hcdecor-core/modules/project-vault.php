@@ -186,8 +186,14 @@ function hcdecor_project_vault_import($file_id){
 
     $featured=(array)($d['featured']??[]);
     $featured_id=hcdecor_project_vault_find_media((string)($featured['drive_file_id']??''),true);
-    if($featured_id) set_post_thumbnail($id,$featured_id);
-    elseif($gallery && !has_post_thumbnail($id)) set_post_thumbnail($id,$gallery[0]);
+    if($featured_id && wp_attachment_is_image($featured_id)){
+        set_post_thumbnail($id,$featured_id);
+    }else{
+        $fallback=0;
+        foreach($gallery as $mid){ if(wp_attachment_is_image($mid)){ $fallback=(int)$mid; break; } }
+        if($fallback) set_post_thumbnail($id,$fallback);
+        else delete_post_thumbnail($id);
+    }
 
     if(taxonomy_exists('hc_project_type') && !empty($project['types'])){
         wp_set_object_terms($id,array_map('sanitize_title',(array)$project['types']),'hc_project_type',false);
@@ -328,6 +334,7 @@ add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/projects/(?P<id>\d+)/drive-save',[
         'methods'=>'POST','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
+            if(!rest_sanitize_boolean($r->get_param('production_approved'))) return new WP_Error('approval','Explicit approval is required for Drive project writes.',['status'=>403]);
             $res=hcdecor_project_vault_save((int)$r['id'],true);
             return is_wp_error($res)?$res:rest_ensure_response($res);
         }
@@ -335,6 +342,7 @@ add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/projects/drive-sync-all',[
         'methods'=>'POST','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
+            if(!rest_sanitize_boolean($r->get_param('production_approved'))) return new WP_Error('approval','Explicit approval is required for bulk Drive project writes.',['status'=>403]);
             $res=hcdecor_project_vault_sync_all((int)($r->get_param('limit')?:100));
             return is_wp_error($res)?$res:rest_ensure_response($res);
         }
