@@ -38,10 +38,10 @@ add_action('admin_post_hcdecor_workspace_create',function(){
     check_admin_referer('hcdecor_workspace_create');
 
     $project=(int)($_POST['project_id']??0);
-    if(!$project || get_post_type($project)!=='hc_project') wp_die('Invalid project');
+    if(!$project || get_post_type($project)!=='hc_project' || !current_user_can('edit_post',$project)) wp_die('Invalid project');
 
     $brief=sanitize_textarea_field(wp_unslash($_POST['brief']??''));
-    $media=array_values(array_unique(array_filter(array_map('intval',(array)($_POST['media_ids']??[])))));
+    $media=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)($_POST['media_ids']??[]))),function($id){ return get_post_type($id)==='attachment' && current_user_can('edit_post',$id); })),0,60);
     $channels=array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)($_POST['channels']??[])));
 
     if(!function_exists('hcdecor_agent_create_job')) wp_die('Agent intake unavailable.');

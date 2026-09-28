@@ -98,6 +98,11 @@ findstr /c:"hcdecor_drive_workflow_auto_sync_enabled',false" "wordpress\hcdecor-
 findstr /c:"Automatic Drive workflow sync is disabled." "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 107
 findstr /c:"hcdecor_conn_public_https($new['webhook_url'])" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 108
 findstr /c:"Explicit production approval is required to retry social publishing." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 161
+findstr /c:"production_approval_consumed_at" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 165
+findstr /c:"Social outbound attempted; fresh production approval is required before retry." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 166
+findstr /c:"Invalid workflow trigger" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 167
+findstr /c:"Invalid workflow action" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 168
+findstr /c:"Invalid inbox source" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 169
 findstr /c:"Invalid social publish schedule." "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 162
 findstr /c:"get_post_type($id)==='attachment'" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 163
 findstr /c:"['facebook','tiktok','youtube']" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 164
@@ -110,6 +115,13 @@ findstr /c:"HTTP_X_HCDECOR_BRIDGE" "wordpress\hcdecor-core\modules\content-opera
 findstr /c:"HTTP_AUTHORIZATION" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 111
 findstr /c:"hc_content_job') return;" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 115
 findstr /c:"get_post_type($id)==='attachment'" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 151
+findstr /c:"current_user_can('edit_post',$project)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 170
+findstr /c:"current_user_can('edit_post',$id)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 171
+findstr /c:"current_user_can('edit_post',$project)" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 172
+findstr /c:"current_user_can('edit_post',$id)" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 173
+findstr /c:"current_user_can('edit_post',$id)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 174
+findstr /c:"current_user_can('edit_post',$id)" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 175
+findstr /c:"current_user_can('edit_post',$id)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 176
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

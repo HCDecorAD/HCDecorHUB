@@ -5,13 +5,19 @@ function hcdecor_ops_inbox(){ $v=get_option('hcdecor_ops_inbox',array()); return
 add_action('admin_post_hcdecor_ops_flow_save',function(){
  if(!current_user_can('manage_options')) wp_die('Forbidden'); check_admin_referer('hcdecor_ops_flow_save');
  $v=hcdecor_ops_flows(); $id='flow_'.wp_generate_password(8,false,false);
- $v[$id]=array('name'=>sanitize_text_field(wp_unslash(isset($_POST['name'])?$_POST['name']:'')),'trigger'=>sanitize_key(isset($_POST['trigger'])?$_POST['trigger']:''),'filter'=>sanitize_text_field(wp_unslash(isset($_POST['filter'])?$_POST['filter']:'')),'action'=>sanitize_key(isset($_POST['flow_action'])?$_POST['flow_action']:''),'enabled'=>!empty($_POST['enabled']));
+ $trigger=sanitize_key(isset($_POST['trigger'])?$_POST['trigger']:'');
+ $action=sanitize_key(isset($_POST['flow_action'])?$_POST['flow_action']:'');
+ if(!in_array($trigger,array('project_created','content_approved','lead_created','schedule'),true)) wp_die('Invalid workflow trigger');
+ if(!in_array($action,array('ai_content','web_publish','social_publish','notify'),true)) wp_die('Invalid workflow action');
+ $v[$id]=array('name'=>sanitize_text_field(wp_unslash(isset($_POST['name'])?$_POST['name']:'')),'trigger'=>$trigger,'filter'=>sanitize_text_field(wp_unslash(isset($_POST['filter'])?$_POST['filter']:'')),'action'=>$action,'enabled'=>!empty($_POST['enabled']));
  update_option('hcdecor_ops_flows',$v,false); wp_safe_redirect(admin_url('admin.php?page=hcdecor-ops')); exit;
 });
 add_action('admin_post_hcdecor_ops_inbox_add',function(){
  if(!current_user_can('edit_posts')) wp_die('Forbidden'); check_admin_referer('hcdecor_ops_inbox_add');
  $v=hcdecor_ops_inbox(); $id='msg_'.wp_generate_password(8,false,false);
- $v[$id]=array('name'=>sanitize_text_field(wp_unslash(isset($_POST['name'])?$_POST['name']:'')),'source'=>sanitize_key(isset($_POST['source'])?$_POST['source']:'manual'),'contact'=>sanitize_text_field(wp_unslash(isset($_POST['contact'])?$_POST['contact']:'')),'message'=>sanitize_textarea_field(wp_unslash(isset($_POST['message'])?$_POST['message']:'')),'status'=>'new','at'=>current_time('mysql'));
+ $source=sanitize_key(isset($_POST['source'])?$_POST['source']:'manual');
+ if(!in_array($source,array('website','facebook','tiktok','zalo','manual'),true)) wp_die('Invalid inbox source');
+ $v[$id]=array('name'=>sanitize_text_field(wp_unslash(isset($_POST['name'])?$_POST['name']:'')),'source'=>$source,'contact'=>sanitize_text_field(wp_unslash(isset($_POST['contact'])?$_POST['contact']:'')),'message'=>sanitize_textarea_field(wp_unslash(isset($_POST['message'])?$_POST['message']:'')),'status'=>'new','at'=>current_time('mysql'));
  update_option('hcdecor_ops_inbox',$v,false); wp_safe_redirect(admin_url('admin.php?page=hcdecor-ops')); exit;
 });
 add_action('admin_post_hcdecor_ops_to_lead',function(){

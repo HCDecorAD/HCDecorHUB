@@ -279,6 +279,7 @@ add_action('admin_post_hcdecor_project_vault_save',function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
     $id=(int)($_POST['project_id']??0);
     check_admin_referer('hcdecor_project_vault_save_'.$id);
+    if(get_post_type($id)!=='hc_project' || !current_user_can('edit_post',$id)) wp_die('Invalid project');
     $r=hcdecor_project_vault_save($id,true);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-project-vault&'.(is_wp_error($r)?'failed=1':'saved=1'))); exit;
 });

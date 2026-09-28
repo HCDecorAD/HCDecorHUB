@@ -171,9 +171,17 @@ function hcdecor_auto_run_task($task_id){
             hcdecor_auto_log($task_id,'blocked','Social outbound is OFF');
             return false;
         }
-        // Connector adapter is intentionally separate. No direct social API call until credentials are connected.
+        // Production approval is one-shot. Consume it before the outbound attempt so network ambiguity cannot auto-publish twice.
+        $payload['production_approved']=false;
+        $payload['production_approval_consumed_at']=current_time('mysql');
+        wp_update_post(['ID'=>$task_id,'post_content'=>wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)]);
         $r=hcdecor_auto_webhook('hcdecor.social_publish',$payload);
-        if(is_wp_error($r)) return hcdecor_auto_retry($task_id,$r->get_error_message());
+        if(is_wp_error($r)){
+            update_post_meta($task_id,'hc_auto_status','failed');
+            update_post_meta($task_id,'hc_auto_last_error',sanitize_text_field($r->get_error_message()));
+            hcdecor_auto_log($task_id,'failed','Social outbound attempted; fresh production approval is required before retry.');
+            return false;
+        }
     }
     elseif($type==='evergreen'){
         if(empty($settings['evergreen_enabled']) || empty($settings['social_enabled'])){

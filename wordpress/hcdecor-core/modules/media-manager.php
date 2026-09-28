@@ -16,8 +16,8 @@ add_action('admin_post_hcdecor_media_assign',function(){
     if(!current_user_can('upload_files')) wp_die('Forbidden');
     check_admin_referer('hcdecor_media_assign');
     $project=(int)($_POST['project_id']??0);
-    $ids=array_values(array_unique(array_filter(array_map('intval',(array)($_POST['media_ids']??[])))));
-    if(!$project || get_post_type($project)!=='hc_project') wp_die('Invalid project');
+    $ids=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)($_POST['media_ids']??[]))),function($id){ return get_post_type($id)==='attachment' && current_user_can('edit_post',$id); })),0,60);
+    if(!$project || get_post_type($project)!=='hc_project' || !current_user_can('edit_post',$project)) wp_die('Invalid project');
     $existing=(array)get_post_meta($project,'hc_project_gallery',true);
     $merged=array_values(array_unique(array_merge(array_map('intval',$existing),$ids)));
     update_post_meta($project,'hc_project_gallery',$merged);
@@ -39,7 +39,7 @@ add_action('admin_post_hcdecor_media_meta',function(){
     if(!current_user_can('upload_files')) wp_die('Forbidden');
     $id=(int)($_POST['attachment_id']??0);
     check_admin_referer('hcdecor_media_meta_'.$id);
-    if(get_post_type($id)!=='attachment') wp_die('Invalid media');
+    if(get_post_type($id)!=='attachment' || !current_user_can('edit_post',$id)) wp_die('Invalid media');
     wp_update_post([
         'ID'=>$id,
         'post_title'=>sanitize_text_field(wp_unslash($_POST['title']??'')),
