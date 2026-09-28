@@ -54,6 +54,11 @@ function hcdecor_drive_secret($name){
 function hcdecor_drive_configured(){
     return hcdecor_drive_secret('client_id')!=='' && hcdecor_drive_secret('client_secret')!=='' && hcdecor_drive_secret('refresh_token')!=='';
 }
+function hcdecor_drive_safe_error($message){
+    $text=sanitize_text_field((string)$message);
+    $text=preg_replace('/\b(?:ya29\.[A-Za-z0-9._-]{12,}|Bearer\s+[A-Za-z0-9._~+\/-]{12,}|1\/\/[A-Za-z0-9_-]{12,})\b/i','[REDACTED]',$text);
+    return function_exists('mb_substr')?mb_substr($text,0,500):substr($text,0,500);
+}
 
 function hcdecor_drive_oauth_redirect_uri(){
     return admin_url('admin-post.php?action=hcdecor_drive_oauth_callback');
@@ -105,14 +110,14 @@ add_action('admin_post_hcdecor_drive_oauth_callback',function(){
     ]);
     if(is_wp_error($r)){
         update_option('hcdecor_drive_test_status','error',false);
-        update_option('hcdecor_drive_test_message',$r->get_error_message(),false);
+        update_option('hcdecor_drive_test_message',hcdecor_drive_safe_error($r->get_error_message()),false);
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&oauth_failed=1')); exit;
     }
     $status=(int)wp_remote_retrieve_response_code($r);
     $data=json_decode(wp_remote_retrieve_body($r),true);
     if($status<200 || $status>=300 || empty($data['access_token'])){
         update_option('hcdecor_drive_test_status','error',false);
-        update_option('hcdecor_drive_test_message',sanitize_text_field((string)($data['error_description']??$data['error']??('OAuth HTTP '.$status))),false);
+        update_option('hcdecor_drive_test_message',hcdecor_drive_safe_error((string)($data['error_description']??$data['error']??('OAuth HTTP '.$status))),false);
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&oauth_failed=1')); exit;
     }
     if(!empty($data['refresh_token'])) update_option('hcdecor_drive_refresh_token',sanitize_text_field($data['refresh_token']),false);
@@ -120,7 +125,7 @@ add_action('admin_post_hcdecor_drive_oauth_callback',function(){
     $test=hcdecor_drive_test();
     if(is_wp_error($test)){
         update_option('hcdecor_drive_test_status','error',false);
-        update_option('hcdecor_drive_test_message',$test->get_error_message(),false);
+        update_option('hcdecor_drive_test_message',hcdecor_drive_safe_error($test->get_error_message()),false);
     }else{
         update_option('hcdecor_drive_test_status','ok',false);
         update_option('hcdecor_drive_test_message',sanitize_text_field((string)($test['user']['emailAddress']??'Connected')),false);
@@ -350,7 +355,7 @@ function hcdecor_drive_save_job($job_id,$sync_media=true){
         update_post_meta($job_id,'hc_drive_synced_at',current_time('mysql'));
         delete_post_meta($job_id,'hc_drive_error');
     }elseif(is_wp_error($res)){
-        update_post_meta($job_id,'hc_drive_error',$res->get_error_message());
+        update_post_meta($job_id,'hc_drive_error',hcdecor_drive_safe_error($res->get_error_message()));
     }
     return $res;
 }
@@ -563,7 +568,7 @@ add_action('admin_post_hcdecor_drive_test',function(){
     $r=hcdecor_drive_test();
     if(is_wp_error($r)){
         update_option('hcdecor_drive_test_status','error',false);
-        update_option('hcdecor_drive_test_message',$r->get_error_message(),false);
+        update_option('hcdecor_drive_test_message',hcdecor_drive_safe_error($r->get_error_message()),false);
     }else{
         update_option('hcdecor_drive_test_status','ok',false);
         update_option('hcdecor_drive_test_message',(string)($r['user']['emailAddress']??'Connected'),false);

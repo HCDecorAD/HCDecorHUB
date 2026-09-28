@@ -157,7 +157,7 @@ function hcdecor_backup_save(){
     }
     $r=hcdecor_drive_multipart('',$name,'application/json',$json,hcdecor_backup_folder_id());
     if(is_wp_error($r)){
-        update_option('hcdecor_backup_last_error',$r->get_error_message(),false);
+        update_option('hcdecor_backup_last_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($r->get_error_message()):sanitize_text_field($r->get_error_message()),false);
         delete_transient('hcdecor_backup_running');
         return $r;
     }

@@ -393,7 +393,7 @@ add_action('admin_post_hcdecor_restore_apply',function(){
     }
     $r=hcdecor_restore_apply($file,$sections);
     if(is_wp_error($r)){
-        update_option('hcdecor_restore_last_error',$r->get_error_message(),false);
+        update_option('hcdecor_restore_last_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($r->get_error_message()):sanitize_text_field($r->get_error_message()),false);
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-restore-center&file_id='.rawurlencode($file).'&failed=1')); exit;
     }
     delete_option('hcdecor_restore_last_error');

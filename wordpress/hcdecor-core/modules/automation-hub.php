@@ -75,9 +75,13 @@ function hcdecor_auto_payload($task_id){
     return is_array($p)?$p:[];
 }
 
+function hcdecor_auto_safe_message($message){
+    $text=sanitize_text_field((string)$message);
+    return function_exists('mb_substr')?mb_substr($text,0,500):substr($text,0,500);
+}
 function hcdecor_auto_log($task_id,$event,$note=''){
     $log=(array)get_post_meta($task_id,'hc_auto_log',true);
-    $log[]=['time'=>current_time('mysql'),'event'=>sanitize_key($event),'note'=>sanitize_text_field($note)];
+    $log[]=['time'=>current_time('mysql'),'event'=>sanitize_key($event),'note'=>hcdecor_auto_safe_message($note)];
     if(count($log)>50) $log=array_slice($log,-50);
     update_post_meta($task_id,'hc_auto_log',$log);
 }
@@ -86,7 +90,7 @@ function hcdecor_auto_retry($task_id,$message){
     $s=hcdecor_auto_settings();
     $attempts=(int)get_post_meta($task_id,'hc_auto_attempts',true)+1;
     update_post_meta($task_id,'hc_auto_attempts',$attempts);
-    update_post_meta($task_id,'hc_auto_last_error',sanitize_text_field($message));
+    update_post_meta($task_id,'hc_auto_last_error',hcdecor_auto_safe_message($message));
     if($attempts >= max(1,(int)$s['max_attempts'])){
         update_post_meta($task_id,'hc_auto_status','failed');
         hcdecor_auto_log($task_id,'failed',$message);
@@ -169,7 +173,7 @@ function hcdecor_auto_run_task($task_id){
         $r=hcdecor_auto_webhook((string)($payload['event']??'hcdecor.event'),(array)($payload['data']??[]));
         if(is_wp_error($r)){
             update_post_meta($task_id,'hc_auto_status','failed');
-            update_post_meta($task_id,'hc_auto_last_error',sanitize_text_field($r->get_error_message()));
+            update_post_meta($task_id,'hc_auto_last_error',hcdecor_auto_safe_message($r->get_error_message()));
             hcdecor_auto_log($task_id,'failed','Webhook outbound attempted; fresh production approval is required before retry.');
             return false;
         }
@@ -192,7 +196,7 @@ function hcdecor_auto_run_task($task_id){
         $r=hcdecor_auto_webhook('hcdecor.social_publish',$payload);
         if(is_wp_error($r)){
             update_post_meta($task_id,'hc_auto_status','failed');
-            update_post_meta($task_id,'hc_auto_last_error',sanitize_text_field($r->get_error_message()));
+            update_post_meta($task_id,'hc_auto_last_error',hcdecor_auto_safe_message($r->get_error_message()));
             hcdecor_auto_log($task_id,'failed','Social outbound attempted; fresh production approval is required before retry.');
             return false;
         }

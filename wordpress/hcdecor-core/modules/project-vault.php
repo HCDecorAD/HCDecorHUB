@@ -92,7 +92,7 @@ function hcdecor_project_vault_save($project_id,$sync_media=true){
     if($sync_media){
         $media_sync=hcdecor_project_vault_sync_media($project_id);
         if(is_wp_error($media_sync)){
-            update_post_meta($project_id,'hc_drive_project_error',$media_sync->get_error_message());
+            update_post_meta($project_id,'hc_drive_project_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($media_sync->get_error_message()):sanitize_text_field($media_sync->get_error_message()));
             return $media_sync;
         }
         if(is_array($media_sync) && !empty($media_sync['failed'])){
@@ -109,7 +109,7 @@ function hcdecor_project_vault_save($project_id,$sync_media=true){
     $r=hcdecor_drive_save_json($name,$data,'projects',$existing);
 
     if(is_wp_error($r)){
-        update_post_meta($project_id,'hc_drive_project_error',$r->get_error_message());
+        update_post_meta($project_id,'hc_drive_project_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($r->get_error_message()):sanitize_text_field($r->get_error_message()));
         return $r;
     }
 
@@ -238,7 +238,7 @@ add_action('hcdecor_project_vault_async_save',function($project_id){
     if(is_wp_error($r)){
         $attempts=(int)get_post_meta($project_id,'hc_drive_project_retry_count',true)+1;
         update_post_meta($project_id,'hc_drive_project_retry_count',$attempts);
-        update_post_meta($project_id,'hc_drive_project_error',$r->get_error_message());
+        update_post_meta($project_id,'hc_drive_project_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($r->get_error_message()):sanitize_text_field($r->get_error_message()));
         if($attempts<3 && !wp_next_scheduled('hcdecor_project_vault_async_save',[$project_id])){
             wp_schedule_single_event(time()+min(900,60*$attempts),'hcdecor_project_vault_async_save',[$project_id]);
         }
@@ -297,7 +297,7 @@ add_action('admin_post_hcdecor_project_vault_sync_all',function(){
     check_admin_referer('hcdecor_project_vault_sync_all');
     $r=hcdecor_project_vault_sync_all(100);
     if(is_wp_error($r)){
-        update_option('hcdecor_project_vault_last_error',$r->get_error_message(),false);
+        update_option('hcdecor_project_vault_last_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($r->get_error_message()):sanitize_text_field($r->get_error_message()),false);
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-project-vault&bulk_failed=1')); exit;
     }
     delete_option('hcdecor_project_vault_last_error');
@@ -310,7 +310,7 @@ add_action('admin_post_hcdecor_project_vault_import',function(){
     check_admin_referer('hcdecor_project_vault_import_'.$file);
     $r=hcdecor_project_vault_import($file);
     if(is_wp_error($r)){
-        update_option('hcdecor_project_vault_last_error',$r->get_error_message(),false);
+        update_option('hcdecor_project_vault_last_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($r->get_error_message()):sanitize_text_field($r->get_error_message()),false);
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-project-vault&import_failed=1')); exit;
     }
     delete_option('hcdecor_project_vault_last_error');

@@ -181,6 +181,15 @@ findstr /c:"current_user_can('manage_options')" "wordpress\hcdecor-core\modules\
 findstr /c:"Drive Inbox is disabled." "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 233
 findstr /c:"AI worker master switch is disabled." "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 234
 findstr /c:"array_slice(array_values(array_filter(array_unique(array_map('intval'" "wordpress\hcdecor-core\modules\project-publishing.php" >nul || exit /b 235
+findstr /c:"function hcdecor_ops_limit_text" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 236
+findstr /c:"function hcdecor_drive_safe_error" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 237
+findstr /c:"function hcdecor_auto_safe_message" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 238
+findstr /c:"mb_substr($raw_msg,0,500)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 239
+findstr /c:"function hcdecor_crm_textarea" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 240
+findstr /c:"hcdecor_crm_textarea(isset($_POST['message'])?$_POST['message']:'',5000)" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 241
+findstr /c:"function hcdecor_conn_safe_error" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 242
+findstr /c:"hcdecor_drive_safe_error($r->get_error_message())" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 243
+findstr /c:"hcdecor_drive_safe_error($r->get_error_message())" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 244
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

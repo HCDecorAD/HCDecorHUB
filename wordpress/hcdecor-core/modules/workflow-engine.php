@@ -8,7 +8,7 @@ function hcdecor_workflow_log($job_id,$event,$note=''){
     $log[]=[
         'time'=>current_time('mysql'),
         'event'=>sanitize_key($event),
-        'note'=>sanitize_text_field($note),
+        'note'=>function_exists('mb_substr')?mb_substr(sanitize_text_field($note),0,500):substr(sanitize_text_field($note),0,500),
         'user'=>get_current_user_id()
     ];
     if(count($log)>100) $log=array_slice($log,-100);
@@ -443,7 +443,8 @@ add_action('rest_api_init',function(){
             $lifecycle=hcdecor_workflow_lifecycle_mutex_acquire($id,$token,30);
             if(!$lifecycle) return new WP_Error('busy','Job lifecycle is already being finalized',['status'=>409]);
             if(!hcdecor_workflow_owned_claim_active($id,$token)){ hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle); return new WP_Error('claim','Worker claim changed before failure update',['status'=>409]); }
-            $msg=sanitize_text_field((string)$r->get_param('message'));
+            $raw_msg=sanitize_text_field((string)$r->get_param('message'));
+            $msg=function_exists('mb_substr')?mb_substr($raw_msg,0,500):substr($raw_msg,0,500);
             $finished=hcdecor_workflow_finish_owned_claim($id,$token,'failed',$msg?:'Agent failed');
             if($finished) update_post_meta($id,'hc_agent_error',$msg);
             hcdecor_workflow_lifecycle_mutex_release($id,$lifecycle);

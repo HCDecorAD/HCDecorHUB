@@ -263,7 +263,7 @@ function hcdecor_ai_generate_job($job_id){
         do_action('hcdecor_after_ai_content_generated',$job_id,$result['provider'],$result['model']);
         return $result;
     }
-    $message=$errors?implode(' | ',array_map(function($k,$v){return $k.': '.$v;},array_keys($errors),$errors)):'Chưa có AI API key.';
+    $message=hcdecor_ai_safe_error($errors?implode(' | ',array_map(function($k,$v){return $k.': '.$v;},array_keys($errors),$errors)):'Chưa có AI API key.');
     update_post_meta($job_id,'hc_ai_error',$message);
     $claim_token=(string)get_post_meta($job_id,'hc_agent_claim_token',true);
     $finished=$claim_token!=='' && function_exists('hcdecor_workflow_finish_owned_claim')
