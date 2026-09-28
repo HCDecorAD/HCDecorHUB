@@ -20,3 +20,9 @@ Data contract:
 ```
 
 Only records with real SKU/name/price/stock supplied by the store should be published.
+
+## Responsive production rules
+- Mobile-first touch targets >= 44px.
+- 4-column style grid collapses to 2 and then 1 column.
+- Navigation links resolve only to AMO-owned routes.
+- Production hostname is fixed to https://amonnguyen.hcdecorhub.com.
