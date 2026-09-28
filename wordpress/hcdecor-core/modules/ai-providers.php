@@ -56,6 +56,10 @@ function hcdecor_ai_schema(){
 }
 
 function hcdecor_ai_prompt($job_id){
+    $clip=function($value,$limit){
+        $text=wp_strip_all_tags((string)$value);
+        return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
+    };
     $job=get_post($job_id);
     if(!$job || $job->post_type!=='hc_content_job') return '';
     $project_id=(int)get_post_meta($job_id,'hc_project_id',true);
@@ -69,21 +73,22 @@ function hcdecor_ai_prompt($job_id){
         'Ngôn ngữ mặc định: tiếng Việt tự nhiên, súc tích, chuyên nghiệp, ưu tiên hình ảnh và trải nghiệm không gian.',
         'Hãy trả về JSON hợp lệ, không markdown, đúng các trường được yêu cầu.',
         'PROJECT: '.($project?$project->post_title:''),
-        'PROJECT EXCERPT: '.($project?$project->post_excerpt:''),
-        'PROJECT CONTENT: '.($project?wp_strip_all_tags($project->post_content):''),
-        'BRIEF: '.$job->post_content,
+        'PROJECT EXCERPT: '.($project?$clip($project->post_excerpt,5000):''),
+        'PROJECT CONTENT: '.($project?$clip($project->post_content,30000):''),
+        'BRIEF: '.$clip($job->post_content,20000),
         'CHANNELS: '.implode(', ',$channels?:['web']),
     ];
     $media_notes=[];
-    foreach((array)get_post_meta($job_id,'hc_media_ids',true) as $mid){
+    foreach(array_slice((array)get_post_meta($job_id,'hc_media_ids',true),0,12) as $mid){
         $mid=(int)$mid; $summary=(string)get_post_meta($mid,'hc_ai_summary',true);
         if($summary==='') continue;
-        $media_notes[]='#'.$mid.' '.$summary.' | cover_score='.(int)get_post_meta($mid,'hc_ai_cover_score',true).' | tags='.implode(',',(array)get_post_meta($mid,'hc_ai_tags',true));
+        $tags=array_slice((array)get_post_meta($mid,'hc_ai_tags',true),0,30);
+        $media_notes[]='#'.$mid.' '.$clip($summary,5000).' | cover_score='.(int)get_post_meta($mid,'hc_ai_cover_score',true).' | tags='.$clip(implode(',',$tags),3000);
     }
     if($media_notes) $parts[]='MEDIA ANALYSIS:\n'.implode("\n",$media_notes);
     $drive_prompt=(string)get_option('hcdecor_drive_active_prompt','');
-    if($drive_prompt!=='') $parts[]='ACTIVE DRIVE PROMPT:\n'.wp_strip_all_tags($drive_prompt);
-    if($review_note!=='') $parts[]='REVIEW NOTE: '.$review_note;
+    if($drive_prompt!=='') $parts[]='ACTIVE DRIVE PROMPT:\n'.$clip($drive_prompt,20000);
+    if($review_note!=='') $parts[]='REVIEW NOTE: '.$clip($review_note,5000);
     $parts[]='Yêu cầu output: web_title, web_intro, web_body, seo_meta, facebook_caption, tiktok_script, youtube_title, youtube_description.';
     $parts[]='TikTok script nên có Hook → cảnh/shot gợi ý → nội dung chính → CTA. SEO meta ngắn gọn. Không thêm hashtag quá mức.';
     return implode("\n\n",$parts);

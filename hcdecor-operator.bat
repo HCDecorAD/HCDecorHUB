@@ -218,6 +218,10 @@ findstr /c:"$clip($project['content']??'',100000,true)" "wordpress\hcdecor-core\
 findstr /c:"array_slice((array)$project['types'],0,30)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 270
 findstr /c:"hcdecor_ops_limit_text($brief,20000)" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 271
 findstr /c:"hcdecor_ops_limit_text(wp_unslash($_POST['brief']??''),20000)" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 272
+findstr /c:"mb_substr($note,0,5000)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 273
+findstr /c:"$clip($project->post_content,30000)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 274
+findstr /c:"array_slice((array)get_post_meta($job_id,'hc_media_ids',true),0,12)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 275
+findstr /c:"$clip($drive_prompt,20000)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 276
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118
