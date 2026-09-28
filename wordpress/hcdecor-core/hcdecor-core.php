@@ -206,7 +206,7 @@ add_action('wp_footer',function(){
 <?php },5);
 
 
-/* Demo operations */
+/* Core operations */
 add_action('init',function(){
   register_post_type('hc_quote',[
     'labels'=>['name'=>'Báo giá','singular_name'=>'Báo giá','add_new_item'=>'Tạo báo giá'],
@@ -231,7 +231,7 @@ function hcdecor_hub_admin(){
 }
 
 
-/* HCDECOR_MASTER_AUTO_V1: demo data + HUB workflow */
+/* HCDECOR_MASTER_AUTO_V1: HUB workflow */
 add_action('init',function(){
   register_post_type('hc_lead',[
     'labels'=>['name'=>'Khách hàng / Lead','singular_name'=>'Lead','add_new_item'=>'Thêm Lead'],
@@ -239,32 +239,6 @@ add_action('init',function(){
     'supports'=>['title','editor','custom-fields']
   ]);
 },12);
-
-function hcdecor_master_seed_demo(){
-  if(get_option('hcdecor_master_demo_v1')==='done') return;
-  $projects=[
-    ['Demo · Bảng hiệu showroom','Concept nhận diện mặt dựng và bảng hiệu.','Bảng hiệu'],
-    ['Demo · Không gian nội thất','Concept nội thất kinh doanh hiện đại.','Nội thất'],
-    ['Demo · Phối cảnh kiến trúc','Phối cảnh 3D và giải pháp kiến trúc.','3D & Phối cảnh']
-  ];
-  foreach($projects as $x){
-    if(!get_page_by_title($x[0],OBJECT,'hc_project')){
-      $id=wp_insert_post(['post_type'=>'hc_project','post_status'=>'publish','post_title'=>$x[0],'post_excerpt'=>$x[1],'post_content'=>$x[1]]);
-      if($id && !is_wp_error($id)) update_post_meta($id,'hc_demo_category',$x[2]);
-    }
-  }
-  if(!get_page_by_title('Demo Lead · Khách hàng mẫu',OBJECT,'hc_lead')){
-    $id=wp_insert_post(['post_type'=>'hc_lead','post_status'=>'publish','post_title'=>'Demo Lead · Khách hàng mẫu','post_content'=>'Nhu cầu: tư vấn bảng hiệu / nội thất']);
-    if($id&&!is_wp_error($id)){update_post_meta($id,'hc_status','new');update_post_meta($id,'hc_source','website-demo');}
-  }
-  if(post_type_exists('hc_quote') && !get_page_by_title('Demo Báo giá · Q-001',OBJECT,'hc_quote')){
-    $id=wp_insert_post(['post_type'=>'hc_quote','post_status'=>'publish','post_title'=>'Demo Báo giá · Q-001','post_content'=>'Hạng mục demo · trạng thái Draft']);
-    if($id&&!is_wp_error($id)) update_post_meta($id,'hc_status','draft');
-  }
-  update_option('hcdecor_master_demo_v1','done');
-}
-// Demo seeding disabled in production.
-
 
 /* HCDECOR_WORKFLOW_V2 */
 add_action('init',function(){
@@ -365,7 +339,7 @@ add_action('admin_post_hcdecor_print_quote',function(){
 });
 
 
-/* HCDECOR_AGENT_DEMO_V1: content/media publishing workspace */
+/* HCDECOR_AGENT_V1: content/media publishing workspace */
 add_action('init',function(){
   register_post_type('hc_content_job',[
     'labels'=>['name'=>'AI Content Jobs','singular_name'=>'AI Content Job','add_new_item'=>'Tạo Content Job'],
@@ -383,7 +357,7 @@ add_action('admin_menu',function(){
 function hcdecor_agent_admin(){
   $jobs=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>8,'orderby'=>'date','order'=>'DESC']);
   $projects=get_posts(['post_type'=>'hc_project','post_status'=>'publish','numberposts'=>6]);
-  echo '<div class="wrap"><h1>HCDecor HUB · AI Agent Demo</h1><p><strong>Project → Media → AI Content → Review → Publish</strong></p>';
+  echo '<div class="wrap"><h1>HCDecor HUB · AI Agent</h1><p><strong>Project → Media → AI Content → Review → Publish</strong></p>';
   echo '<div style="display:grid;grid-template-columns:2fr 1fr;gap:18px;max-width:1200px">';
   echo '<section style="background:#fff;padding:20px;border:1px solid #ddd;border-radius:12px"><h2>Agent Workspace</h2><form method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="hcdecor_create_content_job">'.wp_nonce_field('hcdecor_agent_job','_wpnonce',true,false).'<p><label>Dự án</label><br><select name="project_id" style="width:100%;max-width:600px"><option value="0">Chọn dự án...</option>'; foreach($projects as $p) echo '<option value="'.$p->ID.'">'.esc_html($p->post_title).'</option>'; echo '</select></p><p><label>Yêu cầu cho AI Agent</label><br><textarea name="brief" rows="5" style="width:100%;max-width:800px" placeholder="Ví dụ: tạo nội dung giới thiệu dự án, caption Facebook/TikTok, đề xuất ảnh cover..."></textarea></p><p><label>Kênh đầu ra</label><br><label><input type="checkbox" name="channels[]" value="web" checked> Web</label> &nbsp; <label><input type="checkbox" name="channels[]" value="facebook"> Facebook</label> &nbsp; <label><input type="checkbox" name="channels[]" value="tiktok"> TikTok</label> &nbsp; <label><input type="checkbox" name="channels[]" value="youtube"> YouTube</label></p><button class="button button-primary">Tạo AI Content Job</button></form></section>';
   echo '<aside style="background:#111;color:#eee;padding:20px;border-radius:12px"><h2 style="color:#fff">Pipeline</h2><p>① Upload Media</p><p>② Gắn vào Project</p><p>③ AI xử lý Content</p><p>④ Review / chỉnh sửa</p><p>⑤ Publish theo kênh</p><p style="color:#d59a55">Outbound hiện OFF · Demo an toàn</p></aside></div>';

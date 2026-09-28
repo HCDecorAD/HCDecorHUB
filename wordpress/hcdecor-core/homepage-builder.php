@@ -9,7 +9,7 @@ $button=function($id,$label,$url)use($mk){return $mk($id,'button',['text'=>$labe
 $container=function($id,$class,$els,$settings=[])use(&$container){return ['id'=>$id,'elType'=>'container','settings'=>array_merge(['css_classes'=>$class,'content_width'=>'boxed'], $settings),'elements'=>$els];};
 
 $data=[
-$container('hc00001','hc-dark hc-hero hc-demo-hero',[
+$container('hc00001','hc-dark hc-hero hc-production-hero',[
   $heading('hc10001','HCDECOR · HUB','h6'),
   $heading('hc10002','Ý tưởng tạo nên<br><span style="color:#d59a55">không gian khác biệt.</span>','h1'),
   $text('hc10003','<p class="hc-kicker">ONE HUB · DESIGN → BUILD → GROW</p><p>Thiết kế · Thi công bảng hiệu · Nội thất · 3D & Phối cảnh · Kiến trúc</p>'),
@@ -49,7 +49,7 @@ $container('hc00004','hc-dark hc-process',[
   ])
 ]),
 
-$container('hc00006','hc-dark hc-hub-demo',[
+$container('hc00006','hc-dark hc-hub-section',[
   $heading('hc60001','HCDECOR HUB','h6'),
   $heading('hc60002','Một trung tâm để vận hành toàn bộ hệ sinh thái','h2'),
   $container('hc60010','hc-hub-grid',[
@@ -66,7 +66,7 @@ $container('hc00005','hc-dark hc-contact',[
   $text('hc50002','<p>231D An Dương Vương, P. An Lạc, Tp.HCM, Việt Nam<br>0888 821 842</p>'),
   $button('hc50003','Gọi HCDecor','tel:+84888821842'),
   $button('hc50004','Zalo','https://zalo.me/quangcaohocuong'),
-  $text('hc50005','<div class="hc-demo-quote"><h3>Demo yêu cầu báo giá</h3><p>Khách hàng nhập thông tin → HCDecor HUB nhận lead → tạo báo giá → theo dõi xử lý.</p><p><strong>Họ tên</strong> · <strong>Số điện thoại</strong> · <strong>Dịch vụ</strong> · <strong>Nội dung yêu cầu</strong></p></div>')
+  $text('hc50005','<div class="hc-quote-intake"><h3>Demo yêu cầu báo giá</h3><p>Khách hàng nhập thông tin → HCDecor HUB nhận lead → tạo báo giá → theo dõi xử lý.</p><p><strong>Họ tên</strong> · <strong>Số điện thoại</strong> · <strong>Dịch vụ</strong> · <strong>Nội dung yêu cầu</strong></p></div>')
 ])
 ];
 update_post_meta($id,'_elementor_data',wp_slash(wp_json_encode($data)));
