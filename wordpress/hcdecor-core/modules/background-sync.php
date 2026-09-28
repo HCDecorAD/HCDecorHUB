@@ -8,8 +8,15 @@ if (!defined('ABSPATH')) exit;
 if (!defined('HCDECOR_SYNC_MANIFEST')) define('HCDECOR_SYNC_MANIFEST','https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-sync-manifest.json');
 
 add_filter('cron_schedules',function($s){$s['hcdecor_5min']=['interval'=>300,'display'=>'HCDecor every 5 minutes'];return $s;});
-add_action('init',function(){if(!wp_next_scheduled('hcdecor_background_sync'))wp_schedule_event(time()+60,'hcdecor_5min','hcdecor_background_sync');});
-add_action('hcdecor_background_sync','hcdecor_run_background_sync');
+function hcdecor_background_sync_enabled(){ return (bool)get_option('hcdecor_background_sync_enabled',false); }
+add_action('init',function(){
+    if(hcdecor_background_sync_enabled()){
+        if(!wp_next_scheduled('hcdecor_background_sync')) wp_schedule_event(time()+60,'hcdecor_5min','hcdecor_background_sync');
+    }else{
+        wp_clear_scheduled_hook('hcdecor_background_sync');
+    }
+});
+add_action('hcdecor_background_sync',function(){ if(hcdecor_background_sync_enabled()) hcdecor_run_background_sync(); });
 
 function hcdecor_sync_atomic($target,$body){
     $dir=dirname($target); if(!is_dir($dir)) wp_mkdir_p($dir);
@@ -54,7 +61,7 @@ add_action('admin_post_hcdecor_sync_now',function(){
 
 /* HCDECOR_ADMIN_SELF_HEAL */
 add_action('admin_init', function(){
-    if(!current_user_can('manage_options')) return;
+    if(!current_user_can('manage_options') || !hcdecor_background_sync_enabled()) return;
     $last=(int)get_option('hcdecor_sync_last_epoch',0);
     if((time()-$last)<60) return;
     update_option('hcdecor_sync_last_epoch',time(),false);

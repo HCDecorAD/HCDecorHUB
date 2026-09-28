@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) exit;
 
 function hcdecor_drive_inbox_settings(){
     $defaults=[
-        'enabled'=>true,
+        'enabled'=>false,
         'auto_analyze'=>false,
         'auto_link_project'=>true,
         'limit'=>12
