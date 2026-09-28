@@ -140,7 +140,7 @@ function hcdecor_drive_inbox_scan($limit=null){
             if($project_id && hcdecor_drive_inbox_link_project($attachment_id,$project_id)) $result['linked']++;
         }
 
-        $ai_ready=function_exists('hcdecor_ai_available') && (hcdecor_ai_available('openai') || hcdecor_ai_available('gemini'));
+        $ai_ready=function_exists('hcdecor_ai_worker_enabled') && hcdecor_ai_worker_enabled() && function_exists('hcdecor_ai_available') && (hcdecor_ai_available('openai') || hcdecor_ai_available('gemini'));
         if(!empty($settings['auto_analyze']) && $ai_ready && wp_attachment_is_image($attachment_id) && function_exists('wp_schedule_single_event')){
             wp_schedule_single_event(time()+15,'hcdecor_drive_inbox_analyze_media',[$attachment_id]);
             $result['analyze_queued']++;
@@ -161,6 +161,8 @@ function hcdecor_drive_inbox_scan($limit=null){
 }
 
 add_action('hcdecor_drive_inbox_analyze_media',function($attachment_id){
+    $settings=hcdecor_drive_inbox_settings();
+    if(empty($settings['auto_analyze']) || !function_exists('hcdecor_ai_worker_enabled') || !hcdecor_ai_worker_enabled()) return;
     $attachment_id=(int)$attachment_id;
     if($attachment_id && function_exists('hcdecor_media_ai_analyze')){
         $r=hcdecor_media_ai_analyze($attachment_id);

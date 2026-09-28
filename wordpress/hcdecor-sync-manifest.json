@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.023",
+    "version":  "2026.09.29.024",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -144,7 +144,7 @@
                   {
                       "path":  "modules/drive-inbox.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/drive-inbox.php",
-                      "git_sha1":  "c00bfb9b1f4e08ce3e417c952343f22a637ecc2f"
+                      "git_sha1":  "099b172dd3a0cad7ee146a84124cf18da8410bf8"
                   },
                   {
                       "path":  "modules/project-vault.php",

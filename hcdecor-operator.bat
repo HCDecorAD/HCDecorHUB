@@ -41,6 +41,8 @@ findstr /c:"hcdecor_ai_worker_enabled() && function_exists('hcdecor_ai_available
 findstr /c:"hcdecor_ai_worker_enabled()) return;" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 68
 findstr /c:"Restore source is outside the managed BACKUPS folder." "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 69
 findstr /c:"Backup integrity metadata is required." "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 70
+findstr /c:"hcdecor_ai_worker_enabled() && function_exists('hcdecor_ai_available')" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 71
+findstr /c:"hcdecor_ai_worker_enabled()) return;" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 72
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\setup-hcdecor.cmd" >nul || exit /b 54
