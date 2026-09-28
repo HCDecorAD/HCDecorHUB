@@ -23,8 +23,10 @@ function hcdecor_restore_project_snapshot($project_id,$snapshot){
     if(!$project_id || get_post_type($project_id)!=='hc_project' || !is_array($snapshot)) return new WP_Error('snapshot','Invalid publish snapshot.');
     $r=wp_update_post(['ID'=>$project_id,'post_title'=>(string)($snapshot['title']??''),'post_excerpt'=>(string)($snapshot['excerpt']??''),'post_content'=>(string)($snapshot['content']??'')],true);
     if(is_wp_error($r)) return $r;
-    update_post_meta($project_id,'hc_project_gallery',(array)($snapshot['gallery']??[]));
-    update_post_meta($project_id,'hc_gallery_ids',(array)($snapshot['gallery_legacy']??[]));
+    $gallery=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)($snapshot['gallery']??[]))),function($id){return get_post_type($id)==='attachment';})),0,60);
+    $legacy=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)($snapshot['gallery_legacy']??[]))),function($id){return get_post_type($id)==='attachment';})),0,60);
+    update_post_meta($project_id,'hc_project_gallery',$gallery);
+    update_post_meta($project_id,'hc_gallery_ids',$legacy);
     update_post_meta($project_id,'hc_seo_meta',(string)($snapshot['seo_meta']??''));
     $cover=(int)($snapshot['cover']??0);
     if($cover && wp_attachment_is_image($cover)) set_post_thumbnail($project_id,$cover);
@@ -134,8 +136,10 @@ function hcdecor_rollback_job_publish($job_id){
     ],true);
     if(is_wp_error($r)) return $r;
 
-    update_post_meta($project,'hc_project_gallery',(array)($snapshot['gallery']??[]));
-    update_post_meta($project,'hc_gallery_ids',(array)($snapshot['gallery_legacy']??[]));
+    $gallery=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)($snapshot['gallery']??[]))),function($id){return get_post_type($id)==='attachment';})),0,60);
+    $legacy=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)($snapshot['gallery_legacy']??[]))),function($id){return get_post_type($id)==='attachment';})),0,60);
+    update_post_meta($project,'hc_project_gallery',$gallery);
+    update_post_meta($project,'hc_gallery_ids',$legacy);
     update_post_meta($project,'hc_seo_meta',(string)($snapshot['seo_meta']??''));
     $cover=(int)($snapshot['cover']??0);
     if($cover && wp_attachment_is_image($cover)) set_post_thumbnail($project,$cover);
