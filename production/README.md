@@ -1,11 +1,17 @@
 # HCDecorHUB Production Frontend Modules
 
-Concrete responsive frontend modules for the three sites.
+Fixed production architecture:
 
-- HCDecor HUB: responsive shell, real navigation hooks, social links remain data-driven.
-- GSC: Digital Twin hotspot UI, 11 configured locations, responsive modal/video layer.
-- AMO: men's footwear storefront shell, catalog-ready without fake products/prices.
+| Website | Production host | Role |
+|---|---|---|
+| HCDecor HUB | https://hcdecorhub.com | Main studio/HUB |
+| GSC | https://gscsenior.hcdecorhub.com | Independent GSC website |
+| AMO NGUYEN | https://amonnguyen.hcdecorhub.com | Independent AMO website |
 
-## Safety
-Social URLs are intentionally empty until the owner supplies verified profiles.
-Production host/IP mapping remains external configuration; no DNS values are guessed.
+Rules:
+- Keep source, content, navigation and deployment independent per website.
+- Never route GSC or AMO through HCDecor page paths in production.
+- Social links remain verified-only; Zalo is currently verified.
+- GSC Digital Twin keeps 11 configured hotspots; only hotspots with real media open video.
+- AMO catalog publishes only real products/prices/stock.
+- DNS/server targets must use the previously assigned IPs; never guess IP values.
