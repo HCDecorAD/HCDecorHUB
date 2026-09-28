@@ -97,6 +97,10 @@ findstr /c:"array_intersect(['web','facebook','tiktok','youtube']" "wordpress\hc
 findstr /c:"hcdecor_drive_workflow_auto_sync_enabled',false" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 105
 findstr /c:"Automatic Drive workflow sync is disabled." "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 107
 findstr /c:"hcdecor_conn_public_https($new['webhook_url'])" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 108
+findstr /c:"Explicit production approval is required to retry social publishing." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 161
+findstr /c:"Invalid social publish schedule." "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 162
+findstr /c:"get_post_type($id)==='attachment'" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 163
+findstr /c:"['facebook','tiktok','youtube']" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 164
 findstr /c:"webhook_configured" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 129
 findstr /c:"current_user_can('manage_options')" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 109
 findstr /c:"hcdecor_ops_valid_media_ids" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 149

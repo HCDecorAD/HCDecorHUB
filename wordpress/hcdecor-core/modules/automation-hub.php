@@ -443,6 +443,14 @@ add_action('admin_post_hcdecor_automation_retry',function(){
     if(empty($s['enabled'])) wp_die('Automation HUB is disabled.');
     $type=(string)get_post_meta($id,'hc_auto_type',true);
     if($type==='social_publish' && empty($s['social_enabled'])) wp_die('Social outbound is disabled.');
+    if($type==='social_publish'){
+        if((string)($_POST['production_approved']??'')!=='1') wp_die('Explicit production approval is required to retry social publishing.');
+        $payload=hcdecor_auto_payload($id);
+        $payload['production_approved']=true;
+        $payload['production_approved_by']=get_current_user_id();
+        $payload['production_approved_at']=current_time('mysql');
+        wp_update_post(['ID'=>$id,'post_content'=>wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)]);
+    }
     if($type==='webhook' && (empty($s['webhook_enabled']) || empty($s['webhook_url']))) wp_die('Webhook outbound is disabled.');
     if($type==='evergreen' && (empty($s['evergreen_enabled']) || empty($s['social_enabled']))) wp_die('Evergreen social outbound is disabled.');
     update_post_meta($id,'hc_auto_status','queued');

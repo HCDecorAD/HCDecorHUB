@@ -22,9 +22,11 @@ add_action('admin_post_hcdecor_social_account_save', function () {
     $all = hcdecor_social_accounts();
     $id = sanitize_key($_POST['account_id'] ?? '');
     if (!$id) { $id = 'acc_' . wp_generate_password(10, false, false); }
+    $channel = sanitize_key($_POST['channel'] ?? '');
+    if (!in_array($channel, ['facebook','tiktok','youtube'], true)) { wp_die('Invalid social channel'); }
     $row = [
         'id' => $id,
-        'channel' => sanitize_key($_POST['channel'] ?? ''),
+        'channel' => $channel,
         'name' => sanitize_text_field(wp_unslash($_POST['name'] ?? '')),
         'remote_id' => sanitize_text_field(wp_unslash($_POST['remote_id'] ?? '')),
         'token' => sanitize_text_field(wp_unslash($_POST['token'] ?? '')),
@@ -72,15 +74,17 @@ add_action('admin_post_hcdecor_social_bulk_publish', function () {
         $ids = array_values(array_unique($ids));
     }
     $media_raw = sanitize_text_field(wp_unslash($_POST['media_ids'] ?? ''));
-    $media = array_values(array_filter(array_map('intval', preg_split('/[\s,]+/', $media_raw))));
+    $media = array_slice(array_values(array_filter(array_unique(array_map('intval', preg_split('/[\s,]+/', $media_raw))), function($id){ return get_post_type($id)==='attachment'; })), 0, 60);
     $caption = sanitize_textarea_field(wp_unslash($_POST['caption'] ?? ''));
     $when = sanitize_text_field(wp_unslash($_POST['run_at'] ?? ''));
     $run = $when ? strtotime($when) : time();
+    if ($when !== '' && $run === false) { wp_die('Invalid social publish schedule.'); }
+    $run = max(time(), (int)$run);
     $batch = 'social_' . wp_generate_password(10, false, false);
     $created = 0;
     foreach ($ids as $id) {
         $account = hcdecor_social_account($id);
-        if (!$account || empty($account['enabled'])) { continue; }
+        if (!$account || empty($account['enabled']) || !in_array(($account['channel'] ?? ''), ['facebook','tiktok','youtube'], true)) { continue; }
         $payload = [
             'batch_id' => $batch,
             'account_id' => $id,
