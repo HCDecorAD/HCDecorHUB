@@ -303,7 +303,7 @@ add_action('admin_post_hcdecor_ai_run_job',function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
     $id=(int)($_POST['job_id']??0);
     check_admin_referer('hcdecor_ai_run_'.$id);
-    if(get_post_type($id)!=='hc_content_job') wp_die('Invalid job');
+    if(get_post_type($id)!=='hc_content_job' || !current_user_can('edit_post',$id)) wp_die('Invalid job');
     $status=(string)get_post_meta($id,'hc_agent_status',true);
     if($status==='failed'){
         if(!function_exists('hcdecor_workflow_set_status') || !hcdecor_workflow_set_status($id,'draft','Manual AI retry requested')) wp_die('Unable to reset failed job for retry.');

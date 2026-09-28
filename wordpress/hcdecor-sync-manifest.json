@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.050",
+    "version":  "2026.09.29.051",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -29,7 +29,7 @@
                   {
                       "path":  "modules/content-operations.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/content-operations.php",
-                      "git_sha1":  "74b4fbabc6aa0a55ac6ad6c81cc8449ed9469559"
+                      "git_sha1":  "ad0c974f34883d204c33c040245bc69a40bcb1c4"
                   },
                   {
                       "path":  "modules/workflow-engine.php",
@@ -39,7 +39,7 @@
                   {
                       "path":  "modules/ai-providers.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/ai-providers.php",
-                      "git_sha1":  "73370d17f7fd012f4fb686f625bd0f0e1a17c347"
+                      "git_sha1":  "45db30c07f224f9d9a1526bcc42d1da6b8e4209c"
                   },
                   {
                       "path":  "modules/media-intelligence.php",
@@ -149,12 +149,12 @@
                   {
                       "path":  "modules/project-vault.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/project-vault.php",
-                      "git_sha1":  "06e601a8531f8eebe9e84f2fd0f134b0078bd273"
+                      "git_sha1":  "10e556bbda8d3097b35b4dcb0e600feccf98026c"
                   },
                   {
                       "path":  "modules/hub-dashboard.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/hub-dashboard.php",
-                      "git_sha1":  "8dbea4faba4e908360233359f604f2b3132a68b1"
+                      "git_sha1":  "5d29da286d208e66fb9985691eb26a9eed633e2b"
                   }
               ]
 }

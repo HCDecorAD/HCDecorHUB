@@ -62,7 +62,7 @@ add_action('admin_post_hcdecor_ops_create', function(){
     check_admin_referer('hcdecor_ops_create');
     $project=(int)($_POST['project_id']??0);
     $brief=sanitize_textarea_field(wp_unslash($_POST['brief']??''));
-    if(!$project || get_post_type($project)!=='hc_project') wp_die('Invalid project');
+    if(!$project || get_post_type($project)!=='hc_project' || !current_user_can('edit_post',$project)) wp_die('Invalid project');
     $id=wp_insert_post([
         'post_type'=>'hc_content_job','post_status'=>'publish',
         'post_title'=>'Content · '.get_the_title($project).' · '.current_time('Y-m-d H:i'),
@@ -81,7 +81,7 @@ add_action('admin_post_hcdecor_ops_create', function(){
 add_action('admin_post_hcdecor_ops_save', function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
     $id=(int)($_POST['job_id']??0); check_admin_referer('hcdecor_ops_save_'.$id);
-    if(get_post_type($id)!=='hc_content_job') wp_die('Invalid job');
+    if(get_post_type($id)!=='hc_content_job' || !current_user_can('edit_post',$id)) wp_die('Invalid job');
     $status=sanitize_key($_POST['agent_status']??'');
     $current=(string)get_post_meta($id,'hc_agent_status',true);
     if($status!=='' && $status!==$current) wp_die('Workflow status is read-only here. Use Review Center or worker lifecycle actions.');
@@ -94,7 +94,7 @@ add_action('admin_post_hcdecor_ops_save', function(){
 add_action('admin_post_hcdecor_ops_publish_web', function(){
     if(!current_user_can('publish_posts')) wp_die('Forbidden');
     $id=(int)($_POST['job_id']??0); check_admin_referer('hcdecor_ops_publish_'.$id);
-    if(get_post_type($id)!=='hc_content_job') wp_die('Invalid job');
+    if(get_post_type($id)!=='hc_content_job' || !current_user_can('edit_post',$id)) wp_die('Invalid job');
     if(!function_exists('hcdecor_publish_job_to_web')) wp_die('Web publisher unavailable');
     update_post_meta($id,'hc_publish_approved_by',get_current_user_id());
     update_post_meta($id,'hc_publish_approved_at',current_time('mysql'));

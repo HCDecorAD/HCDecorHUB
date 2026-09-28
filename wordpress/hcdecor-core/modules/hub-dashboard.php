@@ -91,7 +91,7 @@ add_action('admin_post_hcdecor_hub_safe_maintenance',function(){
 
 
 add_action('admin_post_hcdecor_hub_sync_projects',function(){
-    if(!current_user_can('edit_posts')) wp_die('Forbidden');
+    if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_hub_sync_projects');
     $result=function_exists('hcdecor_project_vault_sync_all')?hcdecor_project_vault_sync_all(100):new WP_Error('vault','Project Vault unavailable.');
     if(is_wp_error($result)) update_option('hcdecor_hub_action_error',$result->get_error_message(),false);
@@ -395,7 +395,7 @@ function hcdecor_hub_dashboard_page(){
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-automation'));?>">Automation HUB</a>
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-system-health'));?>">System Health</a>
               <?php if(current_user_can('upload_files')):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_hub_run_inbox"><?php wp_nonce_field('hcdecor_hub_run_inbox');?><button class="button">Run Drive Inbox</button></form><?php endif;?>
-              <?php if(current_user_can('edit_posts')):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_hub_sync_projects"><?php wp_nonce_field('hcdecor_hub_sync_projects');?><button class="button">Sync Project Vault</button></form><?php endif;?>
+              <?php if(current_user_can('manage_options')):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_hub_sync_projects"><?php wp_nonce_field('hcdecor_hub_sync_projects');?><button class="button">Sync Project Vault</button></form><?php endif;?>
               <?php if(current_user_can('manage_options')):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_hub_backup_now"><?php wp_nonce_field('hcdecor_hub_backup_now');?><button class="button">Backup Now</button></form><?php endif;?>
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-data-backups'));?>">Data Backups</a>
               <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-restore-center'));?>">Restore Center</a>

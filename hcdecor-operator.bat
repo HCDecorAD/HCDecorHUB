@@ -122,6 +122,12 @@ findstr /c:"current_user_can('edit_post',$id)" "wordpress\hcdecor-core\modules\a
 findstr /c:"current_user_can('edit_post',$id)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 174
 findstr /c:"current_user_can('edit_post',$id)" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 175
 findstr /c:"current_user_can('edit_post',$id)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 176
+findstr /c:"current_user_can('edit_post',$id)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 177
+findstr /c:"current_user_can('edit_post',$project)" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 178
+findstr /c:"current_user_can('edit_post',$id)" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 179
+findstr /c:"admin_post_hcdecor_project_vault_sync_all" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 180
+findstr /c:"current_user_can('manage_options')" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 181
+findstr /c:"admin_post_hcdecor_hub_sync_projects" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 182
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

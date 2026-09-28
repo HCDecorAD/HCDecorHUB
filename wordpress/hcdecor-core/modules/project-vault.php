@@ -285,7 +285,7 @@ add_action('admin_post_hcdecor_project_vault_save',function(){
 });
 
 add_action('admin_post_hcdecor_project_vault_sync_all',function(){
-    if(!current_user_can('edit_posts')) wp_die('Forbidden');
+    if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_project_vault_sync_all');
     $r=hcdecor_project_vault_sync_all(100);
     if(is_wp_error($r)){
@@ -373,10 +373,12 @@ function hcdecor_project_vault_page(){
           <button class="button">Save Auto-sync</button>
         </form>
         <?php endif;?>
+        <?php if(current_user_can('manage_options')):?>
         <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>">
           <input type="hidden" name="action" value="hcdecor_project_vault_sync_all"><?php wp_nonce_field('hcdecor_project_vault_sync_all');?>
           <button class="button button-primary">Sync All Projects → Drive</button>
         </form>
+        <?php endif;?>
         <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-drive-inbox'));?>">Drive Inbox</a>
       </div>
 
