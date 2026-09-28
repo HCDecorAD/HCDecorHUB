@@ -464,7 +464,21 @@ add_action('rest_api_init',function(){
         'methods'=>'GET','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(){
             $counts=[]; foreach(hcdecor_auto_statuses() as $s){$q=new WP_Query(['post_type'=>'hc_automation_task','post_status'=>'publish','posts_per_page'=>1,'meta_key'=>'hc_auto_status','meta_value'=>$s]);$counts[$s]=(int)$q->found_posts;}
-            return rest_ensure_response(['settings'=>hcdecor_auto_settings(),'queue'=>$counts,'outbound'=>(bool)hcdecor_auto_settings()['social_enabled']]);
+            $s=hcdecor_auto_settings();
+            return rest_ensure_response([
+                'settings'=>[
+                    'enabled'=>!empty($s['enabled']),
+                    'webhook_enabled'=>!empty($s['webhook_enabled']),
+                    'webhook_configured'=>!empty($s['webhook_url']),
+                    'social_enabled'=>!empty($s['social_enabled']),
+                    'evergreen_enabled'=>!empty($s['evergreen_enabled']),
+                    'evergreen_days'=>(int)$s['evergreen_days'],
+                    'max_attempts'=>(int)$s['max_attempts'],
+                    'retry_minutes'=>(int)$s['retry_minutes']
+                ],
+                'queue'=>$counts,
+                'outbound'=>!empty($s['social_enabled'])
+            ]);
         }
     ]);
     register_rest_route('hcdecor/v1','/automation/queue',[

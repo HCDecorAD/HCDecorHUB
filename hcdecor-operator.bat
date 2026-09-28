@@ -88,6 +88,7 @@ findstr /c:"hcdecor_drive_workflow_auto_sync_enabled" "wordpress\hcdecor-core\mo
 findstr /c:"hcdecor_drive_workflow_auto_sync_enabled',false" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 105
 findstr /c:"Automatic Drive workflow sync is disabled." "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 107
 findstr /c:"hcdecor_conn_public_https($new['webhook_url'])" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 108
+findstr /c:"webhook_configured" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 129
 findstr /c:"current_user_can('manage_options')" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 109
 findstr /c:"HTTP_X_HCDECOR_BRIDGE" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 110
 findstr /c:"HTTP_AUTHORIZATION" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 111
