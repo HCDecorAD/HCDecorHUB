@@ -1,0 +1,1 @@
+window.AMO_CONFIG=Object.freeze({host:'https://amonnguyen.hcdecorhub.com',locale:'vi',routes:{home:'/',guide:'/shoe-guide/',contact:'/lien-he/',en:'/en/'},categories:['Loafers','Oxford & Derby','Sneakers','Boots'],publishProduct:p=>Boolean(p&&p.sku&&p.name&&Number.isFinite(p.price)&&p.stock!==null&&p.published===true)});
