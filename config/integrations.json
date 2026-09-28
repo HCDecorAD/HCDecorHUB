@@ -1,13 +1,97 @@
 {
-  "schema_version":"1.1.0",
-  "integrations":{
-    "github":{"purpose":["source","version","release","rollback"],"secret_storage":"environment"},
-    "wordpress":{"purpose":["HCDecor production","Elementor public website"],"site":"https://hcdecorhub.com","state":"connected","secret_storage":"environment"},
-    "vercel":{"purpose":["GSC runtime","AMO runtime"],"state":"degraded","note":"Current connector team does not expose the existing GSC/AMO projects; never create duplicates.","secret_storage":"environment"},
-    "google_drive":{"purpose":["projects","media","data","knowledge","templates","reports","backup"],"secret_storage":"connector-or-environment"},
-    "metricool":{"purpose":["social-publishing","social-analytics","best-time-to-post"],"state":"connected","brand_id":"7127887","timezone":"Asia/Bangkok","networks":{"instagram":"zrubyshop","tiktok":"quangcaohocuong","youtube":"UC5yfCYp8BJNIHbX1-VNXVig","facebook":null},"publish_policy":"draft-or-schedule only unless production publish is approved"},
-    "supermetrics":{"purpose":["cross-channel-analytics","marketing-reporting","dashboards"],"state":"connected-plugin-data-sources-auth-pending","priority_sources":["GAWA","FB","IGI","YT2","TIKBA","FA","AW"]},
-    "social":{"purpose":["publishing"],"providers":["metricool","meta","instagram","tiktok","youtube","zalo"],"status":"metricool-connected-facebook-pending"}
-  },
-  "health_contract":{"states":["connected","degraded","disconnected","unknown"],"required_fields":["provider","state","checked_at"]}
+    "schema_version":  "1.1.0",
+    "integrations":  {
+                         "github":  {
+                                        "purpose":  [
+                                                        "source",
+                                                        "version",
+                                                        "release",
+                                                        "rollback"
+                                                    ],
+                                        "secret_storage":  "environment"
+                                    },
+                         "wordpress":  {
+                                           "purpose":  [
+                                                           "HCDecor production",
+                                                           "Elementor public website"
+                                                       ],
+                                           "site":  "https://hcdecorhub.com",
+                                           "state":  "connected",
+                                           "secret_storage":  "environment"
+                                       },
+                         "vercel":  {
+                                        "purpose":  [
+                                                        "GSC runtime",
+                                                        "AMO runtime"
+                                                    ],
+                                        "state":  "degraded",
+                                        "note":  "Current connector team does not expose the existing GSC/AMO projects; never create duplicates.",
+                                        "secret_storage":  "environment"
+                                    },
+                         "google_drive":  {
+                                              "purpose":  [
+                                                              "projects",
+                                                              "media",
+                                                              "data",
+                                                              "knowledge",
+                                                              "templates",
+                                                              "reports",
+                                                              "backup"
+                                                          ],
+                                              "secret_storage":  "connector-or-environment"
+                                          },
+                         "metricool":  {
+                                           "purpose":  [
+                                                           "social-publishing",
+                                                           "social-analytics",
+                                                           "best-time-to-post"
+                                                       ],
+                                           "state":  "connected",
+                                           "brand_id":  "7127887",
+                                           "timezone":  "Asia/Bangkok",
+                                           "networks":  {
+                                                            "instagram":  "zrubyshop",
+                                                            "tiktok":  "quangcaohocuong",
+                                                            "youtube":  "UC5yfCYp8BJNIHbX1-VNXVig",
+                                                            "facebook":  null
+                                                        },
+                                           "publish_policy":  "draft-or-schedule only unless production publish is approved"
+                                       },
+                         "supermetrics":  {
+                                              "purpose":  [
+                                                              "cross-channel-analytics",
+                                                              "marketing-reporting",
+                                                              "dashboards"
+                                                          ],
+                                              "state":  "deferred",
+                                              "note":  "Deferred until website and analytics sources are ready for production reporting."
+                                          },
+                         "social":  {
+                                        "purpose":  [
+                                                        "publishing"
+                                                    ],
+                                        "providers":  [
+                                                          "metricool",
+                                                          "meta",
+                                                          "instagram",
+                                                          "tiktok",
+                                                          "youtube",
+                                                          "zalo"
+                                                      ],
+                                        "status":  "metricool-connected-facebook-pending"
+                                    }
+                     },
+    "health_contract":  {
+                            "states":  [
+                                           "connected",
+                                           "degraded",
+                                           "disconnected",
+                                           "unknown"
+                                       ],
+                            "required_fields":  [
+                                                    "provider",
+                                                    "state",
+                                                    "checked_at"
+                                                ]
+                        }
 }

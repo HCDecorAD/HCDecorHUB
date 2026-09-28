@@ -1,2 +1,30 @@
-import {HubShell,PageCards} from "../../../components/HubShell";
-export default function Agents(){return <HubShell title="AI Agents" eyebrow="LỚP 3 / AGENT & CONTROL"><div className="notice">Agent chỉ thực hiện hành động trong capability được cấp. Publish / delete quan trọng phải qua approval gate.</div><PageCards items={[["Project Agent","Planned","Đọc Project + Media + CRM để chuẩn bị công việc."],["Content Agent","Planned","Tạo draft nội dung và chuyển Review; không tự publish."],["Operations Agent","Planned","Theo dõi queue, phát hiện lỗi, đề xuất retry."],["Agent Runs","Audit","Lưu input, action, output, trạng thái và lỗi cho từng run."]]}/></HubShell>}
+import {HubShell} from "../../../components/HubShell";
+import {getHubConfig} from "../../../lib/hub-config";
+
+const labels={
+  website:"Website Agent",
+  content:"Content Agent",
+  media:"Media Agent",
+  publishing:"Publishing Agent",
+  "project-assistant":"Project Assistant",
+  qa:"QA Agent"
+};
+const title=s=>s.split("-").map(x=>x.charAt(0).toUpperCase()+x.slice(1)).join(" ");
+
+export default function Agents(){
+  const {agents}=getHubConfig();
+  const master=agents.master_agent;
+  return <HubShell title="Master Agent" eyebrow="HUB CORE / ORCHESTRATION V2">
+    <section className="masterHero">
+      <div><span className="masterBadge">MASTER CONTROL PLANE</span><h2>{master.name}</h2><p>{master.role} · Production write: {master.production_write}</p></div>
+      <div className="masterFlow">{agents.routing.flow.map((x,i)=><div key={x}><b>{String(i+1).padStart(2,"0")}</b><span>{title(x)}</span></div>)}</div>
+    </section>
+    <div className="notice">Source: config/agents.json · Schema {agents.schema_version}. Runtime status không được suy diễn từ UI.</div>
+    <section className="masterGrid">{agents.workers.map(w=><article className="masterCard" key={w.id}><div className="masterCardTop"><span>WORKER</span><em>{w.production_write===false?"No production write":w.production_write}</em></div><h3>{labels[w.id]||title(w.id)}</h3><p>{w.capabilities.map(title).join(" · ")}</p><small>Legacy mapping</small><strong>{w.maps_to.join(" + ")}</strong></article>)}</section>
+    <section className="masterArchitecture">
+      <div><span>CONTEXT</span><h3>{master.context_layers.length} layers</h3><p>{master.context_layers.map(title).join(" → ")}</p></div>
+      <div><span>EXTERNAL AI</span><h3>{Object.keys(agents.external_workers).map(title).join(" · ")}</h3><p>Optional specialists; Master review required before integration.</p></div>
+      <div><span>SAFETY</span><h3>Config enforced</h3><p>Workspace isolation · production gate · audit every execution.</p></div>
+    </section>
+  </HubShell>;
+}

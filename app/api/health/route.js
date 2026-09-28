@@ -1,5 +1,8 @@
+import {runtimeCapabilities} from "../../../lib/data/store";
+import {getIntegrationView} from "../../../lib/hub-config";
 export async function GET(){
- const checks={hub:{ok:true,mode:"v2"},cms:{ok:false,mode:"readonly-demo"},drive:{ok:Boolean(process.env.HCDECOR_DRIVE_ROOT_FOLDER_ID),mode:"configured"},agent:{ok:true,mode:process.env.HCDECOR_AGENT_BASE_URL?"external":"demo"},social:{ok:false,mode:"deferred"}};
- try{const base=process.env.HCDECOR_WP_BASE_URL;if(base){const r=await fetch(base.replace(/\/$/,"")+"/wp-json/",{cache:"no-store"});checks.cms.ok=r.ok;checks.cms.http=r.status}}catch{}
- return Response.json({ok:checks.hub.ok,version:"HCDecor HUB V2",projectIdFormat:"HC-YYYY-XXXX",checks,checkedAt:new Date().toISOString()});
+ const c=runtimeCapabilities();
+ const checks={hub:{state:"configured",source:"application"},cms:{state:c.cmsRead?"configured":"unknown",source:"environment"},cmsWrite:{state:c.cmsWrite?"configured":"disabled",source:"environment"},drive:{state:c.driveConfigured?"configured":"unknown",source:"environment"},driveWrite:{state:c.driveWrite?"configured":"disabled",source:"environment"},leadWrite:{state:c.leadWrite?"configured":"disabled",source:"environment"},projectWrite:{state:c.projectWrite?"configured":"disabled",source:"environment"},agent:{state:c.agentExternal?"configured":"unknown",source:"environment"}};
+ const integrations=getIntegrationView().map(x=>({provider:x.id,state:x.state,source:"config/integrations.json"}));
+ return Response.json({ok:true,version:"HCDecor HUB Master Agent v2",checks,integrations,checkedAt:new Date().toISOString(),note:"Configured/source state is not a live external health assertion."});
 }

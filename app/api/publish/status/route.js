@@ -1,1 +1,2 @@
-export async function GET(){const authenticated=Boolean(process.env.HCDECOR_WP_API_TOKEN);return Response.json({provider:"wordpress.com",mode:authenticated?"authenticated":"demo-readonly",reviewRequired:true,publishEnabled:authenticated,socialEnabled:false,rollback:true});}
+import {productionGuard} from "../../../../lib/hub-policy";
+export async function GET(){const credentialPresent=Boolean(process.env.HCDECOR_WP_API_TOKEN);const guard=productionGuard();return Response.json({provider:"wordpress",credentialPresent,productionGate:guard.guarded.includes("publish"),publishEnabled:false,reason:credentialPresent?"Credential detected, but explicit approval gate is still required.":"WordPress write credential is not configured.",socialEnabled:false})}

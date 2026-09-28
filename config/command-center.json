@@ -1,11 +1,68 @@
 {
-  "schema_version":"1.0.0",
-  "dashboard":{
-    "title":"HCDecor HUB",
-    "subtitle":"Multi-Business AI Command Center",
-    "primary_modules":["websites","projects","crm","media","content","publishing","agents","reports","integrations","audit"],
-    "sites":["HCDECOR","GSC","AMO"]
+  "schema_version": "2.0.0",
+  "dashboard": {
+    "title": "HCDecor HUB",
+    "subtitle": "Master Agent · Multi-Business AI Command Center",
+    "primary_modules": [
+      "dashboard",
+      "registry",
+      "workspaces",
+      "projects",
+      "crm",
+      "media",
+      "content",
+      "publishing",
+      "automations",
+      "agents",
+      "reports",
+      "integrations",
+      "audit-backup"
+    ],
+    "sites": [
+      "HCDECOR",
+      "GSC",
+      "AMO"
+    ]
   },
-  "command_flow":["resolve-workspace","resolve-site","check-registry","check-permission","plan","preview","approve-if-required","execute","verify","audit"],
-  "production_guard":{"publish":true,"delete":true,"manage":true,"deploy":true}
+  "command_flow": [
+    "receive-intent",
+    "load-context",
+    "resolve-workspace",
+    "resolve-site",
+    "check-registry",
+    "check-permission",
+    "plan",
+    "parallelize-safe-work",
+    "route-worker-or-tool",
+    "preview-if-required",
+    "approve-if-required",
+    "execute",
+    "verify",
+    "audit",
+    "return-result"
+  ],
+  "production_guard": {
+    "publish": true,
+    "delete": true,
+    "manage": true,
+    "deploy": true,
+    "replace_core": true
+  },
+  "master_agent": {
+    "entrypoint": "master-agent",
+    "execution_model": "plan-route-execute-verify-audit",
+    "workspace_scope": [
+      "HCDECOR",
+      "GSC",
+      "AMO"
+    ],
+    "worker_registry": "config/agents.json",
+    "source_of_truth": [
+      "config/site-registry.json",
+      "config/workspaces.json",
+      "config/adapters.json",
+      "config/integrations.json"
+    ],
+    "status_policy": "config-driven-only"
+  }
 }

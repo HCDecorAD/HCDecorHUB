@@ -1,49 +1,100 @@
 {
-  "schema_version": "1.0.0",
-  "orchestrator": {
-    "id": "orchestrator",
-    "mode": "coordinate",
-    "production_write": false
+  "schema_version": "2.0.0",
+  "architecture": "master-agent-worker",
+  "master_agent": {
+    "id": "master-agent",
+    "name": "HCDecor HUB Master Agent",
+    "role": "single-control-plane",
+    "responsibilities": [
+      "understand-intent",
+      "resolve-workspace",
+      "build-plan",
+      "route-tasks",
+      "coordinate-workers",
+      "enforce-policy",
+      "verify-output",
+      "maintain-audit"
+    ],
+    "direct_execution": [
+      "code",
+      "configuration",
+      "integration",
+      "qa",
+      "release-prepare"
+    ],
+    "production_write": "permission-gated",
+    "context_layers": [
+      "hub-core",
+      "workspace",
+      "project",
+      "task",
+      "runtime"
+    ]
   },
-  "agents": [
+  "routing": {
+    "strategy": "capability-and-workspace",
+    "flow": [
+      "intent",
+      "context",
+      "workspace",
+      "planner",
+      "permission",
+      "worker-or-tool",
+      "verification",
+      "audit"
+    ],
+    "parallel_safe_tasks": true,
+    "same_resource_writes": "sequential"
+  },
+  "workers": [
     {
-      "id": "developer",
+      "id": "website",
+      "maps_to": [
+        "developer",
+        "design"
+      ],
       "capabilities": [
+        "website",
+        "ui",
+        "ux",
         "code",
-        "qa",
+        "responsive",
         "release_prepare"
       ],
       "production_write": false
     },
     {
-      "id": "design",
-      "capabilities": [
-        "ui",
-        "ux",
-        "visual_spec"
-      ],
-      "production_write": false
-    },
-    {
       "id": "content",
+      "maps_to": [
+        "content"
+      ],
       "capabilities": [
         "draft",
         "seo",
-        "localize"
+        "localize",
+        "content-plan"
       ],
       "production_write": false
     },
     {
       "id": "media",
+      "maps_to": [
+        "media",
+        "design"
+      ],
       "capabilities": [
         "classify",
         "prepare",
-        "optimize"
+        "optimize",
+        "visual-spec"
       ],
       "production_write": false
     },
     {
       "id": "publishing",
+      "maps_to": [
+        "publishing"
+      ],
       "capabilities": [
         "preview",
         "schedule",
@@ -52,21 +103,63 @@
       "production_write": "permission-gated"
     },
     {
-      "id": "crm",
+      "id": "project-assistant",
+      "maps_to": [
+        "crm",
+        "report"
+      ],
       "capabilities": [
+        "project-context",
         "lead",
         "customer",
-        "project_link"
+        "project-link",
+        "aggregate",
+        "report"
       ],
       "production_write": "permission-gated"
     },
     {
-      "id": "report",
-      "capabilities": [
-        "aggregate",
+      "id": "qa",
+      "maps_to": [
+        "developer",
         "report"
+      ],
+      "capabilities": [
+        "qa",
+        "verify",
+        "regression-check",
+        "release-gate"
       ],
       "production_write": false
     }
-  ]
+  ],
+  "legacy_agent_ids": [
+    "developer",
+    "design",
+    "content",
+    "media",
+    "publishing",
+    "crm",
+    "report"
+  ],
+  "external_workers": {
+    "gemini": {
+      "role": "optional-specialist-worker",
+      "authority": "no-architecture-control",
+      "merge": "master-review-required"
+    },
+    "claude": {
+      "role": "optional-specialist-worker",
+      "authority": "scoped-task-only",
+      "merge": "master-review-required"
+    }
+  },
+  "safety": {
+    "no_fabricated_runtime_state": true,
+    "no_fabricated_business_data": true,
+    "production_requires_gate": true,
+    "preserve_existing_core": true,
+    "workspace_isolation": true,
+    "audit_every_execution": true
+  }
 }
