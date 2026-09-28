@@ -60,6 +60,9 @@ add_action('admin_post_hcdecor_social_group_save', function () {
 add_action('admin_post_hcdecor_social_bulk_publish', function () {
     if (!current_user_can('manage_options')) { wp_die('Forbidden'); }
     check_admin_referer('hcdecor_social_bulk_publish');
+    if (empty($_POST['production_approved']) || (string) $_POST['production_approved'] !== '1') {
+        wp_die('Explicit production approval is required before social publishing can be queued.');
+    }
     $ids = array_values(array_filter(array_map('sanitize_key', (array) ($_POST['accounts'] ?? []))));
     $group = sanitize_key($_POST['account_group'] ?? '');
     if ($group) {
@@ -87,6 +90,8 @@ add_action('admin_post_hcdecor_social_bulk_publish', function () {
             'media_ids' => $media,
             'status' => 'ready',
             'production_approved' => true,
+            'production_approved_by' => get_current_user_id(),
+            'production_approved_at' => current_time('mysql'),
         ];
         $result = function_exists('hcdecor_auto_enqueue')
             ? hcdecor_auto_enqueue('social_publish', $payload, $run, 'bulk:' . $batch . ':' . $id)
@@ -126,7 +131,7 @@ function hcdecor_social_manager_page() {
         <section class="hcsm-card"><h2>Nhóm tài khoản</h2>
           <form class="hcsm-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"><input type="hidden" name="action" value="hcdecor_social_group_save"><?php wp_nonce_field('hcdecor_social_group_save'); ?><input name="group_key" placeholder="vd: hcdecor"><input name="group_name" placeholder="HCDecor"><button class="button">Thêm nhóm</button></form>
           <hr><h2>Bulk Publisher</h2>
-          <form class="hcsm-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"><input type="hidden" name="action" value="hcdecor_social_bulk_publish"><?php wp_nonce_field('hcdecor_social_bulk_publish'); ?><label>Chọn nhóm</label><select name="account_group"><option value="">—</option><?php foreach ($groups as $key => $name) : ?><option value="<?php echo esc_attr($key); ?>"><?php echo esc_html($name); ?></option><?php endforeach; ?></select><label>Hoặc chọn nhiều tài khoản</label><?php foreach ($accounts as $account) : ?><label class="hcsm-check"><input type="checkbox" name="accounts[]" value="<?php echo esc_attr($account['id']); ?>"> <?php echo esc_html($account['name'] . ' · ' . strtoupper($account['channel'])); ?></label><?php endforeach; ?><label>Media IDs — chọn nhiều</label><input name="media_ids" placeholder="125, 126, 130"><label>Nội dung / Caption</label><textarea name="caption" rows="5"></textarea><label>Lịch đăng</label><input type="datetime-local" name="run_at"><button class="button button-primary button-hero">Đưa vào hàng đợi</button></form>
+          <form class="hcsm-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"><input type="hidden" name="action" value="hcdecor_social_bulk_publish"><?php wp_nonce_field('hcdecor_social_bulk_publish'); ?><label>Chọn nhóm</label><select name="account_group"><option value="">—</option><?php foreach ($groups as $key => $name) : ?><option value="<?php echo esc_attr($key); ?>"><?php echo esc_html($name); ?></option><?php endforeach; ?></select><label>Hoặc chọn nhiều tài khoản</label><?php foreach ($accounts as $account) : ?><label class="hcsm-check"><input type="checkbox" name="accounts[]" value="<?php echo esc_attr($account['id']); ?>"> <?php echo esc_html($account['name'] . ' · ' . strtoupper($account['channel'])); ?></label><?php endforeach; ?><label>Media IDs — chọn nhiều</label><input name="media_ids" placeholder="125, 126, 130"><label>Nội dung / Caption</label><textarea name="caption" rows="5"></textarea><label>Lịch đăng</label><input type="datetime-local" name="run_at"><label class="hcsm-check"><input type="checkbox" name="production_approved" value="1" required> Tôi xác nhận phê duyệt gửi nội dung này ra các kênh production đã chọn.</label><button class="button button-primary button-hero">Phê duyệt & đưa vào hàng đợi</button></form>
         </section>
       </div>
     </div>
