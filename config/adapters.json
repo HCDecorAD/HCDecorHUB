@@ -8,7 +8,12 @@
       "theme": "hello-elementor",
       "editor": "elementor",
       "status": "connected",
-      "write_policy": "staging-or-backup-first"
+      "write_policy": "staging-or-backup-first",
+      "wpvibe": {
+        "status": "authorization-required",
+        "authorization_url_expires": "1h",
+        "note": "WPVibe app installed in ChatGPT; hcdecorhub.com site authorization still pending."
+      }
     },
     "GSC": {
       "type": "vercel-github",
@@ -37,7 +42,8 @@
       "qa": {
         "source_preserved": true,
         "responsive_patch": "pending-actions-repair",
-        "production_claim": false
+        "production_claim": false,
+        "actions_blocker": "Repository Actions runs fail before job creation; check repository Actions settings/billing."
       }
     },
     "AMO": {
@@ -50,7 +56,8 @@
       "qa": {
         "responsive": true,
         "fake_commerce": false,
-        "production_verification": "pending-vercel-project-visibility"
+        "production_verification": "pending-vercel-project-visibility",
+        "vercel_connector_visibility": "not-visible-in-current-connected-team"
       }
     }
   }
