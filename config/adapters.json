@@ -1,29 +1,47 @@
 {
-  "schema_version":"1.0.0",
-  "adapters":{
-    "HCDECOR":{
-      "type":"wordpress",
-      "production_url":"https://hcdecorhub.com",
-      "site_id":162890150,
-      "theme":"hello-elementor",
-      "editor":"elementor",
-      "status":"connected",
-      "write_policy":"staging-or-backup-first"
+  "schema_version": "1.0.0",
+  "adapters": {
+    "HCDECOR": {
+      "type": "wordpress",
+      "production_url": "https://hcdecorhub.com",
+      "site_id": 162890150,
+      "theme": "hello-elementor",
+      "editor": "elementor",
+      "status": "connected",
+      "write_policy": "staging-or-backup-first"
     },
-    "GSC":{
-      "type":"vercel-github",
-      "production_url":"https://gscsenior.vercel.app",
-      "repository":"HCDecorAD/GSC",
-      "config_source":"gsc-config.json",
-      "status":"connected-source",
-      "invariants":{"hotspots":11,"video_hotspots":[1,2,3,4,5,6,7,8,9,10],"no_video_hotspots":[11]}
+    "GSC": {
+      "type": "vercel-github",
+      "production_url": "https://gscsenior.vercel.app",
+      "repository": "HCDecorAD/GSC",
+      "config_source": "gsc-config.json",
+      "status": "connected-source",
+      "invariants": {
+        "hotspots": 11,
+        "video_hotspots": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "no_video_hotspots": [
+          11
+        ]
+      }
     },
-    "AMO":{
-      "type":"vercel-github",
-      "production_url":"https://amonguyen.vercel.app",
-      "repository":null,
-      "status":"awaiting-repository-discovery",
-      "rule":"Do not fabricate repository or commerce data."
+    "AMO": {
+      "type": "vercel-github",
+      "production_url": "https://amonguyen.vercel.app",
+      "repository": "HCDecorAD/AMONguyen",
+      "status": "connected-source",
+      "rule": "No fabricated products, prices, inventory, or brands.",
+      "source_state": "README-only; storefront scaffold required"
     }
   }
 }
