@@ -328,7 +328,7 @@ function hcdecor_health_snapshot(){
             'configured'=>$drive_configured,
             'config_state'=>$drive_configured?'configured':'requires_credentials',
             'live_health'=>!$drive_configured?'not_checked':($drive_test==='ok'?'healthy':($drive_test==='error'?'unreachable':'not_checked')),
-            'email'=>(string)get_option('hcdecor_drive_connected_email','')
+            'identity_present'=>(string)get_option('hcdecor_drive_connected_email','')!==''
         ],
         'project_vault'=>[
             'ready'=>function_exists('hcdecor_project_vault_save'),

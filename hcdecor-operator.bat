@@ -233,6 +233,10 @@ findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\publish-runtime.ph
 findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 290
 findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 291
 findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 292
+findstr /c:"identity_present" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 293
+findstr /c:"'email'=>(string)get_option('hcdecor_drive_connected_email'" "wordpress\hcdecor-core\modules\system-health.php" >nul && exit /b 294
+findstr /c:"function hcdecor_media_limit_text" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 295
+findstr /c:"hcdecor_media_limit_text(wp_unslash($_POST['description']??''),10000)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 296
 findstr /c:"mb_substr($note,0,5000)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 273
 findstr /c:"$clip($project->post_content,30000)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 274
 findstr /c:"array_slice((array)get_post_meta($job_id,'hc_media_ids',true),0,12)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 275

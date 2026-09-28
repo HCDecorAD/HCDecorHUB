@@ -3,6 +3,11 @@ if (!defined('ABSPATH')) exit;
 
 /* HCDecor production media manager: upload/select, metadata visibility, project assignment. */
 
+function hcdecor_media_limit_text($value,$limit){
+    $text=sanitize_textarea_field((string)$value);
+    return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
+}
+
 add_action('admin_menu',function(){
     add_submenu_page('hcdecor-hub','Media Manager','Media Manager','upload_files','hcdecor-media','hcdecor_media_manager_page',3);
 },25);
@@ -42,11 +47,11 @@ add_action('admin_post_hcdecor_media_meta',function(){
     if(get_post_type($id)!=='attachment' || !current_user_can('edit_post',$id)) wp_die('Invalid media');
     wp_update_post([
         'ID'=>$id,
-        'post_title'=>sanitize_text_field(wp_unslash($_POST['title']??'')),
-        'post_excerpt'=>sanitize_textarea_field(wp_unslash($_POST['caption']??'')),
-        'post_content'=>sanitize_textarea_field(wp_unslash($_POST['description']??''))
+        'post_title'=>hcdecor_media_limit_text(wp_unslash($_POST['title']??''),300),
+        'post_excerpt'=>hcdecor_media_limit_text(wp_unslash($_POST['caption']??''),5000),
+        'post_content'=>hcdecor_media_limit_text(wp_unslash($_POST['description']??''),10000)
     ]);
-    update_post_meta($id,'_wp_attachment_image_alt',sanitize_text_field(wp_unslash($_POST['alt']??'')));
+    update_post_meta($id,'_wp_attachment_image_alt',hcdecor_media_limit_text(wp_unslash($_POST['alt']??''),1000));
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-media&media='.$id.'&updated=1')); exit;
 });
 
