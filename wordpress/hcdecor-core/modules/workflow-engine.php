@@ -315,6 +315,7 @@ add_action('rest_api_init',function(){
         'methods'=>'POST',
         'permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
+            if(!function_exists('hcdecor_ai_worker_enabled') || !hcdecor_ai_worker_enabled()) return new WP_Error('worker_disabled','AI Worker is disabled',['status'=>503]);
             $now=time();
             hcdecor_workflow_recover_orphan_draft_claims(50);
             $jobs=get_posts([

@@ -100,6 +100,7 @@ findstr /c:"hcdecor_conn_public_https($new['webhook_url'])" "wordpress\hcdecor-c
 findstr /c:"webhook_configured" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 129
 findstr /c:"current_user_can('manage_options')" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 109
 findstr /c:"hcdecor_ops_valid_media_ids" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 149
+findstr /c:"worker_disabled','AI Worker is disabled" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 160
 findstr /c:"in_array($cover,$media,true)" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 150
 findstr /c:"HTTP_X_HCDECOR_BRIDGE" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 110
 findstr /c:"HTTP_AUTHORIZATION" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 111
@@ -112,6 +113,10 @@ findstr /c:"'ok'=>'TEST OK'" "wordpress\hcdecor-core\modules\ai-workspace.php" >
 findstr /c:"em.configured" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 121
 findstr /c:"delete_option('hcdecor_ai_'.$p.'_tested_at')" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 119
 findstr /c:"has_backup_file" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 130
+findstr /c:"hcdecor_backup_object_identity" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 156
+findstr /c:"hcdecor_restore_existing_by_identity" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 157
+findstr /c:"get_post_type($old)==='attachment'" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 158
+findstr /c:"if(!$project && get_post_type($old_project)==='hc_project')" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 159
 findstr /c:"drive_project_file_id" "wordpress\hcdecor-core\modules\data-backup.php" >nul && exit /b 134
 findstr /c:"hc_drive_job_file_id" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 135
 findstr /c:"hc_drive_project_file_id" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 152

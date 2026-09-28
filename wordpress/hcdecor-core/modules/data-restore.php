@@ -42,11 +42,6 @@ function hcdecor_restore_media_map($backup){
         $old=(int)($m['id']??0);
         if(!$old) continue;
 
-        if(get_post_type($old)==='attachment'){
-            $map[$old]=$old;
-            continue;
-        }
-
         $drive_id=sanitize_text_field((string)($m['drive_file_id']??''));
         if($drive_id!==''){
             $found=get_posts([
@@ -60,6 +55,16 @@ function hcdecor_restore_media_map($backup){
     return $map;
 }
 
+function hcdecor_restore_existing_by_identity($type,$row){
+    $identity=sanitize_text_field((string)($row['backup_identity']??''));
+    if($identity==='') return 0;
+    $found=get_posts([
+        'post_type'=>$type,'post_status'=>'any','numberposts'=>2,'fields'=>'ids',
+        'meta_key'=>'hc_backup_identity','meta_value'=>$identity
+    ]);
+    return count($found)===1?(int)$found[0]:0;
+}
+
 function hcdecor_restore_plan($backup){
     $media_map=hcdecor_restore_media_map($backup);
     $projects=['update'=>0,'create'=>0];
@@ -67,14 +72,12 @@ function hcdecor_restore_plan($backup){
     $media=['matched'=>0,'missing'=>0];
 
     foreach((array)($backup['projects']??[]) as $p){
-        $id=(int)($p['id']??0);
-        if($id && get_post_type($id)==='hc_project') $projects['update']++;
+        if(hcdecor_restore_existing_by_identity('hc_project',$p)) $projects['update']++;
         else $projects['create']++;
     }
 
     foreach((array)($backup['content_jobs']??[]) as $j){
-        $id=(int)($j['id']??0);
-        if($id && get_post_type($id)==='hc_content_job') $jobs['update']++;
+        if(hcdecor_restore_existing_by_identity('hc_content_job',$j)) $jobs['update']++;
         else $jobs['create']++;
     }
 
@@ -109,7 +112,7 @@ function hcdecor_restore_projects($backup,$media_map){
 
     foreach((array)($backup['projects']??[]) as $p){
         $old=(int)($p['id']??0);
-        $existing=$old && get_post_type($old)==='hc_project' ? $old : 0;
+        $existing=hcdecor_restore_existing_by_identity('hc_project',$p);
         $status=in_array(($p['status']??''),['publish','draft','private'],true)?$p['status']:'draft';
 
         $post=[
@@ -124,6 +127,8 @@ function hcdecor_restore_projects($backup,$media_map){
         $r=$existing?wp_update_post($post,true):wp_insert_post($post,true);
         if(is_wp_error($r)) continue;
         $id=(int)$r;
+        $identity=sanitize_text_field((string)($p['backup_identity']??''));
+        if($identity!=='') update_post_meta($id,'hc_backup_identity',$identity);
         if($old) $project_map[$old]=$id;
         $existing?$updated++:$created++;
 
@@ -156,7 +161,7 @@ function hcdecor_restore_jobs($backup,$project_map,$media_map){
 
     foreach((array)($backup['content_jobs']??[]) as $j){
         $old=(int)($j['id']??0);
-        $existing=$old && get_post_type($old)==='hc_content_job' ? $old : 0;
+        $existing=hcdecor_restore_existing_by_identity('hc_content_job',$j);
 
         $post=[
             'post_type'=>'hc_content_job',
@@ -169,11 +174,12 @@ function hcdecor_restore_jobs($backup,$project_map,$media_map){
         $r=$existing?wp_update_post($post,true):wp_insert_post($post,true);
         if(is_wp_error($r)) continue;
         $id=(int)$r;
+        $identity=sanitize_text_field((string)($j['backup_identity']??''));
+        if($identity!=='') update_post_meta($id,'hc_backup_identity',$identity);
         $existing?$updated++:$created++;
 
         $old_project=(int)($j['project_id']??0);
         $project=(int)($project_map[$old_project]??0);
-        if(!$project && get_post_type($old_project)==='hc_project') $project=$old_project;
         update_post_meta($id,'hc_project_id',$project);
 
         $status=sanitize_key((string)($j['status']??'draft'));
@@ -302,7 +308,8 @@ function hcdecor_restore_apply($file_id,$sections){
     }else{
         foreach((array)($backup['projects']??[]) as $p){
             $old=(int)($p['id']??0);
-            if($old && get_post_type($old)==='hc_project') $project_result['map'][$old]=$old;
+            $existing=hcdecor_restore_existing_by_identity('hc_project',$p);
+            if($old && $existing) $project_result['map'][$old]=$existing;
         }
     }
 

@@ -11,8 +11,19 @@ function hcdecor_backup_folder_id(){
     return (string)($folders['backups']??'1-tNi0yUg9mNQuabzIRRYyigFM899EfHp');
 }
 
+function hcdecor_backup_object_identity($post_id){
+    $identity=(string)get_post_meta((int)$post_id,'hc_backup_identity',true);
+    if($identity===''){
+        $identity=wp_generate_uuid4();
+        add_post_meta((int)$post_id,'hc_backup_identity',$identity,true);
+        $identity=(string)get_post_meta((int)$post_id,'hc_backup_identity',true);
+    }
+    return sanitize_text_field($identity);
+}
+
 function hcdecor_backup_project($p){
     return [
+        'backup_identity'=>hcdecor_backup_object_identity($p->ID),
         'id'=>(int)$p->ID,
         'title'=>$p->post_title,
         'status'=>$p->post_status,
@@ -36,6 +47,7 @@ function hcdecor_backup_job($p){
         foreach(hcdecor_ops_fields() as $k) $fields[$k]=get_post_meta($p->ID,'hc_'.$k,true);
     }
     return [
+        'backup_identity'=>hcdecor_backup_object_identity($p->ID),
         'id'=>(int)$p->ID,
         'title'=>$p->post_title,
         'brief'=>$p->post_content,
