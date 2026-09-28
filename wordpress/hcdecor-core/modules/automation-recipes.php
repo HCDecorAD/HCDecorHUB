@@ -149,6 +149,7 @@ function hcdecor_recipe_execute_action($action,$context){
     }
     if($type==='save_drive'){
         $job=(int)($context['job_id']??0);
+        if(!function_exists('hcdecor_drive_workflow_auto_sync_enabled') || !hcdecor_drive_workflow_auto_sync_enabled()) return new WP_Error('drive_disabled','Automatic Drive workflow sync is disabled.');
         if(!$job || !function_exists('hcdecor_drive_save_job')) return new WP_Error('drive','Drive Vault unavailable');
         return hcdecor_drive_save_job($job,true);
     }

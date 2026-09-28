@@ -398,6 +398,11 @@ add_action('admin_post_hcdecor_automation_settings',function(){
         'max_attempts'=>max(1,min(10,(int)($_POST['max_attempts']??4))),
         'retry_minutes'=>max(1,min(1440,(int)($_POST['retry_minutes']??15)))
     ];
+    // Persist only a public HTTPS webhook. Runtime validates again before every outbound request.
+    if($new['webhook_enabled'] && (!$new['webhook_url'] || !function_exists('hcdecor_conn_public_https') || !hcdecor_conn_public_https($new['webhook_url']))){
+        $new['webhook_enabled']=false;
+        $new['webhook_url']='';
+    }
     // Do not allow social outbound without a configured webhook connector.
     if($new['social_enabled'] && (!$new['webhook_enabled'] || !$new['webhook_url'])) $new['social_enabled']=false;
     // Evergreen only produces social outbound; never leave it enabled without social.
