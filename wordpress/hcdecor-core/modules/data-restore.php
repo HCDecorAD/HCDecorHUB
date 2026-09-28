@@ -330,6 +330,17 @@ add_action('admin_post_hcdecor_restore_apply',function(){
     if($confirm!=='RESTORE') wp_die('Nhập RESTORE để xác nhận.');
 
     $sections=(array)($_POST['sections']??[]);
+    if(in_array('projects',$sections,true)){
+        $backup=hcdecor_restore_read_backup($file);
+        if(is_wp_error($backup)) wp_die(esc_html($backup->get_error_message()));
+        $restores_public=false;
+        foreach((array)($backup['projects']??[]) as $project){
+            if(($project['status']??'')==='publish'){ $restores_public=true; break; }
+        }
+        if($restores_public && (string)($_POST['approve_public_projects']??'')!=='1'){
+            wp_die('Explicit approval is required to restore public projects.');
+        }
+    }
     $r=hcdecor_restore_apply($file,$sections);
     if(is_wp_error($r)){
         update_option('hcdecor_restore_last_error',$r->get_error_message(),false);
@@ -424,6 +435,15 @@ function hcdecor_restore_page(){
                 <label style="display:block;margin:7px 0"><input type="checkbox" name="sections[]" value="<?php echo esc_attr($k);?>" checked> <?php echo esc_html($label);?></label>
               <?php endforeach;?>
 
+              <?php
+              $restore_has_public_projects=false;
+              foreach((array)($backup['projects']??[]) as $project){
+                  if(($project['status']??'')==='publish'){ $restore_has_public_projects=true; break; }
+              }
+              ?>
+              <?php if($restore_has_public_projects):?>
+                <p><label><input type="checkbox" name="approve_public_projects" value="1" required> Tôi xác nhận backup này có project public và cho phép khôi phục trạng thái public.</label></p>
+              <?php endif;?>
               <p><label><strong>Xác nhận</strong><br><input type="text" name="confirm" autocomplete="off" placeholder="Nhập RESTORE" required></label></p>
               <div class="hcrs-actions">
                 <button class="button button-primary">Safety Backup + Restore</button>
