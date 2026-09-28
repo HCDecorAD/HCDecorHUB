@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0.0",
+  "business_id": "hcdecor",
+  "brand_name": "HCDecor",
+  "verified": {
+    "production_url": "https://hcdecorhub.com"
+  },
+  "owner_input_required": {
+    "logo": null,
+    "favicon": null,
+    "phone": null,
+    "email": null,
+    "address": null,
+    "google_maps": null,
+    "facebook": null,
+    "tiktok": null,
+    "youtube": null,
+    "zalo": null
+  },
+  "security_note": "Never store passwords, API secrets, private keys or long-lived tokens in this file."
+}
