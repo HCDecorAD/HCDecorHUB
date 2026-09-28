@@ -38,8 +38,12 @@ call wp post-type get hc_service --field=name >>"%LOG%" 2>&1 || goto :fail_conte
 echo [PASS] HCDecor content types
 echo [PASS] ACF Data Model source synced
 
-call wp eval-file "%PLUGIN%\homepage-builder.php" >>"%LOG%" 2>&1 || goto :fail
-echo [PASS] Elementor homepage rebuilt
+if "%HCDECOR_APPROVE_HOMEPAGE_WRITE%"=="1" (
+  call wp eval "define('HCDECOR_APPROVE_HOMEPAGE_WRITE',true); require '%PLUGIN%/homepage-builder.php';" >>"%LOG%" 2>&1 || goto :fail
+  echo [PASS] Elementor homepage explicitly rebuilt
+) else (
+  echo [SAFE] Elementor homepage rebuild skipped; no explicit approval flag.
+)
 
 call wp eval "if(class_exists('\\Elementor\\Plugin')){\\Elementor\\Plugin::$instance->files_manager->clear_cache();echo 'CACHE_OK';}" >>"%LOG%" 2>&1
 echo [PASS] Elementor cache checkpoint

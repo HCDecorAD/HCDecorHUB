@@ -33,8 +33,12 @@ call wp plugin activate hcdecor-core >>"%LOG%" 2>&1 || goto :fail
 call wp eval "do_action('init'); echo 'MIGRATE_OK';" >>"%LOG%" 2>&1
 echo [AUTO] Data model + demo seed ready
 
-call wp eval-file "%P%\homepage-builder.php" >>"%LOG%" 2>&1 || goto :fail
-echo [AUTO] Website demo built
+if "%HCDECOR_APPROVE_HOMEPAGE_WRITE%"=="1" (
+  call wp eval "define('HCDECOR_APPROVE_HOMEPAGE_WRITE',true); require '%P%/homepage-builder.php';" >>"%LOG%" 2>&1 || goto :fail
+  echo [AUTO] Website homepage explicitly rebuilt
+) else (
+  echo [SAFE] Website homepage write skipped
+)
 
 call wp rewrite flush >>"%LOG%" 2>&1
 echo.

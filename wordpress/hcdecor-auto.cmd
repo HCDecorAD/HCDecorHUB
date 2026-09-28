@@ -75,9 +75,13 @@ call :say "Assign homepage"
 call wp option update page_on_front !HOME_ID! >>"%LOG%" 2>&1 || goto :fail_assign
 echo [PASS] Assign homepage
 
-call :say "Build Elementor homepage"
-call wp eval-file "%PLUGIN%\homepage-builder.php" >>"%LOG%" 2>&1 || goto :fail_build
-echo [PASS] Build Elementor homepage
+call :say "Homepage production write gate"
+if "%HCDECOR_APPROVE_HOMEPAGE_WRITE%"=="1" (
+  call wp eval "define('HCDECOR_APPROVE_HOMEPAGE_WRITE',true); require '%PLUGIN%/homepage-builder.php';" >>"%LOG%" 2>&1 || goto :fail_build
+  echo [PASS] Explicitly approved homepage rebuild
+) else (
+  echo [SAFE] Homepage rebuild skipped; source sync continues without production content write.
+)
 
 rem Do not call "wp elementor flush-css" here: on LocalWP/Elementor it may block indefinitely.
 call :say "Regenerate Elementor CSS cache"

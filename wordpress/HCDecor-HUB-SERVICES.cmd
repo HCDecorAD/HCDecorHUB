@@ -77,8 +77,12 @@ if errorlevel 1 (echo [WARN] Data service deferred>>"%LOG%") else echo [OK] Data
 
 rem SERVICE D - Website builder; failure does not stop Agent/Bridge
 echo [5/6] Website...
-call wp eval-file "%P%\homepage-builder.php" >>"%LOG%" 2>&1
-if errorlevel 1 (echo [WARN] Website builder skipped. HUB services continue.) else echo [OK] Website
+if "%HCDECOR_APPROVE_HOMEPAGE_WRITE%"=="1" (
+  call wp eval "define('HCDECOR_APPROVE_HOMEPAGE_WRITE',true); require '%P%/homepage-builder.php';" >>"%LOG%" 2>&1
+  if errorlevel 1 (echo [WARN] Approved website builder failed. HUB services continue.) else echo [OK] Website
+) else (
+  echo [SAFE] Website builder not approved; HUB services continue without homepage write.
+)
 
 rem SERVICE E - Bridge/Agent quick health; no outbound
 echo [6/6] Agent Bridge / Content / Media / Automation...

@@ -145,11 +145,12 @@ function hcdecor_project_vault_import($file_id){
     $source=(int)($d['source_project_id']??0);
     $id=$source&&get_post_type($source)==='hc_project'?$source:0;
     $project=(array)($d['project']??[]);
-    $status=in_array(($project['status']??''),['publish','draft','private'],true)?$project['status']:'draft';
+    $source_status=in_array(($project['status']??''),['publish','draft','private'],true)?$project['status']:'draft';
 
+    // Drive imports are staging operations. Never publish directly from imported data.
     $post=[
         'post_type'=>'hc_project',
-        'post_status'=>$status,
+        'post_status'=>'draft',
         'post_title'=>sanitize_text_field((string)($project['title']??'Imported Project')),
         'post_excerpt'=>sanitize_textarea_field((string)($project['excerpt']??'')),
         'post_content'=>wp_kses_post((string)($project['content']??''))
@@ -185,6 +186,7 @@ function hcdecor_project_vault_import($file_id){
     }
 
     update_post_meta($id,'hc_drive_project_file_id',$file_id);
+    update_post_meta($id,'hc_drive_project_source_status',$source_status);
     update_post_meta($id,'hc_drive_project_loaded_at',current_time('mysql'));
     return $id;
 }

@@ -7,7 +7,11 @@ for /f "delims=" %%I in ('wp eval "$p=get_page_by_path('trang-chu'); echo $p ? $
 if not defined HOME_ID goto :fail
 
 echo [1/4] Building Elementor homepage data...
-call wp eval-file wp-content/plugins/hcdecor-core/homepage-builder.php || goto :fail
+if not "%HCDECOR_APPROVE_HOMEPAGE_WRITE%"=="1" (
+  echo [BLOCKED] Set HCDECOR_APPROVE_HOMEPAGE_WRITE=1 for an explicit homepage rebuild.
+  goto :fail
+)
+call wp eval "define('HCDECOR_APPROVE_HOMEPAGE_WRITE',true); require 'wp-content/plugins/hcdecor-core/homepage-builder.php';" || goto :fail
 
 echo [2/4] Elementor CSS regeneration...
 call wp elementor flush-css >nul 2>&1
