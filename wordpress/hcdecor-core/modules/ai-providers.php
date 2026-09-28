@@ -146,7 +146,7 @@ function hcdecor_ai_call_openai($job_id){
         'input'=>[['role'=>'user','content'=>$content]],
         'text'=>['format'=>['type'=>'json_schema','name'=>'hcdecor_content','strict'=>true,'schema'=>hcdecor_ai_schema()]]
     ];
-    $r=wp_remote_post('https://api.openai.com/v1/responses',[
+    $r=wp_safe_remote_post('https://api.openai.com/v1/responses',[
         'timeout'=>90,
         'headers'=>['Authorization'=>'Bearer '.$key,'Content-Type'=>'application/json'],
         'body'=>wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)
@@ -180,7 +180,7 @@ function hcdecor_ai_call_gemini($job_id){
             'schema'=>hcdecor_ai_schema()
         ]
     ];
-    $r=wp_remote_post('https://generativelanguage.googleapis.com/v1beta/interactions',[
+    $r=wp_safe_remote_post('https://generativelanguage.googleapis.com/v1beta/interactions',[
         'timeout'=>90,
         'headers'=>['x-goog-api-key'=>$key,'Content-Type'=>'application/json','Api-Revision'=>'2026-05-20'],
         'body'=>wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)
@@ -207,10 +207,10 @@ function hcdecor_ai_test_provider($provider){
     if($model==='') return new WP_Error('model','AI model chưa cấu hình.');
     if($provider==='openai'){
         $url='https://api.openai.com/v1/models/'.rawurlencode($model);
-        $r=wp_remote_get($url,['timeout'=>20,'headers'=>['Authorization'=>'Bearer '.$key]]);
+        $r=wp_safe_remote_get($url,['timeout'=>20,'headers'=>['Authorization'=>'Bearer '.$key]]);
     }else{
         $url='https://generativelanguage.googleapis.com/v1beta/models/'.rawurlencode($model);
-        $r=wp_remote_get($url,['timeout'=>20,'headers'=>['x-goog-api-key'=>$key]]);
+        $r=wp_safe_remote_get($url,['timeout'=>20,'headers'=>['x-goog-api-key'=>$key]]);
     }
     if(is_wp_error($r)) return $r;
     $status=(int)wp_remote_retrieve_response_code($r);

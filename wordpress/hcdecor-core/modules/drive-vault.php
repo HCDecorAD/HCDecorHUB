@@ -93,7 +93,7 @@ add_action('admin_post_hcdecor_drive_oauth_callback',function(){
     }
     $code=(string)wp_unslash($_GET['code']??'');
     if($code==='') wp_die('Missing OAuth code.');
-    $r=wp_remote_post('https://oauth2.googleapis.com/token',[
+    $r=wp_safe_remote_post('https://oauth2.googleapis.com/token',[
         'timeout'=>30,
         'body'=>[
             'code'=>$code,
@@ -148,7 +148,7 @@ function hcdecor_drive_access_token($force=false){
         if(is_string($cached)&&$cached!=='') return $cached;
     }
     if(!hcdecor_drive_configured()) return new WP_Error('drive_auth','Google Drive chưa kết nối.');
-    $r=wp_remote_post('https://oauth2.googleapis.com/token',[
+    $r=wp_safe_remote_post('https://oauth2.googleapis.com/token',[
         'timeout'=>25,
         'body'=>[
             'client_id'=>hcdecor_drive_secret('client_id'),
@@ -180,7 +180,7 @@ function hcdecor_drive_request($method,$url,$args=[]){
     $args['headers']=$headers;
     $args['method']=$method;
     $args['timeout']=$args['timeout']??60;
-    $r=wp_remote_request($url,$args);
+    $r=wp_safe_remote_request($url,$args);
     if(is_wp_error($r)) return $r;
     $code=(int)wp_remote_retrieve_response_code($r);
     if($code===401){
@@ -188,7 +188,7 @@ function hcdecor_drive_request($method,$url,$args=[]){
         $token=hcdecor_drive_access_token(true);
         if(is_wp_error($token)) return $token;
         $args['headers']['Authorization']='Bearer '.$token;
-        $r=wp_remote_request($url,$args);
+        $r=wp_safe_remote_request($url,$args);
         if(is_wp_error($r)) return $r;
         $code=(int)wp_remote_retrieve_response_code($r);
     }

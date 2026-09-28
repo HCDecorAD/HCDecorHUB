@@ -76,6 +76,9 @@ findstr /c:"HCDECOR_APPROVE_CODE_SYNC" "wordpress\hcdecor-core\recovery-bootstra
 findstr /c:"hcdecor_recovery_code_sync_approved" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 103
 findstr /c:"hcdecor_recovery_trusted_raw_url" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 122
 findstr /c:"wp_safe_remote_get" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 123
+findstr /c:"wp_safe_remote_post('https://api.openai.com" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 126
+findstr /c:"wp_safe_remote_post('https://generativelanguage.googleapis.com" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 127
+findstr /c:"wp_safe_remote_request" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 128
 findstr /c:"!=='hc_project'" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 124
 findstr /c:"evergreen_enabled" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 125
 findstr /c:"hcdecor_sync_trusted_raw_url" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 112
