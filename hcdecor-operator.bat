@@ -218,6 +218,14 @@ findstr /c:"$clip($project['content']??'',100000,true)" "wordpress\hcdecor-core\
 findstr /c:"array_slice((array)$project['types'],0,30)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 270
 findstr /c:"hcdecor_ops_limit_text($brief,20000)" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 271
 findstr /c:"hcdecor_ops_limit_text(wp_unslash($_POST['brief']??''),20000)" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 272
+findstr /c:"function hcdecor_restore_clip" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 278
+findstr /c:"hcdecor_restore_clip($p['content']??'',100000,true)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 279
+findstr /c:"hcdecor_restore_clip($j['brief']??'',20000)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 280
+findstr /c:"array_slice((array)($m['ai_tags']??[]),0,30)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 281
+findstr /c:"$clip($d['job']['brief']??'',20000)" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 282
+findstr /c:"mb_substr($prompt,0,20000)" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 283
+findstr /c:"hcdecor_drive_active_prompt_title',$active_title" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 284
+findstr /c:"hcdecor_restore_clip($s['active_prompt'],20000,true)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 285
 findstr /c:"mb_substr($note,0,5000)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 273
 findstr /c:"$clip($project->post_content,30000)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 274
 findstr /c:"array_slice((array)get_post_meta($job_id,'hc_media_ids',true),0,12)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 275

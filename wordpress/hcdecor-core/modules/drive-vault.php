@@ -432,10 +432,13 @@ function hcdecor_drive_load_prompt($file_id){
     if(is_wp_error($body)) return $body;
     $d=json_decode($body,true);
     if(!is_array($d)||($d['schema']??'')!=='hcdecor.prompt.v1') return new WP_Error('schema','Invalid HCDecor prompt file.');
-    $prompt=(string)($d['prompt']??'');
+    $prompt=wp_kses_post((string)($d['prompt']??''));
+    $prompt=function_exists('mb_substr')?mb_substr($prompt,0,20000):substr($prompt,0,20000);
     if($prompt==='') return new WP_Error('prompt','Prompt is empty.');
-    update_option('hcdecor_drive_active_prompt',wp_kses_post($prompt),false);
-    update_option('hcdecor_drive_active_prompt_title',sanitize_text_field((string)($d['title']??'')),false);
+    $title=sanitize_text_field((string)($d['title']??''));
+    $title=function_exists('mb_substr')?mb_substr($title,0,300):substr($title,0,300);
+    update_option('hcdecor_drive_active_prompt',$prompt,false);
+    update_option('hcdecor_drive_active_prompt_title',$title,false);
     update_option('hcdecor_drive_active_prompt_file',sanitize_text_field($file_id),false);
     update_option('hcdecor_drive_active_prompt_loaded_at',current_time('mysql'),false);
     return true;
@@ -461,10 +464,14 @@ function hcdecor_drive_import_job($file_id){
     $source=(int)($d['source_job_id']??0);
     $id=0;
     if($source && get_post_type($source)==='hc_content_job' && (string)get_post_meta($source,'hc_agent_status',true)==='draft' && hash_equals((string)get_post_meta($source,'hc_drive_job_file_id',true),$file_id)) $id=$source;
+    $clip=function($value,$limit){
+        $text=sanitize_textarea_field((string)$value);
+        return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
+    };
     $post=[
         'post_type'=>'hc_content_job','post_status'=>'publish',
-        'post_title'=>sanitize_text_field($d['job']['title']??'Imported Drive Job'),
-        'post_content'=>sanitize_textarea_field($d['job']['brief']??'')
+        'post_title'=>$clip($d['job']['title']??'Imported Drive Job',300),
+        'post_content'=>$clip($d['job']['brief']??'',20000)
     ];
     if($id){$post['ID']=$id;$r=wp_update_post($post,true);}else{$r=wp_insert_post($post,true);}
     if(is_wp_error($r)) return $r;
@@ -483,10 +490,14 @@ function hcdecor_drive_import_job($file_id){
 }
 
 function hcdecor_drive_save_prompt($title,$prompt,$existing=''){
+    $title=sanitize_text_field((string)$title);
+    $title=function_exists('mb_substr')?mb_substr($title,0,300):substr($title,0,300);
+    $prompt=wp_kses_post((string)$prompt);
+    $prompt=function_exists('mb_substr')?mb_substr($prompt,0,20000):substr($prompt,0,20000);
     $data=[
         'schema'=>'hcdecor.prompt.v1',
-        'title'=>sanitize_text_field($title),
-        'prompt'=>wp_kses_post($prompt),
+        'title'=>$title,
+        'prompt'=>$prompt,
         'saved_at'=>current_time('mysql')
     ];
     return hcdecor_drive_save_json(sanitize_file_name($title?:'Prompt').'.json',$data,'prompts',$existing);
@@ -624,7 +635,12 @@ add_action('admin_post_hcdecor_drive_save_prompt',function(){
     $prompt=wp_unslash($_POST['prompt']??'');
     $r=hcdecor_drive_save_prompt($title,$prompt);
     if(!is_wp_error($r)){
-        update_option('hcdecor_drive_active_prompt',wp_kses_post($prompt),false);
+        $active=wp_kses_post((string)$prompt);
+        $active=function_exists('mb_substr')?mb_substr($active,0,20000):substr($active,0,20000);
+        update_option('hcdecor_drive_active_prompt',$active,false);
+        $active_title=sanitize_text_field((string)$title);
+        $active_title=function_exists('mb_substr')?mb_substr($active_title,0,300):substr($active_title,0,300);
+        update_option('hcdecor_drive_active_prompt_title',$active_title,false);
         update_option('hcdecor_drive_active_prompt_file',sanitize_text_field($r['id']??''),false);
     }
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&prompt_saved='.(is_wp_error($r)?'0':'1')));exit;

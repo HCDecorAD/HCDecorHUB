@@ -42,6 +42,11 @@ function hcdecor_restore_read_backup($file_id){
     return $data;
 }
 
+function hcdecor_restore_clip($value,$limit,$html=false){
+    $text=$html?wp_kses_post((string)$value):sanitize_textarea_field((string)$value);
+    return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
+}
+
 function hcdecor_restore_media_map($backup){
     $map=[];
     foreach((array)($backup['media_index']??[]) as $m){
@@ -124,9 +129,9 @@ function hcdecor_restore_projects($backup,$media_map){
         $post=[
             'post_type'=>'hc_project',
             'post_status'=>$status,
-            'post_title'=>sanitize_text_field((string)($p['title']??'Restored Project')),
-            'post_excerpt'=>sanitize_textarea_field((string)($p['excerpt']??'')),
-            'post_content'=>wp_kses_post((string)($p['content']??''))
+            'post_title'=>hcdecor_restore_clip($p['title']??'Restored Project',300),
+            'post_excerpt'=>hcdecor_restore_clip($p['excerpt']??'',5000),
+            'post_content'=>hcdecor_restore_clip($p['content']??'',100000,true)
         ];
         if($existing) $post['ID']=$existing;
 
@@ -150,7 +155,7 @@ function hcdecor_restore_projects($backup,$media_map){
             'hc_year'=>'year',
             'hc_summary'=>'summary'
         ] as $meta=>$key){
-            if(array_key_exists($key,$p)) update_post_meta($id,$meta,sanitize_textarea_field((string)$p[$key]));
+            if(array_key_exists($key,$p)) update_post_meta($id,$meta,hcdecor_restore_clip($p[$key],$key==='summary'?10000:2000));
         }
 
         $thumb_old=(int)($p['thumbnail_id']??0);
@@ -173,8 +178,8 @@ function hcdecor_restore_jobs($backup,$project_map,$media_map){
         $post=[
             'post_type'=>'hc_content_job',
             'post_status'=>'publish',
-            'post_title'=>sanitize_text_field((string)($j['title']??'Restored Content Job')),
-            'post_content'=>sanitize_textarea_field((string)($j['brief']??''))
+            'post_title'=>hcdecor_restore_clip($j['title']??'Restored Content Job',300),
+            'post_content'=>hcdecor_restore_clip($j['brief']??'',20000)
         ];
         if($existing) $post['ID']=$existing;
 
@@ -219,16 +224,16 @@ function hcdecor_restore_jobs($backup,$project_map,$media_map){
         }
 
         update_post_meta($id,'hc_ai_provider',sanitize_key((string)($j['ai_provider']??'')));
-        update_post_meta($id,'hc_ai_model',sanitize_text_field((string)($j['ai_model']??'')));
+        update_post_meta($id,'hc_ai_model',hcdecor_restore_clip($j['ai_model']??'',200));
 
         if(!empty($j['workflow_log']) && is_array($j['workflow_log'])){
             $workflow_log=[];
             foreach(array_slice($j['workflow_log'],-100) as $entry){
                 if(!is_array($entry)) continue;
                 $workflow_log[]=[
-                    'time'=>sanitize_text_field((string)($entry['time']??'')),
+                    'time'=>hcdecor_restore_clip($entry['time']??'',64),
                     'event'=>sanitize_key((string)($entry['event']??'')),
-                    'note'=>sanitize_text_field((string)($entry['note']??'')),
+                    'note'=>hcdecor_restore_clip($entry['note']??'',500),
                     'user'=>(int)($entry['user']??0)
                 ];
             }
@@ -251,12 +256,12 @@ function hcdecor_restore_media_metadata($backup,$media_map){
 
         wp_update_post([
             'ID'=>$id,
-            'post_title'=>sanitize_text_field((string)($m['title']??'')),
-            'post_excerpt'=>sanitize_textarea_field((string)($m['caption']??'')),
-            'post_content'=>sanitize_textarea_field((string)($m['description']??''))
+            'post_title'=>hcdecor_restore_clip($m['title']??'',300),
+            'post_excerpt'=>hcdecor_restore_clip($m['caption']??'',5000),
+            'post_content'=>hcdecor_restore_clip($m['description']??'',10000)
         ]);
 
-        update_post_meta($id,'_wp_attachment_image_alt',sanitize_text_field((string)($m['alt']??'')));
+        update_post_meta($id,'_wp_attachment_image_alt',hcdecor_restore_clip($m['alt']??'',1000));
         foreach([
             'hc_ai_summary'=>'ai_summary',
             'hc_ai_alt'=>'ai_alt',
@@ -265,9 +270,15 @@ function hcdecor_restore_media_metadata($backup,$media_map){
         ] as $meta=>$key){
             if(!array_key_exists($key,$m)) continue;
             $v=(string)$m[$key];
-            update_post_meta($id,$meta,$meta==='hc_drive_url'?esc_url_raw($v):sanitize_textarea_field($v));
+            $limit=$meta==='hc_ai_summary'?5000:($meta==='hc_ai_caption'?5000:1000);
+            update_post_meta($id,$meta,hcdecor_restore_clip($v,$limit));
         }
-        update_post_meta($id,'hc_ai_tags',array_values(array_filter(array_map('sanitize_text_field',(array)($m['ai_tags']??[])))));
+        $tags=[];
+        foreach(array_slice((array)($m['ai_tags']??[]),0,30) as $tag){
+            $tag=hcdecor_restore_clip($tag,100);
+            if($tag!=='') $tags[]=$tag;
+        }
+        update_post_meta($id,'hc_ai_tags',array_values(array_unique($tags)));
         update_post_meta($id,'hc_ai_cover_score',(int)($m['cover_score']??0));
         $updated++;
     }
@@ -280,11 +291,11 @@ function hcdecor_restore_settings($backup){
     $primary=sanitize_key((string)($s['ai_primary']??'auto'));
     if(in_array($primary,['auto','openai','gemini'],true)) update_option('hcdecor_ai_primary',$primary,false);
 
-    if(isset($s['openai_model'])) update_option('hcdecor_ai_openai_model',sanitize_text_field((string)$s['openai_model']),false);
-    if(isset($s['gemini_model'])) update_option('hcdecor_ai_gemini_model',sanitize_text_field((string)$s['gemini_model']),false);
+    if(isset($s['openai_model'])) update_option('hcdecor_ai_openai_model',hcdecor_restore_clip($s['openai_model'],200),false);
+    if(isset($s['gemini_model'])) update_option('hcdecor_ai_gemini_model',hcdecor_restore_clip($s['gemini_model'],200),false);
 
-    if(isset($s['active_prompt'])) update_option('hcdecor_drive_active_prompt',wp_kses_post((string)$s['active_prompt']),false);
-    if(isset($s['active_prompt_title'])) update_option('hcdecor_drive_active_prompt_title',sanitize_text_field((string)$s['active_prompt_title']),false);
+    if(isset($s['active_prompt'])) update_option('hcdecor_drive_active_prompt',hcdecor_restore_clip($s['active_prompt'],20000,true),false);
+    if(isset($s['active_prompt_title'])) update_option('hcdecor_drive_active_prompt_title',hcdecor_restore_clip($s['active_prompt_title'],300),false);
     if(isset($s['active_prompt_file'])) update_option('hcdecor_drive_active_prompt_file',sanitize_text_field((string)$s['active_prompt_file']),false);
 
     if(!empty($s['automation']) && is_array($s['automation'])){
