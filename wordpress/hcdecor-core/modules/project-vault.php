@@ -218,6 +218,8 @@ add_action('hcdecor_project_data_changed',function($project_id){
 add_action('hcdecor_project_vault_async_save',function($project_id){
     if(!hcdecor_project_vault_auto_sync_enabled()) return;
     $project_id=(int)$project_id;
+    if(!$project_id || get_post_type($project_id)!=='hc_project') return;
+    if(!function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()) return;
     $r=hcdecor_project_vault_save($project_id,true);
     if(is_wp_error($r)){
         $attempts=(int)get_post_meta($project_id,'hc_drive_project_retry_count',true)+1;
@@ -235,7 +237,7 @@ add_action('hcdecor_project_vault_async_save',function($project_id){
 add_action('hcdecor_after_web_publish',function($job_id,$project_id){
     if(!hcdecor_project_vault_auto_sync_enabled()) return;
     $project_id=(int)$project_id;
-    if(!$project_id || !function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()) return;
+    if(!$project_id || get_post_type($project_id)!=='hc_project' || !function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()) return;
     if(!wp_next_scheduled('hcdecor_project_vault_async_save',[$project_id])){
         wp_schedule_single_event(time()+10,'hcdecor_project_vault_async_save',[$project_id]);
     }

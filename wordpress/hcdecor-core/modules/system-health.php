@@ -437,7 +437,7 @@ function hcdecor_health_auto_repair_schedules(){
     $ai_ready=function_exists('hcdecor_ai_available') && (hcdecor_ai_available('openai') || hcdecor_ai_available('gemini'));
     $required=['background_sync'=>(bool)get_option('hcdecor_background_sync_enabled',false),'ai_worker'=>(bool)get_option('hcdecor_ai_worker_enabled',false) && $ai_ready,'backup'=>(bool)get_option('hcdecor_backup_schedule_enabled',false),'health_report'=>true];
     $required['automation']=!empty($auto['enabled']);
-    $required['evergreen']=!empty($auto['evergreen_enabled']);
+    $required['evergreen']=!empty($auto['enabled']) && !empty($auto['evergreen_enabled']);
     $required['drive_inbox']=!empty($inbox['enabled']);
     $missing=array_filter($crons,function($v,$name)use($required){ return !empty($required[$name]) && empty($v['scheduled']); },ARRAY_FILTER_USE_BOTH);
     $cleanup_change=(array)get_option('hcdecor_automation_settings_last_change',[]);

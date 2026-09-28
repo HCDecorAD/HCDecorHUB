@@ -10,9 +10,17 @@ if (!defined('HCDECOR_SYNC_MANIFEST')) {
     define('HCDECOR_SYNC_MANIFEST', 'https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-sync-manifest.json');
 }
 function hcdecor_recovery_git_sha($body) { return sha1('blob ' . strlen($body) . "\0" . $body); }
+function hcdecor_recovery_trusted_raw_url($url, $rel='') {
+    $parts = wp_parse_url((string)$url);
+    if (!is_array($parts) || strtolower((string)($parts['scheme'] ?? '')) !== 'https' || strtolower((string)($parts['host'] ?? '')) !== 'raw.githubusercontent.com') { return false; }
+    $path = (string)($parts['path'] ?? '');
+    if ($rel === '') { return $path === '/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-sync-manifest.json'; }
+    return $path === '/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/' . ltrim((string)$rel, '/');
+}
 function hcdecor_recovery_fetch_manifest() {
+    if (!hcdecor_recovery_trusted_raw_url(HCDECOR_SYNC_MANIFEST)) { return new WP_Error('manifest_url','Untrusted manifest URL'); }
     $url = HCDECOR_SYNC_MANIFEST . '?t=' . time();
-    $r = wp_remote_get($url, ['timeout'=>15,'headers'=>['Cache-Control'=>'no-cache']]);
+    $r = wp_safe_remote_get($url, ['timeout'=>15,'headers'=>['Cache-Control'=>'no-cache']]);
     if (is_wp_error($r) || wp_remote_retrieve_response_code($r) !== 200) { return new WP_Error('manifest','Manifest unavailable'); }
     $m = json_decode(wp_remote_retrieve_body($r), true);
     return (!empty($m['files']) && is_array($m['files'])) ? $m : new WP_Error('manifest_json','Invalid manifest');
@@ -50,8 +58,9 @@ function hcdecor_recovery_sync($force=false) {
             $local = @file_get_contents($target);
             if ($local !== false && hash_equals(strtolower($f['git_sha1']), hcdecor_recovery_git_sha($local))) { continue; }
         }
+        if (!hcdecor_recovery_trusted_raw_url($f['url'], $rel)) { continue; }
         $url = $f['url'] . (strpos($f['url'],'?') === false ? '?' : '&') . 'v=' . rawurlencode((string)($m['version'] ?? time()));
-        $r = wp_remote_get($url, ['timeout'=>20,'headers'=>['Cache-Control'=>'no-cache']]);
+        $r = wp_safe_remote_get($url, ['timeout'=>20,'headers'=>['Cache-Control'=>'no-cache']]);
         if (is_wp_error($r) || wp_remote_retrieve_response_code($r) !== 200) { continue; }
         $body = wp_remote_retrieve_body($r);
         if (!hash_equals(strtolower($f['git_sha1']), hcdecor_recovery_git_sha($body))) { continue; }
