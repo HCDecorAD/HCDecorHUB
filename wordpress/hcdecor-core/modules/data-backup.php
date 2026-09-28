@@ -84,9 +84,12 @@ function hcdecor_backup_media($p){
 }
 
 function hcdecor_backup_snapshot(){
-    $projects=get_posts(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'numberposts'=>-1,'orderby'=>'ID','order'=>'ASC']);
-    $jobs=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>-1,'orderby'=>'ID','order'=>'ASC']);
-    $media=get_posts(['post_type'=>'attachment','post_status'=>'inherit','numberposts'=>-1,'orderby'=>'ID','order'=>'ASC']);
+    $projects=get_posts(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'numberposts'=>2001,'orderby'=>'ID','order'=>'ASC']);
+    $jobs=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>5001,'orderby'=>'ID','order'=>'ASC']);
+    $media=get_posts(['post_type'=>'attachment','post_status'=>'inherit','numberposts'=>10001,'orderby'=>'ID','order'=>'ASC']);
+    if(count($projects)>2000 || count($jobs)>5000 || count($media)>10000){
+        return new WP_Error('backup_limit','Backup object count exceeds the safe restore limits.');
+    }
 
     $auto=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
     unset($auto['webhook_url']);
@@ -136,6 +139,11 @@ function hcdecor_backup_save(){
         return new WP_Error('drive','Drive Vault unavailable.');
     }
     $snap=hcdecor_backup_snapshot();
+    if(is_wp_error($snap)){
+        update_option('hcdecor_backup_last_error',sanitize_text_field($snap->get_error_message()),false);
+        delete_transient('hcdecor_backup_running');
+        return $snap;
+    }
     $name='HCDECOR-BACKUP-'.gmdate('Ymd-His').'.json';
     $json=wp_json_encode($snap,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
     if(!is_string($json) || $json===''){

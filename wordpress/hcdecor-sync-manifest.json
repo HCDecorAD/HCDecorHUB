@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.072",
+    "version":  "2026.09.29.073",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -119,7 +119,7 @@
                   {
                       "path":  "modules/drive-vault.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/drive-vault.php",
-                      "git_sha1":  "352bd0d7f5ea91d93c5a5454c4df3894c9b9ede3"
+                      "git_sha1":  "0c5e4934c67187add6f27f42b7d077e59b6bd84f"
                   },
                   {
                       "path":  "modules/ai-workspace.php",
@@ -134,12 +134,12 @@
                   {
                       "path":  "modules/data-backup.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/data-backup.php",
-                      "git_sha1":  "8e87abf224b53cd30bd4a6788b9f1e2672df9384"
+                      "git_sha1":  "c99697ed823dfd40163c6555d985383a53bae15b"
                   },
                   {
                       "path":  "modules/data-restore.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/data-restore.php",
-                      "git_sha1":  "6492b6fd4c1eac9d530bf65fc2a7fd7e3312f5f1"
+                      "git_sha1":  "be548643584406351eb550a199c10b21f0151450"
                   },
                   {
                       "path":  "modules/drive-inbox.php",

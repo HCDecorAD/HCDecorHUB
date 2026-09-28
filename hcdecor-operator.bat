@@ -200,6 +200,12 @@ findstr /c:"Webhook payload exceeds 256 KB." "wordpress\hcdecor-core\modules\aut
 findstr /c:"Only failed or blocked automation tasks can be retried." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 252
 findstr /c:"'completed'=>true,'type'=>$type" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 253
 findstr /c:"mb_substr($caption, 0, 10000)" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 254
+findstr /c:"$limit=max(1,min(100,(int)($r->get_param('limit')?:100)))" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 255
+findstr /c:"$limits=['projects'=>2000,'content_jobs'=>5000,'media_index'=>10000]" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 256
+findstr /c:"'numberposts'=>2001" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 257
+findstr /c:"'numberposts'=>5001" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 258
+findstr /c:"'numberposts'=>10001" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 259
+findstr /c:"if(is_wp_error($snap))" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 260
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

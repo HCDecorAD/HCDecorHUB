@@ -33,6 +33,12 @@ function hcdecor_restore_read_backup($file_id){
     if(!is_string($payload) || !hash_equals(strtolower($expected),hash('sha256',$payload))){
         return new WP_Error('integrity','Backup integrity check failed.');
     }
+    $limits=['projects'=>2000,'content_jobs'=>5000,'media_index'=>10000];
+    foreach($limits as $section=>$limit){
+        if(isset($data[$section]) && (!is_array($data[$section]) || count($data[$section])>$limit)){
+            return new WP_Error('restore_limit','Backup '.$section.' exceeds the safe restore object limit.');
+        }
+    }
     return $data;
 }
 
