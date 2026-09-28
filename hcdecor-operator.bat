@@ -143,6 +143,8 @@ findstr /c:"hcdecor_full_audit_sanitize" "wordpress\hcdecor-core\modules\full-op
 findstr /c:"return '[REDACTED]'" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 195
 findstr /c:"$cron_required=hcdecor_health_required_schedules();" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 196
 findstr /c:"$required=hcdecor_health_required_schedules();" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 197
+findstr /c:"Retry</button>" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 198
+findstr /c:"hcdecor_automation_retry" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 199
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118
