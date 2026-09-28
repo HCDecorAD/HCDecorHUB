@@ -1,97 +1,13 @@
 {
-    "schema_version":  "1.1.0",
-    "integrations":  {
-                         "github":  {
-                                        "purpose":  [
-                                                        "source",
-                                                        "version",
-                                                        "release",
-                                                        "rollback"
-                                                    ],
-                                        "secret_storage":  "environment"
-                                    },
-                         "wordpress":  {
-                                           "purpose":  [
-                                                           "HCDecor production",
-                                                           "Elementor public website"
-                                                       ],
-                                           "site":  "https://hcdecorhub.com",
-                                           "state":  "connected",
-                                           "secret_storage":  "environment"
-                                       },
-                         "vercel":  {
-                                        "purpose":  [
-                                                        "GSC runtime",
-                                                        "AMO runtime"
-                                                    ],
-                                        "state":  "degraded",
-                                        "note":  "Current connector team does not expose the existing GSC/AMO projects; never create duplicates.",
-                                        "secret_storage":  "environment"
-                                    },
-                         "google_drive":  {
-                                              "purpose":  [
-                                                              "projects",
-                                                              "media",
-                                                              "data",
-                                                              "knowledge",
-                                                              "templates",
-                                                              "reports",
-                                                              "backup"
-                                                          ],
-                                              "secret_storage":  "connector-or-environment"
-                                          },
-                         "metricool":  {
-                                           "purpose":  [
-                                                           "social-publishing",
-                                                           "social-analytics",
-                                                           "best-time-to-post"
-                                                       ],
-                                           "state":  "connected",
-                                           "brand_id":  "7127887",
-                                           "timezone":  "Asia/Bangkok",
-                                           "networks":  {
-                                                            "instagram":  "zrubyshop",
-                                                            "tiktok":  "quangcaohocuong",
-                                                            "youtube":  "UC5yfCYp8BJNIHbX1-VNXVig",
-                                                            "facebook":  null
-                                                        },
-                                           "publish_policy":  "draft-or-schedule only unless production publish is approved"
-                                       },
-                         "supermetrics":  {
-                                              "purpose":  [
-                                                              "cross-channel-analytics",
-                                                              "marketing-reporting",
-                                                              "dashboards"
-                                                          ],
-                                              "state":  "deferred",
-                                              "note":  "Deferred until website and analytics sources are ready for production reporting."
-                                          },
-                         "social":  {
-                                        "purpose":  [
-                                                        "publishing"
-                                                    ],
-                                        "providers":  [
-                                                          "metricool",
-                                                          "meta",
-                                                          "instagram",
-                                                          "tiktok",
-                                                          "youtube",
-                                                          "zalo"
-                                                      ],
-                                        "status":  "metricool-connected-facebook-pending"
-                                    }
-                     },
-    "health_contract":  {
-                            "states":  [
-                                           "connected",
-                                           "degraded",
-                                           "disconnected",
-                                           "unknown"
-                                       ],
-                            "required_fields":  [
-                                                    "provider",
-                                                    "state",
-                                                    "checked_at"
-                                                ]
-                        }
+  "schema_version":"1.2.0",
+  "integrations":{
+    "github":{"purpose":["source","version","release","rollback"],"config_state":"configured","secret_storage":"environment"},
+    "wordpress":{"purpose":["HCDecor production","Elementor public website"],"site":"https://hcdecorhub.com","config_state":"configured","secret_storage":"environment"},
+    "vercel":{"purpose":["GSC runtime","AMO runtime"],"config_state":"configured","note":"Existing GSC/AMO projects only; never create duplicates.","secret_storage":"environment"},
+    "google_drive":{"purpose":["projects","media","data","knowledge","templates","reports","backup"],"config_state":"requires-credentials","secret_storage":"connector-or-environment"},
+    "metricool":{"purpose":["social-publishing","social-analytics","best-time-to-post"],"config_state":"configured","brand_id":"7127887","timezone":"Asia/Bangkok","networks":{"instagram":"zrubyshop","tiktok":"quangcaohocuong","youtube":"UC5yfCYp8BJNIHbX1-VNXVig","facebook":null},"publish_policy":"draft-or-schedule only unless production publish is approved"},
+    "supermetrics":{"purpose":["cross-channel-analytics","marketing-reporting","dashboards"],"config_state":"deferred","note":"Deferred until website and analytics sources are ready for production reporting."},
+    "social":{"purpose":["publishing"],"providers":["metricool","meta","instagram","tiktok","youtube","zalo"],"config_state":"partial","note":"Metricool is configured; Facebook remains pending."}
+  },
+  "status_contract":{"config_states":["configured","requires-credentials","partial","deferred","unknown"],"live_health_states":["healthy","degraded","unreachable","not_checked"],"rule":"Configuration state must never be presented as live provider health."}
 }
