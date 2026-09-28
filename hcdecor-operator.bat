@@ -51,6 +51,10 @@ findstr /c:"defined('HCDECOR_OPS_API_TOKEN')" "wordpress\hcdecor-core\modules\co
 findstr /c:"current_user_can('manage_options')" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 78
 findstr /c:"HTTP_AUTHORIZATION" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 79
 findstr /c:"hcdecor_ops_bridge_configured" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 80
+findstr /c:"hc_last_publish_approved_by" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 81
+findstr /c:"delete_post_meta($job_id,'hc_publish_approved_by')" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 82
+findstr /c:"'approved_by'=>$approval_by" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 83
+findstr /c:"delete_post_meta($id,'hc_publish_approved_by')" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 84
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\setup-hcdecor.cmd" >nul || exit /b 54

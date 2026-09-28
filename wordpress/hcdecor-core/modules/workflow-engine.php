@@ -520,19 +520,31 @@ add_action('admin_post_hcdecor_review_action',function(){
         update_post_meta($id,'hc_reviewed_by',get_current_user_id());
         update_post_meta($id,'hc_reviewed_at',current_time('mysql'));
         if($note!=='') update_post_meta($id,'hc_review_note',$note);
-        hcdecor_workflow_set_status($id,'approved','Approved by reviewer');
+        if(!hcdecor_workflow_set_status($id,'approved','Approved by reviewer')){
+            delete_post_meta($id,'hc_reviewed_by');
+            delete_post_meta($id,'hc_reviewed_at');
+            wp_die('Unable to approve job.');
+        }
     }elseif($action==='approve_publish'){
         if(!current_user_can('publish_posts')) wp_die('Forbidden');
         if((string)get_post_meta($id,'hc_agent_status',true)!=='review') wp_die('Job is not ready for approval.');
+        if(!function_exists('hcdecor_publish_job_to_web')) wp_die('Web publisher unavailable');
         update_post_meta($id,'hc_reviewed_by',get_current_user_id());
         update_post_meta($id,'hc_reviewed_at',current_time('mysql'));
         if($note!=='') update_post_meta($id,'hc_review_note',$note);
-        hcdecor_workflow_set_status($id,'approved','Approved by reviewer');
+        if(!hcdecor_workflow_set_status($id,'approved','Approved by reviewer')){
+            delete_post_meta($id,'hc_reviewed_by');
+            delete_post_meta($id,'hc_reviewed_at');
+            wp_die('Unable to approve job for publishing.');
+        }
         update_post_meta($id,'hc_publish_approved_by',get_current_user_id());
         update_post_meta($id,'hc_publish_approved_at',current_time('mysql'));
-        if(!function_exists('hcdecor_publish_job_to_web')) wp_die('Web publisher unavailable');
         $published=hcdecor_publish_job_to_web($id);
-        if(is_wp_error($published)) wp_die($published->get_error_message());
+        if(is_wp_error($published)){
+            delete_post_meta($id,'hc_publish_approved_by');
+            delete_post_meta($id,'hc_publish_approved_at');
+            wp_die($published->get_error_message());
+        }
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-review&job='.$id.'&published=1')); exit;
     }elseif($action==='changes'){
         if((string)get_post_meta($id,'hc_agent_status',true)!=='review') wp_die('Job is not ready to return for changes.');

@@ -81,8 +81,10 @@ function hcdecor_publish_job_to_web($job_id){
     update_post_meta($project,'hc_seo_meta',$seo);
     if($cover && wp_attachment_is_image($cover)) set_post_thumbnail($project,$cover);
 
+    $approval_by=(int)get_post_meta($job_id,'hc_publish_approved_by',true);
+    $approval_at=(string)get_post_meta($job_id,'hc_publish_approved_at',true);
     $history=(array)get_post_meta($job_id,'hc_publish_history',true);
-    $history[]=['published_at'=>current_time('mysql'),'snapshot'=>$snapshot];
+    $history[]=['published_at'=>current_time('mysql'),'approved_by'=>$approval_by,'approved_at'=>$approval_at,'snapshot'=>$snapshot];
     if(count($history)>5) $history=array_slice($history,-5);
     update_post_meta($job_id,'hc_publish_history',$history);
     update_post_meta($job_id,'hc_publish_snapshot',$snapshot);
@@ -99,6 +101,10 @@ function hcdecor_publish_job_to_web($job_id){
         delete_post_meta($job_id,'hc_published_web_url');
         return new WP_Error('transition','Web publish status transition was rejected; Project snapshot was restored.');
     }
+    update_post_meta($job_id,'hc_last_publish_approved_by',$approval_by);
+    update_post_meta($job_id,'hc_last_publish_approved_at',$approval_at);
+    delete_post_meta($job_id,'hc_publish_approved_by');
+    delete_post_meta($job_id,'hc_publish_approved_at');
     do_action('hcdecor_after_web_publish',$job_id,$project);
 
     return ['job_id'=>$job_id,'project_id'=>$project,'url'=>get_permalink($project)];
