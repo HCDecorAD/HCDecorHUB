@@ -34,6 +34,7 @@ findstr /c:"wp_safe_remote_post" "wordpress\hcdecor-core\modules\publish-runtime
 findstr /c:"Webhook URL must be public HTTPS." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 59
 findstr /c:"Unknown managed Drive folder" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 60
 findstr /c:"hcdecor_drive_file_in_managed_folders" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 63
+findstr /c:"Drive request blocked: untrusted API host." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 66
 findstr /c:"Drive media file must be between 1 byte and 50 MB." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 64
 findstr /c:"Approved or published jobs must be returned for changes before editing" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 65
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52

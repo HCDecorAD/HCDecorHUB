@@ -169,6 +169,10 @@ function hcdecor_drive_access_token($force=false){
 }
 
 function hcdecor_drive_request($method,$url,$args=[]){
+    $parts=wp_parse_url((string)$url);
+    if(!is_array($parts) || strtolower((string)($parts['scheme']??''))!=='https' || strtolower((string)($parts['host']??''))!=='www.googleapis.com'){
+        return new WP_Error('drive_url','Drive request blocked: untrusted API host.');
+    }
     $token=hcdecor_drive_access_token();
     if(is_wp_error($token)) return $token;
     $headers=(array)($args['headers']??[]);
