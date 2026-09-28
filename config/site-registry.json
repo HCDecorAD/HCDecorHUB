@@ -37,10 +37,11 @@
       "name": "AMO Nguyen",
       "production_url": "https://amonguyen.vercel.app",
       "platform": "vercel",
-      "repository": null,
+      "repository": "HCDecorAD/AMONguyen",
       "deployment_authority": "GitHub -> Vercel",
       "status": "production",
-      "needs_owner_input": ["repository"]
+      "needs_owner_input": [],
+      "source_status": "repository-discovered"
     }
   ]
 }
