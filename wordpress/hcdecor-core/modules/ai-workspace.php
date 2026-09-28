@@ -29,7 +29,7 @@ function hcdecor_workspace_drive_state(){
 }
 
 function hcdecor_workspace_badge($state){
-    $labels=['ok'=>'CONNECTED','saved'=>'CONFIGURED','error'=>'ERROR','off'=>'OFF'];
+    $labels=['ok'=>'TEST OK','saved'=>'CONFIGURED','error'=>'ERROR','off'=>'OFF'];
     return $labels[$state]??strtoupper((string)$state);
 }
 

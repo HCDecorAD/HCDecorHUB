@@ -217,7 +217,7 @@ add_action('admin_footer',function(){
       .hc-connector-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
       .hc-connector{border:1px solid #eee;border-radius:10px;padding:10px}
       .hc-connector em{font-style:normal;font-size:11px;padding:3px 7px;border-radius:999px;background:#f0f0f1}
-      .hc-connector em.connected{background:#dff3e4;color:#176c2f}
+      .hc-connector em.configured{background:#dff3e4;color:#176c2f}
       @media(max-width:900px){.hc-auto-architecture{grid-template-columns:1fr}}
     </style>
     <div class="hc-auto-architecture">
@@ -236,7 +236,7 @@ add_action('admin_footer',function(){
       </section>
       <section class="hc-auto-box"><h2>Connector Layer</h2><div class="hc-connector-grid">
       <?php foreach($connectors as $id=>$x):?>
-        <div class="hc-connector"><strong><?php echo esc_html($x['label']);?></strong><br><em class="<?php echo in_array($x['status'],['local_available','configured'],true)?'connected':'';?>"><?php echo esc_html(strtoupper($x['status']));?></em><div style="margin-top:6px;color:#646970;font-size:12px"><?php echo esc_html(implode(', ',$x['actions']));?></div></div>
+        <div class="hc-connector"><strong><?php echo esc_html($x['label']);?></strong><br><em class="<?php echo in_array($x['status'],['local_available','configured'],true)?'configured':'';?>"><?php echo esc_html(strtoupper($x['status']));?></em><div style="margin-top:6px;color:#646970;font-size:12px"><?php echo esc_html(implode(', ',$x['actions']));?></div></div>
       <?php endforeach;?>
       </div></section>
     </div><?php
