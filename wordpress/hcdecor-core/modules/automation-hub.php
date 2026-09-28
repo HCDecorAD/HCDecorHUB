@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) exit;
 
 function hcdecor_auto_settings(){
     $d=[
-        'enabled'=>true,
+        'enabled'=>false,
         'social_enabled'=>false,
         'webhook_enabled'=>false,
         'webhook_url'=>'',

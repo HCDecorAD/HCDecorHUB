@@ -122,10 +122,10 @@ function hcdecor_health_snapshot(){
     $drive_test=(string)get_option('hcdecor_drive_test_status','');
     $auto_settings=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
     $inbox_settings=function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[];
-    $cron_required=['background_sync'=>(bool)get_option('hcdecor_background_sync_enabled',false),'ai_worker'=>true,'backup'=>true,'health_report'=>true];
-    $cron_required['automation']=!isset($auto_settings['enabled']) || !empty($auto_settings['enabled']);
+    $cron_required=['background_sync'=>(bool)get_option('hcdecor_background_sync_enabled',false),'ai_worker'=>(bool)get_option('hcdecor_ai_worker_enabled',false),'backup'=>(bool)get_option('hcdecor_backup_schedule_enabled',false),'health_report'=>true];
+    $cron_required['automation']=!empty($auto_settings['enabled']);
     $cron_required['evergreen']=!empty($auto_settings['evergreen_enabled']);
-    $cron_required['drive_inbox']=!isset($inbox_settings['enabled']) || !empty($inbox_settings['enabled']);
+    $cron_required['drive_inbox']=!empty($inbox_settings['enabled']);
     $bridge=(string)get_option('hcdecor_bridge_token','');
     $actionable_blocked=hcdecor_health_actionable_blocked_count();
     $auto_recovered_24h=0;
@@ -426,10 +426,10 @@ function hcdecor_health_auto_repair_schedules(){
     $crons=hcdecor_health_crons();
     $auto=function_exists('hcdecor_auto_settings')?(array)hcdecor_auto_settings():[];
     $inbox=function_exists('hcdecor_drive_inbox_settings')?(array)hcdecor_drive_inbox_settings():[];
-    $required=['background_sync'=>(bool)get_option('hcdecor_background_sync_enabled',false),'ai_worker'=>true,'backup'=>true,'health_report'=>true];
-    $required['automation']=!isset($auto['enabled']) || !empty($auto['enabled']);
+    $required=['background_sync'=>(bool)get_option('hcdecor_background_sync_enabled',false),'ai_worker'=>(bool)get_option('hcdecor_ai_worker_enabled',false),'backup'=>(bool)get_option('hcdecor_backup_schedule_enabled',false),'health_report'=>true];
+    $required['automation']=!empty($auto['enabled']);
     $required['evergreen']=!empty($auto['evergreen_enabled']);
-    $required['drive_inbox']=!isset($inbox['enabled']) || !empty($inbox['enabled']);
+    $required['drive_inbox']=!empty($inbox['enabled']);
     $missing=array_filter($crons,function($v,$name)use($required){ return !empty($required[$name]) && empty($v['scheduled']); },ARRAY_FILTER_USE_BOTH);
     $cleanup_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
     $cleanup_repairs=[];
@@ -509,7 +509,7 @@ function hcdecor_health_auto_repair_schedules(){
     $disabled_repairs=[];
     foreach($crons as $name=>$x){
         if(isset($required[$name]) && empty($required[$name]) && !empty($x['scheduled'])){
-            $hook=['background_sync'=>'hcdecor_background_sync','automation'=>'hcdecor_automation_tick','evergreen'=>'hcdecor_evergreen_tick','drive_inbox'=>'hcdecor_drive_inbox_tick'][$name]??'';
+            $hook=['background_sync'=>'hcdecor_background_sync','ai_worker'=>'hcdecor_ai_worker_tick','automation'=>'hcdecor_automation_tick','evergreen'=>'hcdecor_evergreen_tick','drive_inbox'=>'hcdecor_drive_inbox_tick','backup'=>'hcdecor_backup_daily'][$name]??'';
             if($hook){
                 wp_clear_scheduled_hook($hook);
                 $disabled_repairs[]=$name.'_disabled';

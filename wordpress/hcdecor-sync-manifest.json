@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.008",
+    "version":  "2026.09.29.009",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -39,7 +39,7 @@
                   {
                       "path":  "modules/ai-providers.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/ai-providers.php",
-                      "git_sha1":  "5b67b25446ba453fdf84be41852ce6afa6ef0e10"
+                      "git_sha1":  "f079e2a99cd2ffab3fa443ff02d2cfafc5cfb0ff"
                   },
                   {
                       "path":  "modules/media-intelligence.php",
@@ -109,7 +109,7 @@
                   {
                       "path":  "modules/automation-hub.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/automation-hub.php",
-                      "git_sha1":  "61bd8115509fc9fe491a3e7a366db41751f92137"
+                      "git_sha1":  "8a039c3847de079ff4f5602653817c4f429bfd29"
                   },
                   {
                       "path":  "modules/automation-recipes.php",
@@ -129,12 +129,12 @@
                   {
                       "path":  "modules/system-health.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/system-health.php",
-                      "git_sha1":  "784ac37bc782618e1593b9f9533776904923e11b"
+                      "git_sha1":  "39b9c29ca0516343aae5fe4088771d3887215510"
                   },
                   {
                       "path":  "modules/data-backup.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/data-backup.php",
-                      "git_sha1":  "a8efcac9a621f14075f32fa1dfcbecdc6f089560"
+                      "git_sha1":  "fd3c2ba272f85ee51e5d169a990c2073d00639f7"
                   },
                   {
                       "path":  "modules/data-restore.php",

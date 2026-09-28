@@ -268,10 +268,16 @@ add_filter('cron_schedules',function($s){
     $s['hcdecor_1min']=['interval'=>60,'display'=>'HCDecor every minute'];
     return $s;
 });
+function hcdecor_ai_worker_enabled(){ return (bool)get_option('hcdecor_ai_worker_enabled',false); }
 add_action('init',function(){
-    if(!wp_next_scheduled('hcdecor_ai_worker_tick')) wp_schedule_event(time()+30,'hcdecor_1min','hcdecor_ai_worker_tick');
+    if(hcdecor_ai_worker_enabled()){
+        if(!wp_next_scheduled('hcdecor_ai_worker_tick')) wp_schedule_event(time()+30,'hcdecor_1min','hcdecor_ai_worker_tick');
+    }else{
+        wp_clear_scheduled_hook('hcdecor_ai_worker_tick');
+    }
 },40);
 add_action('hcdecor_ai_worker_tick',function(){
+    if(!hcdecor_ai_worker_enabled()) return;
     if(!hcdecor_ai_available('openai') && !hcdecor_ai_available('gemini')) return;
     $jobs=get_posts([
         'post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>1,'orderby'=>'date','order'=>'ASC',
