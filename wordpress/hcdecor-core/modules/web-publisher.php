@@ -139,6 +139,7 @@ add_action('admin_post_hcdecor_publish_rollback',function(){
     if(!current_user_can('publish_posts')) wp_die('Forbidden');
     $id=(int)($_POST['job_id']??0);
     check_admin_referer('hcdecor_publish_rollback_'.$id);
+    if((string)($_POST['production_approved']??'')!=='1') wp_die('Explicit production rollback approval is required.');
     $r=hcdecor_rollback_job_publish($id);
     if(is_wp_error($r)) wp_die($r->get_error_message());
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$id.'&rolledback=1')); exit;
@@ -155,8 +156,7 @@ add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/operations/jobs/(?P<id>\d+)/rollback-web',[
         'methods'=>'POST','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
-            $res=hcdecor_rollback_job_publish((int)$r['id']);
-            return is_wp_error($res)?$res:rest_ensure_response($res);
+            return new WP_Error('approval','Web rollback requires explicit admin approval in WordPress.',['status'=>403]);
         }
     ]);
 });
@@ -175,7 +175,7 @@ add_action('admin_footer',function(){
       box.style.cssText='margin:14px 0;padding:12px 14px;background:#ecf7ed;border-left:4px solid #46b450';
       box.innerHTML='<strong>Published Web</strong><br><a href="<?php echo esc_js($url);?>" target="_blank" rel="noopener">Mở Project đã publish</a>';
       const form=document.createElement('form');form.method='post';form.action='<?php echo esc_js(admin_url('admin-post.php'));?>';form.style.marginTop='10px';
-      form.innerHTML='<input type="hidden" name="action" value="hcdecor_publish_rollback"><input type="hidden" name="job_id" value="<?php echo $id;?>"><input type="hidden" name="_wpnonce" value="<?php echo esc_js(wp_create_nonce('hcdecor_publish_rollback_'.$id));?>"><button class="button">Rollback bản publish gần nhất</button>';
+      form.innerHTML='<input type="hidden" name="action" value="hcdecor_publish_rollback"><input type="hidden" name="job_id" value="<?php echo $id;?>"><input type="hidden" name="_wpnonce" value="<?php echo esc_js(wp_create_nonce('hcdecor_publish_rollback_'.$id));?>"><label style="display:block;margin:8px 0"><input type="checkbox" name="production_approved" value="1" required> Tôi xác nhận rollback sẽ thay đổi nội dung public.</label><button class="button">Xác nhận rollback bản publish gần nhất</button>';
       box.appendChild(form); root.prepend(box);
     })();
     </script><?php
