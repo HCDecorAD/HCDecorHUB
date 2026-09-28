@@ -20,17 +20,17 @@ function hcdecor_connector_registry(){
         ],
         'facebook'=>[
             'label'=>'Facebook',
-            'status'=>'not_configured',
+            'status'=>function_exists('hcdecor_social_connection_state')&&hcdecor_social_connection_state('facebook')['configured']?'configured':'not_configured',
             'actions'=>['publish_post','publish_reel']
         ],
         'tiktok'=>[
             'label'=>'TikTok',
-            'status'=>'not_configured',
+            'status'=>function_exists('hcdecor_social_connection_state')&&hcdecor_social_connection_state('tiktok')['configured']?'configured':'not_configured',
             'actions'=>['publish_video']
         ],
         'youtube'=>[
             'label'=>'YouTube',
-            'status'=>'not_configured',
+            'status'=>function_exists('hcdecor_social_connection_state')&&hcdecor_social_connection_state('youtube')['configured']?'configured':'not_configured',
             'actions'=>['publish_video','update_description']
         ],
         'drive'=>[
