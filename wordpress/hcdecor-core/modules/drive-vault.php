@@ -446,14 +446,15 @@ function hcdecor_drive_import_job($file_id){
     $meta=hcdecor_drive_file_meta($file_id);
     if(is_wp_error($meta)) return $meta;
     if(!hcdecor_drive_file_in_managed_folders($meta,['content_draft','content_review','content_approved','content_published'])) return new WP_Error('scope','Drive job file is outside managed content folders.');
-    if((int)($meta['size']??0)>2*1024*1024) return new WP_Error('size','Drive job file exceeds 2 MB.');
+    $size=(int)($meta['size']??0);
+    if($size<=0 || $size>2*1024*1024) return new WP_Error('size','Drive job file must be between 1 byte and 2 MB.');
     $body=hcdecor_drive_download($file_id);
     if(is_wp_error($body)) return $body;
     $d=json_decode($body,true);
     if(!is_array($d)||($d['schema']??'')!=='hcdecor.content-job.v1') return new WP_Error('schema','Invalid HCDecor content job file.');
     $source=(int)($d['source_job_id']??0);
     $id=0;
-    if($source && get_post_type($source)==='hc_content_job' && (string)get_post_meta($source,'hc_agent_status',true)==='draft') $id=$source;
+    if($source && get_post_type($source)==='hc_content_job' && (string)get_post_meta($source,'hc_agent_status',true)==='draft' && hash_equals((string)get_post_meta($source,'hc_drive_job_file_id',true),$file_id)) $id=$source;
     $post=[
         'post_type'=>'hc_content_job','post_status'=>'publish',
         'post_title'=>sanitize_text_field($d['job']['title']??'Imported Drive Job'),
@@ -462,11 +463,13 @@ function hcdecor_drive_import_job($file_id){
     if($id){$post['ID']=$id;$r=wp_update_post($post,true);}else{$r=wp_insert_post($post,true);}
     if(is_wp_error($r)) return $r;
     $id=(int)$r;
-    if(!empty($d['project']['wp_id'])) update_post_meta($id,'hc_project_id',(int)$d['project']['wp_id']);
+    $project_id=(int)($d['project']['wp_id']??0);
+    if($project_id && get_post_type($project_id)==='hc_project') update_post_meta($id,'hc_project_id',$project_id);
     if(function_exists('hcdecor_workflow_set_status')){
         if(!hcdecor_workflow_set_status($id,'draft','Imported from Drive for review')) return new WP_Error('status','Imported job could not enter draft workflow.');
     }else update_post_meta($id,'hc_agent_status','draft');
-    update_post_meta($id,'hc_channels',(array)($d['job']['channels']??[]));
+    $channels=array_values(array_intersect(['web','facebook','tiktok','youtube'],array_map('sanitize_key',(array)($d['job']['channels']??[]))));
+    update_post_meta($id,'hc_channels',$channels);
     if(function_exists('hcdecor_ops_save_fields')) hcdecor_ops_save_fields($id,(array)($d['content']??[]));
     update_post_meta($id,'hc_drive_job_file_id',$file_id);
     update_post_meta($id,'hc_drive_loaded_at',current_time('mysql'));

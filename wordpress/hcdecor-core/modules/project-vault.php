@@ -136,14 +136,20 @@ function hcdecor_project_vault_find_media($drive_id,$import=true){
 
 function hcdecor_project_vault_import($file_id){
     $file_id=preg_replace('/[^A-Za-z0-9_-]/','',(string)$file_id);
-    if(!$file_id || !function_exists('hcdecor_drive_download')) return new WP_Error('file','Invalid Project Vault file.');
+    if(!$file_id || !function_exists('hcdecor_drive_download') || !function_exists('hcdecor_drive_file_meta') || !function_exists('hcdecor_drive_file_in_managed_folders')) return new WP_Error('file','Invalid Project Vault file.');
+    $meta=hcdecor_drive_file_meta($file_id);
+    if(is_wp_error($meta)) return $meta;
+    if(!hcdecor_drive_file_in_managed_folders($meta,['projects'])) return new WP_Error('scope','Project Vault file is outside the managed projects folder.');
+    $size=(int)($meta['size']??0);
+    if($size<=0 || $size>2*1024*1024) return new WP_Error('size','Project Vault file must be between 1 byte and 2 MB.');
     $body=hcdecor_drive_download($file_id);
     if(is_wp_error($body)) return $body;
     $d=json_decode($body,true);
     if(!is_array($d)||($d['schema']??'')!=='hcdecor.project.v1') return new WP_Error('schema','Invalid HCDecor Project file.');
 
     $source=(int)($d['source_project_id']??0);
-    $id=$source&&get_post_type($source)==='hc_project'?$source:0;
+    $id=0;
+    if($source && get_post_type($source)==='hc_project' && get_post_status($source)==='draft' && hash_equals((string)get_post_meta($source,'hc_drive_project_file_id',true),$file_id)) $id=$source;
     $project=(array)($d['project']??[]);
     $source_status=in_array(($project['status']??''),['publish','draft','private'],true)?$project['status']:'draft';
 

@@ -6,10 +6,10 @@ if (!defined('ABSPATH')) exit;
 function hcdecor_agent_create_job($project_id,$media_ids=[],$brief=''){
     $project_id=(int)$project_id;
     if(!$project_id || get_post_type($project_id)!=='hc_project') return new WP_Error('project','Invalid project');
-    $media_ids=array_values(array_unique(array_filter(array_map('intval',(array)$media_ids))));
+    $media_ids=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)$media_ids)),function($id){ return get_post_type($id)==='attachment'; })),0,60);
     if($media_ids && function_exists('hcdecor_media_ai_apply_project_recommendations')){
         $recommendation=hcdecor_media_ai_apply_project_recommendations($project_id);
-        if(!is_wp_error($recommendation) && !empty($recommendation['media_ids'])) $media_ids=(array)$recommendation['media_ids'];
+        if(!is_wp_error($recommendation) && !empty($recommendation['media_ids'])) $media_ids=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)$recommendation['media_ids'])),function($id){ return get_post_type($id)==='attachment'; })),0,60);
     }
     if(!$brief){
         $brief='Tạo nội dung dự án HCDecor từ Project và media đã chọn. Phân tích hình ảnh, chọn điểm nổi bật, viết nội dung Web, Facebook, TikTok/Reels và YouTube. Không bịa thông tin không có dữ liệu.';

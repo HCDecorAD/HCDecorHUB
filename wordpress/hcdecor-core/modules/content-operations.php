@@ -31,18 +31,28 @@ function hcdecor_ops_get($id,$key,$default='') {
     $v=get_post_meta($id,'hc_'.$key,true);
     return $v===''?$default:$v;
 }
+function hcdecor_ops_valid_media_ids($ids,$limit=60) {
+    $out=[];
+    foreach(array_values(array_unique(array_filter(array_map('intval',(array)$ids)))) as $id){
+        if(get_post_type($id)==='attachment') $out[]=$id;
+        if(count($out)>=max(1,(int)$limit)) break;
+    }
+    return $out;
+}
 function hcdecor_ops_save_fields($job_id,$src) {
     foreach(hcdecor_ops_fields() as $key){
         if(!array_key_exists($key,$src)) continue;
-        $value=wp_unslash($src[$key]);
+        $value=is_scalar($src[$key])?wp_unslash((string)$src[$key]):'';
         update_post_meta($job_id,'hc_'.$key,sanitize_textarea_field($value));
     }
-    if(array_key_exists('media_ids',$src)){
-        $media=array_values(array_unique(array_filter(array_map('intval',(array)$src['media_ids']))));
-        update_post_meta($job_id,'hc_media_ids',$media);
-        if(!array_key_exists('cover_id',$src) && $media) update_post_meta($job_id,'hc_cover_id',(int)$media[0]);
+    $media=array_key_exists('media_ids',$src)?hcdecor_ops_valid_media_ids($src['media_ids']):(array)get_post_meta($job_id,'hc_media_ids',true);
+    if(array_key_exists('media_ids',$src)) update_post_meta($job_id,'hc_media_ids',$media);
+    if(array_key_exists('cover_id',$src)){
+        $cover=(int)$src['cover_id'];
+        update_post_meta($job_id,'hc_cover_id',($cover && in_array($cover,$media,true))?$cover:($media?(int)$media[0]:0));
+    }elseif(array_key_exists('media_ids',$src)){
+        update_post_meta($job_id,'hc_cover_id',$media?(int)$media[0]:0);
     }
-    if(array_key_exists('cover_id',$src)) update_post_meta($job_id,'hc_cover_id',(int)$src['cover_id']);
     if(array_key_exists('channels',$src)) update_post_meta($job_id,'hc_channels',array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)$src['channels'])));
     update_post_meta($job_id,'hc_outbound',false);
 }
