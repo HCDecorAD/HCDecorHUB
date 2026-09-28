@@ -132,6 +132,7 @@ function hcdecor_recipe_execute_action($action,$context){
     }
     if($type==='publish_web'){
         $job=(int)($context['job_id']??0);
+        if(empty($context['production_approved'])) return new WP_Error('approval','Explicit production approval is required for recipe web publishing.');
         if(!$job || !function_exists('hcdecor_publish_job_to_web')) return new WP_Error('publish','Web publisher unavailable');
         return hcdecor_publish_job_to_web($job);
     }
@@ -139,8 +140,10 @@ function hcdecor_recipe_execute_action($action,$context){
         $project=(int)($context['project_id']??0);
         $job=(int)($context['job_id']??0);
         if(!function_exists('hcdecor_auto_prepare_social') || !function_exists('hcdecor_auto_enqueue')) return new WP_Error('automation','Automation queue unavailable');
+        if(empty($context['production_approved'])) return new WP_Error('approval','Explicit production approval is required for recipe social publishing.');
         $prepared=hcdecor_auto_prepare_social($project,$job);
         if(is_wp_error($prepared)) return $prepared;
+        $prepared['production_approved']=true;
         return hcdecor_auto_enqueue('social_publish',$prepared,time(),'recipe:social:'.$project.':'.$job);
     }
     if($type==='save_drive'){
