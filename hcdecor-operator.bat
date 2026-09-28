@@ -233,6 +233,7 @@ findstr /c:"hcdecor_drive_active_prompt_title',$active_title" "wordpress\hcdecor
 findstr /c:"hcdecor_restore_clip($s['active_prompt'],20000,true)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 285
 findstr /c:"function hcdecor_conn_safe_endpoint" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 286
 findstr /c:"has_secret" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 287
+findstr /c:"length>65536" "app\api\leads\route.js" >nul || exit /b 298
 findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 288
 findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 289
 findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 290

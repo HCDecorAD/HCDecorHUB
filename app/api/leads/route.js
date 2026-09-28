@@ -17,6 +17,8 @@ function rateLimited(request){
 }
 export async function GET(){const r=crmRuntime();return Response.json({ok:r.writeEnabled,storage:r.configured?"google-sheets":null,writeEnabled:r.writeEnabled,projectProvisionEnabled:r.projectProvisionEnabled})}
 export async function POST(request){
+  const length=Number(request.headers.get("content-length")||0);
+  if(Number.isFinite(length)&&length>65536)return Response.json({ok:false,error:"request_too_large"},{status:413});
   const r=crmRuntime();if(!r.writeEnabled)return Response.json({ok:false,error:"crm_write_not_configured"},{status:503});
   if(rateLimited(request))return Response.json({ok:false,error:"rate_limited"},{status:429,headers:{"Retry-After":"600"}});
   let d={};try{const type=request.headers.get("content-type")||"";if(type.includes("form")){const f=await request.formData();d=Object.fromEntries(f.entries())}else d=await request.json()}catch{return Response.json({ok:false,error:"invalid_request"},{status:400})}
