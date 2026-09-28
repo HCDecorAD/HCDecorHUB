@@ -592,8 +592,9 @@ add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/drive/list/(?P<folder>[A-Za-z0-9_-]+)',[
         'methods'=>'GET','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
-            $folder=(string)$r['folder'];$folders=hcdecor_drive_folders();
-            $id=$folders[$folder]??$folder;
+            $folder=sanitize_key((string)$r['folder']);$folders=hcdecor_drive_folders();
+            if(!isset($folders[$folder])) return new WP_Error('folder','Unknown managed Drive folder',['status'=>400]);
+            $id=$folders[$folder];
             $res=hcdecor_drive_list($id,(int)($r->get_param('limit')?:100));
             return is_wp_error($res)?$res:rest_ensure_response($res);
         }

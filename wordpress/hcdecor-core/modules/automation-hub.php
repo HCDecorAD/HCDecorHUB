@@ -103,9 +103,9 @@ function hcdecor_auto_webhook($event,$payload){
     $s=hcdecor_auto_settings();
     if(empty($s['webhook_enabled']) || empty($s['webhook_url'])) return new WP_Error('blocked','Webhook disabled.');
     $url=esc_url_raw($s['webhook_url']);
-    if(!$url || !wp_http_validate_url($url)) return new WP_Error('url','Invalid webhook URL.');
+    if(!$url || !function_exists('hcdecor_conn_public_https') || !hcdecor_conn_public_https($url)) return new WP_Error('url','Webhook URL must be public HTTPS.');
     $body=['event'=>$event,'site'=>home_url('/'),'time'=>current_time('mysql'),'payload'=>$payload];
-    $r=wp_remote_post($url,[
+    $r=wp_safe_remote_post($url,[
         'timeout'=>20,
         'headers'=>['Content-Type'=>'application/json','X-HCDecor-Event'=>$event],
         'body'=>wp_json_encode($body,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)

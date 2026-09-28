@@ -27,6 +27,10 @@ findstr /c:"'post_status'=>'draft'" "wordpress\hcdecor-core\modules\project-vaul
 findstr /c:"approve_public_projects" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 50
 findstr /c:"HCDECOR_APPROVE_CODE_SYNC" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 56
 findstr /c:"live_health" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 51
+findstr /c:"hcdecor_conn_public_https" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 57
+findstr /c:"wp_safe_remote_post" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 58
+findstr /c:"Webhook URL must be public HTTPS." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 59
+findstr /c:"Unknown managed Drive folder" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 60
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\setup-hcdecor.cmd" >nul || exit /b 54
