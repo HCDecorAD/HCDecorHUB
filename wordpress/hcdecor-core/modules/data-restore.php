@@ -152,7 +152,7 @@ function hcdecor_restore_projects($backup,$media_map){
 
 function hcdecor_restore_jobs($backup,$project_map,$media_map){
     $created=0; $updated=0;
-    $allowed_status=['draft','processing','review','approved','published_web','failed'];
+    $allowed_status=['draft','review','failed'];
 
     foreach((array)($backup['content_jobs']??[]) as $j){
         $old=(int)($j['id']??0);
@@ -177,7 +177,18 @@ function hcdecor_restore_jobs($backup,$project_map,$media_map){
         update_post_meta($id,'hc_project_id',$project);
 
         $status=sanitize_key((string)($j['status']??'draft'));
+        if(in_array($status,['approved','published_web'],true)) $status='review';
+        elseif($status==='processing') $status='draft';
         update_post_meta($id,'hc_agent_status',in_array($status,$allowed_status,true)?$status:'draft');
+        delete_post_meta($id,'hc_agent_claim_token');
+        delete_post_meta($id,'hc_agent_lock_until');
+        delete_post_meta($id,'hc_publish_approved_by');
+        delete_post_meta($id,'hc_publish_approved_at');
+        delete_post_meta($id,'hc_publish_snapshot');
+        delete_post_meta($id,'hc_published_project_id');
+        delete_post_meta($id,'hc_published_web_at');
+        delete_post_meta($id,'hc_published_web_by');
+        delete_post_meta($id,'hc_published_web_url');
 
         $channels=array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)($j['channels']??[])));
         update_post_meta($id,'hc_channels',$channels);

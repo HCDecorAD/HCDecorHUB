@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.046",
+    "version":  "2026.09.29.047",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -139,7 +139,7 @@
                   {
                       "path":  "modules/data-restore.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/data-restore.php",
-                      "git_sha1":  "ea5d04fd88728c3f3ad581379cc9d9273e7b8b8c"
+                      "git_sha1":  "ecf9960199b7f89675fbbee3992e2d871d21f5c8"
                   },
                   {
                       "path":  "modules/drive-inbox.php",

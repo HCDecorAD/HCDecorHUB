@@ -116,6 +116,8 @@ findstr /c:"drive_project_file_id" "wordpress\hcdecor-core\modules\data-backup.p
 findstr /c:"hc_drive_job_file_id" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 135
 findstr /c:"hc_drive_project_file_id" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 152
 findstr /c:"hc_drive_project_url" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 153
+findstr /c:"if(in_array($status,['approved','published_web'],true)) $status='review'" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 154
+findstr /c:"delete_post_meta($id,'hc_publish_snapshot')" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 155
 findstr /c:"'hc_drive_file_id'=>'drive_file_id'" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 136
 findstr /c:"hcdecor_runtime_safe_jobs" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 131
 findstr /c:"hcdecor_runtime_prune" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 132
