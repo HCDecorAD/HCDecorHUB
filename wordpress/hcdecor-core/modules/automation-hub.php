@@ -203,11 +203,10 @@ function hcdecor_auto_run_task($task_id){
             hcdecor_auto_log($task_id,'blocked','Evergreen automation is OFF');
             return false;
         }
-        $project=(int)($payload['project_id']??0);
-        $prepared=hcdecor_auto_prepare_social($project,0);
-        if(is_wp_error($prepared)) return hcdecor_auto_retry($task_id,$prepared->get_error_message());
-        $next=hcdecor_auto_enqueue('social_publish',$prepared,time(),'social:evergreen:'.$project.':'.gmdate('Ymd'));
-        if(is_wp_error($next)) return hcdecor_auto_retry($task_id,$next->get_error_message());
+        // Evergreen may prepare content, but it must never turn into an automatic production publish.
+        update_post_meta($task_id,'hc_auto_status','blocked');
+        hcdecor_auto_log($task_id,'blocked','Evergreen social publishing requires fresh explicit production approval.');
+        return false;
     }
     else{
         update_post_meta($task_id,'hc_auto_status','failed');

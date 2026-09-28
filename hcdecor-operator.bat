@@ -22,7 +22,7 @@ findstr /c:"hc_publish_approved_at" "wordpress\hcdecor-core\modules\web-publishe
 findstr /c:"Explicit production rollback approval is required." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 61
 findstr /c:"Web rollback requires explicit admin approval in WordPress." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 62
 findstr /c:"production_approved" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 44
-findstr /c:"Production approval required" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 46
+findstr /c:"Fresh production approval required" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 46
 findstr /c:"HCDECOR_APPROVE_HOMEPAGE_WRITE" "wordpress\hcdecor-core\homepage-builder.php" >nul || exit /b 47
 findstr /c:"HCDECOR_APPROVE_HOMEPAGE_WRITE" "wordpress\hcdecor-core\hcdecor-core.php" >nul || exit /b 48
 findstr /c:"'post_status'=>'draft'" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 49
@@ -145,6 +145,10 @@ findstr /c:"$cron_required=hcdecor_health_required_schedules();" "wordpress\hcde
 findstr /c:"$required=hcdecor_health_required_schedules();" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 197
 findstr /c:"Retry</button>" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 198
 findstr /c:"hcdecor_automation_retry" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 199
+findstr /c:"Evergreen social publishing requires fresh explicit production approval." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 200
+findstr /c:"function hcdecor_runtime_approval_fresh" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 201
+findstr /c:"15*MINUTE_IN_SECONDS" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 202
+findstr /c:"'live_health'=>" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 203
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

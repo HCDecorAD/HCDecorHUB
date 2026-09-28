@@ -629,12 +629,14 @@ add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/drive/status',[
         'methods'=>'GET','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(){
-            $test=hcdecor_drive_configured()?hcdecor_drive_test():new WP_Error('auth','Not configured');
+            $configured=hcdecor_drive_configured();
+            $test_status=(string)get_option('hcdecor_drive_test_status','');
             return rest_ensure_response([
-                'configured'=>hcdecor_drive_configured(),
-                'connected'=>!is_wp_error($test),
+                'configured'=>$configured,
+                'live_health'=>$configured?($test_status==='ok'?'test_ok':($test_status==='error'?'test_failed':'untested')):'not_configured',
+                'tested_at'=>(string)get_option('hcdecor_drive_tested_at',''),
                 'managed_folder_count'=>count(hcdecor_drive_folders()),
-                'error'=>is_wp_error($test)?$test->get_error_message():''
+                'error'=>$test_status==='error'?(string)get_option('hcdecor_drive_test_message',''):''
             ]);
         }
     ]);
