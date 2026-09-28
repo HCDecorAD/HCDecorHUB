@@ -7,6 +7,10 @@ set "P=wp-content\plugins\hcdecor-core"
 set "V=demo-%RANDOM%%RANDOM%"
 where wp >nul 2>&1 || (echo [FAIL] Open LocalWP Site Shell & exit /b 2)
 echo [DEMO] Sync source through safe service manager...
+if /I not "%HCDECOR_APPROVE_CODE_SYNC%"=="1" (
+  echo [BLOCKED] Source sync requires HCDECOR_APPROVE_CODE_SYNC=1.
+  exit /b 3
+)
 call "%~dp0HCDecor-HUB-SERVICES.cmd"
 if errorlevel 1 goto :fail
 echo [DEMO] Homepage write gate...

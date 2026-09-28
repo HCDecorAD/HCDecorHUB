@@ -13,6 +13,10 @@ call wp core is-installed >>"%LOG%" 2>&1 || goto :fail
 for %%P in (elementor hcdecor-core advanced-custom-fields fluentform wp-webhooks) do call wp plugin is-active %%P >>"%LOG%" 2>&1 || goto :fail
 echo [PASS] Phase 2 prerequisites
 
+if /I not "%HCDECOR_APPROVE_CODE_SYNC%"=="1" (
+  echo [BLOCKED] Source sync requires HCDECOR_APPROVE_CODE_SYNC=1.
+  exit /b 3
+)
 call "%~dp0HCDecor-HUB-SERVICES.cmd"
 if errorlevel 1 goto :fail
 echo [PASS] Phase 2B source synced through safe service manager

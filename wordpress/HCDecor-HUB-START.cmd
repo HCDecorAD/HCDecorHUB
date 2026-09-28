@@ -3,6 +3,10 @@ setlocal EnableExtensions
 title HCDecor HUB - Start
 cd /d "%~dp0"
 set "BASE=https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress"
+if /I not "%HCDECOR_APPROVE_CODE_SYNC%"=="1" (
+  echo [BLOCKED] Start-time source update requires HCDECOR_APPROVE_CODE_SYNC=1.
+  exit /b 3
+)
 echo [HCDecor HUB] Installing/updating service manager...
 del /q "HCDecor-HUB-SERVICES.cmd.new" "HCDecor-HUB-WATCH.cmd.new" >nul 2>&1
 curl.exe -fL "%BASE%/HCDecor-HUB-SERVICES.cmd?v=start" -o "HCDecor-HUB-SERVICES.cmd.new" || exit /b 1

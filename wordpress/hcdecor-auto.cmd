@@ -41,6 +41,10 @@ if errorlevel 1 goto :fail_hello
 echo [PASS] Check Hello Elementor
 
 call :say "Sync HCDecor Core through manifest-complete service manager"
+if /I not "%HCDECOR_APPROVE_CODE_SYNC%"=="1" (
+  echo [BLOCKED] Source sync requires HCDECOR_APPROVE_CODE_SYNC=1.
+  exit /b 3
+)
 call "%~dp0HCDecor-HUB-SERVICES.cmd"
 if errorlevel 1 goto :fail_core
 echo [PASS] HCDecor Core source sync

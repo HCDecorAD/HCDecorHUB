@@ -18,6 +18,10 @@ call wp core is-installed >nul 2>&1 || (
 )
 
 set "BASE=https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress"
+if /I not "%HCDECOR_APPROVE_CODE_SYNC%"=="1" (
+  echo [BLOCKED] Manual source sync requires HCDECOR_APPROVE_CODE_SYNC=1.
+  exit /b 3
+)
 set "SERVICE=HCDecor-HUB-SERVICES.cmd"
 set "TMP=%SERVICE%.new"
 set "V=%RANDOM%%RANDOM%%RANDOM%"

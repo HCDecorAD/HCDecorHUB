@@ -10,6 +10,10 @@ if not "%HCDECOR_ENABLE_BACKGROUND_SYNC%"=="1" (
   echo Set HCDECOR_ENABLE_BACKGROUND_SYNC=1 only when continuous source updates are explicitly approved.
   exit /b 3
 )
+if /I not "%HCDECOR_APPROVE_CODE_SYNC%"=="1" (
+  echo [BLOCKED] Background code sync also requires HCDECOR_APPROVE_CODE_SYNC=1.
+  exit /b 3
+)
 if exist "%LOCK%" (echo HCDecor HUB Watch is already running. & exit /b 0)
 echo %date% %time%>"%LOCK%"
 echo HCDecor HUB Background Sync started.
