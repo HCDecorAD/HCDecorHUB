@@ -71,7 +71,7 @@ function hcdecor_media_ai_call_openai($attachment_id){
     ]);
     if(is_wp_error($r)) return $r;
     $status=(int)wp_remote_retrieve_response_code($r); $data=json_decode(wp_remote_retrieve_body($r),true);
-    if($status<200||$status>=300) return new WP_Error('openai',(string)($data['error']['message']??('OpenAI HTTP '.$status)));
+    if($status<200||$status>=300) return new WP_Error('openai',function_exists('hcdecor_ai_safe_error')?hcdecor_ai_safe_error((string)($data['error']['message']??('OpenAI HTTP '.$status))):('OpenAI HTTP '.$status));
     $text=function_exists('hcdecor_ai_extract_openai_text')?hcdecor_ai_extract_openai_text((array)$data):'';
     $json=json_decode($text,true);
     return is_array($json)?['provider'=>'openai','data'=>$json]:new WP_Error('json','OpenAI media JSON invalid.');
@@ -98,7 +98,7 @@ function hcdecor_media_ai_call_gemini($attachment_id){
     ]);
     if(is_wp_error($r)) return $r;
     $status=(int)wp_remote_retrieve_response_code($r); $data=json_decode(wp_remote_retrieve_body($r),true);
-    if($status<200||$status>=300) return new WP_Error('gemini',(string)($data['error']['message']??('Gemini HTTP '.$status)));
+    if($status<200||$status>=300) return new WP_Error('gemini',function_exists('hcdecor_ai_safe_error')?hcdecor_ai_safe_error((string)($data['error']['message']??('Gemini HTTP '.$status))):('Gemini HTTP '.$status));
     $text=function_exists('hcdecor_ai_extract_gemini_text')?hcdecor_ai_extract_gemini_text((array)$data):'';
     $json=json_decode($text,true);
     return is_array($json)?['provider'=>'gemini','data'=>$json]:new WP_Error('json','Gemini media JSON invalid.');
@@ -111,7 +111,7 @@ function hcdecor_media_ai_analyze($attachment_id){
     $order=function_exists('hcdecor_ai_provider_order')?hcdecor_ai_provider_order():['openai','gemini'];
     foreach($order as $provider){
         $r=$provider==='openai'?hcdecor_media_ai_call_openai($attachment_id):hcdecor_media_ai_call_gemini($attachment_id);
-        if(is_wp_error($r)){ $errors[]=$provider.': '.$r->get_error_message(); continue; }
+        if(is_wp_error($r)){ $errors[]=$provider.': '.(function_exists('hcdecor_ai_safe_error')?hcdecor_ai_safe_error($r->get_error_message()):sanitize_text_field($r->get_error_message())); continue; }
         $d=$r['data'];
         update_post_meta($attachment_id,'hc_ai_summary',sanitize_textarea_field($d['summary']??''));
         update_post_meta($attachment_id,'hc_ai_alt',sanitize_text_field($d['alt']??''));

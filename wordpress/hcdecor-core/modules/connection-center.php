@@ -9,7 +9,13 @@ function hcdecor_conn_public_https($url){
  $p=wp_parse_url((string)$url); if(!is_array($p)||strtolower((string)($p['scheme']??''))!=='https'||empty($p['host'])) return false;
  $host=strtolower((string)$p['host']); if($host==='localhost'||substr($host,-6)==='.local'||substr($host,-9)==='.internal') return false;
  $ips=[];
- if(filter_var($host,FILTER_VALIDATE_IP)) $ips=[$host]; else { $v4=@gethostbynamel($host); if(is_array($v4)) $ips=array_merge($ips,$v4); }
+ if(filter_var($host,FILTER_VALIDATE_IP)) $ips=[$host]; else {
+  $v4=@gethostbynamel($host); if(is_array($v4)) $ips=array_merge($ips,$v4);
+  if(function_exists('dns_get_record') && defined('DNS_AAAA')){
+   $v6=@dns_get_record($host,DNS_AAAA);
+   if(is_array($v6)) foreach($v6 as $row){ if(!empty($row['ipv6'])) $ips[]=$row['ipv6']; }
+  }
+ }
  if(!$ips) return false;
  foreach(array_unique($ips) as $ip){ if(!filter_var($ip,FILTER_VALIDATE_IP,FILTER_FLAG_NO_PRIV_RANGE|FILTER_FLAG_NO_RES_RANGE)) return false; }
  return true;

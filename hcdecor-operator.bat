@@ -173,6 +173,11 @@ findstr /c:"array_slice(array_values($value), -50)" "wordpress\hcdecor-core\modu
 findstr /c:"array_slice($groups, -50, null, true)" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 225
 findstr /c:"function hcdecor_conn_save" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 226
 findstr /c:"array_slice((array)$v,-100,null,true)" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 227
+findstr /c:"dns_get_record" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 228
+findstr /c:"function hcdecor_ai_safe_error" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 229
+findstr /c:"$default['enabled']=false;" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 230
+findstr /c:"update_option('hcdecor_automation_recipes',$recipes,false);" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 231
+findstr /c:"current_user_can('manage_options')" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 232
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

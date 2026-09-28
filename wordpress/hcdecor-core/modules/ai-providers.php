@@ -134,6 +134,12 @@ function hcdecor_ai_extract_gemini_text($data){
     return '';
 }
 
+function hcdecor_ai_safe_error($message){
+    $text=sanitize_text_field((string)$message);
+    $text=preg_replace('/\b(?:sk-[A-Za-z0-9_-]{12,}|AIza[0-9A-Za-z_-]{20,}|Bearer\s+[A-Za-z0-9._~+\/-]{12,})\b/i','[REDACTED]',$text);
+    return function_exists('mb_substr')?mb_substr($text,0,500):substr($text,0,500);
+}
+
 function hcdecor_ai_call_openai($job_id){
     $key=hcdecor_ai_secret('openai');
     if($key==='') return new WP_Error('no_openai_key','OpenAI API key chưa cấu hình.');
@@ -155,7 +161,7 @@ function hcdecor_ai_call_openai($job_id){
     $status=wp_remote_retrieve_response_code($r);
     $data=json_decode(wp_remote_retrieve_body($r),true);
     if($status<200 || $status>=300){
-        $msg=(string)($data['error']['message']??('OpenAI HTTP '.$status));
+        $msg=hcdecor_ai_safe_error((string)($data['error']['message']??('OpenAI HTTP '.$status)));
         return new WP_Error('openai_api',$msg,['status'=>$status]);
     }
     $text=hcdecor_ai_extract_openai_text((array)$data);
@@ -189,7 +195,7 @@ function hcdecor_ai_call_gemini($job_id){
     $status=wp_remote_retrieve_response_code($r);
     $data=json_decode(wp_remote_retrieve_body($r),true);
     if($status<200 || $status>=300){
-        $msg=(string)($data['error']['message']??('Gemini HTTP '.$status));
+        $msg=hcdecor_ai_safe_error((string)($data['error']['message']??('Gemini HTTP '.$status)));
         return new WP_Error('gemini_api',$msg,['status'=>$status]);
     }
     $text=hcdecor_ai_extract_gemini_text((array)$data);
@@ -216,7 +222,7 @@ function hcdecor_ai_test_provider($provider){
     $status=(int)wp_remote_retrieve_response_code($r);
     $data=json_decode(wp_remote_retrieve_body($r),true);
     if($status<200 || $status>=300){
-        $msg=(string)($data['error']['message']??('HTTP '.$status));
+        $msg=hcdecor_ai_safe_error((string)($data['error']['message']??('HTTP '.$status)));
         return new WP_Error('api_test',$msg,['status'=>$status]);
     }
     return ['provider'=>$provider,'model'=>$model,'ok'=>true];
@@ -224,7 +230,7 @@ function hcdecor_ai_test_provider($provider){
 function hcdecor_ai_store_test($provider,$result){
     if(is_wp_error($result)){
         update_option('hcdecor_ai_'.$provider.'_test_status','error',false);
-        update_option('hcdecor_ai_'.$provider.'_test_message',sanitize_text_field($result->get_error_message()),false);
+        update_option('hcdecor_ai_'.$provider.'_test_message',hcdecor_ai_safe_error($result->get_error_message()),false);
     }else{
         update_option('hcdecor_ai_'.$provider.'_test_status','ok',false);
         update_option('hcdecor_ai_'.$provider.'_test_message','',false);
@@ -240,7 +246,7 @@ function hcdecor_ai_generate_job($job_id){
         if(!hcdecor_ai_available($provider)) continue;
         $result=$provider==='openai'?hcdecor_ai_call_openai($job_id):hcdecor_ai_call_gemini($job_id);
         if(is_wp_error($result)){
-            $errors[$provider]=$result->get_error_message();
+            $errors[$provider]=hcdecor_ai_safe_error($result->get_error_message());
             continue;
         }
         if(function_exists('hcdecor_ops_save_fields')) hcdecor_ops_save_fields($job_id,$result['content']);

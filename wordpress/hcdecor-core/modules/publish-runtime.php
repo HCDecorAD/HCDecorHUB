@@ -5,7 +5,7 @@ function hcdecor_runtime_prune($jobs,$limit=100){ if(!is_array($jobs)) return ar
 function hcdecor_runtime_safe_jobs(){ $out=array(); foreach(hcdecor_runtime_jobs() as $id=>$j){ $out[$id]=array('type'=>(string)($j['type']??''),'target'=>(string)($j['target']??''),'status'=>(string)($j['status']??''),'attempts'=>(int)($j['attempts']??0),'scheduled'=>(string)($j['scheduled']??''),'created'=>(string)($j['created']??''),'last_error'=>(string)($j['last_error']??''),'production_approved'=>!empty($j['production_approved']),'production_approved_by'=>(int)($j['production_approved_by']??0),'production_approved_at'=>(string)($j['production_approved_at']??'')); } return $out; }
 function hcdecor_runtime_enqueue($type,$target,$payload=array(),$when='',$production_approved=false){
     $v=hcdecor_runtime_jobs(); $id='job_'.wp_generate_password(10,false,false);
-    $approved=(bool)$production_approved;
+    $approved=(bool)$production_approved && get_current_user_id()>0 && current_user_can('manage_options');
     $v[$id]=array('type'=>sanitize_key($type),'target'=>sanitize_key($target),'payload'=>$payload,'status'=>'queued','attempts'=>0,'scheduled'=>$when?$when:current_time('mysql'),'created'=>current_time('mysql'),'last_error'=>'','result'=>array(),'production_approved'=>$approved,'production_approved_by'=>$approved?get_current_user_id():0,'production_approved_at'=>$approved?current_time('mysql'):'');
     $v=hcdecor_runtime_prune($v); update_option('hcdecor_runtime_jobs',$v,false); if(!wp_next_scheduled('hcdecor_runtime_tick')) wp_schedule_single_event(time()+5,'hcdecor_runtime_tick'); return $id;
 }

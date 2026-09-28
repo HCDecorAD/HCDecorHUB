@@ -310,7 +310,14 @@ function hcdecor_restore_settings($backup){
             $default['enabled']=false;
             $recipes[]=$default;
         }
-        update_option('hcdecor_automation_recipes',$recipes?:hcdecor_recipe_defaults(),false);
+        if(!$recipes){
+            foreach(hcdecor_recipe_defaults() as $default){
+                if(!is_array($default)) continue;
+                $default['enabled']=false;
+                $recipes[]=$default;
+            }
+        }
+        update_option('hcdecor_automation_recipes',$recipes,false);
     }
     return true;
 }
