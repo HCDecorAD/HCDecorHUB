@@ -76,7 +76,7 @@ findstr /c:"HCDECOR_APPROVE_CODE_SYNC" "wordpress\hcdecor-core\recovery-bootstra
 findstr /c:"hcdecor_recovery_code_sync_approved" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 103
 findstr /c:"hcdecor_drive_workflow_auto_sync_enabled" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 104
 findstr /c:"hcdecor_drive_workflow_auto_sync_enabled',false" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 105
-for %%F in (HCDecor-HUB-START.cmd HCDecor-HUB-SYNC.cmd HCDecor-HUB-WATCH.cmd HCDecor-HUB-AUTO.cmd hcdecor-auto.cmd hcdecor-demo.cmd hcdecor-phase2.cmd hcdecor-phase2b.cmd) do findstr /c:"HCDECOR_APPROVE_CODE_SYNC" "wordpress\%%F" >nul || exit /b 106
+for %%F in (HCDecor-HUB-SERVICES.cmd HCDecor-HUB-START.cmd HCDecor-HUB-SYNC.cmd HCDecor-HUB-WATCH.cmd HCDecor-HUB-AUTO.cmd hcdecor-auto.cmd hcdecor-demo.cmd hcdecor-phase2.cmd hcdecor-phase2b.cmd) do findstr /c:"HCDECOR_APPROVE_CODE_SYNC" "wordpress\%%F" >nul || exit /b 106
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\setup-hcdecor.cmd" >nul || exit /b 54

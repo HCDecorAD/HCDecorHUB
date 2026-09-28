@@ -2,6 +2,7 @@
 setlocal EnableExtensions EnableDelayedExpansion
 title HCDecor HUB - Services Manager
 cd /d "%~dp0"
+if /I not "%HCDECOR_APPROVE_CODE_SYNC%"=="1" exit /b 3
 set "LOG=%CD%\hcdecor-hub-services.log"
 set "BASE=https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress"
 set "P=wp-content\plugins\hcdecor-core"
