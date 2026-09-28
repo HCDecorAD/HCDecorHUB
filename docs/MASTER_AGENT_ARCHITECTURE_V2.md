@@ -21,8 +21,8 @@ Safe independent tasks may run in parallel. Writes to the same resource remain s
 
 ## Workspaces
 HCDecor: primary/internal, WordPress + Elementor, Design · Build · Fabrication · Media AI.
-GSC: connected/external, Senior Living & Wellness. HUB manages connection/context; public GSC implementation remains isolated.
-AMO NGUYEN: connected/external, Men's Footwear / Quiet Luxury. No fabricated products, prices, inventory, orders or customer data.
+GSC: configured external workspace, Senior Living & Wellness. HUB manages connection/context; public GSC implementation remains isolated.
+AMO NGUYEN: configured external workspace, Men's Footwear / Quiet Luxury. No fabricated products, prices, inventory, orders or customer data.
 
 ## Worker layer
 Website Agent: website, UI/UX, responsive, code, release preparation.
@@ -41,4 +41,4 @@ Gemini and Claude are optional specialist workers. They do not control HUB archi
 Registry, workspaces, adapters and integrations configs remain authoritative. UI/runtime status must be config-driven. Unknown data stays unknown; missing last-run stays “Chưa có dữ liệu”.
 
 ## Production protection
-Page 44 remains protected. Existing hcdecor-core is inherited, never duplicated. Publish, deploy, destructive management and core replacement require permission gates.
+HCDecor production remains protected. Existing hcdecor-core is inherited, never duplicated. Publish, deploy, destructive management and core replacement require permission gates.
