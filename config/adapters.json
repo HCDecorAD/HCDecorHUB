@@ -1,64 +1,9 @@
 {
-    "schema_version":  "1.0.1",
-    "adapters":  {
-                     "HCDECOR":  {
-                                     "type":  "wordpress",
-                                     "production_url":  "https://hcdecorhub.com",
-                                     "site_id":  162890150,
-                                     "theme":  "hello-elementor",
-                                     "editor":  "elementor",
-                                     "status":  "connected",
-                                     "write_policy":  "staging-or-backup-first",
-                                     "wpvibe":  {
-                                                    "status":  "connected",
-                                                    "authorization":  "verified",
-                                                    "plugin_on_site":  false
-                                                }
-                                 },
-                     "GSC":  {
-                                 "type":  "vercel-github",
-                                 "production_url":  "https://gscsenior.vercel.app",
-                                 "repository":  "HCDecorAD/GSC",
-                                 "config_source":  "gsc-config.json",
-                                 "status":  "connected-source",
-                                 "invariants":  {
-                                                    "hotspots":  11,
-                                                    "video_hotspots":  [
-                                                                           1,
-                                                                           2,
-                                                                           3,
-                                                                           4,
-                                                                           5,
-                                                                           6,
-                                                                           7,
-                                                                           8,
-                                                                           9,
-                                                                           10
-                                                                       ],
-                                                    "no_video_hotspots":  [
-                                                                              11
-                                                                          ]
-                                                },
-                                 "qa":  {
-                                            "source_preserved":  true,
-                                            "responsive_patch":  "pending-actions-repair",
-                                            "production_claim":  false,
-                                            "actions_blocker":  "Actions runs fail before job creation; repository Actions permission confirmed enabled."
-                                        }
-                             },
-                     "AMO":  {
-                                 "type":  "vercel-github",
-                                 "production_url":  "https://amonguyen.vercel.app",
-                                 "repository":  "HCDecorAD/AMONguyen",
-                                 "status":  "connected-source",
-                                 "rule":  "No fabricated products, prices, inventory, or brands.",
-                                 "source_state":  "storefront-foundation-present",
-                                 "qa":  {
-                                            "responsive":  true,
-                                            "production_verification":  "pending-vercel-project-visibility",
-                                            "vercel_connector_visibility":  "not-visible-in-current-connected-team",
-                                            "commerce_data_verified":  false
-                                        }
-                             }
-                 }
+  "schema_version":"1.1.0",
+  "adapters":{
+    "HCDECOR":{"type":"wordpress","production_url":"https://hcdecorhub.com","site_id":162890150,"theme":"hello-elementor","editor":"elementor","config_state":"configured","live_health":"not_checked","write_policy":"staging-or-backup-first","wpvibe":{"config_state":"configured","authorization_record":"verified","plugin_on_site":false,"live_health":"not_checked"}},
+    "GSC":{"type":"vercel-github","production_url":"https://gscsenior.vercel.app","repository":"HCDecorAD/GSC","config_source":"gsc-config.json","config_state":"configured-source","live_health":"not_checked","invariants":{"hotspots":11,"video_hotspots":[1,2,3,4,5,6,7,8,9,10],"no_video_hotspots":[11]},"qa":{"source_preserved":true,"responsive_patch":"pending-actions-repair","production_verification":"not_checked","actions_note":"Historical Actions issue retained as a note; current state must be rechecked before any production claim."}},
+    "AMO":{"type":"vercel-github","production_url":"https://amonguyen.vercel.app","repository":"HCDecorAD/AMONguyen","config_state":"configured-source","live_health":"not_checked","rule":"No fabricated products, prices, inventory, or brands.","source_state":"storefront-foundation-present","qa":{"responsive":true,"production_verification":"not_checked","commerce_data_verified":false}}
+  },
+  "status_contract":{"rule":"Adapter configuration and source records are not live production health assertions."}
 }
