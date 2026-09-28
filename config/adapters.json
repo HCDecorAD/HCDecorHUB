@@ -33,6 +33,11 @@
         "no_video_hotspots": [
           11
         ]
+      },
+      "qa": {
+        "source_preserved": true,
+        "responsive_patch": "pending-actions-repair",
+        "production_claim": false
       }
     },
     "AMO": {
@@ -41,7 +46,12 @@
       "repository": "HCDecorAD/AMONguyen",
       "status": "connected-source",
       "rule": "No fabricated products, prices, inventory, or brands.",
-      "source_state": "README-only; storefront scaffold required"
+      "source_state": "storefront-foundation-present",
+      "qa": {
+        "responsive": true,
+        "fake_commerce": false,
+        "production_verification": "pending-vercel-project-visibility"
+      }
     }
   }
 }
