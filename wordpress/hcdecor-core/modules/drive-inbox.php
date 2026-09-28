@@ -140,7 +140,8 @@ function hcdecor_drive_inbox_scan($limit=null){
             if($project_id && hcdecor_drive_inbox_link_project($attachment_id,$project_id)) $result['linked']++;
         }
 
-        if(!empty($settings['auto_analyze']) && wp_attachment_is_image($attachment_id) && function_exists('wp_schedule_single_event')){
+        $ai_ready=function_exists('hcdecor_ai_available') && (hcdecor_ai_available('openai') || hcdecor_ai_available('gemini'));
+        if(!empty($settings['auto_analyze']) && $ai_ready && wp_attachment_is_image($attachment_id) && function_exists('wp_schedule_single_event')){
             wp_schedule_single_event(time()+15,'hcdecor_drive_inbox_analyze_media',[$attachment_id]);
             $result['analyze_queued']++;
         }

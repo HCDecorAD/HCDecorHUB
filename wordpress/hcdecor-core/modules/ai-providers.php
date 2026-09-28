@@ -273,7 +273,8 @@ add_filter('cron_schedules',function($s){
 });
 function hcdecor_ai_worker_enabled(){ return (bool)get_option('hcdecor_ai_worker_enabled',false); }
 add_action('init',function(){
-    if(hcdecor_ai_worker_enabled()){
+    $provider_ready=hcdecor_ai_available('openai') || hcdecor_ai_available('gemini');
+    if(hcdecor_ai_worker_enabled() && $provider_ready){
         if(!wp_next_scheduled('hcdecor_ai_worker_tick')) wp_schedule_event(time()+30,'hcdecor_1min','hcdecor_ai_worker_tick');
     }else{
         wp_clear_scheduled_hook('hcdecor_ai_worker_tick');
