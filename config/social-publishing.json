@@ -1,0 +1,20 @@
+{
+  "schema_version":"1.0.0",
+  "workspace":"HCDecor",
+  "provider":"metricool",
+  "brand_id":"7127887",
+  "timezone":"Asia/Bangkok",
+  "channels":{
+    "instagram":{"handle":"zrubyshop","state":"connected"},
+    "tiktok":{"handle":"quangcaohocuong","state":"connected"},
+    "youtube":{"state":"connected"},
+    "facebook":{"state":"pending"}
+  },
+  "workflow":["content-draft","media-check","channel-adapt","best-time-check","schedule-preview","approval-gate","schedule","analytics"],
+  "rules":{
+    "no_public_publish_without_approval":true,
+    "no_fabricated_claims":true,
+    "preserve_original_media":true,
+    "declare_ai_content_when_platform_requires":true
+  }
+}
