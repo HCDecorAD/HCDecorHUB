@@ -1,16 +1,11 @@
 @echo off
 setlocal EnableExtensions
-title HCDecor HUB Sync v3
+title HCDecor Local Recovery Sync
 cd /d "%~dp0"
-if not exist "%~dp0hcdecor-sync.ps1" (
- echo [ERROR] hcdecor-sync.ps1 must be in the same folder.
- pause
+if "%~1"=="" (
+ echo Usage: hcdecor-sync.bat "C:\path\to\local-wordpress-root" [additional options]
+ echo Example: hcdecor-sync.bat "C:\Users\YOU\Local Sites\hcdecor-hub\app\public"
  exit /b 2
 )
-powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%~dp0hcdecor-sync.ps1" %*
-set "RC=%ERRORLEVEL%"
-if not "%RC%"=="0" exit /b %RC%
-echo.
-echo Sync completed successfully.
-pause
-exit /b 0
+powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%~dp0hcdecor-sync.ps1" -WpRoot "%~1" %2 %3 %4 %5
+exit /b %ERRORLEVEL%
