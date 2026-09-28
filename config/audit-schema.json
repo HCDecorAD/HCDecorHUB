@@ -1,0 +1,7 @@
+{
+  "schema_version":"1.0.0",
+  "event_required_fields":["event_id","timestamp","actor_type","actor_id","workspace_id","site_id","module","action","target_type","target_id","result"],
+  "optional_fields":["before_ref","after_ref","release_ref","request_id","reason","error"],
+  "retention_policy":"retain production-impacting events",
+  "production_actions":["publish","delete","manage","deploy","rollback"]
+}
