@@ -218,6 +218,11 @@ findstr /c:"$clip($project['content']??'',100000,true)" "wordpress\hcdecor-core\
 findstr /c:"array_slice((array)$project['types'],0,30)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 270
 findstr /c:"hcdecor_ops_limit_text($brief,20000)" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 271
 findstr /c:"hcdecor_ops_limit_text(wp_unslash($_POST['brief']??''),20000)" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 272
+findstr /c:"hcdecor_ops_limit_text(wp_unslash($_POST['agent_brief']??''),20000)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 273
+findstr /c:"Runtime payload exceeds 256 KB." "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 274
+findstr /c:"'Publish Runtime','Publish Runtime','manage_options'" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 275
+findstr /c:"Automation payload exceeds 256 KB." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 276
+findstr /c:"'post_content'=>$encoded" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 277
 findstr /c:"function hcdecor_restore_clip" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 278
 findstr /c:"hcdecor_restore_clip($p['content']??'',100000,true)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 279
 findstr /c:"hcdecor_restore_clip($j['brief']??'',20000)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 280

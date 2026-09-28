@@ -45,6 +45,8 @@ function hcdecor_auto_enqueue($type,$payload=[],$run_at=null,$dedupe=''){
     $s=hcdecor_auto_settings();
     if(empty($s['enabled'])) return new WP_Error('disabled','Automation HUB is disabled.');
     $dedupe=sanitize_text_field((string)$dedupe);
+    $encoded=wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+    if(!is_string($encoded) || strlen($encoded)>256*1024) return new WP_Error('payload_size','Automation payload exceeds 256 KB.');
     if($dedupe!==''){
         $existing=get_posts([
             'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>1,
@@ -58,7 +60,7 @@ function hcdecor_auto_enqueue($type,$payload=[],$run_at=null,$dedupe=''){
     $id=wp_insert_post([
         'post_type'=>'hc_automation_task','post_status'=>'publish',
         'post_title'=>sanitize_text_field(strtoupper($type).' · '.current_time('Y-m-d H:i:s')),
-        'post_content'=>wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)
+        'post_content'=>$encoded
     ]);
     if(is_wp_error($id)) return $id;
     update_post_meta($id,'hc_auto_type',sanitize_key($type));
@@ -473,7 +475,9 @@ add_action('admin_post_hcdecor_automation_retry',function(){
         $payload['production_approved']=true;
         $payload['production_approved_by']=get_current_user_id();
         $payload['production_approved_at']=current_time('mysql');
-        wp_update_post(['ID'=>$id,'post_content'=>wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)]);
+        $encoded=wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+        if(!is_string($encoded) || strlen($encoded)>256*1024) wp_die('Automation payload exceeds 256 KB.');
+        wp_update_post(['ID'=>$id,'post_content'=>$encoded]);
     }
     if($type==='webhook' && (empty($s['webhook_enabled']) || empty($s['webhook_url']))) wp_die('Webhook outbound is disabled.');
     if($type==='evergreen' && (empty($s['evergreen_enabled']) || empty($s['social_enabled']))) wp_die('Evergreen social outbound is disabled.');
