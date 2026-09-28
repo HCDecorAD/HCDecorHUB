@@ -74,6 +74,9 @@ findstr /c:"'permission_callback'=>'hcdecor_ops_bridge_auth'" "wordpress\hcdecor
 findstr /c:"hcdecor_bridge_auth" "wordpress\hcdecor-core\modules\media-manager.php" >nul && exit /b 101
 findstr /c:"HCDECOR_APPROVE_CODE_SYNC" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 102
 findstr /c:"hcdecor_recovery_code_sync_approved" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 103
+findstr /c:"hcdecor_sync_trusted_raw_url" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 112
+findstr /c:"raw.githubusercontent.com" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 113
+findstr /c:"wp_safe_remote_get(HCDECOR_SYNC_MANIFEST" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 114
 findstr /c:"hcdecor_drive_workflow_auto_sync_enabled" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 104
 findstr /c:"hcdecor_drive_workflow_auto_sync_enabled',false" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 105
 findstr /c:"Automatic Drive workflow sync is disabled." "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 107

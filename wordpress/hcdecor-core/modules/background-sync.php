@@ -27,12 +27,22 @@ function hcdecor_sync_atomic($target,$body){
     if(!@rename($tmp,$target)){@unlink($tmp);return false;}
     return true;
 }
+function hcdecor_sync_trusted_raw_url($url,$rel=''){
+    $url=(string)$url;
+    $parts=wp_parse_url($url);
+    if(!is_array($parts) || strtolower((string)($parts['scheme']??''))!=='https' || strtolower((string)($parts['host']??''))!=='raw.githubusercontent.com') return false;
+    $prefix='/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/';
+    $path=(string)($parts['path']??'');
+    if($rel==='') return $path==='/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-sync-manifest.json';
+    return $path===$prefix.ltrim((string)$rel,'/');
+}
 function hcdecor_run_background_sync(){
     if(!defined('HCDECOR_APPROVE_CODE_SYNC') || HCDECOR_APPROVE_CODE_SYNC !== true){
         update_option('hcdecor_sync_last_error','approval-required');
         return false;
     }
-    $r=wp_remote_get(HCDECOR_SYNC_MANIFEST,['timeout'=>15,'headers'=>['Cache-Control'=>'no-cache']]);
+    if(!hcdecor_sync_trusted_raw_url(HCDECOR_SYNC_MANIFEST)){ update_option('hcdecor_sync_last_error','manifest-url'); return false; }
+    $r=wp_safe_remote_get(HCDECOR_SYNC_MANIFEST,['timeout'=>15,'headers'=>['Cache-Control'=>'no-cache']]);
     if(is_wp_error($r)||wp_remote_retrieve_response_code($r)!==200){update_option('hcdecor_sync_last_error','manifest');return false;}
     $m=json_decode(wp_remote_retrieve_body($r),true);
     if(!$m||empty($m['files'])||!is_array($m['files'])){update_option('hcdecor_sync_last_error','manifest-json');return false;}
@@ -41,8 +51,9 @@ function hcdecor_run_background_sync(){
     foreach($m['files'] as $f){
         $rel=ltrim((string)($f['path']??''),'/');
         if(!$rel||strpos($rel,'..')!==false||empty($f['url'])||empty($f['git_sha1'])) continue;
+        if(!hcdecor_sync_trusted_raw_url($f['url'],$rel)) continue;
         $target=$base.$rel;
-        $rr=wp_remote_get($f['url'].(strpos($f['url'],'?')===false?'?':'&').'v='.rawurlencode((string)($m['version']??time())),['timeout'=>20,'headers'=>['Cache-Control'=>'no-cache']]);
+        $rr=wp_safe_remote_get($f['url'].(strpos($f['url'],'?')===false?'?':'&').'v='.rawurlencode((string)($m['version']??time())),['timeout'=>20,'headers'=>['Cache-Control'=>'no-cache']]);
         if(is_wp_error($rr)||wp_remote_retrieve_response_code($rr)!==200) continue;
         $body=wp_remote_retrieve_body($rr);
         $git_sha=sha1('blob '.strlen($body)."\0".$body); if(!hash_equals(strtolower($f['git_sha1']),$git_sha)) continue;
