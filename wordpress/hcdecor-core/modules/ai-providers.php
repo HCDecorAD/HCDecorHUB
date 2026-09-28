@@ -368,12 +368,23 @@ add_action('admin_post_hcdecor_ai_settings',function(){
     $primary=sanitize_key($_POST['primary']??'auto');
     if(!in_array($primary,['auto','openai','gemini'],true)) $primary='auto';
     update_option('hcdecor_ai_primary',$primary,false);
-    update_option('hcdecor_ai_openai_model',sanitize_text_field(wp_unslash($_POST['openai_model']??'')),false);
-    update_option('hcdecor_ai_gemini_model',sanitize_text_field(wp_unslash($_POST['gemini_model']??'')),false);
+    $old_models=['openai'=>hcdecor_ai_model('openai'),'gemini'=>hcdecor_ai_model('gemini')];
+    $new_models=[
+        'openai'=>sanitize_text_field(wp_unslash($_POST['openai_model']??'')),
+        'gemini'=>sanitize_text_field(wp_unslash($_POST['gemini_model']??''))
+    ];
+    update_option('hcdecor_ai_openai_model',$new_models['openai'],false);
+    update_option('hcdecor_ai_gemini_model',$new_models['gemini'],false);
     foreach(['openai','gemini'] as $p){
-        if(!empty($_POST[$p.'_clear'])) delete_option('hcdecor_ai_'.$p.'_key');
+        $changed=$old_models[$p]!==$new_models[$p];
+        if(!empty($_POST[$p.'_clear'])){ delete_option('hcdecor_ai_'.$p.'_key'); $changed=true; }
         $v=trim((string)wp_unslash($_POST[$p.'_key']??''));
-        if($v!=='') update_option('hcdecor_ai_'.$p.'_key',$v,false);
+        if($v!==''){ update_option('hcdecor_ai_'.$p.'_key',$v,false); $changed=true; }
+        if($changed){
+            delete_option('hcdecor_ai_'.$p.'_test_status');
+            delete_option('hcdecor_ai_'.$p.'_test_message');
+            delete_option('hcdecor_ai_'.$p.'_tested_at');
+        }
     }
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-ai-providers&saved=1')); exit;
 });
