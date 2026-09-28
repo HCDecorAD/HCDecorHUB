@@ -54,6 +54,7 @@ function hcdecor_media_ai_prompt($attachment_id){
 function hcdecor_media_ai_call_openai($attachment_id){
     $key=function_exists('hcdecor_ai_secret')?hcdecor_ai_secret('openai'):'';
     if(!$key) return new WP_Error('key','OpenAI chưa cấu hình.');
+    if(!function_exists('hcdecor_ai_model') || hcdecor_ai_model('openai')==='') return new WP_Error('model','OpenAI model chưa cấu hình.');
     $img=hcdecor_media_ai_data_url($attachment_id); if(is_wp_error($img)) return $img;
     $payload=[
         'model'=>hcdecor_ai_model('openai'),
@@ -79,6 +80,7 @@ function hcdecor_media_ai_call_openai($attachment_id){
 function hcdecor_media_ai_call_gemini($attachment_id){
     $key=function_exists('hcdecor_ai_secret')?hcdecor_ai_secret('gemini'):'';
     if(!$key) return new WP_Error('key','Gemini chưa cấu hình.');
+    if(!function_exists('hcdecor_ai_model') || hcdecor_ai_model('gemini')==='') return new WP_Error('model','Gemini model chưa cấu hình.');
     $url=hcdecor_media_ai_data_url($attachment_id); if(is_wp_error($url)) return $url;
     if(!preg_match('#^data:([^;]+);base64,(.+)$#s',$url,$m)) return new WP_Error('image','Invalid image encoding.');
     $payload=[
