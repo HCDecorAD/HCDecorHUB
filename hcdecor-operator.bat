@@ -190,6 +190,10 @@ findstr /c:"hcdecor_crm_textarea(isset($_POST['message'])?$_POST['message']:'',5
 findstr /c:"function hcdecor_conn_safe_error" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 242
 findstr /c:"hcdecor_drive_safe_error($r->get_error_message())" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 243
 findstr /c:"hcdecor_drive_safe_error($r->get_error_message())" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 244
+findstr /c:"Explicit production publish approval is required." "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 245
+findstr /c:"name=\"production_approved\" value=\"1\" required" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 246
+findstr /c:"Explicit production publish approval is required." "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 247
+findstr /c:"name=\"production_approved\" value=\"1\"" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 248
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

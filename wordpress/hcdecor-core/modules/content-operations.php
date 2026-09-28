@@ -103,6 +103,7 @@ add_action('admin_post_hcdecor_ops_publish_web', function(){
     if(!current_user_can('publish_posts')) wp_die('Forbidden');
     $id=(int)($_POST['job_id']??0); check_admin_referer('hcdecor_ops_publish_'.$id);
     if(get_post_type($id)!=='hc_content_job' || !current_user_can('edit_post',$id)) wp_die('Invalid job');
+    if((string)($_POST['production_approved']??'')!=='1') wp_die('Explicit production publish approval is required.');
     if(!function_exists('hcdecor_publish_job_to_web')) wp_die('Web publisher unavailable');
     update_post_meta($id,'hc_publish_approved_by',get_current_user_id());
     update_post_meta($id,'hc_publish_approved_at',current_time('mysql'));
@@ -212,7 +213,7 @@ function hcdecor_ops_page(){
         <label>YouTube description</label><textarea name="youtube_description"><?php echo esc_textarea($job?hcdecor_ops_get($job_id,'youtube_description'):'');?></textarea>
         <div class="hcops-actions"><button class="button button-primary"><?php echo $job?'Lưu Content Job':'Tạo Content Job';?></button></div>
       </form>
-      <?php if($job && $status==='approved'):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>" class="hcops-actions"><?php wp_nonce_field('hcdecor_ops_publish_'.$job_id);?><input type="hidden" name="action" value="hcdecor_ops_publish_web"><input type="hidden" name="job_id" value="<?php echo $job_id;?>"><button class="button button-primary">Publish lên Web Project</button></form><?php endif;?>
+      <?php if($job && $status==='approved'):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>" class="hcops-actions"><?php wp_nonce_field('hcdecor_ops_publish_'.$job_id);?><input type="hidden" name="action" value="hcdecor_ops_publish_web"><input type="hidden" name="job_id" value="<?php echo $job_id;?>"><label style="display:block;margin:8px 0"><input type="checkbox" name="production_approved" value="1" required> Tôi xác nhận thao tác này sẽ cập nhật nội dung production public.</label><button class="button button-primary">Publish lên Web Project</button></form><?php endif;?>
       </div></section>
       <section class="hcops-card"><h2>WEB PREVIEW</h2><div class="hcops-body"><?php
         $ptitle=$job?hcdecor_ops_get($job_id,'web_title',get_the_title((int)hcdecor_ops_get($job_id,'project_id'))):'Chọn hoặc tạo Content Job';

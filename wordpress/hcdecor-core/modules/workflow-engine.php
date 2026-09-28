@@ -529,6 +529,7 @@ add_action('admin_post_hcdecor_review_action',function(){
         }
     }elseif($action==='approve_publish'){
         if(!current_user_can('publish_posts')) wp_die('Forbidden');
+        if((string)($_POST['production_approved']??'')!=='1') wp_die('Explicit production publish approval is required.');
         if((string)get_post_meta($id,'hc_agent_status',true)!=='review') wp_die('Job is not ready for approval.');
         if(!function_exists('hcdecor_publish_job_to_web')) wp_die('Web publisher unavailable');
         update_post_meta($id,'hc_reviewed_by',get_current_user_id());
@@ -618,7 +619,7 @@ function hcdecor_review_page(){
       <div class="hcr-preview"><?php foreach($fields as $name=>$x):?><div class="hcr-channel"><h3><?php echo esc_html($name);?></h3><?php if($x[0]):?><strong><?php echo esc_html($x[0]);?></strong><?php endif;?><p><?php echo esc_html(trim($x[1]));?></p></div><?php endforeach;?></div>
       <form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><?php wp_nonce_field('hcdecor_review_'.$job_id);?><input type="hidden" name="action" value="hcdecor_review_action"><input type="hidden" name="job_id" value="<?php echo $job_id;?>">
         <label><strong>Ghi chú chỉnh sửa</strong></label><textarea name="review_note"></textarea>
-        <div class="hcr-actions"><?php if($status==='failed'):?><button class="button button-primary" name="review_action" value="retry">Retry AI</button><?php else:?><button class="button" name="review_action" value="changes">Trả về chỉnh sửa</button><?php endif;?><?php if($status==='review'):?><button class="button" name="review_action" value="approve">Approve</button><?php if(current_user_can('publish_posts')):?><button class="button button-primary" name="review_action" value="approve_publish">Approve + Publish Web</button><?php endif;?><?php endif;?><a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-content-operations&job='.$job_id));?>">Mở Content Job</a></div>
+        <?php if($status==='review' && current_user_can('publish_posts')):?><label style="display:block;margin:8px 0"><input type="checkbox" name="production_approved" value="1"> Tôi xác nhận Approve + Publish Web sẽ cập nhật nội dung production public.</label><?php endif;?><div class="hcr-actions"><?php if($status==='failed'):?><button class="button button-primary" name="review_action" value="retry">Retry AI</button><?php else:?><button class="button" name="review_action" value="changes">Trả về chỉnh sửa</button><?php endif;?><?php if($status==='review'):?><button class="button" name="review_action" value="approve">Approve</button><?php if(current_user_can('publish_posts')):?><button class="button button-primary" name="review_action" value="approve_publish">Approve + Publish Web</button><?php endif;?><?php endif;?><a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-content-operations&job='.$job_id));?>">Mở Content Job</a></div>
       </form>
       <?php if($status==='approved' && $preflight_error===''):?><p><a class="button button-primary" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-content-operations&job='.$job_id));?>">Publish Web trong Content Operations</a></p><?php endif;?>
     <?php else:?><p>Chưa có Content Job để review.</p><?php endif;?>
