@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0.0",
+  "orchestrator": {
+    "id": "orchestrator",
+    "mode": "coordinate",
+    "production_write": false
+  },
+  "agents": [
+    {
+      "id": "developer",
+      "capabilities": [
+        "code",
+        "qa",
+        "release_prepare"
+      ],
+      "production_write": false
+    },
+    {
+      "id": "design",
+      "capabilities": [
+        "ui",
+        "ux",
+        "visual_spec"
+      ],
+      "production_write": false
+    },
+    {
+      "id": "content",
+      "capabilities": [
+        "draft",
+        "seo",
+        "localize"
+      ],
+      "production_write": false
+    },
+    {
+      "id": "media",
+      "capabilities": [
+        "classify",
+        "prepare",
+        "optimize"
+      ],
+      "production_write": false
+    },
+    {
+      "id": "publishing",
+      "capabilities": [
+        "preview",
+        "schedule",
+        "publish"
+      ],
+      "production_write": "permission-gated"
+    },
+    {
+      "id": "crm",
+      "capabilities": [
+        "lead",
+        "customer",
+        "project_link"
+      ],
+      "production_write": "permission-gated"
+    },
+    {
+      "id": "report",
+      "capabilities": [
+        "aggregate",
+        "report"
+      ],
+      "production_write": false
+    }
+  ]
+}
