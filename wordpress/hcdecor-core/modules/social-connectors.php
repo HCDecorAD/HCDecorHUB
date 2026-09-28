@@ -20,6 +20,7 @@ function hcdecor_social_ready($channel,$s){
 add_action('admin_post_hcdecor_social_test',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     $channel=sanitize_key($_POST['channel']??'');check_admin_referer('hcdecor_social_test_'.$channel);
+    if(!array_key_exists($channel,hcdecor_social_channels())) wp_die('Invalid social channel');
     $s=hcdecor_social_settings();$ok=hcdecor_social_ready($channel,$s);
     update_option('hcdecor_social_test_'.$channel,['configured'=>$ok,'at'=>current_time('mysql'),'message'=>$ok?'Credentials are configured; live API health was not checked.':'Connector credentials are incomplete.'],false);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-social-connectors&tested='.$channel));exit;
@@ -36,7 +37,9 @@ add_action('admin_post_hcdecor_social_save',function(){
         if(!isset($_POST[$key])) return (string)($old[$key]??'');
         $v=trim((string)wp_unslash($_POST[$key]));
         if($secret && $v==='') return (string)($old[$key]??'');
-        return sanitize_text_field($v);
+        $v=sanitize_text_field($v);
+        $limit=$secret?8192:500;
+        return function_exists('mb_substr')?mb_substr($v,0,$limit):substr($v,0,$limit);
     };
     $new=[
         'facebook_page_id'=>$field('facebook_page_id'),
@@ -62,6 +65,7 @@ add_action('admin_post_hcdecor_social_save',function(){
 add_action('admin_post_hcdecor_social_disconnect',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     $channel=sanitize_key($_POST['channel']??'');check_admin_referer('hcdecor_social_disconnect_'.$channel);
+    if(!array_key_exists($channel,hcdecor_social_channels())) wp_die('Invalid social channel');
     $s=hcdecor_social_settings();
     if($channel==='facebook'){$s['facebook_page_id']='';$s['facebook_token']='';}
     if($channel==='tiktok'){$s['tiktok_client_key']='';$s['tiktok_client_secret']='';$s['tiktok_access_token']='';}

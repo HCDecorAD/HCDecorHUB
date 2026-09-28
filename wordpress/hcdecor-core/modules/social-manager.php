@@ -1,6 +1,10 @@
 <?php
 if (!defined('ABSPATH')) { exit; }
 
+function hcdecor_social_limit_text($value,$limit) {
+    $text = sanitize_text_field((string)$value);
+    return function_exists('mb_substr') ? mb_substr($text, 0, $limit) : substr($text, 0, $limit);
+}
 function hcdecor_social_accounts() {
     $value = get_option('hcdecor_social_accounts', []);
     return is_array($value) ? array_slice(array_values($value), -50) : [];
@@ -34,9 +38,9 @@ add_action('admin_post_hcdecor_social_account_save', function () {
     $row = [
         'id' => $id,
         'channel' => $channel,
-        'name' => sanitize_text_field(wp_unslash($_POST['name'] ?? '')),
-        'remote_id' => sanitize_text_field(wp_unslash($_POST['remote_id'] ?? '')),
-        'token' => sanitize_text_field(wp_unslash($_POST['token'] ?? '')),
+        'name' => hcdecor_social_limit_text(wp_unslash($_POST['name'] ?? ''), 300),
+        'remote_id' => hcdecor_social_limit_text(wp_unslash($_POST['remote_id'] ?? ''), 500),
+        'token' => hcdecor_social_limit_text(wp_unslash($_POST['token'] ?? ''), 8192),
         'group' => sanitize_key($_POST['group'] ?? ''),
         'enabled' => !empty($_POST['enabled']),
     ];
@@ -60,7 +64,7 @@ add_action('admin_post_hcdecor_social_group_save', function () {
     check_admin_referer('hcdecor_social_group_save');
     $groups = hcdecor_social_groups();
     $key = sanitize_key($_POST['group_key'] ?? '');
-    if ($key) { $groups[$key] = sanitize_text_field(wp_unslash($_POST['group_name'] ?? $key)); }
+    if ($key) { $groups[$key] = hcdecor_social_limit_text(wp_unslash($_POST['group_name'] ?? $key), 300); }
     update_option('hcdecor_social_groups', array_slice($groups, -50, null, true), false);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-social-manager'));
     exit;

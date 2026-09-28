@@ -237,6 +237,10 @@ findstr /c:"identity_present" "wordpress\hcdecor-core\modules\system-health.php"
 findstr /c:"'email'=>(string)get_option('hcdecor_drive_connected_email'" "wordpress\hcdecor-core\modules\system-health.php" >nul && exit /b 294
 findstr /c:"function hcdecor_media_limit_text" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 295
 findstr /c:"hcdecor_media_limit_text(wp_unslash($_POST['description']??''),10000)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 296
+findstr /c:"function hcdecor_social_limit_text" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 297
+findstr /c:"8192" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 298
+findstr /c:"8192:500" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 299
+findstr /c:"array_key_exists" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 300
 findstr /c:"mb_substr($note,0,5000)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 273
 findstr /c:"$clip($project->post_content,30000)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 274
 findstr /c:"array_slice((array)get_post_meta($job_id,'hc_media_ids',true),0,12)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 275
