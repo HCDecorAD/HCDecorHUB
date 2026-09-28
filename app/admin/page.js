@@ -9,7 +9,8 @@ const systems=[
 ["Web Publish","/hub/publish","Publish control","Mở"],
 ["Integrations","/admin/integrations","Connections","Mở"],
 ["Health","/admin/health","Runtime status","Mở"],
-["Settings","/admin/settings","Configuration","Mở"],\n["HCDeploy","/admin/deploy","Production deploy","Mở"]
+["Settings","/admin/settings","Configuration","Mở"],
+["HCDeploy","/admin/deploy","Production deploy","Mở"]
 ];
 async function wp(){try{const b=process.env.HCDECOR_WP_BASE_URL;if(!b)return {ok:false,label:"Chưa cấu hình"};const r=await fetch(b.replace(/\/$/,"")+"/wp-json/",{cache:"no-store"});return {ok:r.ok,label:r.ok?"Đọc được":"Lỗi HTTP "+r.status}}catch{return {ok:false,label:"Không kết nối"}}}
 export default async function Admin(){const cms=await wp();const drive=Boolean(process.env.HCDECOR_DRIVE_ROOT_FOLDER_ID),agent=Boolean(process.env.HCDECOR_AGENT_BASE_URL),write=Boolean(process.env.HCDECOR_WP_API_TOKEN);
