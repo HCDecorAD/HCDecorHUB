@@ -1,0 +1,11 @@
+{
+  "schema_version":"1.0.0",
+  "integrations":{
+    "github":{"purpose":["source","version","release","rollback"],"secret_storage":"environment"},
+    "wordpress":{"purpose":["HCDecor production","Elementor public website"],"site":"https://hcdecorhub.com","secret_storage":"environment"},
+    "vercel":{"purpose":["GSC runtime","AMO runtime"],"secret_storage":"environment"},
+    "google_drive":{"purpose":["projects","media","data","knowledge","templates","reports","backup"],"secret_storage":"connector-or-environment"},
+    "social":{"purpose":["publishing"],"providers":["meta","tiktok","youtube","zalo"],"status":"connect-as-needed"}
+  },
+  "health_contract":{"states":["connected","degraded","disconnected","unknown"],"required_fields":["provider","state","checked_at"]}
+}
