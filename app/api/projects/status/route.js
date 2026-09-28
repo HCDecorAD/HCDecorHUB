@@ -1,2 +1,2 @@
 import {crmRuntime} from "../../../../lib/crm/config";
-export async function GET(){const r=crmRuntime();return Response.json({ok:r.projectProvisionEnabled,storage:r.projectProvisionEnabled?"google-sheets+drive":null,createEnabled:r.projectProvisionEnabled,flow:"Qualified Lead -> Project ID -> Drive Folder -> Projects row"})}
+export async function GET(){const r=crmRuntime();return Response.json({service:"ok",configured:r.projectProvisionEnabled,storage:r.projectProvisionEnabled?"google-sheets+drive":null,liveHealth:"not_checked",createEnabled:r.projectProvisionEnabled,flow:"Qualified Lead -> Project ID -> Drive Folder -> Projects row",rollback:"Drive folder is deleted when Sheets append fails",checkedAt:new Date().toISOString()})}

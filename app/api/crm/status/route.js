@@ -1,2 +1,2 @@
 import {CRM,crmRuntime} from "../../../../lib/crm/config";
-export async function GET(){const r=crmRuntime();return Response.json({ok:r.configured,provider:r.provider||null,storage:r.configured?"google-sheets":null,sheetConfigured:r.configured,writeEnabled:r.writeEnabled,projectProvisionEnabled:r.projectProvisionEnabled,tabs:[CRM.leadsTab,CRM.projectsTab]})}
+export async function GET(){const r=crmRuntime();return Response.json({service:"ok",provider:r.provider||null,config:{sheet:r.configured,write:r.writeEnabled,projectProvision:r.projectProvisionEnabled},storage:r.configured?"google-sheets":null,liveHealth:"not_checked",tabs:[CRM.leadsTab,CRM.projectsTab],checkedAt:new Date().toISOString()})}
