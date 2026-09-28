@@ -39,6 +39,14 @@ curl.exe -fL "%BASE%/hcdecor-core/modules/project-publishing.php?v=%V%" -o "%P%\
 curl.exe -fL "%BASE%/hcdecor-core/modules/media-manager.php?v=%V%" -o "%P%\modules\media-manager.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/hub-dashboard.php?v=%V%" -o "%P%\modules\hub-dashboard.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 curl.exe -fL "%BASE%/hcdecor-core/modules/admin-cleanup.php?v=%V%" -o "%P%\modules\admin-cleanup.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/recovery-bootstrap.php?v=%V%" -o "%P%\recovery-bootstrap.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/social-connectors.php?v=%V%" -o "%P%\modules\social-connectors.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/social-manager.php?v=%V%" -o "%P%\modules\social-manager.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/hub-suite.php?v=%V%" -o "%P%\modules\hub-suite.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/workflow-crm.php?v=%V%" -o "%P%\modules\workflow-crm.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/full-operations.php?v=%V%" -o "%P%\modules\full-operations.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/connection-center.php?v=%V%" -o "%P%\modules\connection-center.php.new" >>"%LOG%" 2>&1 || goto :syncfail
+curl.exe -fL "%BASE%/hcdecor-core/modules/publish-runtime.php?v=%V%" -o "%P%\modules\publish-runtime.php.new" >>"%LOG%" 2>&1 || goto :syncfail
 move /y "%P%\hcdecor-core.php.new" "%P%\hcdecor-core.php" >nul
 move /y "%P%\homepage-builder.php.new" "%P%\homepage-builder.php" >nul
 move /y "%P%\assets\hcdecor-homepage.css.new" "%P%\assets\hcdecor-homepage.css" >nul
@@ -62,6 +70,14 @@ move /y "%P%\modules\project-publishing.php.new" "%P%\modules\project-publishing
 move /y "%P%\modules\media-manager.php.new" "%P%\modules\media-manager.php" >nul
 move /y "%P%\modules\hub-dashboard.php.new" "%P%\modules\hub-dashboard.php" >nul
 move /y "%P%\modules\admin-cleanup.php.new" "%P%\modules\admin-cleanup.php" >nul
+move /y "%P%\recovery-bootstrap.php.new" "%P%\recovery-bootstrap.php" >nul
+move /y "%P%\modules\social-connectors.php.new" "%P%\modules\social-connectors.php" >nul
+move /y "%P%\modules\social-manager.php.new" "%P%\modules\social-manager.php" >nul
+move /y "%P%\modules\hub-suite.php.new" "%P%\modules\hub-suite.php" >nul
+move /y "%P%\modules\workflow-crm.php.new" "%P%\modules\workflow-crm.php" >nul
+move /y "%P%\modules\full-operations.php.new" "%P%\modules\full-operations.php" >nul
+move /y "%P%\modules\connection-center.php.new" "%P%\modules\connection-center.php" >nul
+move /y "%P%\modules\publish-runtime.php.new" "%P%\modules\publish-runtime.php" >nul
 echo [OK] Source Sync
 
 rem SERVICE B - Plugin runtime (isolated)
@@ -116,7 +132,7 @@ echo ==================================================
 exit /b 0
 
 :syncfail
-del /q "%P%\hcdecor-core.php.new" "%P%\homepage-builder.php.new" "%P%\assets\hcdecor-homepage.css.new" "%P%\modules\content-operations.php.new" "%P%\modules\workflow-engine.php.new" "%P%\modules\ai-providers.php.new" "%P%\modules\media-intelligence.php.new" "%P%\modules\agent-intake.php.new" "%P%\modules\ai-workspace.php.new" "%P%\modules\web-publisher.php.new" "%P%\modules\automation-hub.php.new" "%P%\modules\automation-recipes.php.new" "%P%\modules\drive-vault.php.new" "%P%\modules\drive-inbox.php.new" "%P%\modules\project-vault.php.new" "%P%\modules\data-backup.php.new" "%P%\modules\data-restore.php.new" "%P%\modules\system-health.php.new" "%P%\modules\background-sync.php.new" "%P%\modules\project-publishing.php.new" "%P%\modules\media-manager.php.new" "%P%\modules\hub-dashboard.php.new" "%P%\modules\admin-cleanup.php.new" >nul 2>&1
+del /q "%P%\hcdecor-core.php.new" "%P%\homepage-builder.php.new" "%P%\assets\hcdecor-homepage.css.new" "%P%\modules\content-operations.php.new" "%P%\modules\workflow-engine.php.new" "%P%\modules\ai-providers.php.new" "%P%\modules\media-intelligence.php.new" "%P%\modules\agent-intake.php.new" "%P%\modules\ai-workspace.php.new" "%P%\modules\web-publisher.php.new" "%P%\modules\automation-hub.php.new" "%P%\modules\automation-recipes.php.new" "%P%\modules\drive-vault.php.new" "%P%\modules\drive-inbox.php.new" "%P%\modules\project-vault.php.new" "%P%\modules\data-backup.php.new" "%P%\modules\data-restore.php.new" "%P%\modules\system-health.php.new" "%P%\modules\background-sync.php.new" "%P%\modules\project-publishing.php.new" "%P%\modules\media-manager.php.new" "%P%\modules\hub-dashboard.php.new" "%P%\modules\admin-cleanup.php.new" "%P%\recovery-bootstrap.php.new" "%P%\modules\social-connectors.php.new" "%P%\modules\social-manager.php.new" "%P%\modules\hub-suite.php.new" "%P%\modules\workflow-crm.php.new" "%P%\modules\full-operations.php.new" "%P%\modules\connection-center.php.new" "%P%\modules\publish-runtime.php.new" >nul 2>&1
 echo [WARN] Source Sync failed. Existing local files kept intact.
 goto :continue_after_sync
 
