@@ -15,11 +15,11 @@ function hcdecor_ai_secret($provider){
 function hcdecor_ai_model($provider){
     if($provider==='openai'){
         if(defined('HCDECOR_OPENAI_MODEL') && HCDECOR_OPENAI_MODEL) return (string)HCDECOR_OPENAI_MODEL;
-        return (string)get_option('hcdecor_ai_openai_model','gpt-5.6-terra');
+        return trim((string)get_option('hcdecor_ai_openai_model',''));
     }
     if($provider==='gemini'){
         if(defined('HCDECOR_GEMINI_MODEL') && HCDECOR_GEMINI_MODEL) return (string)HCDECOR_GEMINI_MODEL;
-        return (string)get_option('hcdecor_ai_gemini_model','gemini-3.8-flash');
+        return trim((string)get_option('hcdecor_ai_gemini_model',''));
     }
     return '';
 }
@@ -28,7 +28,7 @@ function hcdecor_ai_primary(){
     return in_array($p,['auto','openai','gemini'],true)?$p:'auto';
 }
 function hcdecor_ai_available($provider){
-    return hcdecor_ai_secret($provider)!=='';
+    return hcdecor_ai_secret($provider)!=='' && hcdecor_ai_model($provider)!=='';
 }
 function hcdecor_ai_provider_order(){
     $primary=hcdecor_ai_primary();
@@ -137,6 +137,7 @@ function hcdecor_ai_extract_gemini_text($data){
 function hcdecor_ai_call_openai($job_id){
     $key=hcdecor_ai_secret('openai');
     if($key==='') return new WP_Error('no_openai_key','OpenAI API key chưa cấu hình.');
+    if(hcdecor_ai_model('openai')==='') return new WP_Error('no_openai_model','OpenAI model chưa cấu hình.');
     $content=[['type'=>'input_text','text'=>hcdecor_ai_prompt($job_id)]];
     $content=array_merge($content,hcdecor_ai_media_parts($job_id,'openai'));
     $payload=[
@@ -166,6 +167,7 @@ function hcdecor_ai_call_openai($job_id){
 function hcdecor_ai_call_gemini($job_id){
     $key=hcdecor_ai_secret('gemini');
     if($key==='') return new WP_Error('no_gemini_key','Gemini API key chưa cấu hình.');
+    if(hcdecor_ai_model('gemini')==='') return new WP_Error('no_gemini_model','Gemini model chưa cấu hình.');
     $input=[['type'=>'text','text'=>hcdecor_ai_prompt($job_id)]];
     $input=array_merge($input,hcdecor_ai_media_parts($job_id,'gemini'));
     $payload=[
@@ -202,6 +204,7 @@ function hcdecor_ai_test_provider($provider){
     $key=hcdecor_ai_secret($provider);
     if($key==='') return new WP_Error('key','API key chưa cấu hình.');
     $model=hcdecor_ai_model($provider);
+    if($model==='') return new WP_Error('model','AI model chưa cấu hình.');
     if($provider==='openai'){
         $url='https://api.openai.com/v1/models/'.rawurlencode($model);
         $r=wp_remote_get($url,['timeout'=>20,'headers'=>['Authorization'=>'Bearer '.$key]]);
@@ -364,8 +367,8 @@ add_action('admin_post_hcdecor_ai_settings',function(){
     $primary=sanitize_key($_POST['primary']??'auto');
     if(!in_array($primary,['auto','openai','gemini'],true)) $primary='auto';
     update_option('hcdecor_ai_primary',$primary,false);
-    update_option('hcdecor_ai_openai_model',sanitize_text_field(wp_unslash($_POST['openai_model']??'gpt-5.6-terra')),false);
-    update_option('hcdecor_ai_gemini_model',sanitize_text_field(wp_unslash($_POST['gemini_model']??'gemini-3.8-flash')),false);
+    update_option('hcdecor_ai_openai_model',sanitize_text_field(wp_unslash($_POST['openai_model']??'')),false);
+    update_option('hcdecor_ai_gemini_model',sanitize_text_field(wp_unslash($_POST['gemini_model']??'')),false);
     foreach(['openai','gemini'] as $p){
         if(!empty($_POST[$p.'_clear'])) delete_option('hcdecor_ai_'.$p.'_key');
         $v=trim((string)wp_unslash($_POST[$p.'_key']??''));
