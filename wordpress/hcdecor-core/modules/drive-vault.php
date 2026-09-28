@@ -518,8 +518,15 @@ add_action('admin_post_hcdecor_drive_save_connect',function(){
     check_admin_referer('hcdecor_drive_save_connect');
     $client_id=trim((string)wp_unslash($_POST['client_id']??''));
     $client_secret=trim((string)wp_unslash($_POST['client_secret']??''));
-    if($client_id!=='') update_option('hcdecor_drive_client_id',$client_id,false);
-    if($client_secret!=='') update_option('hcdecor_drive_client_secret',$client_secret,false);
+    $auth_changed=false;
+    if($client_id!=='' && $client_id!==(string)get_option('hcdecor_drive_client_id','')){ update_option('hcdecor_drive_client_id',$client_id,false); $auth_changed=true; }
+    if($client_secret!=='' && $client_secret!==(string)get_option('hcdecor_drive_client_secret','')){ update_option('hcdecor_drive_client_secret',$client_secret,false); $auth_changed=true; }
+    if($auth_changed){
+        delete_transient('hcdecor_drive_access_token');
+        delete_option('hcdecor_drive_test_status');
+        delete_option('hcdecor_drive_test_message');
+        delete_option('hcdecor_drive_tested_at');
+    }
     if(hcdecor_drive_secret('client_id')==='' || hcdecor_drive_secret('client_secret')===''){
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&oauth_missing=1')); exit;
     }
@@ -529,13 +536,21 @@ add_action('admin_post_hcdecor_drive_save_connect',function(){
 add_action('admin_post_hcdecor_drive_settings',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_drive_settings');
+    $auth_changed=false;
     foreach(['client_id','client_secret','refresh_token'] as $k){
         $v=trim((string)wp_unslash($_POST[$k]??''));
-        if($v!=='') update_option('hcdecor_drive_'.$k,$v,false);
+        if($v!=='' && $v!==(string)get_option('hcdecor_drive_'.$k,'')){ update_option('hcdecor_drive_'.$k,$v,false); $auth_changed=true; }
     }
     if(!empty($_POST['clear_auth'])){
         foreach(['client_id','client_secret','refresh_token'] as $k) delete_option('hcdecor_drive_'.$k);
         delete_transient('hcdecor_drive_access_token');
+        $auth_changed=true;
+    }
+    if($auth_changed){
+        delete_transient('hcdecor_drive_access_token');
+        delete_option('hcdecor_drive_test_status');
+        delete_option('hcdecor_drive_test_message');
+        delete_option('hcdecor_drive_tested_at');
     }
     update_option('hcdecor_drive_workflow_auto_sync_enabled',!empty($_POST['workflow_auto_sync']),false);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&saved=1'));exit;

@@ -163,7 +163,7 @@ function hcdecor_media_ai_apply_project_recommendations($project_id){
 add_action('admin_post_hcdecor_media_ai_analyze',function(){
     if(!current_user_can('upload_files')) wp_die('Forbidden');
     check_admin_referer('hcdecor_media_ai_analyze');
-    $ids=array_values(array_unique(array_filter(array_map('intval',(array)($_POST['media_ids']??[])))));
+    $ids=array_values(array_filter(array_unique(array_map('intval',(array)($_POST['media_ids']??[]))),function($id){ return get_post_type($id)==='attachment' && current_user_can('edit_post',$id); }));
     $ok=0; $fail=0;
     foreach(array_slice($ids,0,12) as $id){
         $r=hcdecor_media_ai_analyze($id);

@@ -22,7 +22,7 @@ add_action('admin_post_hcdecor_conn_save',function(){
  $endpoint=esc_url_raw(isset($_POST['endpoint'])?$_POST['endpoint']:'');
  if($endpoint!=='' && !hcdecor_conn_public_https($endpoint)) wp_die('Connection endpoint must be a public HTTPS URL.');
  $account=sanitize_text_field(wp_unslash(isset($_POST['account'])?$_POST['account']:''));
- $same_probe=isset($old['provider'],$old['endpoint'],$old['account']) && $old['provider']===$provider && $old['endpoint']===$endpoint && $old['account']===$account;
+ $same_probe=isset($old['provider'],$old['endpoint'],$old['account']) && $old['provider']===$provider && $old['endpoint']===$endpoint && $old['account']===$account && hash_equals((string)($old['secret']??''),(string)$secret);
  $all[$id]=array('name'=>$name,'provider'=>$provider,'endpoint'=>$endpoint,'account'=>$account,'secret'=>$secret,'enabled'=>!empty($_POST['enabled']),'last_ok'=>$same_probe?(isset($old['last_ok'])?$old['last_ok']:''):'','last_error'=>$same_probe?(isset($old['last_error'])?$old['last_error']:''):'');
  update_option('hcdecor_connections',$all,false); wp_safe_redirect(admin_url('admin.php?page=hcdecor-connections')); exit;
 });

@@ -47,6 +47,14 @@ add_action('admin_post_hcdecor_social_save',function(){
         'youtube_channel_id'=>$field('youtube_channel_id'),
         'youtube_access_token'=>$field('youtube_access_token',true)
     ];
+    $groups=[
+        'facebook'=>['facebook_page_id','facebook_token'],
+        'tiktok'=>['tiktok_client_key','tiktok_client_secret','tiktok_access_token'],
+        'youtube'=>['youtube_channel_id','youtube_access_token']
+    ];
+    foreach($groups as $channel=>$keys){
+        foreach($keys as $key){ if((string)($old[$key]??'')!==(string)($new[$key]??'')){ delete_option('hcdecor_social_test_'.$channel); break; } }
+    }
     update_option('hcdecor_social_connectors',$new,false);
     update_option('hcdecor_social_connectors_updated_at',current_time('mysql'),false);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-social-connectors&saved=1'));exit;
@@ -59,6 +67,8 @@ add_action('admin_post_hcdecor_social_disconnect',function(){
     if($channel==='tiktok'){$s['tiktok_client_key']='';$s['tiktok_client_secret']='';$s['tiktok_access_token']='';}
     if($channel==='youtube'){$s['youtube_channel_id']='';$s['youtube_access_token']='';}
     update_option('hcdecor_social_connectors',$s,false);
+    delete_option('hcdecor_social_test_'.$channel);
+    update_option('hcdecor_social_connectors_updated_at',current_time('mysql'),false);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-social-connectors'));exit;
 });
 add_action('admin_menu',function(){add_submenu_page('hcdecor-hub','Social Connectors','Social Connectors','manage_options','hcdecor-social-connectors','hcdecor_social_connectors_page',4);},27);

@@ -128,6 +128,13 @@ findstr /c:"current_user_can('edit_post',$id)" "wordpress\hcdecor-core\modules\c
 findstr /c:"admin_post_hcdecor_project_vault_sync_all" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 180
 findstr /c:"current_user_can('manage_options')" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 181
 findstr /c:"admin_post_hcdecor_hub_sync_projects" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 182
+findstr /c:"approval_consumed_at" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 183
+findstr /c:"Fresh production approval required." "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 184
+findstr /c:"hash_equals((string)($old['secret']??''),(string)$secret)" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 185
+findstr /c:"current_user_can('edit_post',$id)" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 186
+findstr /c:"delete_option('hcdecor_social_test_'.$channel)" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 187
+findstr /c:"delete_transient('hcdecor_drive_access_token')" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 188
+findstr /c:"delete_option('hcdecor_drive_tested_at')" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 189
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118
