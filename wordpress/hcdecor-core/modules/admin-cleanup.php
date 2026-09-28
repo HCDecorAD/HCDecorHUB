@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-/* Keep legacy business data available by direct URL, but remove obsolete demo/CRM menus from HUB. */
+/* Keep legacy business data available by direct URL, but remove obsolete CRM menus from HUB. */
 add_action('admin_menu',function(){
     remove_submenu_page('hcdecor-hub','hcdecor-agent');
     remove_submenu_page('hcdecor-hub','edit.php?post_type=hc_content_job');

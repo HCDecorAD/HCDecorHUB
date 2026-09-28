@@ -39,7 +39,7 @@ body{background:var(--hc-bg);color:var(--hc-text)}
 @media(max-width:900px){.hc-nav{display:none}.hc-site-header{height:66px}.hc-header-actions{margin-left:auto}.hc-header-actions>a:first-child{display:none}.hc-hero{padding-top:calc(var(--hc-space) + 66px)}}
 @media(max-width:767px){.hc-site-footer{grid-template-columns:1fr}}
 
-/* Demo v1 — visual-first HCDecor HUB */
+/* Production HCDecor HUB */
 .hc-production-hero{position:relative;overflow:hidden;background:radial-gradient(circle at 78% 32%,rgba(213,154,85,.20),transparent 26%),linear-gradient(135deg,#080a0c 0%,#10151a 55%,#090b0d 100%)!important}
 .hc-production-hero:after{content:"HC";position:absolute;right:-2vw;bottom:-12vw;font-size:min(42vw,620px);font-weight:900;line-height:1;color:rgba(255,255,255,.018);pointer-events:none}
 .hc-kicker{color:var(--hc-gold);font-size:12px;letter-spacing:.22em;font-weight:700}

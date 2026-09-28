@@ -66,7 +66,7 @@ $container('hc00005','hc-dark hc-contact',[
   $text('hc50002','<p>231D An Dương Vương, P. An Lạc, Tp.HCM, Việt Nam<br>0888 821 842</p>'),
   $button('hc50003','Gọi HCDecor','tel:+84888821842'),
   $button('hc50004','Zalo','https://zalo.me/quangcaohocuong'),
-  $text('hc50005','<div class="hc-quote-intake"><h3>Demo yêu cầu báo giá</h3><p>Khách hàng nhập thông tin → HCDecor HUB nhận lead → tạo báo giá → theo dõi xử lý.</p><p><strong>Họ tên</strong> · <strong>Số điện thoại</strong> · <strong>Dịch vụ</strong> · <strong>Nội dung yêu cầu</strong></p></div>')
+  $text('hc50005','<div class="hc-quote-intake"><h3>yêu cầu báo giá</h3><p>Khách hàng nhập thông tin → HCDecor HUB nhận lead → tạo báo giá → theo dõi xử lý.</p><p><strong>Họ tên</strong> · <strong>Số điện thoại</strong> · <strong>Dịch vụ</strong> · <strong>Nội dung yêu cầu</strong></p></div>')
 ])
 ];
 update_post_meta($id,'_elementor_data',wp_slash(wp_json_encode($data)));
