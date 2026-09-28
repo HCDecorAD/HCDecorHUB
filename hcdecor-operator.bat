@@ -37,6 +37,10 @@ findstr /c:"hcdecor_drive_file_in_managed_folders" "wordpress\hcdecor-core\modul
 findstr /c:"Drive request blocked: untrusted API host." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 66
 findstr /c:"Drive media file must be between 1 byte and 50 MB." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 64
 findstr /c:"Approved or published jobs must be returned for changes before editing" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 65
+findstr /c:"hcdecor_ai_worker_enabled() && function_exists('hcdecor_ai_available')" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 67
+findstr /c:"hcdecor_ai_worker_enabled()) return;" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 68
+findstr /c:"Restore source is outside the managed BACKUPS folder." "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 69
+findstr /c:"Backup integrity metadata is required." "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 70
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\setup-hcdecor.cmd" >nul || exit /b 54

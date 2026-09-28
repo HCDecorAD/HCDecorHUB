@@ -10,7 +10,11 @@ if (!defined('ABSPATH')) exit;
 function hcdecor_restore_read_backup($file_id){
     $file_id=preg_replace('/[^A-Za-z0-9_-]/','',(string)$file_id);
     if(!$file_id) return new WP_Error('file','Backup File ID không hợp lệ.');
-    if(!function_exists('hcdecor_drive_download')) return new WP_Error('drive','Drive Vault unavailable.');
+    if(!function_exists('hcdecor_drive_download') || !function_exists('hcdecor_drive_file_meta') || !function_exists('hcdecor_drive_file_in_managed_folders')) return new WP_Error('drive','Drive Vault unavailable.');
+    $meta=hcdecor_drive_file_meta($file_id);
+    if(is_wp_error($meta)) return $meta;
+    if(!hcdecor_drive_file_in_managed_folders($meta,['backups'])) return new WP_Error('scope','Restore source is outside the managed BACKUPS folder.');
+    if((int)($meta['size']??0)<=0 || (int)($meta['size']??0)>25*1024*1024) return new WP_Error('size','Backup file must be between 1 byte and 25 MB.');
 
     $body=hcdecor_drive_download($file_id);
     if(is_wp_error($body)) return $body;
@@ -21,13 +25,13 @@ function hcdecor_restore_read_backup($file_id){
         return new WP_Error('schema','Không phải HCDecor system backup hợp lệ.');
     }
     $integrity=(array)($data['integrity']??[]);
-    if(($integrity['algorithm']??'')==='sha256' && !empty($integrity['payload_hash'])){
-        $expected=sanitize_text_field((string)$integrity['payload_hash']);
-        $check=$data; unset($check['integrity']);
-        $payload=wp_json_encode($check,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
-        if(!is_string($payload) || !hash_equals($expected,hash('sha256',$payload))){
-            return new WP_Error('integrity','Backup integrity check failed.');
-        }
+    if(($integrity['algorithm']??'')!=='sha256' || empty($integrity['payload_hash'])) return new WP_Error('integrity','Backup integrity metadata is required.');
+    $expected=sanitize_text_field((string)$integrity['payload_hash']);
+    if(!preg_match('/^[a-f0-9]{64}$/i',$expected)) return new WP_Error('integrity','Backup integrity hash is invalid.');
+    $check=$data; unset($check['integrity']);
+    $payload=wp_json_encode($check,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
+    if(!is_string($payload) || !hash_equals(strtolower($expected),hash('sha256',$payload))){
+        return new WP_Error('integrity','Backup integrity check failed.');
     }
     return $data;
 }

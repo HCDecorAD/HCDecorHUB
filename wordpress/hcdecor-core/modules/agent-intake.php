@@ -38,12 +38,13 @@ function hcdecor_agent_create_job($project_id,$media_ids=[],$brief=''){
         return new WP_Error('workflow','Unable to initialize content job workflow.');
     }
     update_post_meta($id,'hc_outbound',false);
-    $ai_ready=function_exists('hcdecor_ai_available') && (hcdecor_ai_available('openai') || hcdecor_ai_available('gemini'));
+    $ai_ready=function_exists('hcdecor_ai_worker_enabled') && hcdecor_ai_worker_enabled() && function_exists('hcdecor_ai_available') && (hcdecor_ai_available('openai') || hcdecor_ai_available('gemini'));
     if($ai_ready && function_exists('wp_schedule_single_event') && !wp_next_scheduled('hcdecor_ai_process_job',[$id])) wp_schedule_single_event(time()+5,'hcdecor_ai_process_job',[$id]);
     return $id;
 }
 
 add_action('hcdecor_ai_process_job',function($job_id){
+    if(!function_exists('hcdecor_ai_worker_enabled') || !hcdecor_ai_worker_enabled()) return;
     $job_id=(int)$job_id;
     if(get_post_type($job_id)!=='hc_content_job') return;
     $status=(string)get_post_meta($job_id,'hc_agent_status',true);
