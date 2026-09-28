@@ -127,6 +127,7 @@ function hcdecor_recipe_execute_action($action,$context){
     }
     if($type==='run_ai'){
         $job=(int)($context['job_id']??0);
+        if(!function_exists('hcdecor_ai_worker_enabled') || !hcdecor_ai_worker_enabled()) return new WP_Error('ai_disabled','AI worker master switch is disabled.');
         if(!$job || !function_exists('hcdecor_ai_generate_job')) return new WP_Error('ai','AI unavailable');
         return hcdecor_ai_generate_job($job);
     }
