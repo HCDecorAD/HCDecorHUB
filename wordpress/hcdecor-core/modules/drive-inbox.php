@@ -163,8 +163,11 @@ function hcdecor_drive_inbox_scan($limit=null){
 add_action('hcdecor_drive_inbox_analyze_media',function($attachment_id){
     $settings=hcdecor_drive_inbox_settings();
     if(empty($settings['auto_analyze']) || !function_exists('hcdecor_ai_worker_enabled') || !hcdecor_ai_worker_enabled()) return;
+    $ai_ready=function_exists('hcdecor_ai_available') && (hcdecor_ai_available('openai') || hcdecor_ai_available('gemini'));
+    if(!$ai_ready) return;
     $attachment_id=(int)$attachment_id;
-    if($attachment_id && function_exists('hcdecor_media_ai_analyze')){
+    if(!$attachment_id || get_post_type($attachment_id)!=='attachment' || !wp_attachment_is_image($attachment_id)) return;
+    if(function_exists('hcdecor_media_ai_analyze')){
         $r=hcdecor_media_ai_analyze($attachment_id);
         hcdecor_drive_inbox_log(is_wp_error($r)?'analyze_failed':'analyzed',[
             'attachment_id'=>$attachment_id,

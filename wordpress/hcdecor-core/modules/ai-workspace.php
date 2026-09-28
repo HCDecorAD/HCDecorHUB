@@ -61,6 +61,7 @@ add_action('admin_post_hcdecor_workspace_create',function(){
 
 add_action('hcdecor_workspace_drive_save',function($job_id){
     $job_id=(int)$job_id;
+    if(!$job_id || get_post_type($job_id)!=='hc_content_job') return;
     $requested_at=(int)get_post_meta($job_id,'hc_workspace_drive_save_requested_at',true);
     if(!$requested_at || $requested_at<(time()-900)) return;
     delete_post_meta($job_id,'hc_workspace_drive_save_requested_at');

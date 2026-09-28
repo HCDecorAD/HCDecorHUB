@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.035",
+    "version":  "2026.09.29.036",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -39,7 +39,7 @@
                   {
                       "path":  "modules/ai-providers.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/ai-providers.php",
-                      "git_sha1":  "68c843f9f29db3592698466ce56519aba6149e6b"
+                      "git_sha1":  "651262900adefd5350eabf7877129512e06f8d66"
                   },
                   {
                       "path":  "modules/media-intelligence.php",
@@ -124,7 +124,7 @@
                   {
                       "path":  "modules/ai-workspace.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/ai-workspace.php",
-                      "git_sha1":  "0dd297f9df2cc5d6ec0c931a3efa13350693c233"
+                      "git_sha1":  "7eaa75d2116e7bc8fa063500126c5d6719bb95e1"
                   },
                   {
                       "path":  "modules/system-health.php",
@@ -144,7 +144,7 @@
                   {
                       "path":  "modules/drive-inbox.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/drive-inbox.php",
-                      "git_sha1":  "099b172dd3a0cad7ee146a84124cf18da8410bf8"
+                      "git_sha1":  "ea6b0a3f8a803bb55d31c046600ddbd6252ea01b"
                   },
                   {
                       "path":  "modules/project-vault.php",
