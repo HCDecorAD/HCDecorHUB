@@ -154,6 +154,9 @@ findstr /c:"array_slice($j['workflow_log'],-100)" "wordpress\hcdecor-core\module
 findstr /c:"!wp_attachment_is_image($cover)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 206
 findstr /c:"Project Vault import requires a JSON file." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 207
 findstr /c:"array_unique(array_map('intval',(array)($snapshot['gallery']" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 208
+findstr /c:"if($thumb && wp_attachment_is_image($thumb))" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 209
+findstr /c:"never restore executable recipe structures raw" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 210
+findstr /c:"$default['enabled']=false;" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 211
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

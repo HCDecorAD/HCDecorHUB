@@ -149,7 +149,8 @@ function hcdecor_restore_projects($backup,$media_map){
 
         $thumb_old=(int)($p['thumbnail_id']??0);
         $thumb=(int)($media_map[$thumb_old]??0);
-        if($thumb) set_post_thumbnail($id,$thumb);
+        if($thumb && wp_attachment_is_image($thumb)) set_post_thumbnail($id,$thumb);
+        else delete_post_thumbnail($id);
     }
 
     return ['map'=>$project_map,'created'=>$created,'updated'=>$updated];
@@ -294,8 +295,22 @@ function hcdecor_restore_settings($backup){
         update_option('hcdecor_automation_settings',$current,false);
     }
 
-    if(!empty($s['recipes']) && is_array($s['recipes'])){
-        update_option('hcdecor_automation_recipes',$s['recipes'],false);
+    if(!empty($s['recipes']) && is_array($s['recipes']) && function_exists('hcdecor_recipe_defaults')){
+        // Restore only recipes defined by the current code version; never restore executable recipe structures raw.
+        $saved_by_id=[];
+        foreach($s['recipes'] as $recipe){
+            if(!is_array($recipe)) continue;
+            $rid=sanitize_key((string)($recipe['id']??''));
+            if($rid!=='') $saved_by_id[$rid]=$recipe;
+        }
+        $recipes=[];
+        foreach(hcdecor_recipe_defaults() as $default){
+            $rid=sanitize_key((string)($default['id']??''));
+            if($rid==='' || !isset($saved_by_id[$rid])) continue;
+            $default['enabled']=false;
+            $recipes[]=$default;
+        }
+        update_option('hcdecor_automation_recipes',$recipes?:hcdecor_recipe_defaults(),false);
     }
     return true;
 }
