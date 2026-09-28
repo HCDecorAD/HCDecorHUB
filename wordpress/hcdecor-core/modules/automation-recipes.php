@@ -10,12 +10,12 @@ function hcdecor_connector_registry(){
     return apply_filters('hcdecor_connector_registry',[
         'wordpress'=>[
             'label'=>'WordPress',
-            'status'=>'connected',
+            'status'=>'local_available',
             'actions'=>['publish_project','update_project','create_media_meta']
         ],
         'webhook'=>[
             'label'=>'Webhook',
-            'status'=>hcdecor_auto_settings()['webhook_enabled']?'connected':'not_configured',
+            'status'=>hcdecor_auto_settings()['webhook_enabled']?'configured':'not_configured',
             'actions'=>['send_webhook']
         ],
         'facebook'=>[
@@ -35,7 +35,7 @@ function hcdecor_connector_registry(){
         ],
         'drive'=>[
             'label'=>'Google Drive Vault',
-            'status'=>function_exists('hcdecor_drive_configured')&&hcdecor_drive_configured()?'connected':'not_configured',
+            'status'=>function_exists('hcdecor_drive_configured')&&hcdecor_drive_configured()?'configured':'not_configured',
             'actions'=>['save_job','load_job','archive_media','save_prompt','export_package']
         ]
     ]);
@@ -232,7 +232,7 @@ add_action('admin_footer',function(){
       </section>
       <section class="hc-auto-box"><h2>Connector Layer</h2><div class="hc-connector-grid">
       <?php foreach($connectors as $id=>$x):?>
-        <div class="hc-connector"><strong><?php echo esc_html($x['label']);?></strong><br><em class="<?php echo $x['status']==='connected'?'connected':'';?>"><?php echo esc_html(strtoupper($x['status']));?></em><div style="margin-top:6px;color:#646970;font-size:12px"><?php echo esc_html(implode(', ',$x['actions']));?></div></div>
+        <div class="hc-connector"><strong><?php echo esc_html($x['label']);?></strong><br><em class="<?php echo in_array($x['status'],['local_available','configured'],true)?'connected':'';?>"><?php echo esc_html(strtoupper($x['status']));?></em><div style="margin-top:6px;color:#646970;font-size:12px"><?php echo esc_html(implode(', ',$x['actions']));?></div></div>
       <?php endforeach;?>
       </div></section>
     </div><?php
