@@ -1,6 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
-function hcdecor_conn_get(){ $v=get_option('hcdecor_connections',array()); return is_array($v)?$v:array(); }
+function hcdecor_conn_get(){ $v=get_option('hcdecor_connections',array()); return is_array($v)?array_slice($v,-100,null,true):array(); }
+function hcdecor_conn_save($v){ update_option('hcdecor_connections',array_slice((array)$v,-100,null,true),false); }
 function hcdecor_conn_safe($x){ unset($x['secret'],$x['token'],$x['client_secret'],$x['password']); return $x; }
 function hcdecor_conn_status($x){ if(empty($x['enabled'])) return 'disabled'; if(empty($x['endpoint'])) return 'action_required'; return 'configured'; }
 function hcdecor_conn_live_health($x){ if(empty($x['enabled']) || empty($x['endpoint'])) return 'not_checked'; if(!empty($x['last_error'])) return 'unreachable'; return !empty($x['last_ok'])?'healthy':'not_checked'; }
@@ -24,11 +25,11 @@ add_action('admin_post_hcdecor_conn_save',function(){
  $account=sanitize_text_field(wp_unslash(isset($_POST['account'])?$_POST['account']:''));
  $same_probe=isset($old['provider'],$old['endpoint'],$old['account']) && $old['provider']===$provider && $old['endpoint']===$endpoint && $old['account']===$account && hash_equals((string)($old['secret']??''),(string)$secret);
  $all[$id]=array('name'=>$name,'provider'=>$provider,'endpoint'=>$endpoint,'account'=>$account,'secret'=>$secret,'enabled'=>!empty($_POST['enabled']),'last_ok'=>$same_probe?(isset($old['last_ok'])?$old['last_ok']:''):'','last_error'=>$same_probe?(isset($old['last_error'])?$old['last_error']:''):'');
- update_option('hcdecor_connections',$all,false); wp_safe_redirect(admin_url('admin.php?page=hcdecor-connections')); exit;
+ hcdecor_conn_save($all); wp_safe_redirect(admin_url('admin.php?page=hcdecor-connections')); exit;
 });
 add_action('admin_post_hcdecor_conn_test',function(){
  if(!current_user_can('manage_options')) wp_die('Forbidden'); $id=sanitize_key(isset($_GET['id'])?$_GET['id']:''); check_admin_referer('hcdecor_conn_test_'.$id); $all=hcdecor_conn_get();
- if(isset($all[$id])){ $x=$all[$id]; $url=isset($x['endpoint'])?$x['endpoint']:''; if($url){ if(!hcdecor_conn_public_https($url)) wp_die('Unsafe connection endpoint.'); $res=wp_safe_remote_get($url,array('timeout'=>10,'redirection'=>2,'user-agent'=>'HCDecor-HUB/1.0')); if(is_wp_error($res)) $all[$id]['last_error']=$res->get_error_message(); else { $code=wp_remote_retrieve_response_code($res); if($code>=200&&$code<300){$all[$id]['last_ok']=current_time('mysql');$all[$id]['last_error']='';}else{$all[$id]['last_ok']='';$all[$id]['last_error']='HTTP '.$code;} } } update_option('hcdecor_connections',$all,false); }
+ if(isset($all[$id])){ $x=$all[$id]; $url=isset($x['endpoint'])?$x['endpoint']:''; if($url){ if(!hcdecor_conn_public_https($url)) wp_die('Unsafe connection endpoint.'); $res=wp_safe_remote_get($url,array('timeout'=>10,'redirection'=>2,'user-agent'=>'HCDecor-HUB/1.0')); if(is_wp_error($res)) $all[$id]['last_error']=$res->get_error_message(); else { $code=wp_remote_retrieve_response_code($res); if($code>=200&&$code<300){$all[$id]['last_ok']=current_time('mysql');$all[$id]['last_error']='';}else{$all[$id]['last_ok']='';$all[$id]['last_error']='HTTP '.$code;} } } hcdecor_conn_save($all); }
  wp_safe_redirect(admin_url('admin.php?page=hcdecor-connections')); exit;
 });
 add_action('admin_menu',function(){ add_submenu_page('hcdecor-hub','Connection Center','Connections','manage_options','hcdecor-connections','hcdecor_conn_page',4); },29);

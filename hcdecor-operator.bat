@@ -169,6 +169,10 @@ findstr /c:"Explicit approval is required for Drive job writes." "wordpress\hcde
 findstr /c:"Backup exceeds the 25 MB restore limit." "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 221
 findstr /c:"function hcdecor_social_accounts_safe" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 222
 findstr /c:"unset($safe['token'], $safe['secret'], $safe['access_token'], $safe['refresh_token'], $safe['password']);" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 223
+findstr /c:"array_slice(array_values($value), -50)" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 224
+findstr /c:"array_slice($groups, -50, null, true)" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 225
+findstr /c:"function hcdecor_conn_save" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 226
+findstr /c:"array_slice((array)$v,-100,null,true)" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 227
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
 findstr /c:"TEST OK" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 118

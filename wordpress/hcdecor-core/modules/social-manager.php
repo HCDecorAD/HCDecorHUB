@@ -3,11 +3,11 @@ if (!defined('ABSPATH')) { exit; }
 
 function hcdecor_social_accounts() {
     $value = get_option('hcdecor_social_accounts', []);
-    return is_array($value) ? array_values($value) : [];
+    return is_array($value) ? array_slice(array_values($value), -50) : [];
 }
 function hcdecor_social_groups() {
     $value = get_option('hcdecor_social_groups', []);
-    return is_array($value) ? $value : [];
+    return is_array($value) ? array_slice($value, -50, null, true) : [];
 }
 function hcdecor_social_accounts_safe() {
     return array_map(function($account){
@@ -50,7 +50,7 @@ add_action('admin_post_hcdecor_social_account_save', function () {
     }
     unset($account);
     if (!$found) { $all[] = $row; }
-    update_option('hcdecor_social_accounts', $all, false);
+    update_option('hcdecor_social_accounts', array_slice(array_values($all), -50), false);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-social-manager&saved=1'));
     exit;
 });
@@ -61,7 +61,7 @@ add_action('admin_post_hcdecor_social_group_save', function () {
     $groups = hcdecor_social_groups();
     $key = sanitize_key($_POST['group_key'] ?? '');
     if ($key) { $groups[$key] = sanitize_text_field(wp_unslash($_POST['group_name'] ?? $key)); }
-    update_option('hcdecor_social_groups', $groups, false);
+    update_option('hcdecor_social_groups', array_slice($groups, -50, null, true), false);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-social-manager'));
     exit;
 });
