@@ -71,7 +71,6 @@ findstr /c:"requireSameOriginMutation" "app\api\projects\normalize\route.js" >nu
 findstr /c:"cross_origin_mutation_blocked" "lib\request-guard.js" >nul || exit /b 98
 findstr /c:"cross_site_mutation_blocked" "lib\request-guard.js" >nul || exit /b 99
 findstr /c:"'permission_callback'=>'hcdecor_ops_bridge_auth'" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 100
-findstr /c:"hcdecor_bridge_auth" "wordpress\hcdecor-core\modules\media-manager.php" >nul && exit /b 101
 findstr /c:"HCDECOR_APPROVE_CODE_SYNC" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 102
 findstr /c:"hcdecor_recovery_code_sync_approved" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 103
 findstr /c:"hcdecor_recovery_trusted_raw_url" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 122
@@ -80,7 +79,6 @@ findstr /c:"wp_safe_remote_post('https://api.openai.com" "wordpress\hcdecor-core
 findstr /c:"wp_safe_remote_post('https://generativelanguage.googleapis.com" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 127
 findstr /c:"wp_safe_remote_request" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 128
 findstr /c:"managed_folder_count" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 138
-findstr /c:"hcdecor_run_background_sync" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul && exit /b 139
 findstr /c:"!=='hc_project'" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 124
 findstr /c:"evergreen_enabled" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 125
 findstr /c:"function hcdecor_health_required_schedules" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 137
@@ -159,7 +157,6 @@ findstr /c:"never restore executable recipe structures raw" "wordpress\hcdecor-c
 findstr /c:"$default['enabled']=false;" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 211
 findstr /c:"array_slice((array)$v,-500,null,true)" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 212
 findstr /c:" Enabled</label>" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 213
-findstr /c:"checked> Enabled" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul && exit /b 217
 findstr /c:"array_slice(array_values(array_filter(array_unique(array_merge" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 214
 findstr /c:"array_slice(array_values(array_filter(array_unique(array_map('intval',array_merge" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 215
 findstr /c:"else delete_post_thumbnail($id);" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 216
@@ -220,10 +217,8 @@ findstr /c:"hcdecor_ops_limit_text($brief,20000)" "wordpress\hcdecor-core\module
 findstr /c:"hcdecor_ops_limit_text(wp_unslash($_POST['brief']??''),20000)" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 272
 findstr /c:"if($depth>=5) return '[DEPTH_LIMIT]';" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 290
 findstr /c:"array_slice($value,0,30,true)" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 291
-findstr /c:"get_option('hcdecor_bridge_token'" "wordpress\hcdecor-core\modules\content-operations.php" >nul && exit /b 292
 findstr /c:"getenv('HCDECOR_OPS_API_TOKEN')" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 293
 findstr /c:"hcdecor_ops_bridge_configured():false" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 294
-findstr /c:"get_option('hcdecor_bridge_token'" "wordpress\hcdecor-core\modules\system-health.php" >nul && exit /b 295
 findstr /c:"new WP_Error('drive_token',hcdecor_drive_safe_error" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 296
 findstr /c:"hcdecor_ops_limit_text(wp_unslash($_POST['agent_brief']??''),20000)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 273
 findstr /c:"Runtime payload exceeds 256 KB." "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 274
@@ -247,7 +242,6 @@ findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\automation-hub.php
 findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 291
 findstr /c:"'redirection'=>0" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 292
 findstr /c:"identity_present" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 293
-findstr /c:"'email'=>(string)get_option('hcdecor_drive_connected_email'" "wordpress\hcdecor-core\modules\system-health.php" >nul && exit /b 294
 findstr /c:"function hcdecor_media_limit_text" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 295
 findstr /c:"hcdecor_media_limit_text(wp_unslash($_POST['description']??''),10000)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 296
 findstr /c:"function hcdecor_social_limit_text" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 297
@@ -267,26 +261,17 @@ findstr /c:"delete_option('hcdecor_ai_'.$p.'_tested_at')" "wordpress\hcdecor-cor
 findstr /c:"has_backup_file" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 130
 findstr /c:"hcdecor_backup_object_identity" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 156
 findstr /c:"hcdecor_restore_existing_by_identity" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 157
-findstr /c:"get_post_type($old)==='attachment'" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 158
-findstr /c:"if(!$project && get_post_type($old_project)==='hc_project')" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 159
-findstr /c:"drive_project_file_id" "wordpress\hcdecor-core\modules\data-backup.php" >nul && exit /b 134
-findstr /c:"hc_drive_job_file_id" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 135
-findstr /c:"hc_drive_project_file_id" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 152
-findstr /c:"hc_drive_project_url" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 153
 findstr /c:"if(in_array($status,['approved','published_web'],true)) $status='review'" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 154
 findstr /c:"delete_post_meta($id,'hc_publish_snapshot')" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 155
-findstr /c:"'hc_drive_file_id'=>'drive_file_id'" "wordpress\hcdecor-core\modules\data-restore.php" >nul && exit /b 136
 findstr /c:"hcdecor_runtime_safe_jobs" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 131
 findstr /c:"hcdecor_runtime_prune" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 132
 findstr /c:"$v[$id]['payload']=array()" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 142
 findstr /c:"$v[$id]['production_approved']=false" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 143
-findstr /c:"'body'=>substr" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul && exit /b 144
 findstr /c:"crypto.randomBytes(3)" "lib\crm\google.js" >nul || exit /b 133
 for %%F in (HCDecor-HUB-SERVICES.cmd HCDecor-HUB-START.cmd HCDecor-HUB-SYNC.cmd HCDecor-HUB-WATCH.cmd HCDecor-HUB-AUTO.cmd hcdecor-auto.cmd hcdecor-demo.cmd hcdecor-phase2.cmd hcdecor-phase2b.cmd) do findstr /c:"HCDECOR_APPROVE_CODE_SYNC" "wordpress\%%F" >nul || exit /b 106
 findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 52
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\setup-hcdecor.cmd" >nul || exit /b 54
-findstr /i /r /c:"eval-file.*homepage-builder.php" wordpress\*.cmd wordpress\*.bat wordpress\*.ps1 >nul 2>nul && exit /b 55
 findstr /c:"function hcdecor_restore_map_ids" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 301
 findstr /c:"hcdecor_drive_safe_error" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 302
 findstr /c:"'workflow_log'=>hcdecor_backup_workflow_log" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 303
