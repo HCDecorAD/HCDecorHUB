@@ -8,8 +8,14 @@ $release=Join-Path $out 'release.json'
 if(Test-Path $out){Remove-Item $out -Recurse -Force}
 New-Item -ItemType Directory -Path $stage -Force|Out-Null
 Copy-Item (Join-Path $src 'hcdecor-runtime.php') $stage
-Copy-Item (Join-Path $src 'modules') $stage -Recurse
-if(Test-Path (Join-Path $src 'assets')){Copy-Item (Join-Path $src 'assets') $stage -Recurse}
+# Keep runtime PHP files at ZIP root. WordPress.com Atomic upload has proven unreliable
+# with nested plugin payload directories; the entrypoint supports this flat layout.
+Get-ChildItem (Join-Path $src 'modules') -File -Filter '*.php' | ForEach-Object {
+  Copy-Item $_.FullName (Join-Path $stage ('module-'+$_.Name))
+}
+if(Test-Path (Join-Path $src 'assets')){
+  Get-ChildItem (Join-Path $src 'assets') -File | ForEach-Object { Copy-Item $_.FullName (Join-Path $stage ('asset-'+$_.Name)) }
+}
 $forbidden=@('homepage-builder.php','hcdecor-core.php','recovery-bootstrap.php')
 foreach($name in $forbidden){if(Test-Path (Join-Path $stage $name)){throw "Forbidden runtime package file: $name"}}
 $entry=Get-Content (Join-Path $stage 'hcdecor-runtime.php') -Raw
