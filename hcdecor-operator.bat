@@ -293,6 +293,7 @@ findstr /c:"'workflow_log'=>array_slice" "wordpress\hcdecor-core\modules\data-ba
 findstr /c:"'ai_tags'=>array_slice" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 304
 findstr /c:"rest_sanitize_boolean" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 305
 findstr /c:"current_user_can('edit_post'" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 306
+findstr /c:"Fresh explicit production publish approval is required." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 307
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

@@ -64,6 +64,9 @@ function hcdecor_publish_preflight($job_id){
 
 function hcdecor_publish_job_to_web($job_id){
     $job_id=(int)$job_id;
+    $approval_at=(string)get_post_meta($job_id,'hc_publish_approved_at',true);
+    $approval_ts=$approval_at!==''?(strtotime($approval_at)?:0):0;
+    if(!$approval_ts || $approval_ts<(time()-15*MINUTE_IN_SECONDS) || $approval_ts>(time()+5*MINUTE_IN_SECONDS)) return new WP_Error('approval','Fresh explicit production publish approval is required.');
     $preflight=hcdecor_publish_preflight($job_id);
     if(is_wp_error($preflight)) return $preflight;
     $project=(int)$preflight['project_id'];
