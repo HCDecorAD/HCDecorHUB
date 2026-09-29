@@ -516,6 +516,9 @@ findstr /c:"function hcdecor_project_vault_clip" "wordpress\hcdecor-core\modules
 findstr /c:"sanitize_text_field(is_scalar($message)?(string)$message:'')" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 544
 findstr /c:"function hcdecor_hub_dashboard_scalar" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 545
 findstr /c:"hcdecor_hub_dashboard_scalar(get_option('hcdecor_sync_last_error',''),500)" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 546
+findstr /c:"hcdecor_drive_clip(get_option('hcdecor_drive_client_secret',''),4000)" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 547
+findstr /c:"hcdecor_drive_clip(get_option('hcdecor_drive_test_message',''),500)" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 548
+findstr /c:"$file_raw=wp_unslash($_POST['file_id']??'')" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 549
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

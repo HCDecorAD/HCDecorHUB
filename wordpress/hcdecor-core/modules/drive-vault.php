@@ -125,14 +125,14 @@ add_action('admin_post_hcdecor_drive_oauth_start',function(){
 
 add_action('admin_post_hcdecor_drive_oauth_callback',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
-    $state=sanitize_text_field((string)wp_unslash($_GET['state']??''));
+    $state_raw=wp_unslash($_GET['state']??'');$state=sanitize_text_field(is_scalar($state_raw)?(string)$state_raw:'');
     if(strlen($state)>256 || !$state || !wp_verify_nonce($state,'hcdecor_drive_oauth_state')) wp_die('Invalid OAuth state.');
     if(!empty($_GET['error'])){
-        $oauth_error=sanitize_text_field(wp_unslash($_GET['error']));
+        $oauth_raw=wp_unslash($_GET['error']);$oauth_error=sanitize_text_field(is_scalar($oauth_raw)?(string)$oauth_raw:'');
         $oauth_error=function_exists('mb_substr')?mb_substr($oauth_error,0,500):substr($oauth_error,0,500);
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&oauth_error='.rawurlencode($oauth_error))); exit;
     }
-    $code=sanitize_text_field((string)wp_unslash($_GET['code']??''));
+    $code_raw=wp_unslash($_GET['code']??'');$code=sanitize_text_field(is_scalar($code_raw)?(string)$code_raw:'');
     if(strlen($code)>8192) wp_die('Invalid OAuth code.');
     if($code==='') wp_die('Missing OAuth code.');
     $r=wp_safe_remote_post('https://oauth2.googleapis.com/token',[
@@ -592,12 +592,12 @@ add_action('admin_menu',function(){
 add_action('admin_post_hcdecor_drive_save_connect',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_drive_save_connect');
-    $client_id=trim((string)wp_unslash($_POST['client_id']??''));
-    $client_secret=trim((string)wp_unslash($_POST['client_secret']??''));
+    $client_raw=wp_unslash($_POST['client_id']??'');$client_id=is_scalar($client_raw)?trim((string)$client_raw):'';
+    $secret_raw=wp_unslash($_POST['client_secret']??'');$client_secret=is_scalar($secret_raw)?trim((string)$secret_raw):'';
     if(strlen($client_id)>1000 || strlen($client_secret)>4000) wp_die('Credential value too long.');
     $auth_changed=false;
-    if($client_id!=='' && $client_id!==(string)get_option('hcdecor_drive_client_id','')){ update_option('hcdecor_drive_client_id',$client_id,false); $auth_changed=true; }
-    if($client_secret!=='' && $client_secret!==(string)get_option('hcdecor_drive_client_secret','')){ update_option('hcdecor_drive_client_secret',$client_secret,false); $auth_changed=true; }
+    if($client_id!=='' && $client_id!==hcdecor_drive_clip(get_option('hcdecor_drive_client_id',''),1000)){ update_option('hcdecor_drive_client_id',$client_id,false); $auth_changed=true; }
+    if($client_secret!=='' && $client_secret!==hcdecor_drive_clip(get_option('hcdecor_drive_client_secret',''),4000)){ update_option('hcdecor_drive_client_secret',$client_secret,false); $auth_changed=true; }
     if($auth_changed){
         delete_transient('hcdecor_drive_access_token');
         delete_option('hcdecor_drive_test_status');
@@ -616,9 +616,9 @@ add_action('admin_post_hcdecor_drive_settings',function(){
     $auth_changed=false;
     $credential_limits=['client_id'=>1000,'client_secret'=>4000,'refresh_token'=>8000];
     foreach($credential_limits as $k=>$limit){
-        $v=trim((string)wp_unslash($_POST[$k]??''));
+        $raw=wp_unslash($_POST[$k]??'');$v=is_scalar($raw)?trim((string)$raw):'';
         if(strlen($v)>$limit) wp_die('Credential value too long.');
-        if($v!=='' && $v!==(string)get_option('hcdecor_drive_'.$k,'')){ update_option('hcdecor_drive_'.$k,$v,false); $auth_changed=true; }
+        if($v!=='' && $v!==hcdecor_drive_clip(get_option('hcdecor_drive_'.$k,''),$limit)){ update_option('hcdecor_drive_'.$k,$v,false); $auth_changed=true; }
     }
     if(!empty($_POST['clear_auth'])){
         foreach(['client_id','client_secret','refresh_token'] as $k) delete_option('hcdecor_drive_'.$k);
@@ -661,7 +661,7 @@ add_action('admin_post_hcdecor_drive_save_job',function(){
 add_action('admin_post_hcdecor_drive_import_job',function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
     check_admin_referer('hcdecor_drive_import_job');
-    $file=preg_replace('/[^A-Za-z0-9_-]/','',(string)wp_unslash($_POST['file_id']??''));
+    $file_raw=wp_unslash($_POST['file_id']??'');$file=preg_replace('/[^A-Za-z0-9_-]/','',is_scalar($file_raw)?(string)$file_raw:'');
     if($file==='') wp_die('Invalid Drive file ID.');
     $r=hcdecor_drive_import_job($file);
     if(is_wp_error($r)) wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&import_error=1'));
@@ -672,7 +672,7 @@ add_action('admin_post_hcdecor_drive_import_job',function(){
 
 add_action('admin_post_hcdecor_drive_import_media',function(){
     if(!current_user_can('upload_files')) wp_die('Forbidden');
-    $file=preg_replace('/[^A-Za-z0-9_-]/','',(string)wp_unslash($_POST['file_id']??''));
+    $file_raw=wp_unslash($_POST['file_id']??'');$file=preg_replace('/[^A-Za-z0-9_-]/','',is_scalar($file_raw)?(string)$file_raw:'');
     if($file==='') wp_die('Invalid Drive file ID.');
     $folder=sanitize_key($_POST['folder_key']??'media_input');
     check_admin_referer('hcdecor_drive_import_media_'.$file);
@@ -684,7 +684,7 @@ add_action('admin_post_hcdecor_drive_import_media',function(){
 
 add_action('admin_post_hcdecor_drive_activate_prompt',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
-    $file=preg_replace('/[^A-Za-z0-9_-]/','',(string)wp_unslash($_POST['file_id']??''));
+    $file_raw=wp_unslash($_POST['file_id']??'');$file=preg_replace('/[^A-Za-z0-9_-]/','',is_scalar($file_raw)?(string)$file_raw:'');
     if($file==='') wp_die('Invalid Drive file ID.');
     check_admin_referer('hcdecor_drive_activate_prompt_'.$file);
     $r=hcdecor_drive_load_prompt($file);
@@ -716,13 +716,13 @@ add_action('rest_api_init',function(){
         'methods'=>'GET','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(){
             $configured=hcdecor_drive_configured();
-            $test_status=(string)get_option('hcdecor_drive_test_status','');
+            $test_status=hcdecor_drive_clip(get_option('hcdecor_drive_test_status',''),20);
             return rest_ensure_response([
                 'configured'=>$configured,
                 'live_health'=>$configured?($test_status==='ok'?'test_ok':($test_status==='error'?'test_failed':'untested')):'not_configured',
-                'tested_at'=>(string)get_option('hcdecor_drive_tested_at',''),
+                'tested_at'=>hcdecor_drive_clip(get_option('hcdecor_drive_tested_at',''),64),
                 'managed_folder_count'=>count(hcdecor_drive_folders()),
-                'error'=>$test_status==='error'?(string)get_option('hcdecor_drive_test_message',''):''
+                'error'=>$test_status==='error'?hcdecor_drive_clip(get_option('hcdecor_drive_test_message',''),500):''
             ]);
         }
     ]);
@@ -763,8 +763,8 @@ add_action('rest_api_init',function(){
 function hcdecor_drive_vault_page(){
     if(!current_user_can('manage_options')) return;
     $folders=hcdecor_drive_folders();
-    $status=(string)get_option('hcdecor_drive_test_status','');
-    $msg=(string)get_option('hcdecor_drive_test_message','');
+    $status=hcdecor_drive_clip(get_option('hcdecor_drive_test_status',''),20);
+    $msg=hcdecor_drive_clip(get_option('hcdecor_drive_test_message',''),500);
     $jobs=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>20,'orderby'=>'modified','order'=>'DESC']);
     $prompt_files=hcdecor_drive_configured()?hcdecor_drive_list($folders['prompts'],20):[];
     if(is_wp_error($prompt_files)) $prompt_files=[];
@@ -817,7 +817,7 @@ function hcdecor_drive_vault_page(){
             </form>
           </details>
 
-          <?php $connected_email=(string)get_option('hcdecor_drive_connected_email',''); if($connected_email):?><p><strong>Google account:</strong> <?php echo esc_html($connected_email);?></p><?php endif;?>
+          <?php $connected_email=hcdecor_drive_clip(get_option('hcdecor_drive_connected_email',''),320); if($connected_email):?><p><strong>Google account:</strong> <?php echo esc_html($connected_email);?></p><?php endif;?>
           <hr><p><strong>Root Vault</strong><br><code><?php echo esc_html($folders['root']);?></code></p>
           <p><a class="button" target="_blank" rel="noopener" href="<?php echo esc_url('https://drive.google.com/drive/folders/'.$folders['root']);?>">Open Google Drive Vault</a></p>
           <p><a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-drive-inbox'));?>">Drive Inbox Automation</a> <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-project-vault'));?>">Project Vault</a></p>
