@@ -87,7 +87,8 @@ function hcdecor_ai_workspace_page(){
     $drive=hcdecor_workspace_drive_state();
     $automation=function_exists('hcdecor_auto_settings')&&!empty(hcdecor_auto_settings()['enabled'])?'ok':'off';
     $prompt=(string)get_option('hcdecor_drive_active_prompt','');
-    $prompt_title=(string)get_option('hcdecor_drive_active_prompt_title','');
+    $prompt_title=sanitize_text_field((string)get_option('hcdecor_drive_active_prompt_title',''));
+    $prompt_title=function_exists('mb_substr')?mb_substr($prompt_title,0,300):substr($prompt_title,0,300);
     $created=(int)($_GET['job']??0);
     ?>
     <div class="wrap hcaw">

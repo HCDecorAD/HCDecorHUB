@@ -405,6 +405,7 @@ findstr /c:"function hcdecor_social_groups_safe" "wordpress\hcdecor-core\modules
 findstr /c:"'remote_id'=>hcdecor_social_limit_text" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 418
 findstr /c:"function hcdecor_full_audit_entries" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 419
 findstr /c:"array_slice($v,-100,null,true)" "wordpress\hcdecor-core\modules\hub-suite.php" >nul || exit /b 420
+findstr /c:"mb_substr($prompt_title,0,300)" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 421
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
