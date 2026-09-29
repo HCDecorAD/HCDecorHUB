@@ -437,6 +437,8 @@ findstr /c:"hc_publish_approval_source','wp_user'" "wordpress\hcdecor-core\modul
 findstr /c:"hc_publish_approval_source','wp_user'" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 465
 findstr /c:"in_array($approval_source,['wp_user','service_bridge'],true)" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 466
 findstr /c:"Web publish content exceeds safe limits." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 467
+findstr /c:"$published_snapshot=hcdecor_publish_snapshot($project)" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 468
+findstr /c:"published state was restored." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 469
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

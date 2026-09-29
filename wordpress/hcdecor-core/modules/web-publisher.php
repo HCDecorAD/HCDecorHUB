@@ -148,24 +148,15 @@ function hcdecor_rollback_job_publish($job_id){
     $project=(int)get_post_meta($job_id,'hc_published_project_id',true);
     if(!$project || get_post_type($project)!=='hc_project' || !is_array($snapshot)) return new WP_Error('snapshot','No rollback snapshot.');
 
-    $r=wp_update_post([
-        'ID'=>$project,
-        'post_title'=>(string)($snapshot['title']??''),
-        'post_excerpt'=>(string)($snapshot['excerpt']??''),
-        'post_content'=>(string)($snapshot['content']??'')
-    ],true);
+    $published_snapshot=hcdecor_publish_snapshot($project);
+    if(is_wp_error($published_snapshot)) return $published_snapshot;
+    $r=hcdecor_restore_project_snapshot($project,$snapshot);
     if(is_wp_error($r)) return $r;
 
-    $gallery=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)($snapshot['gallery']??[]))),function($id){return get_post_type($id)==='attachment';})),0,60);
-    $legacy=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)($snapshot['gallery_legacy']??[]))),function($id){return get_post_type($id)==='attachment';})),0,60);
-    update_post_meta($project,'hc_project_gallery',$gallery);
-    update_post_meta($project,'hc_gallery_ids',$legacy);
-    update_post_meta($project,'hc_seo_meta',(string)($snapshot['seo_meta']??''));
-    $cover=(int)($snapshot['cover']??0);
-    if($cover && wp_attachment_is_image($cover)) set_post_thumbnail($project,$cover);
-    else delete_post_thumbnail($project);
-
-    if(!hcdecor_workflow_set_status($job_id,'approved','Rolled back Web publish')) return new WP_Error('transition','Web rollback status transition was rejected.');
+    if(!hcdecor_workflow_set_status($job_id,'approved','Rolled back Web publish')){
+        hcdecor_restore_project_snapshot($project,$published_snapshot);
+        return new WP_Error('transition','Web rollback status transition was rejected; published state was restored.');
+    }
     update_post_meta($job_id,'hc_rollback_at',current_time('mysql'));
     update_post_meta($job_id,'hc_rollback_by',get_current_user_id());
     update_post_meta($job_id,'hc_outbound',false);
