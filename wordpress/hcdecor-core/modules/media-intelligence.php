@@ -26,7 +26,7 @@ function hcdecor_media_ai_data_url($attachment_id){
     $size=(int)filesize($path);
     if($size<=0 || $size>8*1024*1024) return new WP_Error('size','Image is too large for analysis.');
     $raw=file_get_contents($path);
-    if($raw===false) return new WP_Error('read','Cannot read image.');
+    if($raw===false || strlen($raw)!==$size) return new WP_Error('read','Cannot read image safely.');
     $mime=(string)get_post_mime_type($attachment_id);
     if(!in_array($mime,['image/jpeg','image/png','image/webp','image/gif'],true)) return new WP_Error('mime','Unsupported image type.');
     return 'data:'.$mime.';base64,'.base64_encode($raw);

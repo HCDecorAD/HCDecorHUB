@@ -373,6 +373,9 @@ findstr /c:"$title=$clip(get_the_title($attachment_id),500)" "wordpress\hcdecor-
 findstr /c:"$args['limit_response_size']=$args['limit_response_size']??4*1024*1024" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 386
 findstr /c:"Drive download exceeds allowed size." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 387
 findstr /c:"hcdecor_drive_download($file_id,25*1024*1024)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 388
+findstr /c:"strlen($raw)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 389
+findstr /c:"Cannot read image safely." "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 390
+findstr /c:"$limit=$ch==='facebook'?10000:20000" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 391
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

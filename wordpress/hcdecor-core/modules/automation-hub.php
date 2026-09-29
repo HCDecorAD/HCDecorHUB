@@ -131,6 +131,8 @@ function hcdecor_auto_prepare_social($project_id,$job_id=0){
             $key=$ch==='facebook'?'hc_facebook_caption':($ch==='tiktok'?'hc_tiktok_script':'hc_youtube_description');
             $text=(string)get_post_meta($job_id,$key,true);
         }
+        $limit=$ch==='facebook'?10000:20000;
+        $text=function_exists('hcdecor_ops_limit_text')?hcdecor_ops_limit_text($text,$limit):(function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit));
         $payload['channels'][$ch]=['text'=>$text,'status'=>'ready'];
     }
     return $payload;

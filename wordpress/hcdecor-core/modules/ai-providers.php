@@ -105,7 +105,7 @@ function hcdecor_ai_media_parts($job_id,$provider){
         $size=(int)filesize($path);
         if($size<=0 || $size>6*1024*1024 || ($bytes_total+$size)>$limit) continue;
         $raw=file_get_contents($path);
-        if($raw===false) continue;
+        if($raw===false || strlen($raw)!==$size) continue;
         $mime=(string)get_post_mime_type($id);
         if(!in_array($mime,['image/jpeg','image/png','image/webp','image/gif'],true)) continue;
         $b64=base64_encode($raw); $bytes_total+=$size;
