@@ -454,6 +454,8 @@ findstr /c:"strlen($claimed_raw)<=64" "wordpress\hcdecor-core\modules\workflow-e
 findstr /c:"$token_raw=$r->get_param('claim_token')" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 482
 findstr /c:"const projectApiAuth=Boolean" "lib\data\store.js" >nul || exit /b 483
 findstr /c:"&&projectFolder&&projectApiAuth" "lib\data\store.js" >nul || exit /b 484
+findstr /c:"array_key_exists('auto_link_project',$saved)" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 485
+findstr /c:"'limit'=>max(1,min(50" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 486
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

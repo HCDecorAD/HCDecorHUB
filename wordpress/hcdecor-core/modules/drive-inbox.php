@@ -8,14 +8,13 @@ if (!defined('ABSPATH')) exit;
  */
 
 function hcdecor_drive_inbox_settings(){
-    $defaults=[
-        'enabled'=>false,
-        'auto_analyze'=>false,
-        'auto_link_project'=>true,
-        'limit'=>12
+    $saved=get_option('hcdecor_drive_inbox_settings',[]);$saved=is_array($saved)?$saved:[];
+    return [
+        'enabled'=>!empty($saved['enabled']),
+        'auto_analyze'=>!empty($saved['auto_analyze']),
+        'auto_link_project'=>array_key_exists('auto_link_project',$saved)?!empty($saved['auto_link_project']):true,
+        'limit'=>max(1,min(50,(int)($saved['limit']??12)))
     ];
-    $saved=get_option('hcdecor_drive_inbox_settings',[]);
-    return wp_parse_args(is_array($saved)?$saved:[],$defaults);
 }
 
 function hcdecor_drive_inbox_approval_fresh(WP_REST_Request $r){
