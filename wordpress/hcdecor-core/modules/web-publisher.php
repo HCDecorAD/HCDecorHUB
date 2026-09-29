@@ -3,31 +3,36 @@ if (!defined('ABSPATH')) exit;
 
 /* HCDecor guarded Web publisher with snapshot + rollback. */
 
+function hcdecor_publish_clip($value,$limit){
+    $value=(string)$value;
+    return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit);
+}
+
 function hcdecor_publish_snapshot($project_id){
     $post=get_post($project_id);
     if(!$post || $post->post_type!=='hc_project') return new WP_Error('project','Invalid project');
     return [
         'time'=>current_time('mysql'),
-        'title'=>$post->post_title,
-        'excerpt'=>$post->post_excerpt,
-        'content'=>$post->post_content,
+        'title'=>hcdecor_publish_clip($post->post_title,500),
+        'excerpt'=>hcdecor_publish_clip($post->post_excerpt,5000),
+        'content'=>hcdecor_publish_clip($post->post_content,100000),
         'gallery'=>array_slice((array)get_post_meta($project_id,'hc_project_gallery',true),0,60),
         'gallery_legacy'=>array_slice((array)get_post_meta($project_id,'hc_gallery_ids',true),0,60),
         'cover'=>(int)get_post_thumbnail_id($project_id),
-        'seo_meta'=>(string)get_post_meta($project_id,'hc_seo_meta',true)
+        'seo_meta'=>hcdecor_publish_clip(get_post_meta($project_id,'hc_seo_meta',true),2000)
     ];
 }
 
 function hcdecor_restore_project_snapshot($project_id,$snapshot){
     $project_id=(int)$project_id;
     if(!$project_id || get_post_type($project_id)!=='hc_project' || !is_array($snapshot)) return new WP_Error('snapshot','Invalid publish snapshot.');
-    $r=wp_update_post(['ID'=>$project_id,'post_title'=>(string)($snapshot['title']??''),'post_excerpt'=>(string)($snapshot['excerpt']??''),'post_content'=>(string)($snapshot['content']??'')],true);
+    $r=wp_update_post(['ID'=>$project_id,'post_title'=>hcdecor_publish_clip($snapshot['title']??'',500),'post_excerpt'=>hcdecor_publish_clip($snapshot['excerpt']??'',5000),'post_content'=>hcdecor_publish_clip($snapshot['content']??'',100000)],true);
     if(is_wp_error($r)) return $r;
     $gallery=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)($snapshot['gallery']??[]))),function($id){return get_post_type($id)==='attachment';})),0,60);
     $legacy=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)($snapshot['gallery_legacy']??[]))),function($id){return get_post_type($id)==='attachment';})),0,60);
     update_post_meta($project_id,'hc_project_gallery',$gallery);
     update_post_meta($project_id,'hc_gallery_ids',$legacy);
-    update_post_meta($project_id,'hc_seo_meta',(string)($snapshot['seo_meta']??''));
+    update_post_meta($project_id,'hc_seo_meta',hcdecor_publish_clip($snapshot['seo_meta']??'',2000));
     $cover=(int)($snapshot['cover']??0);
     if($cover && wp_attachment_is_image($cover)) set_post_thumbnail($project_id,$cover);
     else delete_post_thumbnail($project_id);

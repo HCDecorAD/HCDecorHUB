@@ -376,6 +376,9 @@ findstr /c:"hcdecor_drive_download($file_id,25*1024*1024)" "wordpress\hcdecor-co
 findstr /c:"strlen($raw)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 389
 findstr /c:"Cannot read image safely." "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 390
 findstr /c:"$limit=$ch==='facebook'?10000:20000" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 391
+findstr /c:"function hcdecor_publish_clip" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 392
+findstr /c:"hcdecor_publish_clip($post->post_content,100000)" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 393
+findstr /c:"hcdecor_publish_clip($snapshot['seo_meta']??'',2000)" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 394
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
