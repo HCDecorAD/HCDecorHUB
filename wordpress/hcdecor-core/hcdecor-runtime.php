@@ -2,18 +2,18 @@
 /**
  * Plugin Name: HCDecor HUB Runtime
  * Description: HCDecor operational runtime. Safe-by-default; production writes remain explicitly gated.
- * Version: 2026.09.29.201
+ * Version: 2026.09.30.301
  * Author: HCDecor
  */
 if (!defined('ABSPATH')) exit;
 
-define('HCDECOR_RUNTIME_VERSION','2026.09.29.201');
+define('HCDECOR_RUNTIME_VERSION','2026.09.30.301');
 
 add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/runtime/status',[
         'methods'=>'GET','permission_callback'=>'__return_true',
         'callback'=>function(){
-            $expected=['workflow-engine.php','content-operations.php','media-manager.php','media-intelligence.php','ai-providers.php','agent-intake.php','ai-workspace.php','web-publisher.php','project-publishing.php','connection-center.php','publish-runtime.php','social-connectors.php','social-manager.php','automation-hub.php','automation-recipes.php','drive-vault.php','drive-inbox.php','project-vault.php','data-backup.php','data-restore.php','workflow-crm.php','hub-suite.php','full-operations.php','background-sync.php','system-health.php','hub-dashboard.php','admin-cleanup.php'];
+            $expected=['workflow-engine.php','content-operations.php','media-manager.php','media-intelligence.php','ai-providers.php','agent-intake.php','ai-workspace.php','web-publisher.php','project-publishing.php','connection-center.php','publish-runtime.php','social-connectors.php','social-manager.php','automation-hub.php','automation-recipes.php','drive-vault.php','drive-inbox.php','project-vault.php','data-backup.php','data-restore.php','workflow-crm.php','hub-suite.php','full-operations.php','background-sync.php','system-health.php','hub-dashboard.php','admin-cleanup.php','iam-runtime.php'];
             $loaded=0; foreach($expected as $m){if(is_readable(__DIR__.'/modules/'.$m)||is_readable(__DIR__.'/module-'.$m))$loaded++;}
             return rest_ensure_response(['ok'=>$loaded===count($expected),'version'=>HCDECOR_RUNTIME_VERSION,'module_files'=>$loaded,'module_expected'=>count($expected),'production_write'=>false]);
         }
@@ -45,7 +45,7 @@ $hcdecor_modules=[
     'connection-center.php','publish-runtime.php','social-connectors.php','social-manager.php',
     'automation-hub.php','automation-recipes.php','drive-vault.php','drive-inbox.php','project-vault.php',
     'data-backup.php','data-restore.php','workflow-crm.php','hub-suite.php','full-operations.php',
-    'background-sync.php','system-health.php','hub-dashboard.php','admin-cleanup.php'
+    'background-sync.php','system-health.php','hub-dashboard.php','admin-cleanup.php','iam-runtime.php'
 ];
 foreach($hcdecor_modules as $hcdecor_module){
     $hcdecor_path=__DIR__.'/modules/'.$hcdecor_module;
