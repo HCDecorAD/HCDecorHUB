@@ -294,6 +294,12 @@ findstr /c:"'ai_tags'=>array_slice" "wordpress\hcdecor-core\modules\data-backup.
 findstr /c:"rest_sanitize_boolean" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 305
 findstr /c:"current_user_can('edit_post'" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 306
 findstr /c:"Fresh explicit production publish approval is required." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 307
+findstr /c:"service_bridge" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 308
+findstr /c:"hc_last_publish_approval_source" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 309
+findstr /c:"hc_publish_approval_source" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 310
+findstr /c:"hc_publish_approval_source" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 311
+findstr /c:"hc_publish_approval_source" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 312
+findstr /c:"'gallery'=>array_slice" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 313
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

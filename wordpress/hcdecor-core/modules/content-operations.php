@@ -111,6 +111,7 @@ add_action('admin_post_hcdecor_ops_publish_web', function(){
     if(is_wp_error($r)){
         delete_post_meta($id,'hc_publish_approved_by');
         delete_post_meta($id,'hc_publish_approved_at');
+        delete_post_meta($id,'hc_publish_approval_source');
         wp_die($r->get_error_message());
     }
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$id.'&published=1')); exit;

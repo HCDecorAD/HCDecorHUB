@@ -204,6 +204,7 @@ function hcdecor_restore_jobs($backup,$project_map,$media_map){
         delete_post_meta($id,'hc_agent_lock_until');
         delete_post_meta($id,'hc_publish_approved_by');
         delete_post_meta($id,'hc_publish_approved_at');
+        delete_post_meta($id,'hc_publish_approval_source');
         delete_post_meta($id,'hc_publish_snapshot');
         delete_post_meta($id,'hc_published_project_id');
         delete_post_meta($id,'hc_published_web_at');

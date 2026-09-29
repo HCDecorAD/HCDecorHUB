@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.084",
+    "version":  "2026.09.29.085",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -29,12 +29,12 @@
                   {
                       "path":  "modules/content-operations.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/content-operations.php",
-                      "git_sha1":  "056e2c12525c33556b1641127b3982951ba2d294"
+                      "git_sha1":  "4d7f2e231ad2a46a0936d544ca27de26ef861bde"
                   },
                   {
                       "path":  "modules/workflow-engine.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/workflow-engine.php",
-                      "git_sha1":  "c85a7dab94bbd1dbdd4a4f9ced0a3976f0a974ae"
+                      "git_sha1":  "5c75f2d87dfc3fa2ad02e04c62ba2dc48c89266c"
                   },
                   {
                       "path":  "modules/ai-providers.php",
@@ -54,7 +54,7 @@
                   {
                       "path":  "modules/web-publisher.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/web-publisher.php",
-                      "git_sha1":  "b4901862faae248b42225fb58e3153e7ada794ca"
+                      "git_sha1":  "6b425f3b2c86ec40611e7c68dce803bd6c3d2fdf"
                   },
                   {
                       "path":  "modules/project-publishing.php",
@@ -139,7 +139,7 @@
                   {
                       "path":  "modules/data-restore.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/data-restore.php",
-                      "git_sha1":  "d0a98b2c40e0e57a77e00a3030979652351ec885"
+                      "git_sha1":  "7d7e26828dab148543ae796ea74170db000d6b57"
                   },
                   {
                       "path":  "modules/drive-inbox.php",

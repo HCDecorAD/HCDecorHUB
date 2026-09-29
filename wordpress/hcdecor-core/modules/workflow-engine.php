@@ -547,6 +547,7 @@ add_action('admin_post_hcdecor_review_action',function(){
         if(is_wp_error($published)){
             delete_post_meta($id,'hc_publish_approved_by');
             delete_post_meta($id,'hc_publish_approved_at');
+            delete_post_meta($id,'hc_publish_approval_source');
             wp_die($published->get_error_message());
         }
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-review&job='.$id.'&published=1')); exit;
@@ -556,6 +557,7 @@ add_action('admin_post_hcdecor_review_action',function(){
         delete_post_meta($id,'hc_reviewed_at');
         delete_post_meta($id,'hc_publish_approved_by');
         delete_post_meta($id,'hc_publish_approved_at');
+        delete_post_meta($id,'hc_publish_approval_source');
         hcdecor_workflow_clear_worker_claim($id,true,false);
         hcdecor_workflow_set_status($id,'draft','Returned for changes');
         update_post_meta($id,'hc_review_note',$note);
@@ -567,6 +569,7 @@ add_action('admin_post_hcdecor_review_action',function(){
         delete_post_meta($id,'hc_reviewed_at');
         delete_post_meta($id,'hc_publish_approved_by');
         delete_post_meta($id,'hc_publish_approved_at');
+        delete_post_meta($id,'hc_publish_approval_source');
         hcdecor_workflow_set_status($id,'draft','Retry requested by reviewer');
         hcdecor_workflow_clear_worker_claim($id,true,false);
         $mutex_key='hcdecor_claim_mutex_'.$id;
