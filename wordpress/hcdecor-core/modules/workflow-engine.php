@@ -3,6 +3,8 @@ if (!defined('ABSPATH')) exit;
 
 /* HCDecor production workflow engine: queue claim -> process -> review -> approve -> publish web. */
 
+function hcdecor_workflow_time($value){$raw=is_scalar($value)?(string)$value:'';if($raw===''||strlen($raw)>64)return 0;return strtotime($raw)?:0;}
+
 function hcdecor_workflow_log($job_id,$event,$note=''){
     $log=(array)get_post_meta($job_id,'hc_workflow_log',true);
     $log[]=[
@@ -136,7 +138,7 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
 add_action('init',function(){
     $last=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
     $last_ts=(int)($last['ts']??0);
-    if(!$last_ts && !empty($last['at'])) $last_ts=strtotime((string)$last['at'])?:0;
+    if(!$last_ts && !empty($last['at'])) $last_ts=hcdecor_workflow_time($last['at']);
     if($last_ts && $last_ts>=time()-30) return;
     $next=wp_next_scheduled('hcdecor_worker_mutex_sweep_tick');
     if($next && $next>=(time()-60)) return;
@@ -292,8 +294,8 @@ function hcdecor_workflow_recover_orphan_draft_claims($limit=20){
         if($lock>$now) continue;
         $mutex=(array)get_option('hcdecor_claim_mutex_'.$job_id,[]);
         if(!empty($mutex['at']) && (int)$mutex['at']>=($now-120)) continue;
-        $claimed=strtotime((string)get_post_meta($job_id,'hc_agent_claimed_at',true))?:0;
-        $modified=strtotime((string)get_post_field('post_modified',$job_id))?:0;
+        $claimed=hcdecor_workflow_time(get_post_meta($job_id,'hc_agent_claimed_at',true));
+        $modified=hcdecor_workflow_time(get_post_field('post_modified',$job_id));
         $age_base=$claimed?:$modified;
         $stale_after=$claimed?120:900;
         if(!$age_base || $age_base>=($now-$stale_after)) continue;
@@ -353,7 +355,7 @@ add_action('rest_api_init',function(){
                     $existing_lock=(int)get_post_meta($j->ID,'hc_agent_lock_until',true);
                     if($existing_token!=='' && $existing_lock<=$now){
                         $claimed_raw=get_post_meta($j->ID,'hc_agent_claimed_at',true);$claimed_raw=is_scalar($claimed_raw)?(string)$claimed_raw:'';
-                        $claimed=strlen($claimed_raw)<=64?(strtotime($claimed_raw)?:0):0;
+                        $claimed=hcdecor_workflow_time($claimed_raw);
                         if($claimed && $claimed<($now-120)){
                             $lifecycle=hcdecor_workflow_lifecycle_mutex_acquire($j->ID,$existing_token,30);
                             if($lifecycle){
@@ -475,8 +477,8 @@ function hcdecor_workflow_recover_stale_jobs($limit=10){
     $recovered=0;
     foreach($jobs as $job){
         $lock=(int)get_post_meta($job->ID,'hc_agent_lock_until',true);
-        $claimed=strtotime((string)get_post_meta($job->ID,'hc_agent_claimed_at',true))?:0;
-        $heartbeat=strtotime((string)get_post_meta($job->ID,'hc_agent_heartbeat',true))?:0;
+        $claimed=hcdecor_workflow_time(get_post_meta($job->ID,'hc_agent_claimed_at',true));
+        $heartbeat=hcdecor_workflow_time(get_post_meta($job->ID,'hc_agent_heartbeat',true));
         $token=(string)get_post_meta($job->ID,'hc_agent_claim_token',true);
         $last_worker_activity=max($claimed,$heartbeat);
         $invalid_claim=($token==='' && $last_worker_activity>0 && $last_worker_activity<($now-120));

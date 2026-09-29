@@ -450,7 +450,7 @@ findstr /c:"$len>=32 && $len<=512" "wordpress\hcdecor-core\modules\content-opera
 findstr /c:"function hcdecor_ops_bridge_auth($request=null)" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 478
 findstr /c:"(int)$raw>65536" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 479
 findstr /c:"HCDECOR_OPS_API_TOKEN=" ".env.example" >nul || exit /b 480
-findstr /c:"strlen($claimed_raw)<=64" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 481
+findstr /c:"$claimed=hcdecor_workflow_time($claimed_raw)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 481
 findstr /c:"$token_raw=$r->get_param('claim_token')" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 482
 findstr /c:"const projectApiAuth=Boolean" "lib\data\store.js" >nul || exit /b 483
 findstr /c:"&&projectFolder&&projectApiAuth" "lib\data\store.js" >nul || exit /b 484
@@ -471,6 +471,9 @@ findstr /c:"hcdecor_conn_public_https($out['webhook_url'])" "wordpress\hcdecor-c
 findstr /c:"$defaults=hcdecor_recipe_defaults()" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 499
 findstr /c:"array_slice($saved,0,100)" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 500
 findstr /c:"$recipe['enabled']=$enabled[$id]" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 501
+findstr /c:"function hcdecor_workflow_time" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 502
+findstr /c:"$heartbeat=hcdecor_workflow_time" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 503
+findstr /c:"$modified=hcdecor_workflow_time" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 504
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
