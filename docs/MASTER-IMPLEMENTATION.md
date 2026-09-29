@@ -5,8 +5,8 @@ HCDecor HUB is the Multi-Business AI Command Center and the public HCDecor websi
 
 ## Production map
 - HCDecor: https://hcdecorhub.com — WordPress + Elementor.
-- GSC: https://gscsenior.hcdecorhub.com — independent Vercel frontend, repo HCDecorAD/GSC.
-- AMO: https://amonguyen.hcdecorhub.com — independent Vercel frontend, repo HCDecorAD/AMONguyen.
+- GSC: https://gscsenior.hcdecorhub.com — independent GitHub Pages frontend, repo HCDecorAD/GSC.
+- AMO: https://amonguyen.hcdecorhub.com — independent GitHub Pages frontend, repo HCDecorAD/AMONguyen.
 
 ## Non-negotiable rules
 1. Read `config/site-registry.json` before automation targets a website.
