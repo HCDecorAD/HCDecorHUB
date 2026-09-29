@@ -1,5 +1,6 @@
 import {HubShell} from "../../../components/HubShell";
 import {getHubConfig} from "../../../lib/hub-config";
+import {MasterConsole} from "./MasterConsole";
 
 const labels={
   website:"Website Agent",
@@ -20,6 +21,7 @@ export default function Agents(){
       <div className="masterFlow">{agents.routing.flow.map((x,i)=><div key={x}><b>{String(i+1).padStart(2,"0")}</b><span>{title(x)}</span></div>)}</div>
     </section>
     <div className="notice">Source: config/agents.json · Schema {agents.schema_version}. Runtime status không được suy diễn từ UI.</div>
+    <MasterConsole/>
     <section className="masterGrid">{agents.workers.map(w=><article className="masterCard" key={w.id}><div className="masterCardTop"><span>WORKER</span><em>{w.production_write===false?"No production write":w.production_write}</em></div><h3>{labels[w.id]||title(w.id)}</h3><p>{w.capabilities.map(title).join(" · ")}</p><small>Legacy mapping</small><strong>{w.maps_to.join(" + ")}</strong></article>)}</section>
     <section className="masterArchitecture">
       <div><span>CONTEXT</span><h3>{master.context_layers.length} layers</h3><p>{master.context_layers.map(title).join(" → ")}</p></div>
