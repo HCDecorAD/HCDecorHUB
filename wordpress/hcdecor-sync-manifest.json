@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.112",
+    "version":  "2026.09.29.113",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -44,7 +44,7 @@
                   {
                       "path":  "modules/media-intelligence.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/media-intelligence.php",
-                      "git_sha1":  "fc82d235cfb41c73f444a125fbdd2d0e727cea72"
+                      "git_sha1":  "a99476cec78d91b81e5654ba9ceade67b42d7a76"
                   },
                   {
                       "path":  "modules/agent-intake.php",

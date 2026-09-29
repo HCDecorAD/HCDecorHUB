@@ -33,12 +33,13 @@ function hcdecor_media_ai_data_url($attachment_id){
 }
 
 function hcdecor_media_ai_prompt($attachment_id){
-    $title=get_the_title($attachment_id);
+    $clip=function($value,$limit){$value=(string)$value;return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit);};
+    $title=$clip(get_the_title($attachment_id),500);
     $project_ids=get_posts([
         'post_type'=>'hc_project','post_status'=>['publish','draft'],'numberposts'=>20,'fields'=>'ids',
         'meta_query'=>[['key'=>'hc_project_gallery','value'=>'"'.(int)$attachment_id.'"','compare'=>'LIKE']]
     ]);
-    $project_titles=array_map('get_the_title',$project_ids);
+    $project_titles=array_map(function($id)use($clip){return $clip(get_the_title($id),500);},$project_ids);
     return implode("\n",[
         'Phân tích hình ảnh này cho HCDecor HUB.',
         'Mục tiêu: quản lý media cho dự án thiết kế/thi công/nội thất/kiến trúc/bảng hiệu/3D.',
@@ -66,11 +67,13 @@ function hcdecor_media_ai_call_openai($attachment_id){
         'text'=>['format'=>['type'=>'json_schema','name'=>'hcdecor_media_analysis','strict'=>true,'schema'=>hcdecor_media_ai_schema()]]
     ];
     $r=wp_safe_remote_post('https://api.openai.com/v1/responses',[
-        'timeout'=>90,'redirection'=>0,'headers'=>['Authorization'=>'Bearer '.$key,'Content-Type'=>'application/json'],
+        'timeout'=>90,'redirection'=>0,'limit_response_size'=>2*1024*1024,'headers'=>['Authorization'=>'Bearer '.$key,'Content-Type'=>'application/json'],
         'body'=>wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)
     ]);
     if(is_wp_error($r)) return $r;
-    $status=(int)wp_remote_retrieve_response_code($r); $data=json_decode(wp_remote_retrieve_body($r),true);
+    $status=(int)wp_remote_retrieve_response_code($r); $body=(string)wp_remote_retrieve_body($r);
+    if(strlen($body)>2*1024*1024) return new WP_Error('response_size','AI media response exceeds 2 MB.');
+    $data=json_decode($body,true);
     if($status<200||$status>=300) return new WP_Error('openai',function_exists('hcdecor_ai_safe_error')?hcdecor_ai_safe_error((string)($data['error']['message']??('OpenAI HTTP '.$status))):('OpenAI HTTP '.$status));
     $text=function_exists('hcdecor_ai_extract_openai_text')?hcdecor_ai_extract_openai_text((array)$data):'';
     $json=json_decode($text,true);
@@ -94,11 +97,14 @@ function hcdecor_media_ai_call_gemini($attachment_id){
     $r=wp_safe_remote_post('https://generativelanguage.googleapis.com/v1beta/interactions',[
         'timeout'=>90,
         'redirection'=>0,
+        'limit_response_size'=>2*1024*1024,
         'headers'=>['x-goog-api-key'=>$key,'Content-Type'=>'application/json','Api-Revision'=>'2026-05-20'],
         'body'=>wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)
     ]);
     if(is_wp_error($r)) return $r;
-    $status=(int)wp_remote_retrieve_response_code($r); $data=json_decode(wp_remote_retrieve_body($r),true);
+    $status=(int)wp_remote_retrieve_response_code($r); $body=(string)wp_remote_retrieve_body($r);
+    if(strlen($body)>2*1024*1024) return new WP_Error('response_size','AI media response exceeds 2 MB.');
+    $data=json_decode($body,true);
     if($status<200||$status>=300) return new WP_Error('gemini',function_exists('hcdecor_ai_safe_error')?hcdecor_ai_safe_error((string)($data['error']['message']??('Gemini HTTP '.$status))):('Gemini HTTP '.$status));
     $text=function_exists('hcdecor_ai_extract_gemini_text')?hcdecor_ai_extract_gemini_text((array)$data):'';
     $json=json_decode($text,true);

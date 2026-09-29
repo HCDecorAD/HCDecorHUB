@@ -367,6 +367,9 @@ findstr /c:"hcdecor_runtime_prune(is_array($v)?$v:array())" "wordpress\hcdecor-c
 findstr /c:"limit_response_size'=>2*1024*1024" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 380
 findstr /c:"AI response exceeds 2 MB." "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 381
 findstr /c:"hcdecor_ai_limit_text" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 382
+findstr /c:"AI media response exceeds 2 MB." "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 383
+findstr /c:"limit_response_size'=>2*1024*1024" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 384
+findstr /c:"$title=$clip(get_the_title($attachment_id),500)" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 385
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
