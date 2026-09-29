@@ -149,14 +149,16 @@ add_action('admin_post_hcdecor_drive_oauth_callback',function(){
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&oauth_failed=1')); exit;
     }
     $status=(int)wp_remote_retrieve_response_code($r);
-    $data=json_decode(wp_remote_retrieve_body($r),true);
-    if($status<200 || $status>=300 || empty($data['access_token'])){
+    $data=json_decode(wp_remote_retrieve_body($r),true);$data=is_array($data)?$data:[];
+    $access=is_scalar($data['access_token']??'')?sanitize_text_field((string)$data['access_token']):'';
+    $refresh=is_scalar($data['refresh_token']??'')?sanitize_text_field((string)$data['refresh_token']):'';
+    if($status<200 || $status>=300 || $access==='' || strlen($access)>16000 || strlen($refresh)>8000){
         update_option('hcdecor_drive_test_status','error',false);
         update_option('hcdecor_drive_test_message',hcdecor_drive_safe_error((string)($data['error_description']??$data['error']??('OAuth HTTP '.$status))),false);
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&oauth_failed=1')); exit;
     }
-    if(!empty($data['refresh_token'])) update_option('hcdecor_drive_refresh_token',sanitize_text_field($data['refresh_token']),false);
-    set_transient('hcdecor_drive_access_token',sanitize_text_field($data['access_token']),max(60,(int)($data['expires_in']??3600)-120));
+    if($refresh!=='') update_option('hcdecor_drive_refresh_token',$refresh,false);
+    set_transient('hcdecor_drive_access_token',$access,max(60,min(DAY_IN_SECONDS,(int)($data['expires_in']??3600)-120)));
     $test=hcdecor_drive_test();
     if(is_wp_error($test)){
         update_option('hcdecor_drive_test_status','error',false);
@@ -201,13 +203,14 @@ function hcdecor_drive_access_token($force=false){
     ]);
     if(is_wp_error($r)) return $r;
     $code=(int)wp_remote_retrieve_response_code($r);
-    $data=json_decode(wp_remote_retrieve_body($r),true);
-    if($code<200||$code>=300||empty($data['access_token'])){
+    $data=json_decode(wp_remote_retrieve_body($r),true);$data=is_array($data)?$data:[];
+    $access=is_scalar($data['access_token']??'')?sanitize_text_field((string)$data['access_token']):'';
+    if($code<200||$code>=300||$access===''||strlen($access)>16000){
         return new WP_Error('drive_token',hcdecor_drive_safe_error((string)($data['error_description']??$data['error']??('Token HTTP '.$code))));
     }
-    $ttl=max(60,(int)($data['expires_in']??3600)-120);
-    set_transient('hcdecor_drive_access_token',(string)$data['access_token'],$ttl);
-    return (string)$data['access_token'];
+    $ttl=max(60,min(DAY_IN_SECONDS,(int)($data['expires_in']??3600)-120));
+    set_transient('hcdecor_drive_access_token',$access,$ttl);
+    return $access;
 }
 
 function hcdecor_drive_request($method,$url,$args=[]){
@@ -587,6 +590,7 @@ add_action('admin_post_hcdecor_drive_save_connect',function(){
     check_admin_referer('hcdecor_drive_save_connect');
     $client_id=trim((string)wp_unslash($_POST['client_id']??''));
     $client_secret=trim((string)wp_unslash($_POST['client_secret']??''));
+    if(strlen($client_id)>1000 || strlen($client_secret)>4000) wp_die('Credential value too long.');
     $auth_changed=false;
     if($client_id!=='' && $client_id!==(string)get_option('hcdecor_drive_client_id','')){ update_option('hcdecor_drive_client_id',$client_id,false); $auth_changed=true; }
     if($client_secret!=='' && $client_secret!==(string)get_option('hcdecor_drive_client_secret','')){ update_option('hcdecor_drive_client_secret',$client_secret,false); $auth_changed=true; }
@@ -606,8 +610,10 @@ add_action('admin_post_hcdecor_drive_settings',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_drive_settings');
     $auth_changed=false;
-    foreach(['client_id','client_secret','refresh_token'] as $k){
+    $credential_limits=['client_id'=>1000,'client_secret'=>4000,'refresh_token'=>8000];
+    foreach($credential_limits as $k=>$limit){
         $v=trim((string)wp_unslash($_POST[$k]??''));
+        if(strlen($v)>$limit) wp_die('Credential value too long.');
         if($v!=='' && $v!==(string)get_option('hcdecor_drive_'.$k,'')){ update_option('hcdecor_drive_'.$k,$v,false); $auth_changed=true; }
     }
     if(!empty($_POST['clear_auth'])){

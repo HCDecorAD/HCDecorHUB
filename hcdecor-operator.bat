@@ -431,6 +431,10 @@ findstr /c:"buckets.size>=5000" "app\api\projects\route.js" >nul || exit /b 443
 findstr /c:"trim().slice(0,256)" "app\api\leads\route.js" >nul || exit /b 444
 findstr /c:"foreach($defaults as $key=>$default)" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 445
 findstr /c:"preg_replace('/[^A-Za-z0-9_-]/','',$value)" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 446
+findstr /c:"strlen($client_id)>1000" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 447
+findstr /c:"'refresh_token'=>8000" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 448
+findstr /c:"strlen($access)>16000" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 449
+findstr /c:"min(DAY_IN_SECONDS" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 450
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
