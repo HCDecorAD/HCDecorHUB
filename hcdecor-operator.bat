@@ -558,6 +558,9 @@ findstr /c:"sanitize_key(is_scalar($action['type']" "wordpress\hcdecor-core\modu
 findstr /c:"hcdecor_ai_safe_error($data['error']['message']" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 586
 findstr /c:"sanitize_key(hcdecor_backup_clip($entry['event']" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 587
 findstr /c:"hcdecor_drive_inbox_safe_text($row['time']" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 588
+findstr /c:"$event=sanitize_key(is_scalar($payload['event']" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 589
+findstr /c:"is_array($parts)" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 590
+findstr /c:"raw.githubusercontent.com" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 591
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

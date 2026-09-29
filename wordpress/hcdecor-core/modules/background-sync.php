@@ -38,11 +38,13 @@ function hcdecor_sync_atomic($target,$body){
     return true;
 }
 function hcdecor_sync_trusted_raw_url($url,$rel=''){
-    $url=(string)$url;
+    $url=is_scalar($url)?(string)$url:'';
     $parts=wp_parse_url($url);
-    if(!is_array($parts) || strtolower((string)($parts['scheme']??''))!=='https' || strtolower((string)($parts['host']??''))!=='raw.githubusercontent.com') return false;
+    if(!is_array($parts)) return false;
+    $scheme=is_scalar($parts['scheme']??'')?strtolower((string)$parts['scheme']):'';$host=is_scalar($parts['host']??'')?strtolower((string)$parts['host']):'';
+    if($scheme!=='https' || $host!=='raw.githubusercontent.com') return false;
     $prefix='/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/';
-    $path=(string)($parts['path']??'');
+    $path=is_scalar($parts['path']??'')?(string)$parts['path']:'';
     if($rel==='') return $path==='/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-sync-manifest.json';
     return $path===$prefix.ltrim((string)$rel,'/');
 }

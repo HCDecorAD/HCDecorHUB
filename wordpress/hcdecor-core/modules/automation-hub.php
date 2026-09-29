@@ -178,7 +178,8 @@ function hcdecor_auto_run_task($task_id){
         $payload['production_approved']=false;
         $payload['production_approval_consumed_at']=current_time('mysql');
         wp_update_post(['ID'=>$task_id,'post_content'=>wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES)]);
-        $r=hcdecor_auto_webhook((string)($payload['event']??'hcdecor.event'),(array)($payload['data']??[]));
+        $event=sanitize_key(is_scalar($payload['event']??'')?(string)$payload['event']:'hcdecor.event');
+        $r=hcdecor_auto_webhook($event,(array)($payload['data']??[]));
         if(is_wp_error($r)){
             update_post_meta($task_id,'hc_auto_status','failed');
             update_post_meta($task_id,'hc_auto_last_error',hcdecor_auto_safe_message($r->get_error_message()));
@@ -306,7 +307,7 @@ function hcdecor_auto_cleanup_mutex_delete_if_same($observed){
 
 function hcdecor_auto_cleanup_mutex_state($raw=null){
     if($raw===null) $raw=get_option('hcdecor_automation_cleanup_mutex',[]);
-    if(is_array($raw)) return ['token'=>(string)($raw['token']??''),'at'=>(int)($raw['at']??0),'raw'=>$raw];
+    if(is_array($raw)){ $token=is_scalar($raw['token']??'')?(string)$raw['token']:''; if(strlen($token)>128)$token=''; return ['token'=>$token,'at'=>(int)($raw['at']??0),'raw'=>$raw]; }
     $at=(int)$raw;
     return ['token'=>'','at'=>$at,'raw'=>$raw];
 }
