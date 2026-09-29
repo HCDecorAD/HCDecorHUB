@@ -462,6 +462,9 @@ findstr /c:"strlen($media_input)>5000" "wordpress\hcdecor-core\modules\social-ma
 findstr /c:"function hcdecor_social_account_normalize" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 490
 findstr /c:"Social credential value too long." "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 491
 findstr /c:"if(strlen($token)>8192)$token=''" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 492
+findstr /c:"$limits=['facebook_page_id'=>500" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 493
+findstr /c:"Social connector credential is too long." "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 494
+findstr /c:"is_scalar($channel_raw)" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 495
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

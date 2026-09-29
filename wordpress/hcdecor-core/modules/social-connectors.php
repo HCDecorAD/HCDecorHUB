@@ -2,12 +2,10 @@
 if (!defined('ABSPATH')) exit;
 
 function hcdecor_social_settings(){
-    $v=(array)get_option('hcdecor_social_connectors',[]);
-    return wp_parse_args($v,[
-        'facebook_page_id'=>'','facebook_token'=>'',
-        'tiktok_client_key'=>'','tiktok_client_secret'=>'','tiktok_access_token'=>'',
-        'youtube_channel_id'=>'','youtube_access_token'=>''
-    ]);
+    $v=get_option('hcdecor_social_connectors',[]);$v=is_array($v)?$v:[];
+    $limits=['facebook_page_id'=>500,'facebook_token'=>8192,'tiktok_client_key'=>500,'tiktok_client_secret'=>8192,'tiktok_access_token'=>8192,'youtube_channel_id'=>500,'youtube_access_token'=>8192];$out=[];
+    foreach($limits as $key=>$limit){$value=is_scalar($v[$key]??'')?trim((string)$v[$key]):'';$out[$key]=strlen($value)<=$limit?$value:'';}
+    return $out;
 }
 function hcdecor_social_mask($v){$v=(string)$v;if($v==='')return 'Chưa cấu hình';$n=strlen($v);return $n<9?'••••••••':substr($v,0,4).'••••'.substr($v,-4);}
 function hcdecor_social_channels(){ return ['facebook'=>'Facebook / Meta','tiktok'=>'TikTok','youtube'=>'YouTube']; }
@@ -19,7 +17,7 @@ function hcdecor_social_ready($channel,$s){
 }
 add_action('admin_post_hcdecor_social_test',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
-    $channel=sanitize_key($_POST['channel']??'');check_admin_referer('hcdecor_social_test_'.$channel);
+    $channel_raw=$_POST['channel']??'';$channel=sanitize_key(is_scalar($channel_raw)?(string)$channel_raw:'');check_admin_referer('hcdecor_social_test_'.$channel);
     if(!array_key_exists($channel,hcdecor_social_channels())) wp_die('Invalid social channel');
     $s=hcdecor_social_settings();$ok=hcdecor_social_ready($channel,$s);
     update_option('hcdecor_social_test_'.$channel,['configured'=>$ok,'at'=>current_time('mysql'),'message'=>$ok?'Credentials are configured; live API health was not checked.':'Connector credentials are incomplete.'],false);
@@ -35,11 +33,10 @@ add_action('admin_post_hcdecor_social_save',function(){
     $old=hcdecor_social_settings();
     $field=function($key,$secret=false)use($old){
         if(!isset($_POST[$key])) return (string)($old[$key]??'');
-        $v=trim((string)wp_unslash($_POST[$key]));
+        $raw=wp_unslash($_POST[$key]);$v=is_scalar($raw)?trim((string)$raw):'';
         if($secret && $v==='') return (string)($old[$key]??'');
-        $v=sanitize_text_field($v);
-        $limit=$secret?8192:500;
-        return function_exists('mb_substr')?mb_substr($v,0,$limit):substr($v,0,$limit);
+        $limit=$secret?8192:500;if(strlen($v)>$limit) wp_die($secret?'Social connector credential is too long.':'Social connector identifier is too long.');
+        return sanitize_text_field($v);
     };
     $new=[
         'facebook_page_id'=>$field('facebook_page_id'),
@@ -64,7 +61,7 @@ add_action('admin_post_hcdecor_social_save',function(){
 });
 add_action('admin_post_hcdecor_social_disconnect',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
-    $channel=sanitize_key($_POST['channel']??'');check_admin_referer('hcdecor_social_disconnect_'.$channel);
+    $channel_raw=$_POST['channel']??'';$channel=sanitize_key(is_scalar($channel_raw)?(string)$channel_raw:'');check_admin_referer('hcdecor_social_disconnect_'.$channel);
     if(!array_key_exists($channel,hcdecor_social_channels())) wp_die('Invalid social channel');
     $s=hcdecor_social_settings();
     if($channel==='facebook'){$s['facebook_page_id']='';$s['facebook_token']='';}

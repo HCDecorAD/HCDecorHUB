@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.154",
+    "version":  "2026.09.29.155",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -74,7 +74,7 @@
                   {
                       "path":  "modules/social-connectors.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/social-connectors.php",
-                      "git_sha1":  "00634b557c2727aaa117e29a73af079e2eeabb0f"
+                      "git_sha1":  "f5a7d9ec115a170eb2e3ea202e7f2dca7cbde12e"
                   },
                   {
                       "path":  "modules/social-manager.php",
