@@ -132,7 +132,7 @@ function hcdecor_drive_inbox_scan($limit=null){
         $imported=hcdecor_drive_import_media($id);
         if(is_wp_error($imported)){
             $result['failed']++;
-            hcdecor_drive_inbox_log('import_failed',['drive_id'=>$id,'name'=>$name,'error'=>$imported->get_error_message()]);
+            hcdecor_drive_inbox_log('import_failed',['drive_id'=>$id,'name'=>$name,'error'=>hcdecor_drive_inbox_safe_text($imported->get_error_message())]);
             continue;
         }
 
@@ -179,7 +179,7 @@ add_action('hcdecor_drive_inbox_analyze_media',function($attachment_id){
         $r=hcdecor_media_ai_analyze($attachment_id);
         hcdecor_drive_inbox_log(is_wp_error($r)?'analyze_failed':'analyzed',[
             'attachment_id'=>$attachment_id,
-            'message'=>is_wp_error($r)?$r->get_error_message():'ok'
+            'message'=>is_wp_error($r)?hcdecor_drive_inbox_safe_text($r->get_error_message()):'ok'
         ]);
     }
 },10,1);
