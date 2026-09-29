@@ -214,13 +214,13 @@ findstr /c:"hcdecor_ops_limit_text(is_scalar($p['brief'])?(string)$p['brief']:''
 findstr /c:"$clip($project['content']??'',100000,true)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 269
 findstr /c:"array_slice((array)$project['types'],0,30)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 270
 findstr /c:"hcdecor_ops_limit_text($brief,20000)" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 271
-findstr /c:"hcdecor_ops_limit_text(wp_unslash($_POST['brief']??''),20000)" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 272
+findstr /c:"$brief_raw=wp_unslash($_POST['brief']??'')" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 272
 findstr /c:"if($depth>=5) return '[DEPTH_LIMIT]';" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 290
 findstr /c:"array_slice($value,0,30,true)" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 291
 findstr /c:"getenv('HCDECOR_OPS_API_TOKEN')" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 293
 findstr /c:"hcdecor_ops_bridge_configured():false" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 294
 findstr /c:"new WP_Error('drive_token',hcdecor_drive_safe_error" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 296
-findstr /c:"hcdecor_ops_limit_text(wp_unslash($_POST['agent_brief']??''),20000)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 273
+findstr /c:"$brief_raw=wp_unslash($_POST['agent_brief']??'')" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 273
 findstr /c:"Runtime payload exceeds 256 KB." "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 274
 findstr /c:"'Publish Runtime','Publish Runtime','manage_options'" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 275
 findstr /c:"Automation payload exceeds 256 KB." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 276
@@ -522,6 +522,10 @@ findstr /c:"$file_raw=wp_unslash($_POST['file_id']??'')" "wordpress\hcdecor-core
 findstr /c:"function hcdecor_social_clip" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 550
 findstr /c:"hcdecor_project_vault_clip(get_option('hcdecor_project_vault_last_error',''),500)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 551
 findstr /c:"$confirm_raw=wp_unslash($_POST['confirm']??'')" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 552
+findstr /c:"$note_raw=wp_unslash($_POST['review_note']??'')" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 553
+findstr /c:"$brief_raw=wp_unslash($_POST['brief']??'')" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 554
+findstr /c:"$openai_model_raw=wp_unslash($_POST['openai_model']??'')" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 555
+findstr /c:"$value=is_scalar($value)?(string)$value:''" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 556
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

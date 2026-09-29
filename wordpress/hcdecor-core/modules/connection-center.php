@@ -44,13 +44,13 @@ function hcdecor_conn_public_https($url){
 }
 add_action('admin_post_hcdecor_conn_save',function(){
  if(!current_user_can('manage_options')) wp_die('Forbidden'); check_admin_referer('hcdecor_conn_save'); $all=hcdecor_conn_get();
- $id=hcdecor_conn_clip(sanitize_key(isset($_POST['id'])?$_POST['id']:''),64); if(!$id) $id='conn_'.wp_generate_password(8,false,false); $old=isset($all[$id])?$all[$id]:array();
+ $id_raw=$_POST['id']??'';$id=hcdecor_conn_clip(sanitize_key(is_scalar($id_raw)?(string)$id_raw:''),64); if(!$id) $id='conn_'.wp_generate_password(8,false,false); $old=isset($all[$id])?$all[$id]:array();
  $secret_input=wp_unslash(isset($_POST['secret'])?$_POST['secret']:'');$secret_raw=is_scalar($secret_input)?trim((string)$secret_input):''; if(strlen($secret_raw)>8192) wp_die('Connection secret is too long.'); $secret=hcdecor_conn_clip($secret_raw,8192); if($secret==='') $secret=hcdecor_conn_clip($old['secret']??'',8192);
- $name=hcdecor_conn_clip(sanitize_text_field(wp_unslash(isset($_POST['name'])?$_POST['name']:'')),500);
- $provider=hcdecor_conn_clip(sanitize_key(isset($_POST['provider'])?$_POST['provider']:''),100);
- $endpoint=hcdecor_conn_clip(esc_url_raw(isset($_POST['endpoint'])?$_POST['endpoint']:''),2048);
+ $name_raw=wp_unslash($_POST['name']??'');$name=hcdecor_conn_clip(sanitize_text_field(is_scalar($name_raw)?(string)$name_raw:''),500);
+ $provider_raw=$_POST['provider']??'';$provider=hcdecor_conn_clip(sanitize_key(is_scalar($provider_raw)?(string)$provider_raw:''),100);
+ $endpoint_raw=$_POST['endpoint']??'';$endpoint=hcdecor_conn_clip(esc_url_raw(is_scalar($endpoint_raw)?(string)$endpoint_raw:''),2048);
  if($endpoint!=='' && !hcdecor_conn_public_https($endpoint)) wp_die('Connection endpoint must be a public HTTPS URL.');
- $account=hcdecor_conn_clip(sanitize_text_field(wp_unslash(isset($_POST['account'])?$_POST['account']:'')),500);
+ $account_raw=wp_unslash($_POST['account']??'');$account=hcdecor_conn_clip(sanitize_text_field(is_scalar($account_raw)?(string)$account_raw:''),500);
  $same_probe=isset($old['provider'],$old['endpoint'],$old['account']) && $old['provider']===$provider && $old['endpoint']===$endpoint && $old['account']===$account && hash_equals((string)($old['secret']??''),(string)$secret);
  $all[$id]=array('name'=>$name,'provider'=>$provider,'endpoint'=>$endpoint,'account'=>$account,'secret'=>$secret,'enabled'=>!empty($_POST['enabled']),'last_ok'=>$same_probe?(isset($old['last_ok'])?$old['last_ok']:''):'','last_error'=>$same_probe?(isset($old['last_error'])?$old['last_error']:''):'');
  hcdecor_conn_save($all); wp_safe_redirect(admin_url('admin.php?page=hcdecor-connections')); exit;

@@ -5,11 +5,11 @@ function hcdecor_ops_inbox(){ $v=get_option('hcdecor_ops_inbox',array()); return
 function hcdecor_ops_save_flows($v){ update_option('hcdecor_ops_flows',array_slice((array)$v,-100,null,true),false); }
 function hcdecor_ops_save_inbox($v){ update_option('hcdecor_ops_inbox',array_slice((array)$v,-500,null,true),false); }
 function hcdecor_crm_text($value,$limit=500){
- $text=sanitize_text_field(wp_unslash((string)$value));
+ $value=is_scalar($value)?(string)$value:'';$text=sanitize_text_field(wp_unslash($value));
  return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
 }
 function hcdecor_crm_textarea($value,$limit=5000){
- $text=sanitize_textarea_field(wp_unslash((string)$value));
+ $value=is_scalar($value)?(string)$value:'';$text=sanitize_textarea_field(wp_unslash($value));
  return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
 }
 add_action('admin_post_hcdecor_ops_flow_save',function(){

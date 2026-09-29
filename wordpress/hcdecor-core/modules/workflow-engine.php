@@ -526,7 +526,7 @@ add_action('admin_post_hcdecor_review_action',function(){
     check_admin_referer('hcdecor_review_'.$id);
     if(get_post_type($id)!=='hc_content_job' || !current_user_can('edit_post',$id)) wp_die('Invalid job');
     $action=sanitize_key($_POST['review_action']??'');
-    $note=sanitize_textarea_field(wp_unslash($_POST['review_note']??''));
+    $note_raw=wp_unslash($_POST['review_note']??'');$note=sanitize_textarea_field(is_scalar($note_raw)?(string)$note_raw:'');
     $note=function_exists('mb_substr')?mb_substr($note,0,5000):substr($note,0,5000);
     if($action==='approve'){
         if((string)get_post_meta($id,'hc_agent_status',true)!=='review') wp_die('Job is not ready for approval.');

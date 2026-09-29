@@ -31,7 +31,7 @@ add_action('admin_post_hcdecor_media_assign',function(){
     do_action('hcdecor_project_data_changed',$project);
     $next=sanitize_key($_POST['next_action']??'assign');
     if($next==='agent' && function_exists('hcdecor_agent_create_job')){
-        $brief=function_exists('hcdecor_ops_limit_text')?hcdecor_ops_limit_text(wp_unslash($_POST['agent_brief']??''),20000):(function_exists('mb_substr')?mb_substr(sanitize_textarea_field(wp_unslash($_POST['agent_brief']??'')),0,20000):substr(sanitize_textarea_field(wp_unslash($_POST['agent_brief']??'')),0,20000));
+        $brief_raw=wp_unslash($_POST['agent_brief']??'');$brief_raw=is_scalar($brief_raw)?(string)$brief_raw:'';$brief=function_exists('hcdecor_ops_limit_text')?hcdecor_ops_limit_text($brief_raw,20000):(function_exists('mb_substr')?mb_substr(sanitize_textarea_field($brief_raw),0,20000):substr(sanitize_textarea_field($brief_raw),0,20000));
         $job=hcdecor_agent_create_job($project,$ids,$brief);
         if(!is_wp_error($job)){
             wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$job.'&created=1')); exit;

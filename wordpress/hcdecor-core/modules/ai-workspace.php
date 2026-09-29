@@ -42,7 +42,7 @@ add_action('admin_post_hcdecor_workspace_create',function(){
     $project=(int)($_POST['project_id']??0);
     if(!$project || get_post_type($project)!=='hc_project' || !current_user_can('edit_post',$project)) wp_die('Invalid project');
 
-    $brief=function_exists('hcdecor_ops_limit_text')?hcdecor_ops_limit_text(wp_unslash($_POST['brief']??''),20000):(function_exists('mb_substr')?mb_substr(sanitize_textarea_field(wp_unslash($_POST['brief']??'')),0,20000):substr(sanitize_textarea_field(wp_unslash($_POST['brief']??'')),0,20000));
+    $brief_raw=wp_unslash($_POST['brief']??'');$brief_raw=is_scalar($brief_raw)?(string)$brief_raw:'';$brief=function_exists('hcdecor_ops_limit_text')?hcdecor_ops_limit_text($brief_raw,20000):(function_exists('mb_substr')?mb_substr(sanitize_textarea_field($brief_raw),0,20000):substr(sanitize_textarea_field($brief_raw),0,20000));
     $media=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)($_POST['media_ids']??[]))),function($id){ return get_post_type($id)==='attachment' && current_user_can('edit_post',$id); })),0,60);
     $channels=array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)($_POST['channels']??[])));
 

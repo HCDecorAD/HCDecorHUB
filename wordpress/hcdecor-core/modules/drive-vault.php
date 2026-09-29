@@ -696,8 +696,8 @@ add_action('admin_post_hcdecor_drive_activate_prompt',function(){
 add_action('admin_post_hcdecor_drive_save_prompt',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_drive_save_prompt');
-    $title=sanitize_text_field(wp_unslash($_POST['prompt_title']??''));
-    $prompt=wp_unslash($_POST['prompt']??'');
+    $title_raw=wp_unslash($_POST['prompt_title']??'');$title=sanitize_text_field(is_scalar($title_raw)?(string)$title_raw:'');
+    $prompt_raw=wp_unslash($_POST['prompt']??'');$prompt=is_scalar($prompt_raw)?(string)$prompt_raw:'';
     $r=hcdecor_drive_save_prompt($title,$prompt);
     if(!is_wp_error($r)){
         $active=wp_kses_post((string)$prompt);
