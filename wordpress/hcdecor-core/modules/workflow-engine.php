@@ -22,7 +22,7 @@ function hcdecor_workflow_set_status($job_id,$status,$note=''){
     if(!$job_id || get_post_type($job_id)!=='hc_content_job') return false;
     $allowed=['draft','processing','review','approved','published_web','failed'];
     if(!in_array($status,$allowed,true)) return false;
-    $old=(string)get_post_meta($job_id,'hc_agent_status',true);
+    $old=hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_status',true),50);
     if($old===$status) return true;
     if($old==='' && $status!=='draft') return false;
     $transitions=[
@@ -183,7 +183,7 @@ function hcdecor_workflow_claim_mutex_release($job_id,$claim_token){
 
 function hcdecor_workflow_clear_owned_claim($job_id,$claim_token,$clear_claimed=true){
     $job_id=(int)$job_id;
-    if($claim_token==='' || (string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token) return false;
+    if($claim_token==='' || hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_claim_token',true),128)!==$claim_token) return false;
     hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed,false);
     hcdecor_workflow_claim_mutex_release($job_id,$claim_token);
     return true;
@@ -191,8 +191,8 @@ function hcdecor_workflow_clear_owned_claim($job_id,$claim_token,$clear_claimed=
 
 function hcdecor_workflow_finalize_claim($job_id,$claim_token,$now,$message='Agent claimed job'){
     $job_id=(int)$job_id;
-    if($claim_token==='' || (string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token) return false;
-    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='draft'){
+    if($claim_token==='' || hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_claim_token',true),128)!==$claim_token) return false;
+    if(hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_status',true),50)!=='draft'){
         hcdecor_workflow_clear_owned_claim($job_id,$claim_token,true);
         return false;
     }
@@ -205,14 +205,14 @@ function hcdecor_workflow_finalize_claim($job_id,$claim_token,$now,$message='Age
 
 function hcdecor_workflow_refresh_owned_claim($job_id,$claim_token,$seconds=600){
     $job_id=(int)$job_id;
-    if($claim_token==='' || (string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token) return false;
-    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='processing') return false;
+    if($claim_token==='' || hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_claim_token',true),128)!==$claim_token) return false;
+    if(hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_status',true),50)!=='processing') return false;
     $lock=(int)get_post_meta($job_id,'hc_agent_lock_until',true);
     if($lock<=0 || $lock<time()) return false;
     $new_lock=time()+max(60,(int)$seconds);
     update_post_meta($job_id,'hc_agent_lock_until',$new_lock);
-    if((string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token || (string)get_post_meta($job_id,'hc_agent_status',true)!=='processing'){
-        if((string)get_post_meta($job_id,'hc_agent_claim_token',true)===$claim_token && (int)get_post_meta($job_id,'hc_agent_lock_until',true)===$new_lock) delete_post_meta($job_id,'hc_agent_lock_until');
+    if(hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_claim_token',true),128)!==$claim_token || hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_status',true),50)!=='processing'){
+        if(hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_claim_token',true),128)===$claim_token && (int)get_post_meta($job_id,'hc_agent_lock_until',true)===$new_lock) delete_post_meta($job_id,'hc_agent_lock_until');
         return false;
     }
     update_post_meta($job_id,'hc_agent_heartbeat',current_time('mysql'));
@@ -221,8 +221,8 @@ function hcdecor_workflow_refresh_owned_claim($job_id,$claim_token,$seconds=600)
 
 function hcdecor_workflow_owned_claim_active($job_id,$claim_token){
     $job_id=(int)$job_id;
-    if($claim_token==='' || (string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$claim_token) return false;
-    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='processing') return false;
+    if($claim_token==='' || hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_claim_token',true),128)!==$claim_token) return false;
+    if(hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_status',true),50)!=='processing') return false;
     $lock=(int)get_post_meta($job_id,'hc_agent_lock_until',true);
     return $lock>0 && $lock>=time();
 }
@@ -288,7 +288,7 @@ function hcdecor_workflow_recover_orphan_draft_claims($limit=20){
     ]);
     $now=time(); $recovered=0;
     foreach($jobs as $job_id){
-        $token=(string)get_post_meta($job_id,'hc_agent_claim_token',true);
+        $token=hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_claim_token',true),128);
         if($token==='') continue;
         $lock=(int)get_post_meta($job_id,'hc_agent_lock_until',true);
         if($lock>$now) continue;
@@ -301,7 +301,7 @@ function hcdecor_workflow_recover_orphan_draft_claims($limit=20){
         if(!$age_base || $age_base>=($now-$stale_after)) continue;
         $lifecycle=hcdecor_workflow_lifecycle_mutex_acquire($job_id,$token,30);
         if(!$lifecycle) continue;
-        if((string)get_post_meta($job_id,'hc_agent_status',true)!=='draft' || (string)get_post_meta($job_id,'hc_agent_claim_token',true)!==$token){
+        if(hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_status',true),50)!=='draft' || hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_claim_token',true),128)!==$token){
             hcdecor_workflow_lifecycle_mutex_release($job_id,$lifecycle);
             continue;
         }
@@ -342,7 +342,7 @@ add_action('rest_api_init',function(){
                         if(!add_option($mutex,['token'=>$claim_token,'at'=>$now],'',false)) continue;
                     }else continue;
                 }
-                if((string)get_post_meta($j->ID,'hc_agent_status',true)!=='draft'){
+                if(hcdecor_workflow_clip(get_post_meta($j->ID,'hc_agent_status',true),50)!=='draft'){
                     hcdecor_workflow_claim_mutex_release($j->ID,$claim_token);
                     continue;
                 }
@@ -351,7 +351,7 @@ add_action('rest_api_init',function(){
                     continue;
                 }
                 if(!add_post_meta($j->ID,'hc_agent_claim_token',$claim_token,true)){
-                    $existing_token=(string)get_post_meta($j->ID,'hc_agent_claim_token',true);
+                    $existing_token=hcdecor_workflow_clip(get_post_meta($j->ID,'hc_agent_claim_token',true),128);
                     $existing_lock=(int)get_post_meta($j->ID,'hc_agent_lock_until',true);
                     if($existing_token!=='' && $existing_lock<=$now){
                         $claimed_raw=get_post_meta($j->ID,'hc_agent_claimed_at',true);$claimed_raw=is_scalar($claimed_raw)?(string)$claimed_raw:'';
@@ -359,8 +359,8 @@ add_action('rest_api_init',function(){
                         if($claimed && $claimed<($now-120)){
                             $lifecycle=hcdecor_workflow_lifecycle_mutex_acquire($j->ID,$existing_token,30);
                             if($lifecycle){
-                                $still_orphan=(string)get_post_meta($j->ID,'hc_agent_status',true)==='draft'
-                                    && (string)get_post_meta($j->ID,'hc_agent_claim_token',true)===$existing_token
+                                $still_orphan=hcdecor_workflow_clip(get_post_meta($j->ID,'hc_agent_status',true),50)==='draft'
+                                    && hcdecor_workflow_clip(get_post_meta($j->ID,'hc_agent_claim_token',true),128)===$existing_token
                                     && (int)get_post_meta($j->ID,'hc_agent_lock_until',true)<=$now;
                                 if($still_orphan){
                                     hcdecor_workflow_clear_worker_claim($j->ID,true,false);
@@ -479,11 +479,11 @@ function hcdecor_workflow_recover_stale_jobs($limit=10){
         $lock=(int)get_post_meta($job->ID,'hc_agent_lock_until',true);
         $claimed=hcdecor_workflow_time(get_post_meta($job->ID,'hc_agent_claimed_at',true));
         $heartbeat=hcdecor_workflow_time(get_post_meta($job->ID,'hc_agent_heartbeat',true));
-        $token=(string)get_post_meta($job->ID,'hc_agent_claim_token',true);
+        $token=hcdecor_workflow_clip(get_post_meta($job->ID,'hc_agent_claim_token',true),128);
         $last_worker_activity=max($claimed,$heartbeat);
         $invalid_claim=($token==='' && $last_worker_activity>0 && $last_worker_activity<($now-120));
         if($invalid_claim || ($lock>0 && $lock<$now) || ($lock<=0 && $claimed>0 && $claimed<($now-900))){
-            $current_token=(string)get_post_meta($job->ID,'hc_agent_claim_token',true);
+            $current_token=hcdecor_workflow_clip(get_post_meta($job->ID,'hc_agent_claim_token',true),128);
             $current_lock=(int)get_post_meta($job->ID,'hc_agent_lock_until',true);
             if($current_token!==$token || $current_lock!==$lock) continue;
             $note=$invalid_claim?'Worker claim token missing; safe retry available':'Processing lock expired; safe retry available';
@@ -496,8 +496,8 @@ function hcdecor_workflow_recover_stale_jobs($limit=10){
             }else{
                 $lifecycle=hcdecor_workflow_lifecycle_mutex_acquire($job->ID,'recovery-'.$job->ID,30);
                 if(!$lifecycle) continue;
-                $current_status=(string)get_post_meta($job->ID,'hc_agent_status',true);
-                $current_token=(string)get_post_meta($job->ID,'hc_agent_claim_token',true);
+                $current_status=hcdecor_workflow_clip(get_post_meta($job->ID,'hc_agent_status',true),50);
+                $current_token=hcdecor_workflow_clip(get_post_meta($job->ID,'hc_agent_claim_token',true),128);
                 $current_lock=(int)get_post_meta($job->ID,'hc_agent_lock_until',true);
                 if($current_status!=='processing' || $current_token!=='' || $current_lock!==$lock){
                     hcdecor_workflow_lifecycle_mutex_release($job->ID,$lifecycle);
@@ -529,7 +529,7 @@ add_action('admin_post_hcdecor_review_action',function(){
     $note_raw=wp_unslash($_POST['review_note']??'');$note=sanitize_textarea_field(is_scalar($note_raw)?(string)$note_raw:'');
     $note=function_exists('mb_substr')?mb_substr($note,0,5000):substr($note,0,5000);
     if($action==='approve'){
-        if((string)get_post_meta($id,'hc_agent_status',true)!=='review') wp_die('Job is not ready for approval.');
+        if(hcdecor_workflow_clip(get_post_meta($id,'hc_agent_status',true),50)!=='review') wp_die('Job is not ready for approval.');
         update_post_meta($id,'hc_reviewed_by',get_current_user_id());
         update_post_meta($id,'hc_reviewed_at',current_time('mysql'));
         if($note!=='') update_post_meta($id,'hc_review_note',$note);
@@ -541,7 +541,7 @@ add_action('admin_post_hcdecor_review_action',function(){
     }elseif($action==='approve_publish'){
         if(!current_user_can('publish_posts')) wp_die('Forbidden');
         if((string)($_POST['production_approved']??'')!=='1') wp_die('Explicit production publish approval is required.');
-        if((string)get_post_meta($id,'hc_agent_status',true)!=='review') wp_die('Job is not ready for approval.');
+        if(hcdecor_workflow_clip(get_post_meta($id,'hc_agent_status',true),50)!=='review') wp_die('Job is not ready for approval.');
         if(!function_exists('hcdecor_publish_job_to_web')) wp_die('Web publisher unavailable');
         update_post_meta($id,'hc_reviewed_by',get_current_user_id());
         update_post_meta($id,'hc_reviewed_at',current_time('mysql'));
@@ -563,7 +563,7 @@ add_action('admin_post_hcdecor_review_action',function(){
         }
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-review&job='.$id.'&published=1')); exit;
     }elseif($action==='changes'){
-        if((string)get_post_meta($id,'hc_agent_status',true)!=='review') wp_die('Job is not ready to return for changes.');
+        if(hcdecor_workflow_clip(get_post_meta($id,'hc_agent_status',true),50)!=='review') wp_die('Job is not ready to return for changes.');
         delete_post_meta($id,'hc_reviewed_by');
         delete_post_meta($id,'hc_reviewed_at');
         delete_post_meta($id,'hc_publish_approved_by');
@@ -574,7 +574,7 @@ add_action('admin_post_hcdecor_review_action',function(){
         update_post_meta($id,'hc_review_note',$note);
         $ai_ready=function_exists('hcdecor_ai_worker_enabled') && hcdecor_ai_worker_enabled() && function_exists('hcdecor_ai_available') && (hcdecor_ai_available('openai') || hcdecor_ai_available('gemini'));
         if($ai_ready && function_exists('wp_schedule_single_event') && !wp_next_scheduled('hcdecor_ai_process_job',[$id])) wp_schedule_single_event(time()+3,'hcdecor_ai_process_job',[$id]);
-    }elseif($action==='retry' && (string)get_post_meta($id,'hc_agent_status',true)==='failed'){
+    }elseif($action==='retry' && hcdecor_workflow_clip(get_post_meta($id,'hc_agent_status',true),50)==='failed'){
         wp_clear_scheduled_hook('hcdecor_ai_process_job',[$id]);
         delete_post_meta($id,'hc_reviewed_by');
         delete_post_meta($id,'hc_reviewed_at');
@@ -608,20 +608,20 @@ function hcdecor_review_page(){
     </style>
     <div class="hcr-head"><div><h1>HCDecor Review Center</h1><p>Kiểm tra nội dung Agent trước khi publish.</p></div><span class="hcr-status">SOCIAL OUTBOUND OFF</span></div>
     <div class="hcr-grid"><aside class="hcr-card"><h2>REVIEW QUEUE</h2><div class="hcr-body">
-    <?php foreach($jobs as $j): $s=(string)get_post_meta($j->ID,'hc_agent_status',true);?>
+    <?php foreach($jobs as $j): $s=hcdecor_workflow_clip(get_post_meta($j->ID,'hc_agent_status',true),50);?>
       <a class="hcr-job <?php echo $job_id===$j->ID?'active':'';?>" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-review&job='.$j->ID));?>"><strong><?php echo esc_html($j->post_title);?></strong><small><?php echo esc_html(strtoupper($s));?></small></a>
     <?php endforeach; if(!$jobs):?><p>Chưa có job cần review.</p><?php endif;?>
     </div></aside>
     <section class="hcr-card"><h2>CONTENT REVIEW</h2><div class="hcr-body">
     <?php if($job):
-      $status=(string)get_post_meta($job_id,'hc_agent_status',true);
+      $status=hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_status',true),50);
       $fields=[
-        'Web'=>[(string)get_post_meta($job_id,'hc_web_title',true),(string)get_post_meta($job_id,'hc_web_intro',true)."
+        'Web'=>[hcdecor_workflow_clip(get_post_meta($job_id,'hc_web_title',true),300),hcdecor_workflow_clip(get_post_meta($job_id,'hc_web_intro',true),2000)."
 
-".(string)get_post_meta($job_id,'hc_web_body',true)],
-        'Facebook'=>['',(string)get_post_meta($job_id,'hc_facebook_caption',true)],
-        'TikTok / Reels'=>['',(string)get_post_meta($job_id,'hc_tiktok_script',true)],
-        'YouTube'=>[(string)get_post_meta($job_id,'hc_youtube_title',true),(string)get_post_meta($job_id,'hc_youtube_description',true)]
+".hcdecor_workflow_clip(get_post_meta($job_id,'hc_web_body',true),50000)],
+        'Facebook'=>['',hcdecor_workflow_clip(get_post_meta($job_id,'hc_facebook_caption',true),10000)],
+        'TikTok / Reels'=>['',hcdecor_workflow_clip(get_post_meta($job_id,'hc_tiktok_script',true),20000)],
+        'YouTube'=>[hcdecor_workflow_clip(get_post_meta($job_id,'hc_youtube_title',true),300),hcdecor_workflow_clip(get_post_meta($job_id,'hc_youtube_description',true),20000)]
       ];?>
       <p><span class="hcr-status"><?php echo esc_html(strtoupper($status));?></span></p>
       <?php

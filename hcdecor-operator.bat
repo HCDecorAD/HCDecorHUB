@@ -89,7 +89,7 @@ findstr /c:"raw.githubusercontent.com" "wordpress\hcdecor-core\modules\backgroun
 findstr /c:"wp_safe_remote_get(HCDECOR_SYNC_MANIFEST" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 114
 findstr /c:"hcdecor_drive_workflow_auto_sync_enabled" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 104
 findstr /c:"hcdecor_drive_file_in_managed_folders($meta,['projects'])" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 145
-findstr /c:"hc_drive_project_file_id',true),$file_id" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 146
+findstr /c:"hcdecor_project_vault_clip(get_post_meta($source,'hc_drive_project_file_id',true),300),$file_id" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 146
 findstr /c:"hcdecor_drive_clip(get_post_meta($source,'hc_drive_job_file_id',true),300),$file_id" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 147
 findstr /c:"array_intersect(['web','facebook','tiktok','youtube']" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 148
 findstr /c:"hcdecor_drive_workflow_auto_sync_enabled',false" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 105
@@ -539,6 +539,11 @@ findstr /c:"$file_raw=$r->get_param('file_id')" "wordpress\hcdecor-core\modules\
 findstr /c:"$file_raw=$r->get_param('file_id')" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 567
 findstr /c:"$message_raw=$r->get_param('message')" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 568
 findstr /c:"$approved_at_raw=$r->get_param('production_approved_at')" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 569
+findstr /c:"$old=hcdecor_workflow_clip(get_post_meta($job_id,'hc_agent_status',true),50)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 570
+findstr /c:"hcdecor_workflow_clip(get_post_meta($job_id,'hc_web_body',true),50000)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 571
+findstr /c:"hcdecor_project_vault_clip(get_post_meta($source,'hc_drive_project_file_id',true),300)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 572
+findstr /c:"hcdecor_health_scalar(get_post_meta($did,'hc_agent_claim_token',true),128)" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 573
+findstr /c:"sanitize_key(hcdecor_health_scalar(get_post_meta($rid,'hc_agent_recovery_reason',true),100))" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 574
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

@@ -17,7 +17,7 @@ function hcdecor_project_vault_media_record($attachment_id){
     return [
         'wp_id'=>$attachment_id,
         'drive_file_id'=>hcdecor_project_vault_clip(get_post_meta($attachment_id,'hc_drive_file_id',true),300),
-        'drive_url'=>esc_url_raw((string)get_post_meta($attachment_id,'hc_drive_url',true)),
+        'drive_url'=>esc_url_raw(hcdecor_project_vault_clip(get_post_meta($attachment_id,'hc_drive_url',true),2048)),
         'title'=>hcdecor_project_vault_clip(get_the_title($attachment_id),500),
         'mime'=>hcdecor_project_vault_clip(get_post_mime_type($attachment_id),200),
         'alt'=>hcdecor_project_vault_clip(get_post_meta($attachment_id,'_wp_attachment_image_alt',true),1000),
@@ -81,7 +81,7 @@ function hcdecor_project_vault_sync_media($project_id){
     $ok=0; $failed=0;
     foreach($gallery as $mid){
         if(get_post_type($mid)!=='attachment') continue;
-        if((string)get_post_meta($mid,'hc_drive_file_id',true)!==''){ $ok++; continue; }
+        if(hcdecor_project_vault_clip(get_post_meta($mid,'hc_drive_file_id',true),300)!==''){ $ok++; continue; }
         if(!function_exists('hcdecor_drive_upload_attachment')){ $failed++; continue; }
         $r=hcdecor_drive_upload_attachment($mid,'media_input');
         is_wp_error($r)?$failed++:$ok++;
@@ -110,7 +110,7 @@ function hcdecor_project_vault_save($project_id,$sync_media=true){
     $data=hcdecor_project_vault_data($project_id);
     if(is_wp_error($data)) return $data;
 
-    $existing=(string)get_post_meta($project_id,'hc_drive_project_file_id',true);
+    $existing=hcdecor_project_vault_clip(get_post_meta($project_id,'hc_drive_project_file_id',true),300);
     $name=sanitize_file_name('PROJECT-'.$project_id.'-'.($data['project']['slug']?:$data['project']['title']).'.json');
     $r=hcdecor_drive_save_json($name,$data,'projects',$existing);
 
@@ -157,13 +157,13 @@ function hcdecor_project_vault_import($file_id){
 
     $source=(int)($d['source_project_id']??0);
     $id=0;
-    if($source && get_post_type($source)==='hc_project' && get_post_status($source)==='draft' && hash_equals((string)get_post_meta($source,'hc_drive_project_file_id',true),$file_id)) $id=$source;
+    if($source && get_post_type($source)==='hc_project' && get_post_status($source)==='draft' && hash_equals(hcdecor_project_vault_clip(get_post_meta($source,'hc_drive_project_file_id',true),300),$file_id)) $id=$source;
     $project=(array)($d['project']??[]);
     $source_status=in_array(($project['status']??''),['publish','draft','private'],true)?$project['status']:'draft';
 
     // Drive imports are staging operations. Never publish directly from imported data.
     $clip=function($value,$limit,$html=false){
-        $text=$html?wp_kses_post((string)$value):sanitize_textarea_field((string)$value);
+        $value=is_scalar($value)?(string)$value:'';$text=$html?wp_kses_post($value):sanitize_textarea_field($value);
         return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
     };
     $post=[
@@ -418,8 +418,8 @@ function hcdecor_project_vault_page(){
         <section class="hcpv-card">
           <h2>WordPress Projects</h2>
           <?php foreach($projects as $p):
-            $fid=(string)get_post_meta($p->ID,'hc_drive_project_file_id',true);
-            $synced=(string)get_post_meta($p->ID,'hc_drive_project_synced_at',true);
+            $fid=hcdecor_project_vault_clip(get_post_meta($p->ID,'hc_drive_project_file_id',true),300);
+            $synced=hcdecor_project_vault_clip(get_post_meta($p->ID,'hc_drive_project_synced_at',true),64);
           ?>
             <div class="hcpv-row">
               <div><strong>#<?php echo $p->ID;?> · <?php echo esc_html($p->post_title);?></strong><br><small><?php echo $fid?'Drive synced '.esc_html($synced):'Not saved to Drive';?></small></div>
@@ -429,7 +429,7 @@ function hcdecor_project_vault_page(){
                   <button class="button"><?php echo $fid?'Sync → Drive':'Save → Drive';?></button>
                 </form>
                 <a class="button" href="<?php echo esc_url(get_edit_post_link($p->ID));?>">Edit</a>
-                <?php $u=(string)get_post_meta($p->ID,'hc_drive_project_url',true); if($u):?><a class="button" target="_blank" rel="noopener" href="<?php echo esc_url($u);?>">Drive</a><?php endif;?>
+                <?php $u=hcdecor_project_vault_clip(get_post_meta($p->ID,'hc_drive_project_url',true),2048); if($u):?><a class="button" target="_blank" rel="noopener" href="<?php echo esc_url($u);?>">Drive</a><?php endif;?>
               </div>
             </div>
           <?php endforeach; if(!$projects):?><p>Chưa có Project.</p><?php endif;?>

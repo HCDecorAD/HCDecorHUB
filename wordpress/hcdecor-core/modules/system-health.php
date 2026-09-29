@@ -110,7 +110,7 @@ function hcdecor_health_actionable_blocked_count(){
     $settings=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
     $count=0;
     foreach($tasks as $id){
-        $type=(string)get_post_meta($id,'hc_auto_type',true);
+        $type=sanitize_key(hcdecor_health_scalar(get_post_meta($id,'hc_auto_type',true),50));
         if(empty($settings['enabled'])) continue;
         if($type==='social_publish' && empty($settings['social_enabled'])) continue;
         if($type==='webhook' && (empty($settings['webhook_enabled']) || empty($settings['webhook_url']))) continue;
@@ -141,7 +141,7 @@ function hcdecor_health_snapshot(){
         $at=hcdecor_health_time(get_post_meta($aid,'hc_auto_recovered_at',true));
         if($at && $at>=time()-DAY_IN_SECONDS){
             $auto_recovered_24h++;
-            $reason=(string)get_post_meta($aid,'hc_auto_recovery_reason',true);
+            $reason=sanitize_key(hcdecor_health_scalar(get_post_meta($aid,'hc_auto_recovery_reason',true),100));
             if(isset($auto_recovery_reasons[$reason])) $auto_recovery_reasons[$reason]++;
         }
     }
@@ -175,7 +175,7 @@ function hcdecor_health_snapshot(){
     ]);
     $now=time();
     foreach($draft_claim_ids as $did){
-        $token=(string)get_post_meta($did,'hc_agent_claim_token',true);
+        $token=hcdecor_health_scalar(get_post_meta($did,'hc_agent_claim_token',true),128);
         if($token==='') continue;
         $lock=(int)get_post_meta($did,'hc_agent_lock_until',true);
         if($lock>$now) continue;
@@ -189,7 +189,7 @@ function hcdecor_health_snapshot(){
         $lock=(int)get_post_meta($pid,'hc_agent_lock_until',true);
         $claimed=hcdecor_health_time(get_post_meta($pid,'hc_agent_claimed_at',true));
         $heartbeat=hcdecor_health_time(get_post_meta($pid,'hc_agent_heartbeat',true));
-        $token=(string)get_post_meta($pid,'hc_agent_claim_token',true);
+        $token=hcdecor_health_scalar(get_post_meta($pid,'hc_agent_claim_token',true),128);
         if($token==='' && max($claimed,$heartbeat)>0 && max($claimed,$heartbeat)<($now-120)) $processing_without_token++;
         if($lock>$now && ($lock-$now)<=120) $processing_lock_expiring++;
         if(($lock>0 && $lock<$now) || ($lock<=0 && $claimed>0 && $claimed<($now-900))) $stale_processing++;
@@ -281,7 +281,7 @@ function hcdecor_health_snapshot(){
         $rt=hcdecor_health_time(get_post_meta($rid,'hc_agent_recovered_at',true));
         if($rt && $rt>=($now-DAY_IN_SECONDS)){
             $recovered_24h++;
-            $reason=(string)get_post_meta($rid,'hc_agent_recovery_reason',true);
+            $reason=sanitize_key(hcdecor_health_scalar(get_post_meta($rid,'hc_agent_recovery_reason',true),100));
             if(isset($recovery_reasons[$reason])) $recovery_reasons[$reason]++;
         }
     }
