@@ -6,6 +6,8 @@ if (!defined('ABSPATH')) exit;
  * Production readiness, cron repair, queue visibility, daily Drive report.
  */
 
+function hcdecor_health_time($value){$raw=is_scalar($value)?(string)$value:'';if($raw===''||strlen($raw)>64)return 0;return strtotime($raw)?:0;}
+
 function hcdecor_health_required_modules(){
     return [
         'background-sync.php','content-operations.php','workflow-engine.php','ai-providers.php',
@@ -135,7 +137,7 @@ function hcdecor_health_snapshot(){
     $auto_recovery_scan_limited=count($auto_recovered_ids)>100;
     if($auto_recovery_scan_limited) $auto_recovered_ids=array_slice($auto_recovered_ids,0,100);
     foreach($auto_recovered_ids as $aid){
-        $at=strtotime((string)get_post_meta($aid,'hc_auto_recovered_at',true))?:0;
+        $at=hcdecor_health_time(get_post_meta($aid,'hc_auto_recovered_at',true));
         if($at && $at>=time()-DAY_IN_SECONDS){
             $auto_recovered_24h++;
             $reason=(string)get_post_meta($aid,'hc_auto_recovery_reason',true);
@@ -143,10 +145,10 @@ function hcdecor_health_snapshot(){
         }
     }
     $backup_last=(string)get_option('hcdecor_backup_last_at','');
-    $backup_ts=$backup_last!==''?strtotime($backup_last):0;
+    $backup_ts=hcdecor_health_time($backup_last);
     $backup_age=$backup_ts?max(0,current_time('timestamp')-$backup_ts):null;
     $inbox_last=(string)get_option('hcdecor_drive_inbox_last_at','');
-    $inbox_ts=$inbox_last!==''?strtotime($inbox_last):0;
+    $inbox_ts=hcdecor_health_time($inbox_last);
     $inbox_age=$inbox_ts?max(0,current_time('timestamp')-$inbox_ts):null;
     $stale_processing=0;
     $processing_without_token=0;
@@ -156,8 +158,8 @@ function hcdecor_health_snapshot(){
     $oldest_review_age=0;
     $review_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'review']);
     foreach($review_ids as $rid){
-        $entered=strtotime((string)get_post_meta($rid,'hc_review_entered_at',true))?:0;
-        if(!$entered) $entered=strtotime((string)get_post_field('post_modified',$rid))?:0;
+        $entered=hcdecor_health_time(get_post_meta($rid,'hc_review_entered_at',true));
+        if(!$entered) $entered=hcdecor_health_time(get_post_field('post_modified',$rid));
         if($entered) $oldest_review_age=max($oldest_review_age,max(0,current_time('timestamp')-$entered));
     }
     $processing_ids=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'fields'=>'ids','meta_key'=>'hc_agent_status','meta_value'=>'processing']);
@@ -176,16 +178,16 @@ function hcdecor_health_snapshot(){
         if($token==='') continue;
         $lock=(int)get_post_meta($did,'hc_agent_lock_until',true);
         if($lock>$now) continue;
-        $claimed=strtotime((string)get_post_meta($did,'hc_agent_claimed_at',true))?:0;
-        $modified=strtotime((string)get_post_field('post_modified',$did))?:0;
+        $claimed=hcdecor_health_time(get_post_meta($did,'hc_agent_claimed_at',true));
+        $modified=hcdecor_health_time(get_post_field('post_modified',$did));
         $base=$claimed?:$modified;
         $stale_after=$claimed?120:900;
         if($base && $base<($now-$stale_after)) $draft_orphan_claims++;
     }
     foreach($processing_ids as $pid){
         $lock=(int)get_post_meta($pid,'hc_agent_lock_until',true);
-        $claimed=strtotime((string)get_post_meta($pid,'hc_agent_claimed_at',true))?:0;
-        $heartbeat=strtotime((string)get_post_meta($pid,'hc_agent_heartbeat',true))?:0;
+        $claimed=hcdecor_health_time(get_post_meta($pid,'hc_agent_claimed_at',true));
+        $heartbeat=hcdecor_health_time(get_post_meta($pid,'hc_agent_heartbeat',true));
         $token=(string)get_post_meta($pid,'hc_agent_claim_token',true);
         if($token==='' && max($claimed,$heartbeat)>0 && max($claimed,$heartbeat)<($now-120)) $processing_without_token++;
         if($lock>$now && ($lock-$now)<=120) $processing_lock_expiring++;
@@ -199,14 +201,14 @@ function hcdecor_health_snapshot(){
     $backup_retry=(int)get_option('hcdecor_backup_retry_count',0);
     $vault_bulk=(array)get_option('hcdecor_project_vault_bulk_last_result',[]);
     $vault_bulk_at=(string)get_option('hcdecor_project_vault_bulk_last_at','');
-    $vault_bulk_ts=$vault_bulk_at!==''?(strtotime($vault_bulk_at)?:0):0;
+    $vault_bulk_ts=hcdecor_health_time($vault_bulk_at);
     $inbox_result=(array)get_option('hcdecor_drive_inbox_last_result',[]);
     $inbox_unlinked=max(0,(int)($inbox_result['imported']??0)-(int)($inbox_result['linked']??0));
     $published_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'fields'=>'ids','meta_query'=>[['key'=>'hc_published_web_at','value'=>wp_date('Y-m-d H:i:s',current_time('timestamp')-7*DAY_IN_SECONDS),'compare'=>'>=','type'=>'DATETIME']]]))->found_posts;
     $created_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'date_query'=>[['after'=>'7 days ago']],'fields'=>'ids']))->found_posts;
     $backup_cron=(int)(wp_next_scheduled('hcdecor_backup_daily')?:0);
     $last_auto_repair=(array)get_option('hcdecor_health_auto_repair_last',[]);
-    $last_auto_repair_ts=!empty($last_auto_repair['at'])?(strtotime((string)$last_auto_repair['at'])?:0):0;
+    $last_auto_repair_ts=!empty($last_auto_repair['at'])?hcdecor_health_time($last_auto_repair['at']):0;
     $vault_stale=0;
     $vault_stale_scanned=0;
     for($page=1;$page<=4;$page++){
@@ -217,8 +219,8 @@ function hcdecor_health_snapshot(){
         if(!$vault_ids) break;
         foreach($vault_ids as $pid){
             $vault_stale_scanned++;
-            $synced=strtotime((string)get_post_meta($pid,'hc_drive_project_synced_at',true))?:0;
-            $modified=strtotime((string)get_post_field('post_modified',$pid))?:0;
+            $synced=hcdecor_health_time(get_post_meta($pid,'hc_drive_project_synced_at',true));
+            $modified=hcdecor_health_time(get_post_field('post_modified',$pid));
             if($modified>0 && ($synced===0 || $modified>$synced+5)) $vault_stale++;
         }
         if(count($vault_ids)<50) break;
@@ -234,7 +236,7 @@ function hcdecor_health_snapshot(){
     if($actionable_blocked>0) $issues[]='Automation blocked: '.$actionable_blocked;
     $worker_mutex_sweep=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
     $worker_mutex_sweep_ts=(int)($worker_mutex_sweep['ts']??0);
-    if(!$worker_mutex_sweep_ts && !empty($worker_mutex_sweep['at'])) $worker_mutex_sweep_ts=strtotime((string)$worker_mutex_sweep['at'])?:0;
+    if(!$worker_mutex_sweep_ts && !empty($worker_mutex_sweep['at'])) $worker_mutex_sweep_ts=hcdecor_health_time($worker_mutex_sweep['at']);
     $worker_mutex_sweep_fresh=$worker_mutex_sweep_ts>=(time()-600);
     $worker_sweep_mutex_raw=get_option('hcdecor_worker_mutex_sweep_mutex',[]);
     $worker_sweep_mutex_at=is_array($worker_sweep_mutex_raw)?(int)($worker_sweep_mutex_raw['at']??0):(int)$worker_sweep_mutex_raw;
@@ -275,7 +277,7 @@ function hcdecor_health_snapshot(){
     $worker_recovery_scan_limited=count($recovered_ids)>100;
     if($worker_recovery_scan_limited) $recovered_ids=array_slice($recovered_ids,0,100);
     foreach($recovered_ids as $rid){
-        $rt=strtotime((string)get_post_meta($rid,'hc_agent_recovered_at',true))?:0;
+        $rt=hcdecor_health_time(get_post_meta($rid,'hc_agent_recovered_at',true));
         if($rt && $rt>=($now-DAY_IN_SECONDS)){
             $recovered_24h++;
             $reason=(string)get_post_meta($rid,'hc_agent_recovery_reason',true);
@@ -435,7 +437,7 @@ function hcdecor_health_auto_repair_schedules(){
     $worker_sweep=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
     $worker_sweep_next=wp_next_scheduled('hcdecor_worker_mutex_sweep_tick');
     $worker_sweep_ts=(int)($worker_sweep['ts']??0);
-    if(!$worker_sweep_ts && !empty($worker_sweep['at'])) $worker_sweep_ts=strtotime((string)$worker_sweep['at'])?:0;
+    if(!$worker_sweep_ts && !empty($worker_sweep['at'])) $worker_sweep_ts=hcdecor_health_time($worker_sweep['at']);
     $worker_sweep_fresh=$worker_sweep_ts>=(time()-600);
     $worker_sweep_lock_raw=get_option('hcdecor_worker_mutex_sweep_mutex',[]);
     $worker_sweep_lock_at=is_array($worker_sweep_lock_raw)?(int)($worker_sweep_lock_raw['at']??0):(int)$worker_sweep_lock_raw;
