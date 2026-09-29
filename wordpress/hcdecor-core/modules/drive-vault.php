@@ -427,7 +427,10 @@ function hcdecor_drive_load_prompt($file_id){
     $meta=hcdecor_drive_file_meta($file_id);
     if(is_wp_error($meta)) return $meta;
     if(!hcdecor_drive_file_in_managed_folders($meta,['prompts'])) return new WP_Error('scope','Drive prompt file is outside the managed prompts folder.');
-    if((int)($meta['size']??0)>1024*1024) return new WP_Error('size','Drive prompt file exceeds 1 MB.');
+    $mime=strtolower((string)($meta['mimeType']??''));
+    if(!in_array($mime,['application/json','text/json','text/plain'],true)) return new WP_Error('mime','Drive prompt import requires a JSON file.');
+    $size=(int)($meta['size']??0);
+    if($size<=0 || $size>1024*1024) return new WP_Error('size','Drive prompt file must be between 1 byte and 1 MB.');
     $body=hcdecor_drive_download($file_id);
     if(is_wp_error($body)) return $body;
     $d=json_decode($body,true);
@@ -455,6 +458,8 @@ function hcdecor_drive_import_job($file_id){
     $meta=hcdecor_drive_file_meta($file_id);
     if(is_wp_error($meta)) return $meta;
     if(!hcdecor_drive_file_in_managed_folders($meta,['content_draft','content_review','content_approved','content_published'])) return new WP_Error('scope','Drive job file is outside managed content folders.');
+    $mime=strtolower((string)($meta['mimeType']??''));
+    if(!in_array($mime,['application/json','text/json','text/plain'],true)) return new WP_Error('mime','Drive job import requires a JSON file.');
     $size=(int)($meta['size']??0);
     if($size<=0 || $size>2*1024*1024) return new WP_Error('size','Drive job file must be between 1 byte and 2 MB.');
     $body=hcdecor_drive_download($file_id);

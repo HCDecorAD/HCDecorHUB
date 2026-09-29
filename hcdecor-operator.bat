@@ -316,6 +316,9 @@ findstr /c:"Invalid Drive file ID." "wordpress\hcdecor-core\modules\drive-vault.
 findstr /c:"Invalid Drive file ID." "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 327
 findstr /c:"Backup snapshot failed." "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 328
 findstr /c:"Runtime delivery failed." "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 329
+findstr /c:"Restore source must be a JSON backup file." "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 330
+findstr /c:"Drive job import requires a JSON file." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 331
+findstr /c:"Drive prompt import requires a JSON file." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 332
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

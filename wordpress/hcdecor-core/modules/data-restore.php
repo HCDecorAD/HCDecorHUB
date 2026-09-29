@@ -14,6 +14,8 @@ function hcdecor_restore_read_backup($file_id){
     $meta=hcdecor_drive_file_meta($file_id);
     if(is_wp_error($meta)) return $meta;
     if(!hcdecor_drive_file_in_managed_folders($meta,['backups'])) return new WP_Error('scope','Restore source is outside the managed BACKUPS folder.');
+    $mime=strtolower((string)($meta['mimeType']??''));
+    if(!in_array($mime,['application/json','text/json','text/plain'],true)) return new WP_Error('mime','Restore source must be a JSON backup file.');
     if((int)($meta['size']??0)<=0 || (int)($meta['size']??0)>25*1024*1024) return new WP_Error('size','Backup file must be between 1 byte and 25 MB.');
 
     $body=hcdecor_drive_download($file_id);
