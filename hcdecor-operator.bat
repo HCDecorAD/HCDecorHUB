@@ -423,6 +423,9 @@ findstr /c:"production_approval_source'=>hcdecor_runtime_clip" "wordpress\hcdeco
 findstr /c:"$at<=time()+5*MINUTE_IN_SECONDS" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 436
 findstr /c:"function hcdecor_runtime_time" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 437
 findstr /c:"Invalid runtime schedule." "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 438
+findstr /c:"hcdecor-projects" "app\api\projects\route.js" >nul || exit /b 439
+findstr /c:"limit=10" "app\api\projects\route.js" >nul || exit /b 440
+findstr /c:"leadId.length>200" "app\api\projects\route.js" >nul || exit /b 441
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
