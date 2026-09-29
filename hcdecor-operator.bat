@@ -623,6 +623,11 @@ findstr /c:"$media_raw=$_GET['media']??0" "wordpress\hcdecor-core\modules\media-
 findstr /c:"$evergreen_raw=$_POST['evergreen_days']??30" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 584
 findstr /c:"$limit_raw=$_POST['limit']??12" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 585
 findstr /c:"$job_raw=$_GET['job']??($jobs[0]->ID??0)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 586
+findstr /c:"Plugin Name: HCDecor HUB Runtime" "wordpress\hcdecor-core\hcdecor-runtime.php" >nul || exit /b 629
+findstr /c:"register_post_type('hc_project'" "wordpress\hcdecor-core\hcdecor-runtime.php" >nul || exit /b 630
+findstr /c:"register_post_type('hc_content_job'" "wordpress\hcdecor-core\hcdecor-runtime.php" >nul || exit /b 631
+findstr /c:"homepage-builder.php" "wordpress\hcdecor-core\hcdecor-runtime.php" >nul && exit /b 632
+findstr /c:"recovery-bootstrap.php" "wordpress\hcdecor-core\hcdecor-runtime.php" >nul && exit /b 633
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
