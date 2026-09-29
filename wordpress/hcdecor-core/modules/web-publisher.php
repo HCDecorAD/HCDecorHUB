@@ -8,6 +8,18 @@ function hcdecor_publish_clip($value,$limit){
     return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit);
 }
 
+function hcdecor_publish_rest_approval_fresh(WP_REST_Request $r){
+    if(!rest_sanitize_boolean($r->get_param('production_approved'))) return false;
+    $by_raw=$r->get_param('production_approved_by');$source_raw=$r->get_param('production_approval_source');$at_raw=$r->get_param('production_approved_at');
+    $by=is_scalar($by_raw)?trim((string)$by_raw):'';$source=is_scalar($source_raw)?sanitize_key((string)$source_raw):'';$at_raw=is_scalar($at_raw)?(string)$at_raw:'';
+    if($by==='' || strlen($by)>200 || strlen($source)>50 || strlen($at_raw)>64) return false;
+    $uid=get_current_user_id();
+    if($uid>0){ if($source!=='wp_user' || !ctype_digit($by) || (int)$by!==$uid) return false; }
+    elseif($source!=='service_bridge') return false;
+    $at=strtotime($at_raw)?:0;
+    return $at>=time()-15*MINUTE_IN_SECONDS && $at<=time()+5*MINUTE_IN_SECONDS;
+}
+
 function hcdecor_publish_snapshot($project_id){
     $post=get_post($project_id);
     if(!$post || $post->post_type!=='hc_project') return new WP_Error('project','Invalid project');
@@ -181,10 +193,10 @@ add_action('rest_api_init',function(){
             $id=(int)$r['id'];
             if(!$id || get_post_type($id)!=='hc_content_job') return new WP_Error('job','Invalid content job.',['status'=>404]);
             if(get_current_user_id()>0 && !current_user_can('edit_post',$id)) return new WP_Error('forbidden','Forbidden.',['status'=>403]);
-            if(!rest_sanitize_boolean($r->get_param('production_approved'))) return new WP_Error('approval','Explicit production publish approval is required.',['status'=>403]);
+            if(!hcdecor_publish_rest_approval_fresh($r)) return new WP_Error('approval','Fresh explicit production publish approval is required.',['status'=>403]);
             update_post_meta($id,'hc_publish_approved_by',get_current_user_id());
             update_post_meta($id,'hc_publish_approval_source',get_current_user_id()>0?'wp_user':'service_bridge');
-            update_post_meta($id,'hc_publish_approved_at',current_time('mysql'));
+            update_post_meta($id,'hc_publish_approved_at',sanitize_text_field((string)$r->get_param('production_approved_at')));
             $res=hcdecor_publish_job_to_web($id);
             if(is_wp_error($res)){
                 delete_post_meta($id,'hc_publish_approved_by');
