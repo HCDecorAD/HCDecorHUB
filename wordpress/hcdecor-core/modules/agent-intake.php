@@ -4,13 +4,14 @@ if (!defined('ABSPATH')) exit;
 /* HCDecor Agent Intake: Project/Media -> Content Job -> AI worker. */
 
 function hcdecor_agent_create_job($project_id,$media_ids=[],$brief=''){
-    $project_id=(int)$project_id;
+    $project_id=is_scalar($project_id)?(int)$project_id:0;
     if(!$project_id || get_post_type($project_id)!=='hc_project') return new WP_Error('project','Invalid project');
-    $media_ids=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)$media_ids)),function($id){ return get_post_type($id)==='attachment'; })),0,60);
+    $media_ids=array_slice(array_values(array_filter(array_unique(array_map('intval',array_filter(is_array($media_ids)?$media_ids:[],'is_scalar'))),function($id){ return get_post_type($id)==='attachment'; })),0,60);
     if($media_ids && function_exists('hcdecor_media_ai_apply_project_recommendations')){
         $recommendation=hcdecor_media_ai_apply_project_recommendations($project_id);
-        if(!is_wp_error($recommendation) && !empty($recommendation['media_ids'])) $media_ids=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)$recommendation['media_ids'])),function($id){ return get_post_type($id)==='attachment'; })),0,60);
+        if(!is_wp_error($recommendation) && !empty($recommendation['media_ids'])){$recommended_media=$recommendation['media_ids'];$media_ids=array_slice(array_values(array_filter(array_unique(array_map('intval',array_filter(is_array($recommended_media)?$recommended_media:[],'is_scalar'))),function($id){ return get_post_type($id)==='attachment'; })),0,60);}
     }
+    $brief=is_scalar($brief)?(string)$brief:'';
     if(!$brief){
         $brief='Tạo nội dung dự án HCDecor từ Project và media đã chọn. Phân tích hình ảnh, chọn điểm nổi bật, viết nội dung Web, Facebook, TikTok/Reels và YouTube. Không bịa thông tin không có dữ liệu.';
     }

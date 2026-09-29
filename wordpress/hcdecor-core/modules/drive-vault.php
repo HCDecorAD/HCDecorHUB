@@ -652,7 +652,7 @@ add_action('admin_post_hcdecor_drive_test',function(){
 
 add_action('admin_post_hcdecor_drive_save_job',function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
-    $id=(int)($_POST['job_id']??0);check_admin_referer('hcdecor_drive_save_job_'.$id);
+    $job_raw=$_POST['job_id']??0;$id=is_scalar($job_raw)?(int)$job_raw:0;check_admin_referer('hcdecor_drive_save_job_'.$id);
     if(get_post_type($id)!=='hc_content_job' || !current_user_can('edit_post',$id)) wp_die('Invalid job');
     $r=hcdecor_drive_save_job($id,true);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&job='.$id.(is_wp_error($r)?'&drive_error=1':'&drive_saved=1')));exit;

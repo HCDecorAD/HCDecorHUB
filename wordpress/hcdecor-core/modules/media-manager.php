@@ -20,8 +20,8 @@ add_action('admin_enqueue_scripts',function($hook){
 add_action('admin_post_hcdecor_media_assign',function(){
     if(!current_user_can('upload_files')) wp_die('Forbidden');
     check_admin_referer('hcdecor_media_assign');
-    $project=(int)($_POST['project_id']??0);
-    $ids_raw=$_POST['media_ids']??[];$ids=array_slice(array_values(array_filter(array_unique(array_map('intval',is_array($ids_raw)?$ids_raw:[])),function($id){ return get_post_type($id)==='attachment' && current_user_can('edit_post',$id); })),0,60);
+    $project_raw=$_POST['project_id']??0;$project=is_scalar($project_raw)?(int)$project_raw:0;
+    $ids_raw=$_POST['media_ids']??[];$ids=array_slice(array_values(array_filter(array_unique(array_map('intval',array_filter(is_array($ids_raw)?$ids_raw:[],'is_scalar'))),function($id){ return get_post_type($id)==='attachment' && current_user_can('edit_post',$id); })),0,60);
     if(!$project || get_post_type($project)!=='hc_project' || !current_user_can('edit_post',$project)) wp_die('Invalid project');
     $existing_raw=get_post_meta($project,'hc_project_gallery',true);$existing=is_array($existing_raw)?$existing_raw:[];
     $merged=array_slice(array_values(array_filter(array_unique(array_merge(array_map('intval',$existing),$ids)),function($id){ return get_post_type($id)==='attachment'; })),0,60);

@@ -39,7 +39,7 @@ add_action('admin_post_hcdecor_workspace_create',function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
     check_admin_referer('hcdecor_workspace_create');
 
-    $project=(int)($_POST['project_id']??0);
+    $project_raw=$_POST['project_id']??0;$project=is_scalar($project_raw)?(int)$project_raw:0;
     if(!$project || get_post_type($project)!=='hc_project' || !current_user_can('edit_post',$project)) wp_die('Invalid project');
 
     $brief_raw=wp_unslash($_POST['brief']??'');$brief_raw=is_scalar($brief_raw)?(string)$brief_raw:'';$brief=function_exists('hcdecor_ops_limit_text')?hcdecor_ops_limit_text($brief_raw,20000):(function_exists('mb_substr')?mb_substr(sanitize_textarea_field($brief_raw),0,20000):substr(sanitize_textarea_field($brief_raw),0,20000));

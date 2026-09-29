@@ -527,7 +527,7 @@ add_action('hcdecor_ai_worker_tick',function(){
 
 add_action('admin_post_hcdecor_review_action',function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
-    $id=(int)($_POST['job_id']??0);
+    $job_raw=$_POST['job_id']??0;$id=is_scalar($job_raw)?(int)$job_raw:0;
     check_admin_referer('hcdecor_review_'.$id);
     if(get_post_type($id)!=='hc_content_job' || !current_user_can('edit_post',$id)) wp_die('Invalid job');
     $action_raw=$_POST['review_action']??'';$action=sanitize_key(is_scalar($action_raw)?(string)$action_raw:'');

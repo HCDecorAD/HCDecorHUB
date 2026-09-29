@@ -68,7 +68,7 @@ function hcdecor_ops_save_fields($job_id,$src) {
 add_action('admin_post_hcdecor_ops_create', function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
     check_admin_referer('hcdecor_ops_create');
-    $project=(int)($_POST['project_id']??0);
+    $project_raw=$_POST['project_id']??0;$project=is_scalar($project_raw)?(int)$project_raw:0;
     $brief=hcdecor_ops_limit_text(wp_unslash($_POST['brief']??''),20000);
     if(!$project || get_post_type($project)!=='hc_project' || !current_user_can('edit_post',$project)) wp_die('Invalid project');
     $id=wp_insert_post([
