@@ -619,6 +619,9 @@ findstr /c:"$attachment_raw=$_POST['attachment_id']??0" "wordpress\hcdecor-core\
 findstr /c:"$project_raw=$_GET['project_id']??0" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 581
 findstr /c:"$job_raw=$_GET['job']??0" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 582
 findstr /c:"$media_raw=$_GET['media']??0" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 583
+findstr /c:"$evergreen_raw=$_POST['evergreen_days']??30" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 584
+findstr /c:"$limit_raw=$_POST['limit']??12" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 585
+findstr /c:"$job_raw=$_GET['job']??($jobs[0]->ID??0)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 586
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

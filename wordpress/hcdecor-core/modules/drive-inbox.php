@@ -221,11 +221,12 @@ add_action('admin_post_hcdecor_drive_inbox_settings',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_drive_inbox_settings');
 
+    $limit_raw=$_POST['limit']??12;$limit=is_scalar($limit_raw)?(int)$limit_raw:12;
     $settings=[
         'enabled'=>!empty($_POST['enabled']),
         'auto_analyze'=>!empty($_POST['auto_analyze']),
         'auto_link_project'=>!empty($_POST['auto_link_project']),
-        'limit'=>max(1,min(50,(int)($_POST['limit']??12)))
+        'limit'=>max(1,min(50,$limit))
     ];
     update_option('hcdecor_drive_inbox_settings',$settings,false);
     if($settings['enabled']){

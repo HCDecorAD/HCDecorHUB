@@ -427,15 +427,17 @@ add_action('admin_post_hcdecor_automation_settings',function(){
     $old=hcdecor_auto_settings();
     $webhook_raw=wp_unslash($_POST['webhook_url']??'');$webhook_raw=is_scalar($webhook_raw)?trim((string)$webhook_raw):'';
     if(strlen($webhook_raw)>2048) wp_die('Webhook URL is too long.');
+    $evergreen_raw=$_POST['evergreen_days']??30;$attempts_raw=$_POST['max_attempts']??4;$retry_raw=$_POST['retry_minutes']??15;
+    $evergreen_days=is_scalar($evergreen_raw)?(int)$evergreen_raw:30;$max_attempts=is_scalar($attempts_raw)?(int)$attempts_raw:4;$retry_minutes=is_scalar($retry_raw)?(int)$retry_raw:15;
     $new=[
         'enabled'=>!empty($_POST['enabled']),
         'social_enabled'=>!empty($_POST['social_enabled']),
         'webhook_enabled'=>!empty($_POST['webhook_enabled']),
         'webhook_url'=>esc_url_raw($webhook_raw),
         'evergreen_enabled'=>!empty($_POST['evergreen_enabled']),
-        'evergreen_days'=>max(7,min(3650,(int)($_POST['evergreen_days']??30))),
-        'max_attempts'=>max(1,min(10,(int)($_POST['max_attempts']??4))),
-        'retry_minutes'=>max(1,min(1440,(int)($_POST['retry_minutes']??15)))
+        'evergreen_days'=>max(7,min(3650,$evergreen_days)),
+        'max_attempts'=>max(1,min(10,$max_attempts)),
+        'retry_minutes'=>max(1,min(1440,$retry_minutes))
     ];
     // Persist only a public HTTPS webhook. Runtime validates again before every outbound request.
     if($new['webhook_enabled'] && (!$new['webhook_url'] || !function_exists('hcdecor_conn_public_https') || !hcdecor_conn_public_https($new['webhook_url']))){

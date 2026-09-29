@@ -605,7 +605,7 @@ function hcdecor_review_page(){
         'orderby'=>'modified','order'=>'DESC',
         'meta_query'=>[['key'=>'hc_agent_status','value'=>['review','approved','failed'],'compare'=>'IN']]
     ]);
-    $job_id=(int)($_GET['job']??($jobs[0]->ID??0));
+    $job_raw=$_GET['job']??($jobs[0]->ID??0);$job_id=is_scalar($job_raw)?(int)$job_raw:0;
     $job=$job_id&&get_post_type($job_id)==='hc_content_job'?get_post($job_id):null;
     ?>
     <div class="wrap hcr"><style>
