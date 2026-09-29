@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.102",
+    "version":  "2026.09.29.103",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -64,7 +64,7 @@
                   {
                       "path":  "modules/media-manager.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/media-manager.php",
-                      "git_sha1":  "41952f3963445b1445a2e422235f0786d19b0a00"
+                      "git_sha1":  "8dc18bfeeefdf6ed9857d4b860c37c400988f21d"
                   },
                   {
                       "path":  "modules/admin-cleanup.php",

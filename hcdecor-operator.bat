@@ -342,6 +342,8 @@ findstr /c:".env.*" ".gitignore" >nul || exit /b 354
 findstr /c:"!.env.example" ".gitignore" >nul || exit /b 355
 findstr /c:"Project Vault operation failed." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 356
 findstr /c:"Project media sync failed." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 357
+findstr /c:"hcdecor_media_limit_text($m->post_content,10000)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 358
+findstr /c:"hcdecor_media_limit_text(get_post_meta($m->ID,'_wp_attachment_image_alt',true),1000)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 359
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

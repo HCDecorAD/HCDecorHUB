@@ -65,8 +65,8 @@ add_action('rest_api_init',function(){
             return rest_ensure_response(array_map(function($m){
                 $meta=wp_get_attachment_metadata($m->ID);
                 return [
-                    'id'=>$m->ID,'title'=>$m->post_title,'caption'=>$m->post_excerpt,
-                    'description'=>$m->post_content,'alt'=>(string)get_post_meta($m->ID,'_wp_attachment_image_alt',true),
+                    'id'=>$m->ID,'title'=>hcdecor_media_limit_text($m->post_title,300),'caption'=>hcdecor_media_limit_text($m->post_excerpt,5000),
+                    'description'=>hcdecor_media_limit_text($m->post_content,10000),'alt'=>hcdecor_media_limit_text(get_post_meta($m->ID,'_wp_attachment_image_alt',true),1000),
                     'mime'=>$m->post_mime_type,'url'=>wp_get_attachment_url($m->ID),
                     'thumb'=>wp_get_attachment_image_url($m->ID,'medium')?:null,
                     'width'=>(int)($meta['width']??0),'height'=>(int)($meta['height']??0),
