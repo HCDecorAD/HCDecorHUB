@@ -352,7 +352,8 @@ add_action('rest_api_init',function(){
                     $existing_token=(string)get_post_meta($j->ID,'hc_agent_claim_token',true);
                     $existing_lock=(int)get_post_meta($j->ID,'hc_agent_lock_until',true);
                     if($existing_token!=='' && $existing_lock<=$now){
-                        $claimed=strtotime((string)get_post_meta($j->ID,'hc_agent_claimed_at',true))?:0;
+                        $claimed_raw=get_post_meta($j->ID,'hc_agent_claimed_at',true);$claimed_raw=is_scalar($claimed_raw)?(string)$claimed_raw:'';
+                        $claimed=strlen($claimed_raw)<=64?(strtotime($claimed_raw)?:0):0;
                         if($claimed && $claimed<($now-120)){
                             $lifecycle=hcdecor_workflow_lifecycle_mutex_acquire($j->ID,$existing_token,30);
                             if($lifecycle){
@@ -396,7 +397,7 @@ add_action('rest_api_init',function(){
             $id=(int)$r['id'];
             if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
             if((string)get_post_meta($id,'hc_agent_status',true)!=='processing') return new WP_Error('status','Job is not processing',['status'=>409]);
-            $token=sanitize_text_field((string)$r->get_param('claim_token'));
+            $token_raw=$r->get_param('claim_token');$token=is_scalar($token_raw)?sanitize_text_field((string)$token_raw):'';
             if(strlen($token)>128) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
             $expected=(string)get_post_meta($id,'hc_agent_claim_token',true);
             if($expected==='' || $token==='' || !hash_equals($expected,$token)) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
@@ -411,7 +412,7 @@ add_action('rest_api_init',function(){
             $id=(int)$r['id'];
             if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
             if((string)get_post_meta($id,'hc_agent_status',true)!=='processing') return new WP_Error('status','Job is not processing',['status'=>409]);
-            $token=sanitize_text_field((string)$r->get_param('claim_token'));
+            $token_raw=$r->get_param('claim_token');$token=is_scalar($token_raw)?sanitize_text_field((string)$token_raw):'';
             if(strlen($token)>128) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
             $expected=(string)get_post_meta($id,'hc_agent_claim_token',true);
             if($expected==='' || $token==='' || !hash_equals($expected,$token)) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
@@ -440,7 +441,7 @@ add_action('rest_api_init',function(){
             $id=(int)$r['id'];
             if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
             if((string)get_post_meta($id,'hc_agent_status',true)!=='processing') return new WP_Error('status','Job is not processing',['status'=>409]);
-            $token=sanitize_text_field((string)$r->get_param('claim_token'));
+            $token_raw=$r->get_param('claim_token');$token=is_scalar($token_raw)?sanitize_text_field((string)$token_raw):'';
             if(strlen($token)>128) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
             $expected=(string)get_post_meta($id,'hc_agent_claim_token',true);
             if($expected==='' || $token==='' || !hash_equals($expected,$token)) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
