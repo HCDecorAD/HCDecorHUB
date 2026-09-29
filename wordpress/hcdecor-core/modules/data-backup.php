@@ -12,17 +12,17 @@ function hcdecor_backup_folder_id(){
 }
 
 function hcdecor_backup_object_identity($post_id){
-    $identity=(string)get_post_meta((int)$post_id,'hc_backup_identity',true);
+    $identity=hcdecor_backup_clip(get_post_meta((int)$post_id,'hc_backup_identity',true),100);
     if($identity===''){
         $identity=wp_generate_uuid4();
         add_post_meta((int)$post_id,'hc_backup_identity',$identity,true);
-        $identity=(string)get_post_meta((int)$post_id,'hc_backup_identity',true);
+        $identity=hcdecor_backup_clip(get_post_meta((int)$post_id,'hc_backup_identity',true),100);
     }
     return sanitize_text_field($identity);
 }
 
 function hcdecor_backup_clip($value,$limit){
-    $value=(string)$value;
+    if(!is_scalar($value)) return '';$value=(string)$value;
     return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit);
 }
 
@@ -123,7 +123,7 @@ function hcdecor_backup_snapshot(){
             'url'=>home_url('/'),
             'wp_version'=>get_bloginfo('version'),
             'timezone'=>wp_timezone_string(),
-            'sync_version'=>(string)get_option('hcdecor_sync_version','')
+            'sync_version'=>hcdecor_backup_clip(get_option('hcdecor_sync_version',''),100)
         ],
         'settings'=>[
             'ai_primary'=>hcdecor_backup_clip(get_option('hcdecor_ai_primary','auto'),50),
@@ -266,10 +266,10 @@ add_action('rest_api_init',function(){
         'permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(){
             return rest_ensure_response([
-                'last_at'=>(string)get_option('hcdecor_backup_last_at',''),
+                'last_at'=>hcdecor_backup_clip(get_option('hcdecor_backup_last_at',''),64),
                 'has_backup_file'=>(bool)get_option('hcdecor_backup_last_file_id',''),
                 'counts'=>(array)get_option('hcdecor_backup_last_counts',[]),
-                'error'=>(string)get_option('hcdecor_backup_last_error',''),
+                'error'=>hcdecor_backup_clip(get_option('hcdecor_backup_last_error',''),500),
                 'next'=>(int)(wp_next_scheduled('hcdecor_backup_daily')?:0)
             ]);
         }
@@ -278,10 +278,10 @@ add_action('rest_api_init',function(){
 
 function hcdecor_backup_page(){
     if(!current_user_can('manage_options')) return;
-    $last=(string)get_option('hcdecor_backup_last_at','');
-    $url=(string)get_option('hcdecor_backup_last_url','');
+    $last=hcdecor_backup_clip(get_option('hcdecor_backup_last_at',''),64);
+    $url=hcdecor_backup_clip(get_option('hcdecor_backup_last_url',''),2048);
     $counts=(array)get_option('hcdecor_backup_last_counts',[]);
-    $error=(string)get_option('hcdecor_backup_last_error','');
+    $error=hcdecor_backup_clip(get_option('hcdecor_backup_last_error',''),500);
     $next=(int)(wp_next_scheduled('hcdecor_backup_daily')?:0);
     $files=[];
     if(function_exists('hcdecor_drive_configured') && hcdecor_drive_configured() && function_exists('hcdecor_drive_list')){

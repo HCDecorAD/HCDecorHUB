@@ -491,6 +491,8 @@ findstr /c:"requireSameOriginMutation" "app\api\leads\route.js" >nul || exit /b 
 findstr /c:"const blocked=requireSameOriginMutation(request)" "app\api\leads\route.js" >nul || exit /b 519
 findstr /c:"hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_openai_test_message',''),500)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 520
 findstr /c:"hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_gemini_test_message',''),500)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 521
+findstr /c:"function hcdecor_backup_clip" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 522
+findstr /c:"hcdecor_backup_clip(get_option('hcdecor_backup_last_error',''),500)" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 523
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
