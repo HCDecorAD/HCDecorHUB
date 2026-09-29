@@ -260,11 +260,15 @@ function hcdecor_workflow_lifecycle_mutex_release($job_id,$owned){
 }
 
 function hcdecor_workflow_claim_response($job,$claim_token){
+    $channels=array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)get_post_meta($job->ID,'hc_channels',true)));
+    $media_ids=function_exists('hcdecor_ops_valid_media_ids')?hcdecor_ops_valid_media_ids(get_post_meta($job->ID,'hc_media_ids',true)):array_slice(array_values(array_filter(array_map('intval',(array)get_post_meta($job->ID,'hc_media_ids',true)))),0,60);
+    $title=function_exists('hcdecor_ops_limit_text')?hcdecor_ops_limit_text($job->post_title,500):substr((string)$job->post_title,0,500);
+    $brief=function_exists('hcdecor_ops_limit_text')?hcdecor_ops_limit_text($job->post_content,20000):substr((string)$job->post_content,0,20000);
     return rest_ensure_response([
-        'id'=>$job->ID,'title'=>$job->post_title,'brief'=>$job->post_content,
+        'id'=>$job->ID,'title'=>$title,'brief'=>$brief,
         'project_id'=>(int)get_post_meta($job->ID,'hc_project_id',true),
-        'channels'=>(array)get_post_meta($job->ID,'hc_channels',true),
-        'media_ids'=>(array)get_post_meta($job->ID,'hc_media_ids',true),
+        'channels'=>$channels,
+        'media_ids'=>$media_ids,
         'cover_id'=>(int)get_post_meta($job->ID,'hc_cover_id',true),
         'status'=>'processing','claim_token'=>$claim_token,'outbound'=>false
     ]);
@@ -393,6 +397,7 @@ add_action('rest_api_init',function(){
             if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
             if((string)get_post_meta($id,'hc_agent_status',true)!=='processing') return new WP_Error('status','Job is not processing',['status'=>409]);
             $token=sanitize_text_field((string)$r->get_param('claim_token'));
+            if(strlen($token)>128) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
             $expected=(string)get_post_meta($id,'hc_agent_claim_token',true);
             if($expected==='' || $token==='' || !hash_equals($expected,$token)) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
             if(!hcdecor_workflow_refresh_owned_claim($id,$token,600)) return new WP_Error('claim','Worker claim changed or expired during heartbeat',['status'=>409]);
@@ -407,6 +412,7 @@ add_action('rest_api_init',function(){
             if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
             if((string)get_post_meta($id,'hc_agent_status',true)!=='processing') return new WP_Error('status','Job is not processing',['status'=>409]);
             $token=sanitize_text_field((string)$r->get_param('claim_token'));
+            if(strlen($token)>128) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
             $expected=(string)get_post_meta($id,'hc_agent_claim_token',true);
             if($expected==='' || $token==='' || !hash_equals($expected,$token)) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
             $lock=(int)get_post_meta($id,'hc_agent_lock_until',true);
@@ -435,6 +441,7 @@ add_action('rest_api_init',function(){
             if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
             if((string)get_post_meta($id,'hc_agent_status',true)!=='processing') return new WP_Error('status','Job is not processing',['status'=>409]);
             $token=sanitize_text_field((string)$r->get_param('claim_token'));
+            if(strlen($token)>128) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
             $expected=(string)get_post_meta($id,'hc_agent_claim_token',true);
             if($expected==='' || $token==='' || !hash_equals($expected,$token)) return new WP_Error('claim','Invalid worker claim token',['status'=>409]);
             $lock=(int)get_post_meta($id,'hc_agent_lock_until',true);
