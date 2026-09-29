@@ -97,14 +97,21 @@ add_action('admin_post_hcdecor_social_bulk_publish', function () {
         $ids = array_values(array_unique($ids));
     }
     $ids=array_slice(array_values(array_unique($ids)),0,50);
-    $media_raw = sanitize_text_field(wp_unslash($_POST['media_ids'] ?? ''));
+    $media_input=wp_unslash($_POST['media_ids'] ?? '');$media_input=is_scalar($media_input)?(string)$media_input:'';
+    if(strlen($media_input)>5000) wp_die('Media selection is too large.');
+    $media_raw = sanitize_text_field($media_input);
     $media = array_slice(array_values(array_filter(array_unique(array_map('intval', preg_split('/[\s,]+/', $media_raw))), function($id){ return get_post_type($id)==='attachment'; })), 0, 60);
-    $caption = sanitize_textarea_field(wp_unslash($_POST['caption'] ?? ''));
+    $caption_input=wp_unslash($_POST['caption'] ?? '');$caption_input=is_scalar($caption_input)?(string)$caption_input:'';
+    if(strlen($caption_input)>20000) wp_die('Social caption is too large.');
+    $caption = sanitize_textarea_field($caption_input);
     $caption = function_exists('mb_substr') ? mb_substr($caption, 0, 10000) : substr($caption, 0, 10000);
-    $when = sanitize_text_field(wp_unslash($_POST['run_at'] ?? ''));
+    $when_raw=wp_unslash($_POST['run_at'] ?? '');$when_raw=is_scalar($when_raw)?(string)$when_raw:'';
+    if(strlen($when_raw)>64) wp_die('Invalid social publish schedule.');
+    $when = sanitize_text_field($when_raw);
     $run = $when ? strtotime($when) : time();
     if ($when !== '' && $run === false) { wp_die('Invalid social publish schedule.'); }
     $run = max(time(), (int)$run);
+    if($run>time()+10*MINUTE_IN_SECONDS) wp_die('Social publish schedule must run within 10 minutes of fresh approval.');
     $batch = 'social_' . wp_generate_password(10, false, false);
     $created = 0;
     foreach ($ids as $id) {

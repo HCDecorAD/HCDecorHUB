@@ -456,6 +456,9 @@ findstr /c:"const projectApiAuth=Boolean" "lib\data\store.js" >nul || exit /b 48
 findstr /c:"&&projectFolder&&projectApiAuth" "lib\data\store.js" >nul || exit /b 484
 findstr /c:"array_key_exists('auto_link_project',$saved)" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 485
 findstr /c:"'limit'=>max(1,min(50" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 486
+findstr /c:"Social publish schedule must run within 10 minutes" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 487
+findstr /c:"strlen($caption_input)>20000" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 488
+findstr /c:"strlen($media_input)>5000" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 489
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
