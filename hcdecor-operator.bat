@@ -415,6 +415,8 @@ findstr /c:"function hcdecor_drive_approval_fresh" "wordpress\hcdecor-core\modul
 findstr /c:"Fresh explicit approval is required for Drive imports." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 428
 findstr /c:"Fresh explicit approval is required for Drive project imports." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 429
 findstr /c:"$limit=max(1,min(100,(int)$limit));" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 430
+findstr /c:"function hcdecor_media_rest_approval_fresh" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 431
+findstr /c:"Fresh explicit approval is required for AI media analysis." "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 432
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

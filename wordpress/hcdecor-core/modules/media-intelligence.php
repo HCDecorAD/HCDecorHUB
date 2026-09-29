@@ -3,6 +3,14 @@ if (!defined('ABSPATH')) exit;
 
 /* HCDecor Media Intelligence: AI analysis, metadata suggestions, cover scoring. */
 
+function hcdecor_media_rest_approval_fresh(WP_REST_Request $r){
+    if(!rest_sanitize_boolean($r->get_param('production_approved'))) return false;
+    $by=sanitize_text_field((string)$r->get_param('production_approved_by'));
+    $source=sanitize_key((string)$r->get_param('production_approval_source'));
+    $at=strtotime((string)$r->get_param('production_approved_at'))?:0;
+    return $by!=='' && in_array($source,['wp_user','service_bridge'],true) && $at>=time()-15*MINUTE_IN_SECONDS && $at<=time()+5*MINUTE_IN_SECONDS;
+}
+
 function hcdecor_media_ai_schema(){
     return [
         'type'=>'object',
@@ -197,6 +205,7 @@ add_action('rest_api_init',function(){
             $id=(int)$r['id'];
             if(!$id || get_post_type($id)!=='attachment') return new WP_Error('media','Invalid media.',['status'=>404]);
             if(get_current_user_id()>0 && !current_user_can('edit_post',$id)) return new WP_Error('forbidden','Forbidden.',['status'=>403]);
+            if(!hcdecor_media_rest_approval_fresh($r)) return new WP_Error('approval','Fresh explicit approval is required for AI media analysis.',['status'=>403]);
             $res=hcdecor_media_ai_analyze($id);
             return is_wp_error($res)?$res:rest_ensure_response($res);
         }
