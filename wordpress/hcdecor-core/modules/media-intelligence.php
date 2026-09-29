@@ -143,7 +143,7 @@ function hcdecor_media_ai_apply_project_recommendations($project_id){
     if(!$project_id || get_post_type($project_id)!=='hc_project') return new WP_Error('project','Invalid project.');
     $media=(array)get_post_meta($project_id,'hc_project_gallery',true);
     if(!$media) $media=(array)get_post_meta($project_id,'hc_gallery_ids',true);
-    $media=array_values(array_unique(array_filter(array_map('intval',$media))));
+    $media=array_slice(array_values(array_filter(array_unique(array_map('intval',$media)),function($id){return get_post_type($id)==='attachment';})),0,60);
     if(!$media) return new WP_Error('media','Project has no media.');
 
     $ranked=[];
@@ -154,6 +154,8 @@ function hcdecor_media_ai_apply_project_recommendations($project_id){
         $ranked[]=['id'=>$mid,'score'=>$score,'analyzed'=>$analyzed!==''?1:0];
         $alt=(string)get_post_meta($mid,'hc_ai_alt',true);
         $caption=(string)get_post_meta($mid,'hc_ai_caption',true);
+        $alt=function_exists('mb_substr')?mb_substr($alt,0,1000):substr($alt,0,1000);
+        $caption=function_exists('mb_substr')?mb_substr($caption,0,5000):substr($caption,0,5000);
         if($alt!=='' && get_post_meta($mid,'_wp_attachment_image_alt',true)==='') update_post_meta($mid,'_wp_attachment_image_alt',$alt);
         $post=get_post($mid);
         if($post && $caption!=='' && trim((string)$post->post_excerpt)==='') wp_update_post(['ID'=>$mid,'post_excerpt'=>$caption]);

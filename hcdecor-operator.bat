@@ -333,6 +333,8 @@ findstr /c:"mb_substr((string)$p->post_excerpt,0,2000)" "wordpress\hcdecor-core\
 findstr /c:"Drive JSON payload exceeds 4 MB." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 346
 findstr /c:"function hcdecor_project_vault_clip" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 347
 findstr /c:"0,60" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 348
+findstr /c:"0,60" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 349
+findstr /c:"mb_substr($caption,0,5000)" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 350
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
