@@ -604,6 +604,7 @@ findstr /c:"$automation_last_change_raw=get_option('hcdecor_automation_settings_
 findstr /c:"$provider_raw=$_POST['provider']??''" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 566
 findstr /c:"$folder_raw=$_POST['folder_key']??'media_input'" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 567
 findstr /c:"$accounts_raw=$_POST['accounts']??[]" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 568
+findstr /c:"foreach(array_slice($value,-50,null,true)" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 611
 findstr /c:"$trigger_raw=$_POST['trigger']??''" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 569
 findstr /c:"$media_raw=$_POST['media_ids']??[]" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 570
 findstr /c:"$channels_raw=$_POST['channels']??[]" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 571

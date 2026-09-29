@@ -15,8 +15,8 @@ function hcdecor_social_accounts() {
     foreach(array_slice(array_values($value),-50) as $account){$safe=hcdecor_social_account_normalize($account);if($safe['id']!==''&&$safe['channel']!=='')$out[]=$safe;}return $out;
 }
 function hcdecor_social_groups() {
-    $value = get_option('hcdecor_social_groups', []);
-    return is_array($value) ? array_slice($value, -50, null, true) : [];
+    $value = get_option('hcdecor_social_groups', []);if(!is_array($value))return [];
+    $out=[];foreach(array_slice($value,-50,null,true) as $key=>$name){$safe_key=hcdecor_social_limit_text(sanitize_key(is_scalar($key)?(string)$key:''),100);if($safe_key==='')continue;$out[$safe_key]=hcdecor_social_limit_text($name,300);}return $out;
 }
 function hcdecor_social_accounts_safe() {
     return array_map(function($account){
