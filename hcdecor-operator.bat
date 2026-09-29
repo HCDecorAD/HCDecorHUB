@@ -489,6 +489,8 @@ findstr /c:"function hcdecor_workspace_scalar" "wordpress\hcdecor-core\modules\a
 findstr /c:"hcdecor_workspace_scalar(get_option('hcdecor_drive_active_prompt',''),20000)" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 517
 findstr /c:"requireSameOriginMutation" "app\api\leads\route.js" >nul || exit /b 518
 findstr /c:"const blocked=requireSameOriginMutation(request)" "app\api\leads\route.js" >nul || exit /b 519
+findstr /c:"hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_openai_test_message',''),500)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 520
+findstr /c:"hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_gemini_test_message',''),500)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 521
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

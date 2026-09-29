@@ -429,8 +429,8 @@ add_action('admin_post_hcdecor_ai_settings',function(){
 function hcdecor_ai_settings_page(){
     if(!current_user_can('manage_options')) return;
     $openai=hcdecor_ai_available('openai'); $gemini=hcdecor_ai_available('gemini');
-    $openai_test=(string)get_option('hcdecor_ai_openai_test_status',''); $gemini_test=(string)get_option('hcdecor_ai_gemini_test_status','');
-    $openai_msg=(string)get_option('hcdecor_ai_openai_test_message',''); $gemini_msg=(string)get_option('hcdecor_ai_gemini_test_message','');
+    $openai_test=hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_openai_test_status',''),20); $gemini_test=hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_gemini_test_status',''),20);
+    $openai_msg=hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_openai_test_message',''),500); $gemini_msg=hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_gemini_test_message',''),500);
     ?>
     <div class="wrap" style="max-width:900px"><h1>HCDecor AI Providers</h1>
     <p>AI xử lý nội dung + hình ảnh cho Content Operations. Có thể dùng một provider hoặc primary + fallback.</p>

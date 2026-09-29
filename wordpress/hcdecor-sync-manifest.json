@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.164",
+    "version":  "2026.09.29.165",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -39,7 +39,7 @@
                   {
                       "path":  "modules/ai-providers.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/ai-providers.php",
-                      "git_sha1":  "43ac903c9d61feb4fb6bb03e486715e6515c851d"
+                      "git_sha1":  "241d21680378b6e3b579d81788d09fad9cb08151"
                   },
                   {
                       "path":  "modules/media-intelligence.php",
