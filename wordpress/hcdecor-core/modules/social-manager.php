@@ -2,12 +2,17 @@
 if (!defined('ABSPATH')) { exit; }
 
 function hcdecor_social_limit_text($value,$limit) {
-    $text = sanitize_text_field((string)$value);
+    $text = sanitize_text_field(is_scalar($value)?(string)$value:'');
     return function_exists('mb_substr') ? mb_substr($text, 0, $limit) : substr($text, 0, $limit);
 }
+function hcdecor_social_account_normalize($account){
+    $account=is_array($account)?$account:[];$channel=sanitize_key(is_scalar($account['channel']??'')?(string)$account['channel']:'');
+    $token=is_scalar($account['token']??'')?trim((string)$account['token']):'';if(strlen($token)>8192)$token='';
+    return ['id'=>hcdecor_social_limit_text(sanitize_key(is_scalar($account['id']??'')?(string)$account['id']:''),100),'channel'=>in_array($channel,['facebook','tiktok','youtube'],true)?$channel:'','name'=>hcdecor_social_limit_text($account['name']??'',300),'remote_id'=>hcdecor_social_limit_text($account['remote_id']??'',500),'token'=>$token,'group'=>hcdecor_social_limit_text(sanitize_key(is_scalar($account['group']??'')?(string)$account['group']:''),100),'enabled'=>!empty($account['enabled'])];
+}
 function hcdecor_social_accounts() {
-    $value = get_option('hcdecor_social_accounts', []);
-    return is_array($value) ? array_slice(array_values($value), -50) : [];
+    $value = get_option('hcdecor_social_accounts', []);if(!is_array($value))return [];$out=[];
+    foreach(array_slice(array_values($value),-50) as $account){$safe=hcdecor_social_account_normalize($account);if($safe['id']!==''&&$safe['channel']!=='')$out[]=$safe;}return $out;
 }
 function hcdecor_social_groups() {
     $value = get_option('hcdecor_social_groups', []);
@@ -43,17 +48,19 @@ add_action('admin_post_hcdecor_social_account_save', function () {
     if (!current_user_can('manage_options')) { wp_die('Forbidden'); }
     check_admin_referer('hcdecor_social_account_save');
     $all = hcdecor_social_accounts();
-    $id = sanitize_key($_POST['account_id'] ?? '');
+    $id_raw=$_POST['account_id']??'';$id=sanitize_key(is_scalar($id_raw)?(string)$id_raw:'');
     if (!$id) { $id = 'acc_' . wp_generate_password(10, false, false); }
-    $channel = sanitize_key($_POST['channel'] ?? '');
+    $channel_raw=$_POST['channel']??'';$channel=sanitize_key(is_scalar($channel_raw)?(string)$channel_raw:'');
     if (!in_array($channel, ['facebook','tiktok','youtube'], true)) { wp_die('Invalid social channel'); }
+    $token_input=wp_unslash($_POST['token']??'');$token_input=is_scalar($token_input)?trim((string)$token_input):'';
+    if(strlen($token_input)>8192) wp_die('Social credential value too long.');
     $row = [
         'id' => $id,
         'channel' => $channel,
         'name' => hcdecor_social_limit_text(wp_unslash($_POST['name'] ?? ''), 300),
         'remote_id' => hcdecor_social_limit_text(wp_unslash($_POST['remote_id'] ?? ''), 500),
-        'token' => hcdecor_social_limit_text(wp_unslash($_POST['token'] ?? ''), 8192),
-        'group' => sanitize_key($_POST['group'] ?? ''),
+        'token' => $token_input,
+        'group' => sanitize_key(is_scalar($_POST['group']??'')?(string)$_POST['group']:''),
         'enabled' => !empty($_POST['enabled']),
     ];
     $found = false;

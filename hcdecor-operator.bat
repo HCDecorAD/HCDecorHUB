@@ -166,7 +166,7 @@ findstr /c:"Fresh explicit approval is required for Drive job writes." "wordpres
 findstr /c:"Backup exceeds the 25 MB restore limit." "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 221
 findstr /c:"function hcdecor_social_accounts_safe" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 222
 findstr /c:"function hcdecor_social_accounts_safe" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 223
-findstr /c:"array_slice(array_values($value), -50)" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 224
+findstr /c:"foreach(array_slice(array_values($value),-50)" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 224
 findstr /c:"array_slice($groups, -50, null, true)" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 225
 findstr /c:"function hcdecor_conn_save" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 226
 findstr /c:"array_slice((array)$v,-100,null,true)" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 227
@@ -459,6 +459,9 @@ findstr /c:"'limit'=>max(1,min(50" "wordpress\hcdecor-core\modules\drive-inbox.p
 findstr /c:"Social publish schedule must run within 10 minutes" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 487
 findstr /c:"strlen($caption_input)>20000" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 488
 findstr /c:"strlen($media_input)>5000" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 489
+findstr /c:"function hcdecor_social_account_normalize" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 490
+findstr /c:"Social credential value too long." "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 491
+findstr /c:"if(strlen($token)>8192)$token=''" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 492
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
