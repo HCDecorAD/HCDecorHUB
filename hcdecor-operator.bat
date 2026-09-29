@@ -149,7 +149,7 @@ findstr /c:"Evergreen social publishing requires fresh explicit production appro
 findstr /c:"function hcdecor_runtime_approval_fresh" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 201
 findstr /c:"15*MINUTE_IN_SECONDS" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 202
 findstr /c:"'live_health'=>" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 203
-findstr /c:"Production publish approval expired; approve again." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 204
+findstr /c:"Production publish approval is not fresh; approve again." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 204
 findstr /c:"array_slice($j['workflow_log'],-100)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 205
 findstr /c:"!wp_attachment_is_image($cover)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 206
 findstr /c:"Project Vault import requires a JSON file." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 207
@@ -379,6 +379,8 @@ findstr /c:"$limit=$ch==='facebook'?10000:20000" "wordpress\hcdecor-core\modules
 findstr /c:"function hcdecor_publish_clip" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 392
 findstr /c:"hcdecor_publish_clip($post->post_content,100000)" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 393
 findstr /c:"hcdecor_publish_clip($snapshot['seo_meta']??'',2000)" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 394
+findstr /c:"$approval_ts>time()+5*MINUTE_IN_SECONDS" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 395
+findstr /c:"Production publish approval is not fresh; approve again." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 396
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

@@ -50,11 +50,11 @@ function hcdecor_publish_preflight($job_id){
     $approval_at=(string)get_post_meta($job_id,'hc_publish_approved_at',true);
     $approval_ts=$approval_at!==''?(strtotime($approval_at)?:0):0;
     if((!$approval_by && $approval_source!=='service_bridge') || !$approval_ts) return new WP_Error('approval','Explicit production publish approval is required.');
-    if($approval_ts<time()-15*MINUTE_IN_SECONDS){
+    if($approval_ts<time()-15*MINUTE_IN_SECONDS || $approval_ts>time()+5*MINUTE_IN_SECONDS){
         delete_post_meta($job_id,'hc_publish_approved_by');
         delete_post_meta($job_id,'hc_publish_approved_at');
         delete_post_meta($job_id,'hc_publish_approval_source');
-        return new WP_Error('approval_expired','Production publish approval expired; approve again.');
+        return new WP_Error('approval_expired','Production publish approval is not fresh; approve again.');
     }
     $project=(int)get_post_meta($job_id,'hc_project_id',true);
     if(!$project || get_post_type($project)!=='hc_project') return new WP_Error('project','Invalid project');
@@ -73,7 +73,12 @@ function hcdecor_publish_job_to_web($job_id){
     $job_id=(int)$job_id;
     $approval_at=(string)get_post_meta($job_id,'hc_publish_approved_at',true);
     $approval_ts=$approval_at!==''?(strtotime($approval_at)?:0):0;
-    if(!$approval_ts || $approval_ts<(time()-15*MINUTE_IN_SECONDS) || $approval_ts>(time()+5*MINUTE_IN_SECONDS)) return new WP_Error('approval','Fresh explicit production publish approval is required.');
+    if(!$approval_ts || $approval_ts<(time()-15*MINUTE_IN_SECONDS) || $approval_ts>(time()+5*MINUTE_IN_SECONDS)){
+        delete_post_meta($job_id,'hc_publish_approved_by');
+        delete_post_meta($job_id,'hc_publish_approved_at');
+        delete_post_meta($job_id,'hc_publish_approval_source');
+        return new WP_Error('approval','Fresh explicit production publish approval is required.');
+    }
     $preflight=hcdecor_publish_preflight($job_id);
     if(is_wp_error($preflight)) return $preflight;
     $project=(int)$preflight['project_id'];
