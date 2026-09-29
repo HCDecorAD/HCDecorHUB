@@ -584,6 +584,9 @@ findstr /c:"$media_raw=get_post_meta($project,'hc_project_gallery',true)" "wordp
 findstr /c:"$ids_raw=get_post_meta(get_the_ID(),'hc_project_gallery',true)" "wordpress\hcdecor-core\modules\project-publishing.php" >nul || exit /b 612
 findstr /c:"$ids_raw=$_POST['media_ids']" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 613
 findstr /c:"$existing_raw=get_post_meta($project,'hc_project_gallery',true)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 614
+findstr /c:"$gallery_raw=get_post_meta($project_id,'hc_project_gallery',true)" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 615
+findstr /c:"$gallery_raw=get_post_meta($project_id,'hc_project_gallery',true)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 616
+findstr /c:"hcdecor_project_vault_media_record" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 617
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

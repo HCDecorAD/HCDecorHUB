@@ -23,7 +23,7 @@ function hcdecor_project_vault_media_record($attachment_id){
         'alt'=>hcdecor_project_vault_clip(get_post_meta($attachment_id,'_wp_attachment_image_alt',true),1000),
         'caption'=>hcdecor_project_vault_clip(wp_get_attachment_caption($attachment_id),5000),
         'ai_summary'=>hcdecor_project_vault_clip(get_post_meta($attachment_id,'hc_ai_summary',true),5000),
-        'ai_tags'=>array_slice(array_map(function($tag){return hcdecor_project_vault_clip($tag,100);},(array)get_post_meta($attachment_id,'hc_ai_tags',true)),0,30),
+        'ai_tags'=>(function($raw){return array_slice(array_values(array_filter(array_map(function($tag){return hcdecor_project_vault_clip($tag,100);},is_array($raw)?$raw:[]))),0,30);})(get_post_meta($attachment_id,'hc_ai_tags',true)),
         'cover_score'=>(int)get_post_meta($attachment_id,'hc_ai_cover_score',true)
     ];
 }
@@ -33,8 +33,8 @@ function hcdecor_project_vault_data($project_id){
     $p=get_post($project_id);
     if(!$p || $p->post_type!=='hc_project') return new WP_Error('project','Invalid Project.');
 
-    $gallery=(array)get_post_meta($project_id,'hc_project_gallery',true);
-    if(!$gallery) $gallery=(array)get_post_meta($project_id,'hc_gallery_ids',true);
+    $gallery_raw=get_post_meta($project_id,'hc_project_gallery',true);$gallery=is_array($gallery_raw)?$gallery_raw:[];
+    if(!$gallery){$legacy_raw=get_post_meta($project_id,'hc_gallery_ids',true);$gallery=is_array($legacy_raw)?$legacy_raw:[];}
     $gallery=array_slice(array_values(array_unique(array_filter(array_map('intval',$gallery)))),0,60);
     $media=[];
     foreach($gallery as $mid){
@@ -72,8 +72,8 @@ function hcdecor_project_vault_data($project_id){
 }
 
 function hcdecor_project_vault_sync_media($project_id){
-    $gallery=(array)get_post_meta($project_id,'hc_project_gallery',true);
-    if(!$gallery) $gallery=(array)get_post_meta($project_id,'hc_gallery_ids',true);
+    $gallery_raw=get_post_meta($project_id,'hc_project_gallery',true);$gallery=is_array($gallery_raw)?$gallery_raw:[];
+    if(!$gallery){$legacy_raw=get_post_meta($project_id,'hc_gallery_ids',true);$gallery=is_array($legacy_raw)?$legacy_raw:[];}
     $gallery=array_slice(array_values(array_unique(array_filter(array_map('intval',$gallery)))),0,60);
     $featured=(int)get_post_thumbnail_id($project_id);
     if($featured && !in_array($featured,$gallery,true)) array_unshift($gallery,$featured);
