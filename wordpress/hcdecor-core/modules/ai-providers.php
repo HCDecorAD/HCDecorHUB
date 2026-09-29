@@ -27,7 +27,7 @@ function hcdecor_ai_model($provider){
     return '';
 }
 function hcdecor_ai_primary(){
-    $p=(string)get_option('hcdecor_ai_primary','auto');
+    $p=hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_primary','auto'),20);
     return in_array($p,['auto','openai','gemini'],true)?$p:'auto';
 }
 function hcdecor_ai_available($provider){
@@ -68,7 +68,7 @@ function hcdecor_ai_prompt($job_id){
     $project_id=(int)get_post_meta($job_id,'hc_project_id',true);
     $project=$project_id?get_post($project_id):null;
     $channels=(array)get_post_meta($job_id,'hc_channels',true);
-    $review_note=(string)get_post_meta($job_id,'hc_review_note',true);
+    $review_note=hcdecor_ai_bounded_scalar(get_post_meta($job_id,'hc_review_note',true),5000);
 
     $parts=[
         'Bạn là HCDecor HUB Agent phụ trách nội dung dự án thiết kế, thi công, nội thất, kiến trúc, bảng hiệu và 3D.',
@@ -83,13 +83,13 @@ function hcdecor_ai_prompt($job_id){
     ];
     $media_notes=[];
     foreach(array_slice((array)get_post_meta($job_id,'hc_media_ids',true),0,12) as $mid){
-        $mid=(int)$mid; $summary=(string)get_post_meta($mid,'hc_ai_summary',true);
+        $mid=(int)$mid; $summary=hcdecor_ai_bounded_scalar(get_post_meta($mid,'hc_ai_summary',true),5000);
         if($summary==='') continue;
         $tags=array_slice((array)get_post_meta($mid,'hc_ai_tags',true),0,30);
         $media_notes[]='#'.$mid.' '.$clip($summary,5000).' | cover_score='.(int)get_post_meta($mid,'hc_ai_cover_score',true).' | tags='.$clip(implode(',',$tags),3000);
     }
     if($media_notes) $parts[]='MEDIA ANALYSIS:\n'.implode("\n",$media_notes);
-    $drive_prompt=(string)get_option('hcdecor_drive_active_prompt','');
+    $drive_prompt=hcdecor_ai_bounded_scalar(get_option('hcdecor_drive_active_prompt',''),20000);
     if($drive_prompt!=='') $parts[]='ACTIVE DRIVE PROMPT:\n'.$clip($drive_prompt,20000);
     if($review_note!=='') $parts[]='REVIEW NOTE: '.$clip($review_note,5000);
     $parts[]='Yêu cầu output: web_title, web_intro, web_body, seo_meta, facebook_caption, tiktok_script, youtube_title, youtube_description.';
