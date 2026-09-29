@@ -19,4 +19,4 @@ Production is WordPress + Elementor at https://hcdecorhub.com. GitHub Next/Verce
 Repository HCDecorAD/GSC. Preserve 11 hotspots. Hotspots 1–10 use configured real videos; hotspot 11 has no video. Never replace the large index blindly.
 
 ### AMO
-Repository HCDecorAD/AMONguyen. Production hosting is GitHub Pages at https://amonguyen.hcdecorhub.com. Never fabricate products, prices, stock, brands, reviews, or order history.
+Repository HCDecorAD/AMONguyen. Production frontend is verified live at https://amonguyen.vercel.app. Deployment provider remains registry-controlled; verify the current adapter before any promotion. Never fabricate products, prices, stock, brands, reviews, or order history.
