@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.082",
+    "version":  "2026.09.29.083",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -54,7 +54,7 @@
                   {
                       "path":  "modules/web-publisher.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/web-publisher.php",
-                      "git_sha1":  "51ae9da4832473020c5b02c53c5464ef609322c2"
+                      "git_sha1":  "bc791031a68b86be7bb00c92b2be7e08bb4fc07b"
                   },
                   {
                       "path":  "modules/project-publishing.php",
@@ -134,12 +134,12 @@
                   {
                       "path":  "modules/data-backup.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/data-backup.php",
-                      "git_sha1":  "c99697ed823dfd40163c6555d985383a53bae15b"
+                      "git_sha1":  "b1d218f5b40a689edb86970bba9f1f022805730b"
                   },
                   {
                       "path":  "modules/data-restore.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/data-restore.php",
-                      "git_sha1":  "66269b8a56a1bf0c428f29889028490f226fe08b"
+                      "git_sha1":  "d0a98b2c40e0e57a77e00a3030979652351ec885"
                   },
                   {
                       "path":  "modules/drive-inbox.php",
@@ -149,7 +149,7 @@
                   {
                       "path":  "modules/project-vault.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/project-vault.php",
-                      "git_sha1":  "da6834afa54456903bbc493890b2a50e04bca586"
+                      "git_sha1":  "6bee0ad37200dc3ea1644255c5049d5c8cfaa434"
                   },
                   {
                       "path":  "modules/hub-dashboard.php",

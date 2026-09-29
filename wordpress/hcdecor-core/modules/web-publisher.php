@@ -167,7 +167,17 @@ add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/operations/jobs/(?P<id>\d+)/publish-web',[
         'methods'=>'POST','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
-            $res=hcdecor_publish_job_to_web((int)$r['id']);
+            $id=(int)$r['id'];
+            if(!$id || get_post_type($id)!=='hc_content_job') return new WP_Error('job','Invalid content job.',['status'=>404]);
+            if(get_current_user_id()>0 && !current_user_can('edit_post',$id)) return new WP_Error('forbidden','Forbidden.',['status'=>403]);
+            if(!rest_sanitize_boolean($r->get_param('production_approved'))) return new WP_Error('approval','Explicit production publish approval is required.',['status'=>403]);
+            update_post_meta($id,'hc_publish_approved_by',get_current_user_id());
+            update_post_meta($id,'hc_publish_approved_at',current_time('mysql'));
+            $res=hcdecor_publish_job_to_web($id);
+            if(is_wp_error($res)){
+                delete_post_meta($id,'hc_publish_approved_by');
+                delete_post_meta($id,'hc_publish_approved_at');
+            }
             return is_wp_error($res)?$res:rest_ensure_response($res);
         }
     ]);

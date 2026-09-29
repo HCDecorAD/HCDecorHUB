@@ -275,7 +275,7 @@ function hcdecor_project_vault_sync_all($limit=100){
         $r=hcdecor_project_vault_save((int)$project_id,true);
         if(is_wp_error($r)){
             $result['failed']++;
-            if(count($result['errors'])<10) $result['errors'][]='#'.(int)$project_id.': '.$r->get_error_message();
+            if(count($result['errors'])<10) $result['errors'][]='#'.(int)$project_id.': '.(function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($r->get_error_message()):sanitize_text_field($r->get_error_message()));
         }else{
             $result['synced']++;
         }

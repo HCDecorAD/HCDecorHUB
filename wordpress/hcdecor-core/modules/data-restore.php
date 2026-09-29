@@ -107,12 +107,14 @@ function hcdecor_restore_plan($backup){
     ];
 }
 
-function hcdecor_restore_map_ids($ids,$map){
+function hcdecor_restore_map_ids($ids,$map,$limit=60){
     $out=[];
-    foreach((array)$ids as $id){
+    $limit=max(1,min(60,(int)$limit));
+    foreach(array_slice((array)$ids,0,$limit) as $id){
         $old=(int)$id;
         $new=(int)($map[$old]??0);
         if($new) $out[]=$new;
+        if(count($out)>=$limit) break;
     }
     return array_values(array_unique($out));
 }

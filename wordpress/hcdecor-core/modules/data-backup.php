@@ -30,8 +30,8 @@ function hcdecor_backup_project($p){
         'excerpt'=>$p->post_excerpt,
         'content'=>$p->post_content,
         'modified'=>$p->post_modified,
-        'gallery'=>(array)get_post_meta($p->ID,'hc_project_gallery',true),
-        'gallery_legacy'=>(array)get_post_meta($p->ID,'hc_gallery_ids',true),
+        'gallery'=>array_slice((array)get_post_meta($p->ID,'hc_project_gallery',true),0,60),
+        'gallery_legacy'=>array_slice((array)get_post_meta($p->ID,'hc_gallery_ids',true),0,60),
         'thumbnail_id'=>(int)get_post_thumbnail_id($p->ID),
         'seo_meta'=>(string)get_post_meta($p->ID,'hc_seo_meta',true),
         'client'=>(string)get_post_meta($p->ID,'hc_client',true),
@@ -54,13 +54,13 @@ function hcdecor_backup_job($p){
         'modified'=>$p->post_modified,
         'status'=>(string)get_post_meta($p->ID,'hc_agent_status',true),
         'project_id'=>(int)get_post_meta($p->ID,'hc_project_id',true),
-        'channels'=>(array)get_post_meta($p->ID,'hc_channels',true),
-        'media_ids'=>(array)get_post_meta($p->ID,'hc_media_ids',true),
+        'channels'=>array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)get_post_meta($p->ID,'hc_channels',true))),
+        'media_ids'=>array_slice((array)get_post_meta($p->ID,'hc_media_ids',true),0,60),
         'cover_id'=>(int)get_post_meta($p->ID,'hc_cover_id',true),
         'ai_provider'=>(string)get_post_meta($p->ID,'hc_ai_provider',true),
         'ai_model'=>(string)get_post_meta($p->ID,'hc_ai_model',true),
         'content'=>$fields,
-        'workflow_log'=>(array)get_post_meta($p->ID,'hc_workflow_log',true)
+        'workflow_log'=>array_slice((array)get_post_meta($p->ID,'hc_workflow_log',true),-100)
     ];
 }
 
@@ -77,7 +77,7 @@ function hcdecor_backup_media($p){
         'ai_summary'=>(string)get_post_meta($id,'hc_ai_summary',true),
         'ai_alt'=>(string)get_post_meta($id,'hc_ai_alt',true),
         'ai_caption'=>(string)get_post_meta($id,'hc_ai_caption',true),
-        'ai_tags'=>(array)get_post_meta($id,'hc_ai_tags',true),
+        'ai_tags'=>array_slice((array)get_post_meta($id,'hc_ai_tags',true),0,30),
         'ai_visual_type'=>(string)get_post_meta($id,'hc_ai_visual_type',true),
         'cover_score'=>(int)get_post_meta($id,'hc_ai_cover_score',true)
     ];

@@ -287,6 +287,12 @@ findstr /c:"live_health'=>'not_checked'" "wordpress\hcdecor-core\modules\social-
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\hcdecor-auto.cmd" >nul || exit /b 53
 findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\setup-hcdecor.cmd" >nul || exit /b 54
 findstr /i /r /c:"eval-file.*homepage-builder.php" wordpress\*.cmd wordpress\*.bat wordpress\*.ps1 >nul 2>nul && exit /b 55
+findstr /c:"function hcdecor_restore_map_ids" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 301
+findstr /c:"hcdecor_drive_safe_error" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 302
+findstr /c:"'workflow_log'=>array_slice" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 303
+findstr /c:"'ai_tags'=>array_slice" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 304
+findstr /c:"rest_sanitize_boolean" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 305
+findstr /c:"current_user_can('edit_post'" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 306
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
