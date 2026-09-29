@@ -90,6 +90,8 @@ function hcdecor_auto_log($task_id,$event,$note=''){
 
 function hcdecor_auto_approval_fresh($payload){
     if(empty($payload['production_approved']) || empty($payload['production_approved_by']) || empty($payload['production_approved_at'])) return false;
+    $source=sanitize_key((string)($payload['production_approval_source']??''));
+    if(!in_array($source,['wp_user','service_bridge'],true)) return false;
     $at=strtotime((string)$payload['production_approved_at'])?:0;
     return $at>0 && $at>=time()-15*MINUTE_IN_SECONDS && $at<=time()+5*MINUTE_IN_SECONDS;
 }
@@ -467,6 +469,7 @@ add_action('admin_post_hcdecor_automation_retry',function(){
         $payload['production_approved']=true;
         $payload['production_approved_by']=get_current_user_id();
         $payload['production_approved_at']=current_time('mysql');
+        $payload['production_approval_source']='wp_user';
         $encoded=wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
         if(!is_string($encoded) || strlen($encoded)>256*1024) wp_die('Automation payload exceeds 256 KB.');
         wp_update_post(['ID'=>$id,'post_content'=>$encoded]);

@@ -84,6 +84,7 @@ add_action('admin_post_hcdecor_social_bulk_publish', function () {
         }
         $ids = array_values(array_unique($ids));
     }
+    $ids=array_slice(array_values(array_unique($ids)),0,50);
     $media_raw = sanitize_text_field(wp_unslash($_POST['media_ids'] ?? ''));
     $media = array_slice(array_values(array_filter(array_unique(array_map('intval', preg_split('/[\s,]+/', $media_raw))), function($id){ return get_post_type($id)==='attachment'; })), 0, 60);
     $caption = sanitize_textarea_field(wp_unslash($_POST['caption'] ?? ''));
@@ -108,6 +109,7 @@ add_action('admin_post_hcdecor_social_bulk_publish', function () {
             'production_approved' => true,
             'production_approved_by' => get_current_user_id(),
             'production_approved_at' => current_time('mysql'),
+            'production_approval_source' => 'wp_user',
         ];
         $result = function_exists('hcdecor_auto_enqueue')
             ? hcdecor_auto_enqueue('social_publish', $payload, $run, 'bulk:' . $batch . ':' . $id)

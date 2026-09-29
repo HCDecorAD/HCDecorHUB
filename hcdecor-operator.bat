@@ -390,6 +390,10 @@ findstr /c:"count($m['files'])<=100" "wordpress\hcdecor-core\recovery-bootstrap.
 findstr /c:"limit_response_size'=>4*1024*1024+1" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 403
 findstr /c:"$local_size=@filesize($target)" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 404
 findstr /c:"$local_size=@filesize($target)" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 405
+findstr /c:"production_approval_source']='wp_user'" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 406
+findstr /c:"in_array($source,['wp_user','service_bridge'],true)" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 407
+findstr /c:"$ids=array_slice(array_values(array_unique($ids)),0,50)" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 408
+findstr /c:"external_write_confirmation_required" "app\api\projects\route.js" >nul || exit /b 409
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

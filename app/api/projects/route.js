@@ -6,6 +6,7 @@ export async function POST(req){
  const blocked=requireSameOriginMutation(req);if(blocked)return blocked;
  const r=crmRuntime();if(!r.projectProvisionEnabled)return Response.json({ok:false,error:"project_runtime_not_configured"},{status:503});
  let d={};try{d=await req.json()}catch{return Response.json({ok:false,error:"invalid_json"},{status:400})}
+ if(d.confirmExternalWrite!==true)return Response.json({ok:false,error:"external_write_confirmation_required"},{status:403});
  const client=clean(d.client);if(!client)return Response.json({ok:false,error:"client_required"},{status:400});
  const fields=[client,clean(d.leadId),clean(d.service),clean(d.location),clean(d.status),clean(d.notes)];if(fields.some(v=>v.length>5000)||client.length>160)return Response.json({ok:false,error:"field_too_long"},{status:400});
  const projectId=newProjectId(),createdAt=new Date().toISOString();let folder=null;
