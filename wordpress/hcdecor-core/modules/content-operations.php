@@ -40,7 +40,7 @@ function hcdecor_ops_valid_media_ids($ids,$limit=60) {
     return $out;
 }
 function hcdecor_ops_limit_text($value,$limit){
-    $value=sanitize_textarea_field((string)$value);
+    $value=sanitize_textarea_field(is_scalar($value)?(string)$value:'');
     return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit);
 }
 function hcdecor_ops_save_fields($job_id,$src) {

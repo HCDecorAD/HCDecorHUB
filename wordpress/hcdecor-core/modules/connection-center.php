@@ -5,7 +5,7 @@ function hcdecor_conn_normalize($x){ $x=is_array($x)?$x:array(); return array('n
 function hcdecor_conn_get(){ $v=get_option('hcdecor_connections',array());$out=array();if(!is_array($v))return $out;foreach(array_slice($v,-100,null,true) as $id=>$x){$safe_id=hcdecor_conn_clip(sanitize_key((string)$id),64);if($safe_id!=='')$out[$safe_id]=hcdecor_conn_normalize($x);}return $out; }
 function hcdecor_conn_save($v){ $out=array();foreach(array_slice((array)$v,-100,null,true) as $id=>$x){$safe_id=hcdecor_conn_clip(sanitize_key((string)$id),64);if($safe_id!=='')$out[$safe_id]=hcdecor_conn_normalize($x);}update_option('hcdecor_connections',$out,false); }
 function hcdecor_conn_safe_error($message){
- $text=sanitize_text_field((string)$message);
+ $text=sanitize_text_field(is_scalar($message)?(string)$message:'');
  $text=preg_replace('/\bBearer\s+[A-Za-z0-9._~+\/-]{12,}\b/i','[REDACTED]',$text);
  $text=preg_replace('/([?&](?:token|key|api[_-]?key|secret|sig|signature|code)=)[^&\s]+/i','$1[REDACTED]',$text);
  return function_exists('mb_substr')?mb_substr($text,0,500):substr($text,0,500);

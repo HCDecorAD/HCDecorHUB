@@ -508,6 +508,12 @@ findstr /c:"hcdecor_health_scalar(get_option('hcdecor_backup_last_error',''),500
 findstr /c:"$value=is_scalar($value)?(string)$value:''" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 536
 findstr /c:"hcdecor_publish_clip(get_post_meta($job_id,'hc_web_body',true),100001)" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 537
 findstr /c:"sanitize_key(hcdecor_publish_clip(get_post_meta($job_id,'hc_publish_approval_source',true),50))" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 538
+findstr /c:"sanitize_text_field(is_scalar($message)?(string)$message:'')" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 539
+findstr /c:"sanitize_text_field(is_scalar($message)?(string)$message:'')" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 540
+findstr /c:"sanitize_textarea_field(is_scalar($value)?(string)$value:'')" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 541
+findstr /c:"sanitize_textarea_field(is_scalar($value)?(string)$value:'')" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 542
+findstr /c:"function hcdecor_project_vault_clip" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 543
+findstr /c:"sanitize_text_field(is_scalar($message)?(string)$message:'')" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 544
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

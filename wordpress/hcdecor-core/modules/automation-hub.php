@@ -85,7 +85,7 @@ function hcdecor_auto_payload($task_id){
 }
 
 function hcdecor_auto_safe_message($message){
-    $text=sanitize_text_field((string)$message);
+    $text=sanitize_text_field(is_scalar($message)?(string)$message:'');
     return function_exists('mb_substr')?mb_substr($text,0,500):substr($text,0,500);
 }
 function hcdecor_auto_log($task_id,$event,$note=''){

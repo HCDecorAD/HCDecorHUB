@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) exit;
 /* HCDecor production media manager: upload/select, metadata visibility, project assignment. */
 
 function hcdecor_media_limit_text($value,$limit){
-    $text=sanitize_textarea_field((string)$value);
+    $text=sanitize_textarea_field(is_scalar($value)?(string)$value:'');
     return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
 }
 

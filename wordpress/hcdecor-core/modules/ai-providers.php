@@ -143,7 +143,7 @@ function hcdecor_ai_extract_gemini_text($data){
 }
 
 function hcdecor_ai_safe_error($message){
-    $text=sanitize_text_field((string)$message);
+    $text=sanitize_text_field(is_scalar($message)?(string)$message:'');
     $text=preg_replace('/\b(?:sk-[A-Za-z0-9_-]{12,}|AIza[0-9A-Za-z_-]{20,}|Bearer\s+[A-Za-z0-9._~+\/-]{12,})\b/i','[REDACTED]',$text);
     return function_exists('mb_substr')?mb_substr($text,0,500):substr($text,0,500);
 }

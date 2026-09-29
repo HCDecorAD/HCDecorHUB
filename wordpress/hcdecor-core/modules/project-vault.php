@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) exit;
  */
 
 function hcdecor_project_vault_clip($value,$limit){
-    $value=(string)$value;
+    $value=is_scalar($value)?(string)$value:'';
     return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit);
 }
 
