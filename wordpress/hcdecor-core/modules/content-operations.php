@@ -145,7 +145,7 @@ add_action('rest_api_init',function(){
             $status=sanitize_key($r->get_param('status')?:'');
             $meta=$status?[['key'=>'hc_agent_status','value'=>$status]]:[];
             $jobs=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'orderby'=>'modified','order'=>'ASC','meta_query'=>$meta]);
-            $out=[]; foreach($jobs as $j){$out[]=['id'=>$j->ID,'title'=>$j->post_title,'brief'=>$j->post_content,'project_id'=>(int)hcdecor_ops_get($j->ID,'project_id'),'status'=>hcdecor_ops_get($j->ID,'agent_status','draft'),'channels'=>(array)hcdecor_ops_get($j->ID,'channels',[]),'media_ids'=>(array)hcdecor_ops_get($j->ID,'media_ids',[]),'outbound'=>false];}
+            $out=[]; foreach($jobs as $j){$out[]=['id'=>$j->ID,'title'=>hcdecor_ops_limit_text($j->post_title,500),'brief'=>hcdecor_ops_limit_text($j->post_content,20000),'project_id'=>(int)hcdecor_ops_get($j->ID,'project_id'),'status'=>sanitize_key((string)hcdecor_ops_get($j->ID,'agent_status','draft')),'channels'=>array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)hcdecor_ops_get($j->ID,'channels',[]))),'media_ids'=>hcdecor_ops_valid_media_ids(hcdecor_ops_get($j->ID,'media_ids',[])),'outbound'=>false];}
             return rest_ensure_response($out);
         }
     ]);
@@ -165,8 +165,8 @@ add_action('rest_api_init',function(){
                 hcdecor_ops_save_fields($id,$p);
             }
             $post=get_post($id);
-            $data=['id'=>$id,'title'=>$post->post_title,'brief'=>$post->post_content,'project_id'=>(int)hcdecor_ops_get($id,'project_id'),'status'=>hcdecor_ops_get($id,'agent_status','draft'),'media_ids'=>(array)hcdecor_ops_get($id,'media_ids',[]),'cover_id'=>(int)hcdecor_ops_get($id,'cover_id'),'channels'=>(array)hcdecor_ops_get($id,'channels',[]),'outbound'=>false];
-            foreach(hcdecor_ops_fields() as $k) $data[$k]=hcdecor_ops_get($id,$k);
+            $data=['id'=>$id,'title'=>hcdecor_ops_limit_text($post->post_title,500),'brief'=>hcdecor_ops_limit_text($post->post_content,20000),'project_id'=>(int)hcdecor_ops_get($id,'project_id'),'status'=>sanitize_key((string)hcdecor_ops_get($id,'agent_status','draft')),'media_ids'=>hcdecor_ops_valid_media_ids(hcdecor_ops_get($id,'media_ids',[])),'cover_id'=>(int)hcdecor_ops_get($id,'cover_id'),'channels'=>array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)hcdecor_ops_get($id,'channels',[]))),'outbound'=>false];
+            foreach(hcdecor_ops_fields() as $k) $data[$k]=hcdecor_ops_limit_text(hcdecor_ops_get($id,$k),50000);
             return rest_ensure_response($data);
         }
     ]);
