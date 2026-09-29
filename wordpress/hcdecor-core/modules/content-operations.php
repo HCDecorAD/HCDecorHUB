@@ -132,7 +132,7 @@ function hcdecor_ops_bridge_auth(){
         $auth=(string)($_SERVER['HTTP_AUTHORIZATION']??'');
         if(stripos($auth,'Bearer ')===0) $given=trim(substr($auth,7));
     }
-    if($given==='') return false;
+    if($given==='' || strlen($given)>512) return false;
     foreach(hcdecor_ops_bridge_tokens() as $token){
         if(hash_equals($token,$given)) return true;
     }
@@ -143,6 +143,7 @@ add_action('rest_api_init',function(){
         'methods'=>'GET','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
             $status=sanitize_key($r->get_param('status')?:'');
+            if($status!=='' && !array_key_exists($status,hcdecor_ops_statuses())) return new WP_Error('status','Invalid workflow status.',['status'=>400]);
             $meta=$status?[['key'=>'hc_agent_status','value'=>$status]]:[];
             $jobs=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'orderby'=>'modified','order'=>'ASC','meta_query'=>$meta]);
             $out=[]; foreach($jobs as $j){$out[]=['id'=>$j->ID,'title'=>hcdecor_ops_limit_text($j->post_title,500),'brief'=>hcdecor_ops_limit_text($j->post_content,20000),'project_id'=>(int)hcdecor_ops_get($j->ID,'project_id'),'status'=>sanitize_key((string)hcdecor_ops_get($j->ID,'agent_status','draft')),'channels'=>array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)hcdecor_ops_get($j->ID,'channels',[]))),'media_ids'=>hcdecor_ops_valid_media_ids(hcdecor_ops_get($j->ID,'media_ids',[])),'outbound'=>false];}

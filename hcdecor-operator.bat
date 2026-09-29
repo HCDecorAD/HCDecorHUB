@@ -346,6 +346,8 @@ findstr /c:"hcdecor_media_limit_text($m->post_content,10000)" "wordpress\hcdecor
 findstr /c:"hcdecor_media_limit_text(get_post_meta($m->ID,'_wp_attachment_image_alt',true),1000)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 359
 findstr /c:"hcdecor_ops_valid_media_ids(hcdecor_ops_get" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 360
 findstr /c:"hcdecor_ops_limit_text($post->post_content,20000)" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 361
+findstr /c:"strlen($given)>512" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 362
+findstr /c:"Invalid workflow status." "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 363
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
