@@ -6,19 +6,24 @@ if (!defined('ABSPATH')) exit;
  * Project metadata + media references <-> Google Drive / 01_PROJECTS.
  */
 
+function hcdecor_project_vault_clip($value,$limit){
+    $value=(string)$value;
+    return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit);
+}
+
 function hcdecor_project_vault_media_record($attachment_id){
     $attachment_id=(int)$attachment_id;
     if(!$attachment_id || get_post_type($attachment_id)!=='attachment') return null;
     return [
         'wp_id'=>$attachment_id,
-        'drive_file_id'=>(string)get_post_meta($attachment_id,'hc_drive_file_id',true),
-        'drive_url'=>(string)get_post_meta($attachment_id,'hc_drive_url',true),
-        'title'=>get_the_title($attachment_id),
-        'mime'=>(string)get_post_mime_type($attachment_id),
-        'alt'=>(string)get_post_meta($attachment_id,'_wp_attachment_image_alt',true),
-        'caption'=>(string)wp_get_attachment_caption($attachment_id),
-        'ai_summary'=>(string)get_post_meta($attachment_id,'hc_ai_summary',true),
-        'ai_tags'=>(array)get_post_meta($attachment_id,'hc_ai_tags',true),
+        'drive_file_id'=>hcdecor_project_vault_clip(get_post_meta($attachment_id,'hc_drive_file_id',true),300),
+        'drive_url'=>esc_url_raw((string)get_post_meta($attachment_id,'hc_drive_url',true)),
+        'title'=>hcdecor_project_vault_clip(get_the_title($attachment_id),500),
+        'mime'=>hcdecor_project_vault_clip(get_post_mime_type($attachment_id),200),
+        'alt'=>hcdecor_project_vault_clip(get_post_meta($attachment_id,'_wp_attachment_image_alt',true),1000),
+        'caption'=>hcdecor_project_vault_clip(wp_get_attachment_caption($attachment_id),5000),
+        'ai_summary'=>hcdecor_project_vault_clip(get_post_meta($attachment_id,'hc_ai_summary',true),5000),
+        'ai_tags'=>array_slice(array_map(function($tag){return hcdecor_project_vault_clip($tag,100);},(array)get_post_meta($attachment_id,'hc_ai_tags',true)),0,30),
         'cover_score'=>(int)get_post_meta($attachment_id,'hc_ai_cover_score',true)
     ];
 }
@@ -30,7 +35,7 @@ function hcdecor_project_vault_data($project_id){
 
     $gallery=(array)get_post_meta($project_id,'hc_project_gallery',true);
     if(!$gallery) $gallery=(array)get_post_meta($project_id,'hc_gallery_ids',true);
-    $gallery=array_values(array_unique(array_filter(array_map('intval',$gallery))));
+    $gallery=array_slice(array_values(array_unique(array_filter(array_map('intval',$gallery)))),0,60);
     $media=[];
     foreach($gallery as $mid){
         $row=hcdecor_project_vault_media_record($mid);
@@ -41,24 +46,25 @@ function hcdecor_project_vault_data($project_id){
     $featured=$featured_id?hcdecor_project_vault_media_record($featured_id):null;
     $terms=wp_get_post_terms($project_id,'hc_project_type',['fields'=>'slugs']);
     if(is_wp_error($terms)) $terms=[];
+    $terms=array_slice(array_map('sanitize_title',(array)$terms),0,20);
 
     return [
         'schema'=>'hcdecor.project.v1',
         'saved_at'=>current_time('mysql'),
         'source_project_id'=>$project_id,
         'project'=>[
-            'title'=>$p->post_title,
-            'slug'=>$p->post_name,
-            'status'=>$p->post_status,
-            'excerpt'=>$p->post_excerpt,
-            'content'=>$p->post_content,
+            'title'=>hcdecor_project_vault_clip($p->post_title,500),
+            'slug'=>sanitize_title($p->post_name),
+            'status'=>sanitize_key($p->post_status),
+            'excerpt'=>hcdecor_project_vault_clip($p->post_excerpt,5000),
+            'content'=>hcdecor_project_vault_clip($p->post_content,100000),
             'url'=>get_permalink($project_id),
             'types'=>array_values((array)$terms),
-            'client'=>(string)get_post_meta($project_id,'hc_client',true),
-            'location'=>(string)get_post_meta($project_id,'hc_location',true),
-            'year'=>(string)get_post_meta($project_id,'hc_year',true),
-            'summary'=>(string)get_post_meta($project_id,'hc_summary',true),
-            'seo_meta'=>(string)get_post_meta($project_id,'hc_seo_meta',true)
+            'client'=>hcdecor_project_vault_clip(get_post_meta($project_id,'hc_client',true),2000),
+            'location'=>hcdecor_project_vault_clip(get_post_meta($project_id,'hc_location',true),2000),
+            'year'=>hcdecor_project_vault_clip(get_post_meta($project_id,'hc_year',true),100),
+            'summary'=>hcdecor_project_vault_clip(get_post_meta($project_id,'hc_summary',true),10000),
+            'seo_meta'=>hcdecor_project_vault_clip(get_post_meta($project_id,'hc_seo_meta',true),2000)
         ],
         'featured'=>$featured,
         'media'=>$media

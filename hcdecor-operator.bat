@@ -330,6 +330,9 @@ findstr /c:"function hcdecor_backup_workflow_log" "wordpress\hcdecor-core\module
 findstr /c:"function hcdecor_backup_tags" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 343
 findstr /c:"0,60" "wordpress\hcdecor-core\modules\project-publishing.php" >nul || exit /b 344
 findstr /c:"mb_substr((string)$p->post_excerpt,0,2000)" "wordpress\hcdecor-core\modules\project-publishing.php" >nul || exit /b 345
+findstr /c:"Drive JSON payload exceeds 4 MB." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 346
+findstr /c:"function hcdecor_project_vault_clip" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 347
+findstr /c:"0,60" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 348
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

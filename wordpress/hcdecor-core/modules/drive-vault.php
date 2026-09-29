@@ -254,6 +254,8 @@ function hcdecor_drive_save_json($name,$data,$folder_key,$existing_file_id=''){
     $folder=(string)($folders[$folder_key]??'');
     if(!$folder) return new WP_Error('folder','Drive folder not configured: '.$folder_key);
     $bytes=wp_json_encode($data,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
+    if(!is_string($bytes) || $bytes==='') return new WP_Error('json','Unable to encode Drive JSON payload.');
+    if(strlen($bytes)>4*1024*1024) return new WP_Error('payload_size','Drive JSON payload exceeds 4 MB.');
     return hcdecor_drive_multipart($existing_file_id,$name,'application/json',$bytes,$folder);
 }
 
