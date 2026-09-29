@@ -151,7 +151,7 @@ findstr /c:"Production publish approval is not fresh; approve again." "wordpress
 findstr /c:"array_slice($j['workflow_log'],-100)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 205
 findstr /c:"!wp_attachment_is_image($cover)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 206
 findstr /c:"Project Vault import requires a JSON file." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 207
-findstr /c:"array_unique(array_map('intval',(array)($snapshot['gallery']" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 208
+findstr /c:"hcdecor_publish_ids($snapshot['gallery']" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 208
 findstr /c:"if($thumb && wp_attachment_is_image($thumb))" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 209
 findstr /c:"never restore executable recipe structures raw" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 210
 findstr /c:"$default['enabled']=false;" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 211
@@ -284,7 +284,7 @@ findstr /c:"hc_last_publish_approval_source" "wordpress\hcdecor-core\modules\web
 findstr /c:"hc_publish_approval_source" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 310
 findstr /c:"hc_publish_approval_source" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 311
 findstr /c:"hc_publish_approval_source" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 312
-findstr /c:"'gallery'=>array_slice" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 313
+findstr /c:"'gallery'=>hcdecor_publish_ids" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 313
 findstr /c:"Invalid content job." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 314
 findstr /c:"'workflow_log'=>hcdecor_drive_job_log" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 315
 findstr /c:"hcdecor_drive_inbox_safe_text($imported->get_error_message())" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 316
@@ -590,6 +590,14 @@ findstr /c:"hcdecor_project_vault_media_record" "wordpress\hcdecor-core\modules\
 findstr /c:"function hcdecor_backup_ids" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 618
 findstr /c:"hcdecor_backup_ids(get_post_meta($p->ID,'hc_media_ids',true),60)" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 619
 findstr /c:"$media_raw=get_post_meta($project_id,'hc_project_gallery',true)" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 620
+findstr /c:"$media_ids_raw=get_post_meta($job_id,'hc_media_ids',true)" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 621
+findstr /c:"$sync_media_raw=get_post_meta($job_id,'hc_media_ids',true)" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 622
+findstr /c:"function hcdecor_publish_ids" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 623
+findstr /c:"hcdecor_publish_ids(get_post_meta($job_id,'hc_media_ids',true),60)" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 624
+findstr /c:"$stored_media=get_post_meta($job_id,'hc_media_ids',true)" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 625
+findstr /c:"$channels_raw=get_post_meta($job->ID,'hc_channels',true)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 626
+findstr /c:"$media_raw=get_post_meta($job->ID,'hc_media_ids',true)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 627
+findstr /c:"$aitags_raw=get_post_meta($edit_id,'hc_ai_tags',true)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 628
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

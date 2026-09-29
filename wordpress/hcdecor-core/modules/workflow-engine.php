@@ -267,8 +267,8 @@ function hcdecor_workflow_lifecycle_mutex_release($job_id,$owned){
 }
 
 function hcdecor_workflow_claim_response($job,$claim_token){
-    $channels=array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)get_post_meta($job->ID,'hc_channels',true)));
-    $media_ids=function_exists('hcdecor_ops_valid_media_ids')?hcdecor_ops_valid_media_ids(get_post_meta($job->ID,'hc_media_ids',true)):array_slice(array_values(array_filter(array_map('intval',(array)get_post_meta($job->ID,'hc_media_ids',true)))),0,60);
+    $channels_raw=get_post_meta($job->ID,'hc_channels',true);$channels=array_values(array_intersect(['web','facebook','tiktok','youtube'],is_array($channels_raw)?$channels_raw:[]));
+    $media_raw=get_post_meta($job->ID,'hc_media_ids',true);$media_ids=function_exists('hcdecor_ops_valid_media_ids')?hcdecor_ops_valid_media_ids($media_raw):array_slice(array_values(array_filter(array_map('intval',is_array($media_raw)?$media_raw:[]))),0,60);
     $title=function_exists('hcdecor_ops_limit_text')?hcdecor_ops_limit_text($job->post_title,500):substr((string)$job->post_title,0,500);
     $brief=function_exists('hcdecor_ops_limit_text')?hcdecor_ops_limit_text($job->post_content,20000):substr((string)$job->post_content,0,20000);
     return rest_ensure_response([

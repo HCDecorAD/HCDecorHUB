@@ -331,7 +331,7 @@ function hcdecor_drive_job_data($job_id){
     $job=get_post($job_id);
     if(!$job||$job->post_type!=='hc_content_job') return new WP_Error('job','Invalid job.');
     $project=(int)get_post_meta($job_id,'hc_project_id',true);
-    $media_ids=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)get_post_meta($job_id,'hc_media_ids',true))),function($id){return get_post_type($id)==='attachment';})),0,60);
+    $media_ids_raw=get_post_meta($job_id,'hc_media_ids',true);$media_ids=array_slice(array_values(array_filter(array_unique(array_map('intval',is_array($media_ids_raw)?$media_ids_raw:[])),function($id){return get_post_type($id)==='attachment';})),0,60);
     $media=[];
     foreach($media_ids as $mid){
         $media[]=[
@@ -341,7 +341,7 @@ function hcdecor_drive_job_data($job_id){
             'title'=>hcdecor_drive_clip(get_the_title($mid),500),
             'mime'=>hcdecor_drive_clip(get_post_mime_type($mid),200),
             'ai_summary'=>hcdecor_drive_clip(get_post_meta($mid,'hc_ai_summary',true),5000),
-            'ai_tags'=>array_slice(array_map(function($tag){return hcdecor_drive_clip($tag,100);},(array)get_post_meta($mid,'hc_ai_tags',true)),0,30),
+            'ai_tags'=>(function($raw){return array_slice(array_values(array_filter(array_map(function($tag){return hcdecor_drive_clip($tag,100);},is_array($raw)?$raw:[]))),0,30);})(get_post_meta($mid,'hc_ai_tags',true)),
             'cover_score'=>(int)get_post_meta($mid,'hc_ai_cover_score',true)
         ];
     }
@@ -363,7 +363,7 @@ function hcdecor_drive_job_data($job_id){
             'title'=>hcdecor_drive_clip($job->post_title,500),
             'brief'=>hcdecor_drive_clip($job->post_content,20000),
             'status'=>sanitize_key(hcdecor_drive_clip(get_post_meta($job_id,'hc_agent_status',true),50)),
-            'channels'=>array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)get_post_meta($job_id,'hc_channels',true))),
+            'channels'=>(function($raw){return array_values(array_intersect(['web','facebook','tiktok','youtube'],is_array($raw)?$raw:[]));})(get_post_meta($job_id,'hc_channels',true)),
             'cover_id'=>(int)get_post_meta($job_id,'hc_cover_id',true),
             'ai_provider'=>sanitize_key(hcdecor_drive_clip(get_post_meta($job_id,'hc_ai_provider',true),50)),
             'ai_model'=>hcdecor_drive_clip(get_post_meta($job_id,'hc_ai_model',true),200)
@@ -386,7 +386,7 @@ function hcdecor_drive_save_job($job_id,$sync_media=true){
     $data=hcdecor_drive_job_data($job_id);
     if(is_wp_error($data)) return $data;
     if($sync_media){
-        foreach(array_slice((array)get_post_meta($job_id,'hc_media_ids',true),0,60) as $mid){
+        $sync_media_raw=get_post_meta($job_id,'hc_media_ids',true);foreach(array_slice(is_array($sync_media_raw)?$sync_media_raw:[],0,60) as $mid){
             $mid=(int)$mid;
             if($mid && hcdecor_drive_clip(get_post_meta($mid,'hc_drive_file_id',true),300)==='') hcdecor_drive_upload_attachment($mid,'media_input');
         }
