@@ -289,8 +289,8 @@ findstr /c:"HCDECOR_APPROVE_SITE_CONFIG_WRITE" "wordpress\setup-hcdecor.cmd" >nu
 findstr /i /r /c:"eval-file.*homepage-builder.php" wordpress\*.cmd wordpress\*.bat wordpress\*.ps1 >nul 2>nul && exit /b 55
 findstr /c:"function hcdecor_restore_map_ids" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 301
 findstr /c:"hcdecor_drive_safe_error" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 302
-findstr /c:"'workflow_log'=>array_slice" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 303
-findstr /c:"'ai_tags'=>array_slice" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 304
+findstr /c:"'workflow_log'=>hcdecor_backup_workflow_log" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 303
+findstr /c:"'ai_tags'=>hcdecor_backup_tags" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 304
 findstr /c:"rest_sanitize_boolean" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 305
 findstr /c:"current_user_can('edit_post'" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 306
 findstr /c:"Fresh explicit production publish approval is required." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 307
@@ -325,6 +325,9 @@ findstr /c:"function hcdecor_recipe_approval_fresh" "wordpress\hcdecor-core\modu
 findstr /c:"Fresh explicit production approval is required for recipe webhook delivery." "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 338
 findstr /c:"missing_origin_context" "lib\request-guard.js" >nul || exit /b 339
 findstr /c:"request_too_large" "lib\request-guard.js" >nul || exit /b 340
+findstr /c:"function hcdecor_backup_clip" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 341
+findstr /c:"function hcdecor_backup_workflow_log" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 342
+findstr /c:"function hcdecor_backup_tags" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 343
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

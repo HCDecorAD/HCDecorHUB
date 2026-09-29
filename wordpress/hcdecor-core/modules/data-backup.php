@@ -21,46 +21,67 @@ function hcdecor_backup_object_identity($post_id){
     return sanitize_text_field($identity);
 }
 
+function hcdecor_backup_clip($value,$limit){
+    $value=(string)$value;
+    return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit);
+}
+
+function hcdecor_backup_workflow_log($value){
+    $out=[];
+    foreach(array_slice((array)$value,-100) as $entry){
+        if(!is_array($entry)) continue;
+        $out[]=['time'=>hcdecor_backup_clip($entry['time']??'',64),'event'=>sanitize_key((string)($entry['event']??'')),'note'=>hcdecor_backup_clip($entry['note']??'',500),'user'=>(int)($entry['user']??0)];
+    }
+    return $out;
+}
+
+function hcdecor_backup_tags($value){
+    $out=[];
+    foreach(array_slice((array)$value,0,30) as $tag){$tag=hcdecor_backup_clip($tag,100);if($tag!=='')$out[]=$tag;}
+    return array_values(array_unique($out));
+}
+
 function hcdecor_backup_project($p){
     return [
         'backup_identity'=>hcdecor_backup_object_identity($p->ID),
         'id'=>(int)$p->ID,
-        'title'=>$p->post_title,
-        'status'=>$p->post_status,
-        'excerpt'=>$p->post_excerpt,
-        'content'=>$p->post_content,
+        'title'=>hcdecor_backup_clip($p->post_title,500),
+        'status'=>sanitize_key($p->post_status),
+        'excerpt'=>hcdecor_backup_clip($p->post_excerpt,5000),
+        'content'=>hcdecor_backup_clip($p->post_content,100000),
         'modified'=>$p->post_modified,
         'gallery'=>array_slice((array)get_post_meta($p->ID,'hc_project_gallery',true),0,60),
         'gallery_legacy'=>array_slice((array)get_post_meta($p->ID,'hc_gallery_ids',true),0,60),
         'thumbnail_id'=>(int)get_post_thumbnail_id($p->ID),
-        'seo_meta'=>(string)get_post_meta($p->ID,'hc_seo_meta',true),
-        'client'=>(string)get_post_meta($p->ID,'hc_client',true),
-        'location'=>(string)get_post_meta($p->ID,'hc_location',true),
-        'year'=>(string)get_post_meta($p->ID,'hc_year',true),
-        'summary'=>(string)get_post_meta($p->ID,'hc_summary',true)
+        'seo_meta'=>hcdecor_backup_clip(get_post_meta($p->ID,'hc_seo_meta',true),2000),
+        'client'=>hcdecor_backup_clip(get_post_meta($p->ID,'hc_client',true),2000),
+        'location'=>hcdecor_backup_clip(get_post_meta($p->ID,'hc_location',true),2000),
+        'year'=>hcdecor_backup_clip(get_post_meta($p->ID,'hc_year',true),2000),
+        'summary'=>hcdecor_backup_clip(get_post_meta($p->ID,'hc_summary',true),10000)
     ];
 }
 
 function hcdecor_backup_job($p){
     $fields=[];
     if(function_exists('hcdecor_ops_fields')){
-        foreach(hcdecor_ops_fields() as $k) $fields[$k]=get_post_meta($p->ID,'hc_'.$k,true);
+        $limits=['web_title'=>300,'web_intro'=>2000,'web_body'=>50000,'seo_meta'=>2000,'facebook_caption'=>10000,'tiktok_script'=>20000,'youtube_title'=>300,'youtube_description'=>20000];
+        foreach(hcdecor_ops_fields() as $k) $fields[$k]=hcdecor_backup_clip(get_post_meta($p->ID,'hc_'.$k,true),(int)($limits[$k]??10000));
     }
     return [
         'backup_identity'=>hcdecor_backup_object_identity($p->ID),
         'id'=>(int)$p->ID,
-        'title'=>$p->post_title,
-        'brief'=>$p->post_content,
+        'title'=>hcdecor_backup_clip($p->post_title,500),
+        'brief'=>hcdecor_backup_clip($p->post_content,20000),
         'modified'=>$p->post_modified,
         'status'=>(string)get_post_meta($p->ID,'hc_agent_status',true),
         'project_id'=>(int)get_post_meta($p->ID,'hc_project_id',true),
         'channels'=>array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)get_post_meta($p->ID,'hc_channels',true))),
         'media_ids'=>array_slice((array)get_post_meta($p->ID,'hc_media_ids',true),0,60),
         'cover_id'=>(int)get_post_meta($p->ID,'hc_cover_id',true),
-        'ai_provider'=>(string)get_post_meta($p->ID,'hc_ai_provider',true),
-        'ai_model'=>(string)get_post_meta($p->ID,'hc_ai_model',true),
+        'ai_provider'=>sanitize_key((string)get_post_meta($p->ID,'hc_ai_provider',true)),
+        'ai_model'=>hcdecor_backup_clip(get_post_meta($p->ID,'hc_ai_model',true),200),
         'content'=>$fields,
-        'workflow_log'=>array_slice((array)get_post_meta($p->ID,'hc_workflow_log',true),-100)
+        'workflow_log'=>hcdecor_backup_workflow_log(get_post_meta($p->ID,'hc_workflow_log',true))
     ];
 }
 
@@ -68,17 +89,17 @@ function hcdecor_backup_media($p){
     $id=(int)$p->ID;
     return [
         'id'=>$id,
-        'title'=>$p->post_title,
-        'caption'=>$p->post_excerpt,
-        'description'=>$p->post_content,
+        'title'=>hcdecor_backup_clip($p->post_title,500),
+        'caption'=>hcdecor_backup_clip($p->post_excerpt,5000),
+        'description'=>hcdecor_backup_clip($p->post_content,10000),
         'mime'=>(string)get_post_mime_type($id),
-        'alt'=>(string)get_post_meta($id,'_wp_attachment_image_alt',true),
-        'drive_file_id'=>(string)get_post_meta($id,'hc_drive_file_id',true),
-        'ai_summary'=>(string)get_post_meta($id,'hc_ai_summary',true),
-        'ai_alt'=>(string)get_post_meta($id,'hc_ai_alt',true),
-        'ai_caption'=>(string)get_post_meta($id,'hc_ai_caption',true),
-        'ai_tags'=>array_slice((array)get_post_meta($id,'hc_ai_tags',true),0,30),
-        'ai_visual_type'=>(string)get_post_meta($id,'hc_ai_visual_type',true),
+        'alt'=>hcdecor_backup_clip(get_post_meta($id,'_wp_attachment_image_alt',true),1000),
+        'drive_file_id'=>hcdecor_backup_clip(get_post_meta($id,'hc_drive_file_id',true),300),
+        'ai_summary'=>hcdecor_backup_clip(get_post_meta($id,'hc_ai_summary',true),5000),
+        'ai_alt'=>hcdecor_backup_clip(get_post_meta($id,'hc_ai_alt',true),1000),
+        'ai_caption'=>hcdecor_backup_clip(get_post_meta($id,'hc_ai_caption',true),5000),
+        'ai_tags'=>hcdecor_backup_tags(get_post_meta($id,'hc_ai_tags',true)),
+        'ai_visual_type'=>hcdecor_backup_clip(get_post_meta($id,'hc_ai_visual_type',true),1000),
         'cover_score'=>(int)get_post_meta($id,'hc_ai_cover_score',true)
     ];
 }
