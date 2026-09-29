@@ -378,7 +378,7 @@ findstr /c:"$local_size=@filesize($target)" "wordpress\hcdecor-core\recovery-boo
 findstr /c:"production_approval_source']='wp_user'" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 406
 findstr /c:"in_array($source,['wp_user','service_bridge'],true)" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 407
 findstr /c:"$ids=array_slice(array_values(array_unique($ids)),0,50)" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 408
-findstr /c:"external_write_confirmation_required" "app\api\projects\route.js" >nul || exit /b 409
+findstr /c:"fresh_external_write_approval_required" "app\api\projects\route.js" >nul || exit /b 409
 findstr /c:"hcdecor_backup_clip(get_option('hcdecor_drive_active_prompt',''),20000)" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 410
 findstr /c:"hcdecor_backup_clip(get_option('hcdecor_ai_openai_model',''),200)" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 411
 findstr /c:"function hcdecor_hub_dashboard_safe_error" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 412
@@ -430,6 +430,9 @@ findstr /c:"hcdecor_conn_clip($x['secret']" "wordpress\hcdecor-core\modules\conn
 findstr /c:"$limits=['client_id'=>1000,'client_secret'=>4000,'refresh_token'=>8000]" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 458
 findstr /c:"strlen($cached)<=16000" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 459
 findstr /c:"add_menu_page('HCDecor HUB','HCDecor HUB','edit_posts','hcdecor-hub','hcdecor_hub_dashboard_page'" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 460
+findstr /c:"content_length_required" "lib\request-guard.js" >nul || exit /b 461
+findstr /c:"fresh_external_write_approval_required" "app\api\projects\route.js" >nul || exit /b 462
+findstr /c:"approvalSource" "app\api\projects\route.js" >nul || exit /b 463
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
