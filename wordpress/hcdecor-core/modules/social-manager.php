@@ -15,10 +15,22 @@ function hcdecor_social_groups() {
 }
 function hcdecor_social_accounts_safe() {
     return array_map(function($account){
-        $safe = is_array($account) ? $account : [];
-        unset($safe['token'], $safe['secret'], $safe['access_token'], $safe['refresh_token'], $safe['password']);
-        return $safe;
+        $account=is_array($account)?$account:[];
+        $channel=sanitize_key((string)($account['channel']??''));
+        return [
+            'id'=>hcdecor_social_limit_text(sanitize_key((string)($account['id']??'')),100),
+            'channel'=>in_array($channel,['facebook','tiktok','youtube'],true)?$channel:'',
+            'name'=>hcdecor_social_limit_text($account['name']??'',300),
+            'remote_id'=>hcdecor_social_limit_text($account['remote_id']??'',500),
+            'group'=>hcdecor_social_limit_text(sanitize_key((string)($account['group']??'')),100),
+            'enabled'=>!empty($account['enabled'])
+        ];
     }, hcdecor_social_accounts());
+}
+function hcdecor_social_groups_safe(){
+    $out=[];
+    foreach(hcdecor_social_groups() as $key=>$name){$out[hcdecor_social_limit_text(sanitize_key((string)$key),100)]=hcdecor_social_limit_text($name,300);}
+    return $out;
 }
 function hcdecor_social_account($id) {
     foreach (hcdecor_social_accounts() as $account) {
@@ -161,7 +173,7 @@ add_action('rest_api_init', function () {
         'methods' => 'GET',
         'permission_callback' => 'hcdecor_ops_bridge_auth',
         'callback' => function () {
-            return rest_ensure_response(['accounts' => hcdecor_social_accounts_safe(), 'groups' => hcdecor_social_groups()]);
+            return rest_ensure_response(['accounts' => hcdecor_social_accounts_safe(), 'groups' => hcdecor_social_groups_safe()]);
         },
     ]);
 });

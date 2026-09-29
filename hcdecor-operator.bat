@@ -168,7 +168,7 @@ findstr /c:"Explicit approval is required for bulk Drive project writes." "wordp
 findstr /c:"Explicit approval is required for Drive job writes." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 220
 findstr /c:"Backup exceeds the 25 MB restore limit." "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 221
 findstr /c:"function hcdecor_social_accounts_safe" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 222
-findstr /c:"unset($safe['token'], $safe['secret'], $safe['access_token'], $safe['refresh_token'], $safe['password']);" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 223
+findstr /c:"function hcdecor_social_accounts_safe" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 223
 findstr /c:"array_slice(array_values($value), -50)" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 224
 findstr /c:"array_slice($groups, -50, null, true)" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 225
 findstr /c:"function hcdecor_conn_save" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 226
@@ -401,6 +401,8 @@ findstr /c:"mb_substr($text,0,500)" "wordpress\hcdecor-core\modules\hub-dashboar
 findstr /c:"active_prompt_file'],300" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 414
 findstr /c:"max(7,min(3650" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 415
 findstr /c:"max(1,min(1440" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 416
+findstr /c:"function hcdecor_social_groups_safe" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 417
+findstr /c:"'remote_id'=>hcdecor_social_limit_text" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 418
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
