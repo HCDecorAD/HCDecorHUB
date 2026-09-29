@@ -2,7 +2,7 @@
   "schema_version":"1.2.0",
   "integrations":{
     "github":{"purpose":["source","version","release","rollback"],"config_state":"configured","secret_storage":"environment"},
-    "wordpress":{"purpose":["HCDecor production","Elementor public website"],"site":"https://hcdecorhub.com","config_state":"configured","secret_storage":"environment"},
+    "wordpress":{"purpose":["HCDecor production","Elementor public website"],"site":"https://hcdecorhub.com","config_state":"configured","secret_storage":"environment","connector_state":"verified-authenticated-read","connector_scope":"external-chat-connector","server_write_runtime":"requires-environment-credential"},
     "vercel":{"purpose":["GSC runtime","AMO runtime"],"config_state":"configured","note":"Existing GSC/AMO projects only; never create duplicates.","secret_storage":"environment"},
     "google_drive":{"purpose":["projects","media","data","knowledge","templates","reports","backup"],"config_state":"requires-credentials","secret_storage":"connector-or-environment"},
     "metricool":{"purpose":["social-publishing","social-analytics","best-time-to-post"],"config_state":"configured","brand_id":"7127887","timezone":"Asia/Bangkok","networks":{"instagram":"zrubyshop","tiktok":"quangcaohocuong","youtube":"UC5yfCYp8BJNIHbX1-VNXVig","facebook":null},"publish_policy":"draft-or-schedule only unless production publish is approved"},
