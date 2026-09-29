@@ -1,0 +1,33 @@
+{
+  "schema_version": "3.0.0",
+  "baseline_id": "hcdecor-master-agent-v3",
+  "status": "locked",
+  "locked_at": "2026-09-29",
+  "principle": "core-stable-edge-flexible",
+  "core": [
+    "master-agent",
+    "context-resolver",
+    "planner-task-dag",
+    "orchestrator",
+    "workers",
+    "capability-router",
+    "policy-engine",
+    "verification",
+    "audit"
+  ],
+  "change_policy": {
+    "default": "adapter-or-module-first",
+    "core_change_requires_warning": true,
+    "core_change_requires_explicit_confirmation": true,
+    "warning_fields": ["requested_change","affected_components","risk","migration","adapter_alternative"]
+  },
+  "flexible_edges": [
+    "ai-model-provider",
+    "deployment-provider",
+    "cms-connector",
+    "storage-provider",
+    "database-provider",
+    "design-provider",
+    "social-provider"
+  ]
+}
