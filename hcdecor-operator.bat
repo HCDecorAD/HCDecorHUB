@@ -362,6 +362,8 @@ findstr /c:"Drive media upload must be between 1 byte and 50 MB." "wordpress\hcd
 findstr /c:"Cannot read attachment safely." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 375
 findstr /c:"hcdecor_ops_valid_media_ids" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 376
 findstr /c:"strlen($token)>128" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 377
+findstr /c:"function hcdecor_runtime_clip" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 378
+findstr /c:"hcdecor_runtime_prune(is_array($v)?$v:array())" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 379
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
