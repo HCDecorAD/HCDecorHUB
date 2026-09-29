@@ -56,3 +56,5 @@ html[data-theme="dark"] .realStat span,html[data-theme="dark"] .guard span{color
 .approvalQueue{margin:16px 0;padding:18px;border:1px solid #26364d;border-radius:16px;background:#101722}.approvalQueue h2{margin:0 0 4px}.approvalQueue>p{color:#93a5bb}.approvalItem{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:12px 0;border-top:1px solid #223047}.approvalItem small{display:block;color:#93a5bb;margin-top:3px}.approvalItem p{margin:5px 0 0}.approvalItem button{white-space:nowrap}
 
 .masterPreflight{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0;padding:10px 12px;border:1px solid #26364d;border-radius:12px;background:#101722}.masterPreflight span{font-weight:700}.masterPreflight small{color:#93a5bb}
+
+.workflowRunner{margin:16px 0;padding:18px;border:1px solid #26364d;border-radius:16px;background:#101722}.workflowRunner p{color:#93a5bb}.workflowRunner textarea{width:100%;min-height:90px}.workflowResult{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.workflowResult span{padding:6px 9px;border:1px solid #26364d;border-radius:9px}
