@@ -54,8 +54,10 @@ function hcdecor_run_background_sync(){
     if(!hcdecor_sync_trusted_raw_url(HCDECOR_SYNC_MANIFEST)){ update_option('hcdecor_sync_last_error','manifest-url'); return false; }
     $r=wp_safe_remote_get(HCDECOR_SYNC_MANIFEST,['timeout'=>15,'headers'=>['Cache-Control'=>'no-cache']]);
     if(is_wp_error($r)||wp_remote_retrieve_response_code($r)!==200){update_option('hcdecor_sync_last_error','manifest');return false;}
-    $m=json_decode(wp_remote_retrieve_body($r),true);
-    if(!$m||empty($m['files'])||!is_array($m['files'])){update_option('hcdecor_sync_last_error','manifest-json');return false;}
+    $manifest_body=(string)wp_remote_retrieve_body($r);
+    if($manifest_body==='' || strlen($manifest_body)>512*1024){update_option('hcdecor_sync_last_error','manifest-size');return false;}
+    $m=json_decode($manifest_body,true);
+    if(!$m||empty($m['files'])||!is_array($m['files'])||count($m['files'])>100){update_option('hcdecor_sync_last_error','manifest-json');return false;}
     $base=plugin_dir_path(__FILE__).'../';
     $changed=0;
     foreach($m['files'] as $f){
@@ -65,7 +67,8 @@ function hcdecor_run_background_sync(){
         $target=$base.$rel;
         $rr=wp_safe_remote_get($f['url'].(strpos($f['url'],'?')===false?'?':'&').'v='.rawurlencode((string)($m['version']??time())),['timeout'=>20,'headers'=>['Cache-Control'=>'no-cache']]);
         if(is_wp_error($rr)||wp_remote_retrieve_response_code($rr)!==200) continue;
-        $body=wp_remote_retrieve_body($rr);
+        $body=(string)wp_remote_retrieve_body($rr);
+        if($body==='' || strlen($body)>4*1024*1024) continue;
         $git_sha=sha1('blob '.strlen($body)."\0".$body); if(!hash_equals(strtolower($f['git_sha1']),$git_sha)) continue;
         if(file_exists($target)){ $local=file_get_contents($target); if($local!==false && sha1('blob '.strlen($local)."\0".$local)===strtolower($f['git_sha1'])) continue; }
         if(hcdecor_sync_atomic($target,$body)) $changed++;

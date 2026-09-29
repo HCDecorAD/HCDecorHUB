@@ -352,6 +352,9 @@ findstr /c:"function hcdecor_drive_clip" "wordpress\hcdecor-core\modules\drive-v
 findstr /c:"function hcdecor_drive_job_log" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 365
 findstr /c:"hcdecor_drive_job_log(get_post_meta" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 366
 findstr /c:"Managed Drive folder is not configured." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 367
+findstr /c:"strlen($manifest_body)>512*1024" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 368
+findstr /c:"count($m['files'])>100" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 369
+findstr /c:"strlen($body)>4*1024*1024" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 370
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
