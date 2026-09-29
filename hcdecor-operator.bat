@@ -301,7 +301,7 @@ findstr /c:"hc_publish_approval_source" "wordpress\hcdecor-core\modules\workflow
 findstr /c:"hc_publish_approval_source" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 312
 findstr /c:"'gallery'=>array_slice" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 313
 findstr /c:"Invalid content job." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 314
-findstr /c:"'workflow_log'=>array_slice" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 315
+findstr /c:"'workflow_log'=>hcdecor_drive_job_log" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 315
 findstr /c:"hcdecor_drive_inbox_safe_text($imported->get_error_message())" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 316
 findstr /c:"function hcdecor_ai_usage_summary" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 317
 findstr /c:"Unable to create content job." "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 318
@@ -348,6 +348,10 @@ findstr /c:"hcdecor_ops_valid_media_ids(hcdecor_ops_get" "wordpress\hcdecor-core
 findstr /c:"hcdecor_ops_limit_text($post->post_content,20000)" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 361
 findstr /c:"strlen($given)>512" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 362
 findstr /c:"Invalid workflow status." "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 363
+findstr /c:"function hcdecor_drive_clip" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 364
+findstr /c:"function hcdecor_drive_job_log" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 365
+findstr /c:"hcdecor_drive_job_log(get_post_meta" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 366
+findstr /c:"Managed Drive folder is not configured." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 367
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

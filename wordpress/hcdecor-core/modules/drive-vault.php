@@ -60,6 +60,19 @@ function hcdecor_drive_safe_error($message){
     return function_exists('mb_substr')?mb_substr($text,0,500):substr($text,0,500);
 }
 
+function hcdecor_drive_clip($value,$limit){
+    $value=(string)$value;
+    return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit);
+}
+function hcdecor_drive_job_log($value){
+    $out=[];
+    foreach(array_slice((array)$value,-100) as $entry){
+        if(!is_array($entry)) continue;
+        $out[]=['time'=>hcdecor_drive_clip($entry['time']??'',64),'event'=>sanitize_key((string)($entry['event']??'')),'note'=>hcdecor_drive_clip($entry['note']??'',500),'user'=>(int)($entry['user']??0)];
+    }
+    return $out;
+}
+
 function hcdecor_drive_oauth_redirect_uri(){
     return admin_url('admin-post.php?action=hcdecor_drive_oauth_callback');
 }
@@ -269,6 +282,7 @@ function hcdecor_drive_upload_attachment($attachment_id,$folder_key='media_input
     if($bytes===false) return new WP_Error('file','Cannot read attachment.');
     $folders=hcdecor_drive_folders();
     $folder=(string)($folders[$folder_key]??'');
+    if($folder==='' || !array_key_exists($folder_key,$folders)) return new WP_Error('folder','Managed Drive folder is not configured.');
     $name=basename($path);
     $mime=(string)(get_post_mime_type($attachment_id)?:'application/octet-stream');
     $res=hcdecor_drive_multipart($existing,$name,$mime,$bytes,$folder);
@@ -284,23 +298,24 @@ function hcdecor_drive_job_data($job_id){
     $job=get_post($job_id);
     if(!$job||$job->post_type!=='hc_content_job') return new WP_Error('job','Invalid job.');
     $project=(int)get_post_meta($job_id,'hc_project_id',true);
-    $media_ids=array_values(array_filter(array_map('intval',(array)get_post_meta($job_id,'hc_media_ids',true))));
+    $media_ids=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)get_post_meta($job_id,'hc_media_ids',true))),function($id){return get_post_type($id)==='attachment';})),0,60);
     $media=[];
     foreach($media_ids as $mid){
         $media[]=[
             'wp_id'=>$mid,
-            'drive_file_id'=>(string)get_post_meta($mid,'hc_drive_file_id',true),
-            'drive_url'=>(string)get_post_meta($mid,'hc_drive_url',true),
-            'title'=>get_the_title($mid),
-            'mime'=>(string)get_post_mime_type($mid),
-            'ai_summary'=>(string)get_post_meta($mid,'hc_ai_summary',true),
-            'ai_tags'=>(array)get_post_meta($mid,'hc_ai_tags',true),
+            'drive_file_id'=>hcdecor_drive_clip(get_post_meta($mid,'hc_drive_file_id',true),300),
+            'drive_url'=>esc_url_raw((string)get_post_meta($mid,'hc_drive_url',true)),
+            'title'=>hcdecor_drive_clip(get_the_title($mid),500),
+            'mime'=>hcdecor_drive_clip(get_post_mime_type($mid),200),
+            'ai_summary'=>hcdecor_drive_clip(get_post_meta($mid,'hc_ai_summary',true),5000),
+            'ai_tags'=>array_slice(array_map(function($tag){return hcdecor_drive_clip($tag,100);},(array)get_post_meta($mid,'hc_ai_tags',true)),0,30),
             'cover_score'=>(int)get_post_meta($mid,'hc_ai_cover_score',true)
         ];
     }
     $fields=[];
     if(function_exists('hcdecor_ops_fields')){
-        foreach(hcdecor_ops_fields() as $k) $fields[$k]=get_post_meta($job_id,'hc_'.$k,true);
+        $limits=['web_title'=>300,'web_intro'=>2000,'web_body'=>50000,'seo_meta'=>2000,'facebook_caption'=>10000,'tiktok_script'=>20000,'youtube_title'=>300,'youtube_description'=>20000];
+        foreach(hcdecor_ops_fields() as $k) $fields[$k]=hcdecor_drive_clip(get_post_meta($job_id,'hc_'.$k,true),(int)($limits[$k]??10000));
     }
     return [
         'schema'=>'hcdecor.content-job.v1',
@@ -308,21 +323,21 @@ function hcdecor_drive_job_data($job_id){
         'source_job_id'=>(int)$job_id,
         'project'=>[
             'wp_id'=>$project,
-            'title'=>$project?get_the_title($project):'',
+            'title'=>$project?hcdecor_drive_clip(get_the_title($project),500):'',
             'url'=>$project?get_permalink($project):''
         ],
         'job'=>[
-            'title'=>$job->post_title,
-            'brief'=>$job->post_content,
-            'status'=>(string)get_post_meta($job_id,'hc_agent_status',true),
-            'channels'=>(array)get_post_meta($job_id,'hc_channels',true),
+            'title'=>hcdecor_drive_clip($job->post_title,500),
+            'brief'=>hcdecor_drive_clip($job->post_content,20000),
+            'status'=>sanitize_key((string)get_post_meta($job_id,'hc_agent_status',true)),
+            'channels'=>array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)get_post_meta($job_id,'hc_channels',true))),
             'cover_id'=>(int)get_post_meta($job_id,'hc_cover_id',true),
-            'ai_provider'=>(string)get_post_meta($job_id,'hc_ai_provider',true),
-            'ai_model'=>(string)get_post_meta($job_id,'hc_ai_model',true)
+            'ai_provider'=>sanitize_key((string)get_post_meta($job_id,'hc_ai_provider',true)),
+            'ai_model'=>hcdecor_drive_clip(get_post_meta($job_id,'hc_ai_model',true),200)
         ],
         'content'=>$fields,
         'media'=>$media,
-        'workflow_log'=>array_slice((array)get_post_meta($job_id,'hc_workflow_log',true),-100)
+        'workflow_log'=>hcdecor_drive_job_log(get_post_meta($job_id,'hc_workflow_log',true))
     ];
 }
 
