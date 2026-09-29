@@ -106,6 +106,7 @@ add_action('admin_post_hcdecor_ops_publish_web', function(){
     if((string)($_POST['production_approved']??'')!=='1') wp_die('Explicit production publish approval is required.');
     if(!function_exists('hcdecor_publish_job_to_web')) wp_die('Web publisher unavailable');
     update_post_meta($id,'hc_publish_approved_by',get_current_user_id());
+    update_post_meta($id,'hc_publish_approval_source','wp_user');
     update_post_meta($id,'hc_publish_approved_at',current_time('mysql'));
     $r=hcdecor_publish_job_to_web($id);
     if(is_wp_error($r)){

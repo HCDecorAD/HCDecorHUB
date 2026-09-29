@@ -549,6 +549,7 @@ add_action('admin_post_hcdecor_review_action',function(){
             wp_die('Unable to approve job for publishing.');
         }
         update_post_meta($id,'hc_publish_approved_by',get_current_user_id());
+        update_post_meta($id,'hc_publish_approval_source','wp_user');
         update_post_meta($id,'hc_publish_approved_at',current_time('mysql'));
         $published=hcdecor_publish_job_to_web($id);
         if(is_wp_error($published)){

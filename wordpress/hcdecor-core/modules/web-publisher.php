@@ -48,8 +48,8 @@ function hcdecor_publish_preflight($job_id){
     $approval_by=(int)get_post_meta($job_id,'hc_publish_approved_by',true);
     $approval_source=sanitize_key((string)get_post_meta($job_id,'hc_publish_approval_source',true));
     $approval_at=(string)get_post_meta($job_id,'hc_publish_approved_at',true);
-    $approval_ts=$approval_at!==''?(strtotime($approval_at)?:0):0;
-    if((!$approval_by && $approval_source!=='service_bridge') || !$approval_ts) return new WP_Error('approval','Explicit production publish approval is required.');
+    $approval_ts=$approval_at!=='' && strlen($approval_at)<=64?(strtotime($approval_at)?:0):0;
+    if(!in_array($approval_source,['wp_user','service_bridge'],true) || ($approval_source==='wp_user' && !$approval_by) || !$approval_ts) return new WP_Error('approval','Explicit production publish approval is required.');
     if($approval_ts<time()-15*MINUTE_IN_SECONDS || $approval_ts>time()+5*MINUTE_IN_SECONDS){
         delete_post_meta($job_id,'hc_publish_approved_by');
         delete_post_meta($job_id,'hc_publish_approved_at');
@@ -62,6 +62,8 @@ function hcdecor_publish_preflight($job_id){
     $body=trim((string)get_post_meta($job_id,'hc_web_body',true));
     if($title==='') return new WP_Error('title','Web title is required.');
     if($body==='') return new WP_Error('body','Web body is required.');
+    $intro=(string)get_post_meta($job_id,'hc_web_intro',true);$seo=(string)get_post_meta($job_id,'hc_seo_meta',true);
+    if(strlen($title)>500 || strlen($intro)>5000 || strlen($body)>100000 || strlen($seo)>2000) return new WP_Error('content_size','Web publish content exceeds safe limits.');
     $media=array_values(array_unique(array_filter(array_map('intval',array_slice((array)get_post_meta($job_id,'hc_media_ids',true),0,60)))));
     $media=array_values(array_filter($media,function($id){return get_post_type($id)==='attachment';}));
     $cover=(int)get_post_meta($job_id,'hc_cover_id',true);
@@ -72,7 +74,7 @@ function hcdecor_publish_preflight($job_id){
 function hcdecor_publish_job_to_web($job_id){
     $job_id=(int)$job_id;
     $approval_at=(string)get_post_meta($job_id,'hc_publish_approved_at',true);
-    $approval_ts=$approval_at!==''?(strtotime($approval_at)?:0):0;
+    $approval_ts=$approval_at!=='' && strlen($approval_at)<=64?(strtotime($approval_at)?:0):0;
     if(!$approval_ts || $approval_ts<(time()-15*MINUTE_IN_SECONDS) || $approval_ts>(time()+5*MINUTE_IN_SECONDS)){
         delete_post_meta($job_id,'hc_publish_approved_by');
         delete_post_meta($job_id,'hc_publish_approved_at');

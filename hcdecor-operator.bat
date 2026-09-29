@@ -433,6 +433,10 @@ findstr /c:"add_menu_page('HCDecor HUB','HCDecor HUB','edit_posts','hcdecor-hub'
 findstr /c:"content_length_required" "lib\request-guard.js" >nul || exit /b 461
 findstr /c:"fresh_external_write_approval_required" "app\api\projects\route.js" >nul || exit /b 462
 findstr /c:"approvalSource" "app\api\projects\route.js" >nul || exit /b 463
+findstr /c:"hc_publish_approval_source','wp_user'" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 464
+findstr /c:"hc_publish_approval_source','wp_user'" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 465
+findstr /c:"in_array($approval_source,['wp_user','service_bridge'],true)" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 466
+findstr /c:"Web publish content exceeds safe limits." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 467
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
