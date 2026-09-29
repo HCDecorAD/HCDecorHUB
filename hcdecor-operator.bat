@@ -224,6 +224,7 @@ findstr /c:"get_option('hcdecor_bridge_token'" "wordpress\hcdecor-core\modules\c
 findstr /c:"getenv('HCDECOR_OPS_API_TOKEN')" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 293
 findstr /c:"hcdecor_ops_bridge_configured():false" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 294
 findstr /c:"get_option('hcdecor_bridge_token'" "wordpress\hcdecor-core\modules\system-health.php" >nul && exit /b 295
+findstr /c:"new WP_Error('drive_token',hcdecor_drive_safe_error" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 296
 findstr /c:"hcdecor_ops_limit_text(wp_unslash($_POST['agent_brief']??''),20000)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 273
 findstr /c:"Runtime payload exceeds 256 KB." "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 274
 findstr /c:"'Publish Runtime','Publish Runtime','manage_options'" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 275

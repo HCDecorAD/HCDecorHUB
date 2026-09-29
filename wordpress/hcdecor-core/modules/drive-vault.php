@@ -167,7 +167,7 @@ function hcdecor_drive_access_token($force=false){
     $code=(int)wp_remote_retrieve_response_code($r);
     $data=json_decode(wp_remote_retrieve_body($r),true);
     if($code<200||$code>=300||empty($data['access_token'])){
-        return new WP_Error('drive_token',(string)($data['error_description']??$data['error']??('Token HTTP '.$code)));
+        return new WP_Error('drive_token',hcdecor_drive_safe_error((string)($data['error_description']??$data['error']??('Token HTTP '.$code))));
     }
     $ttl=max(60,(int)($data['expires_in']??3600)-120);
     set_transient('hcdecor_drive_access_token',(string)$data['access_token'],$ttl);
