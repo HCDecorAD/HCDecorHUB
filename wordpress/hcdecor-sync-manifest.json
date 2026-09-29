@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.118",
+    "version":  "2026.09.29.119",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -9,7 +9,7 @@
                   {
                       "path":  "recovery-bootstrap.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/recovery-bootstrap.php",
-                      "git_sha1":  "58ee7a05019fae56c72bee0d8f81bfa9fd6afa72"
+                      "git_sha1":  "e60ee86d00e4624f8c65afc376a2e19cd26474f9"
                   },
                   {
                       "path":  "homepage-builder.php",

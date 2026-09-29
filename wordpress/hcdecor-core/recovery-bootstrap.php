@@ -20,10 +20,12 @@ function hcdecor_recovery_trusted_raw_url($url, $rel='') {
 function hcdecor_recovery_fetch_manifest() {
     if (!hcdecor_recovery_trusted_raw_url(HCDECOR_SYNC_MANIFEST)) { return new WP_Error('manifest_url','Untrusted manifest URL'); }
     $url = HCDECOR_SYNC_MANIFEST . '?t=' . time();
-    $r = wp_safe_remote_get($url, ['timeout'=>15,'headers'=>['Cache-Control'=>'no-cache']]);
+    $r = wp_safe_remote_get($url, ['timeout'=>15,'limit_response_size'=>512*1024+1,'headers'=>['Cache-Control'=>'no-cache']]);
     if (is_wp_error($r) || wp_remote_retrieve_response_code($r) !== 200) { return new WP_Error('manifest','Manifest unavailable'); }
-    $m = json_decode(wp_remote_retrieve_body($r), true);
-    return (!empty($m['files']) && is_array($m['files'])) ? $m : new WP_Error('manifest_json','Invalid manifest');
+    $body=(string)wp_remote_retrieve_body($r);
+    if($body==='' || strlen($body)>512*1024) return new WP_Error('manifest_size','Manifest exceeds 512 KB');
+    $m = json_decode($body, true);
+    return (!empty($m['files']) && is_array($m['files']) && count($m['files'])<=100) ? $m : new WP_Error('manifest_json','Invalid manifest');
 }
 function hcdecor_recovery_atomic($target, $body) {
     $dir = dirname($target); if (!is_dir($dir)) { wp_mkdir_p($dir); }
@@ -69,9 +71,10 @@ function hcdecor_recovery_sync($force=false) {
         }
         if (!hcdecor_recovery_trusted_raw_url($f['url'], $rel)) { continue; }
         $url = $f['url'] . (strpos($f['url'],'?') === false ? '?' : '&') . 'v=' . rawurlencode((string)($m['version'] ?? time()));
-        $r = wp_safe_remote_get($url, ['timeout'=>20,'headers'=>['Cache-Control'=>'no-cache']]);
+        $r = wp_safe_remote_get($url, ['timeout'=>20,'limit_response_size'=>4*1024*1024+1,'headers'=>['Cache-Control'=>'no-cache']]);
         if (is_wp_error($r) || wp_remote_retrieve_response_code($r) !== 200) { continue; }
-        $body = wp_remote_retrieve_body($r);
+        $body = (string)wp_remote_retrieve_body($r);
+        if ($body==='' || strlen($body)>4*1024*1024) { continue; }
         if (!hash_equals(strtolower($f['git_sha1']), hcdecor_recovery_git_sha($body))) { continue; }
         if (hcdecor_recovery_atomic($target, $body)) { $changed++; }
     }

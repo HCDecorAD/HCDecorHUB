@@ -385,6 +385,9 @@ findstr /c:"limit_response_size'=>64*1024" "wordpress\hcdecor-core\modules\autom
 findstr /c:"limit_response_size'=>64*1024" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 398
 findstr /c:"limit_response_size'=>64*1024" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 399
 findstr /c:"limit_response_size'=>512*1024+1" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 400
+findstr /c:"Manifest exceeds 512 KB" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 401
+findstr /c:"count($m['files'])<=100" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 402
+findstr /c:"limit_response_size'=>4*1024*1024+1" "wordpress\hcdecor-core\recovery-bootstrap.php" >nul || exit /b 403
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
