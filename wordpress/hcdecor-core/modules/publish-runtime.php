@@ -3,6 +3,7 @@ if (!defined('ABSPATH')) exit;
 function hcdecor_runtime_prune($jobs,$limit=100){ if(!is_array($jobs)) return array(); if(count($jobs)<=$limit) return $jobs; uasort($jobs,function($a,$b){ return strcmp((string)($b['created']??''),(string)($a['created']??'')); }); return array_slice($jobs,0,$limit,true); }
 function hcdecor_runtime_jobs(){ $v=get_option('hcdecor_runtime_jobs',array()); return hcdecor_runtime_prune(is_array($v)?$v:array()); }
 function hcdecor_runtime_clip($value,$limit=500){ $value=(string)$value; return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit); }
+function hcdecor_runtime_time($value){ $raw=hcdecor_runtime_clip(is_scalar($value)?$value:'',64); return $raw!==''?(strtotime($raw)?:0):0; }
 function hcdecor_runtime_safe_jobs(){ $out=array(); foreach(hcdecor_runtime_jobs() as $id=>$j){ $safe_id=hcdecor_runtime_clip(sanitize_key((string)$id),100); $out[$safe_id]=array('type'=>hcdecor_runtime_clip(sanitize_key((string)($j['type']??'')),100),'target'=>hcdecor_runtime_clip(sanitize_key((string)($j['target']??'')),100),'status'=>hcdecor_runtime_clip(sanitize_key((string)($j['status']??'')),50),'attempts'=>max(0,min(100,(int)($j['attempts']??0))),'scheduled'=>hcdecor_runtime_clip($j['scheduled']??'',64),'created'=>hcdecor_runtime_clip($j['created']??'',64),'last_error'=>hcdecor_runtime_clip($j['last_error']??'',500),'production_approved'=>!empty($j['production_approved']),'production_approved_by'=>(int)($j['production_approved_by']??0),'production_approved_at'=>hcdecor_runtime_clip($j['production_approved_at']??'',64),'production_approval_source'=>hcdecor_runtime_clip(sanitize_key((string)($j['production_approval_source']??'')),50)); } return $out; }
 function hcdecor_runtime_approval_fresh($job){
     if(empty($job['production_approved']) || empty($job['production_approved_by']) || empty($job['production_approved_at'])) return false;
@@ -17,7 +18,10 @@ function hcdecor_runtime_execute($id,$job){ if(!hcdecor_runtime_approval_fresh($
 add_action('hcdecor_runtime_tick',function(){
  $v=hcdecor_runtime_jobs(); $changed=false; $now=current_time('timestamp');
  foreach($v as $id=>$j){
-  if(($j['status']??'')!=='queued'||strtotime((string)($j['scheduled']??''))>$now) continue;
+  if(($j['status']??'')!=='queued') continue;
+  $scheduled=hcdecor_runtime_time($j['scheduled']??'');
+  if(!$scheduled){ $v[$id]['status']='failed'; $v[$id]['last_error']='Invalid runtime schedule.'; $v[$id]['payload']=array(); $v[$id]['production_approved']=false; $changed=true; continue; }
+  if($scheduled>$now) continue;
   if(!hcdecor_runtime_approval_fresh($j)){ $v[$id]['status']='failed'; $v[$id]['last_error']='Fresh production approval required.'; $v[$id]['payload']=array(); $v[$id]['production_approved']=false; $changed=true; continue; }
   $approved_job=$j;
   $v[$id]['status']='running'; $v[$id]['attempts']=(int)($v[$id]['attempts']??0)+1;

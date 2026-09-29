@@ -421,6 +421,8 @@ findstr /c:"strlen($at_raw)>64" "wordpress\hcdecor-core\modules\automation-hub.p
 findstr /c:"production_approval_source'=>sanitize_key" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 434
 findstr /c:"production_approval_source'=>hcdecor_runtime_clip" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 435
 findstr /c:"$at<=time()+5*MINUTE_IN_SECONDS" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 436
+findstr /c:"function hcdecor_runtime_time" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 437
+findstr /c:"Invalid runtime schedule." "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 438
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
