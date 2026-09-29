@@ -442,6 +442,10 @@ findstr /c:"published state was restored." "wordpress\hcdecor-core\modules\web-p
 findstr /c:"function hcdecor_publish_rest_approval_fresh" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 470
 findstr /c:"Fresh explicit production publish approval is required." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 471
 findstr /c:"ctype_digit($by)" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 472
+findstr /c:"HCDECOR_PROJECT_API_TOKEN=" ".env.example" >nul || exit /b 473
+findstr /c:"projectApiAuthConfigured" "lib\crm\config.js" >nul || exit /b 474
+findstr /c:"crypto.timingSafeEqual" "app\api\projects\route.js" >nul || exit /b 475
+findstr /c:"error:\"unauthorized\"" "app\api\projects\route.js" >nul || exit /b 476
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
