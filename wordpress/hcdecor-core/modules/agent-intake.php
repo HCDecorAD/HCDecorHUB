@@ -79,7 +79,7 @@ add_filter('post_row_actions',function($actions,$post){
 },20,2);
 
 add_action('admin_post_hcdecor_agent_from_project',function(){
-    $project=(int)($_GET['project_id']??0);
+    $project_raw=$_GET['project_id']??0;$project=is_scalar($project_raw)?(int)$project_raw:0;
     if(!$project || !current_user_can('edit_post',$project)) wp_die('Forbidden');
     check_admin_referer('hcdecor_agent_from_project_'.$project);
     $media_raw=get_post_meta($project,'hc_project_gallery',true);$media=is_array($media_raw)?array_slice(array_values(array_filter(array_map('intval',$media_raw))),0,60):[];

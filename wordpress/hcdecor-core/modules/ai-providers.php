@@ -357,7 +357,7 @@ add_action('admin_post_hcdecor_ai_run_job',function(){
 
 add_action('admin_footer',function(){
     if(!isset($_GET['page']) || $_GET['page']!=='hcdecor-content-operations' || empty($_GET['job'])) return;
-    $id=(int)$_GET['job']; if(get_post_type($id)!=='hc_content_job') return;
+    $job_raw=$_GET['job']??0;$id=is_scalar($job_raw)?(int)$job_raw:0; if(get_post_type($id)!=='hc_content_job') return;
     $status=hcdecor_ai_bounded_scalar(get_post_meta($id,'hc_agent_status',true),50);
     if(!in_array($status,['draft','failed'],true)) return;
     ?>

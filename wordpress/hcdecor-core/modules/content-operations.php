@@ -180,7 +180,7 @@ add_action('rest_api_init',function(){
 function hcdecor_ops_page(){
     if(!current_user_can('edit_posts')) return;
     $projects=get_posts(['post_type'=>'hc_project','post_status'=>['publish','draft'],'numberposts'=>100,'orderby'=>'modified','order'=>'DESC']);
-    $job_id=(int)($_GET['job']??0); $job=$job_id&&get_post_type($job_id)==='hc_content_job'?get_post($job_id):null;
+    $job_raw=$_GET['job']??0;$job_id=is_scalar($job_raw)?(int)$job_raw:0; $job=$job_id&&get_post_type($job_id)==='hc_content_job'?get_post($job_id):null;
     $jobs=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>30,'orderby'=>'modified','order'=>'DESC']);
     $status=$job?hcdecor_ops_get($job_id,'agent_status','draft'):'draft';
     $media=$job?(array)hcdecor_ops_get($job_id,'media_ids',[]):[]; $cover=$job?(int)hcdecor_ops_get($job_id,'cover_id'):0;

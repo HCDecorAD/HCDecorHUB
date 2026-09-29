@@ -223,7 +223,7 @@ add_action('rest_api_init',function(){
 
 add_action('admin_footer',function(){
     if(($_GET['page']??'')!=='hcdecor-content-operations' || empty($_GET['job'])) return;
-    $id=(int)$_GET['job'];
+    $job_raw=$_GET['job']??0;$id=is_scalar($job_raw)?(int)$job_raw:0;
     if(get_post_type($id)!=='hc_content_job') return;
     $status=hcdecor_publish_clip(get_post_meta($id,'hc_agent_status',true),50);
     $url=hcdecor_publish_clip(get_post_meta($id,'hc_published_web_url',true),2048);

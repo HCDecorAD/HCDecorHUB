@@ -91,7 +91,7 @@ function hcdecor_ai_workspace_page(){
     $prompt=hcdecor_workspace_scalar(get_option('hcdecor_drive_active_prompt',''),20000);
     $prompt_title=sanitize_text_field(hcdecor_workspace_scalar(get_option('hcdecor_drive_active_prompt_title',''),300));
     $prompt_title=function_exists('mb_substr')?mb_substr($prompt_title,0,300):substr($prompt_title,0,300);
-    $created=(int)($_GET['job']??0);
+    $created_raw=$_GET['job']??0;$created=is_scalar($created_raw)?(int)$created_raw:0;
     ?>
     <div class="wrap hcaw">
       <style>

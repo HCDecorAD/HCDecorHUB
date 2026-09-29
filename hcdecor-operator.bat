@@ -616,6 +616,9 @@ findstr /c:"$approval_raw=$_POST['production_approved']??''" "wordpress\hcdecor-
 findstr /c:"$task_raw=$_POST['task_id']??0" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 578
 findstr /c:"$job_raw=$_POST['job_id']??0" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 579
 findstr /c:"$attachment_raw=$_POST['attachment_id']??0" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 580
+findstr /c:"$project_raw=$_GET['project_id']??0" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 581
+findstr /c:"$job_raw=$_GET['job']??0" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 582
+findstr /c:"$media_raw=$_GET['media']??0" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 583
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
