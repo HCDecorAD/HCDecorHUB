@@ -115,6 +115,12 @@ function hcdecor_recipe_matches($recipe,$trigger,$context){
     return true;
 }
 
+function hcdecor_recipe_approval_fresh($context){
+    if(empty($context['production_approved']) || empty($context['production_approved_by']) || empty($context['production_approved_at'])) return false;
+    $at=strtotime((string)$context['production_approved_at'])?:0;
+    return $at>0 && $at>=time()-15*MINUTE_IN_SECONDS && $at<=time()+5*MINUTE_IN_SECONDS;
+}
+
 function hcdecor_recipe_execute_action($action,$context){
     $type=(string)($action['type']??'');
     if($type==='create_content_job'){
@@ -133,7 +139,7 @@ function hcdecor_recipe_execute_action($action,$context){
     }
     if($type==='publish_web'){
         $job=(int)($context['job_id']??0);
-        if(empty($context['production_approved'])) return new WP_Error('approval','Explicit production approval is required for recipe web publishing.');
+        if(!hcdecor_recipe_approval_fresh($context)) return new WP_Error('approval','Fresh explicit production approval is required for recipe web publishing.');
         if(!$job || !function_exists('hcdecor_publish_job_to_web')) return new WP_Error('publish','Web publisher unavailable');
         return hcdecor_publish_job_to_web($job);
     }
@@ -141,10 +147,12 @@ function hcdecor_recipe_execute_action($action,$context){
         $project=(int)($context['project_id']??0);
         $job=(int)($context['job_id']??0);
         if(!function_exists('hcdecor_auto_prepare_social') || !function_exists('hcdecor_auto_enqueue')) return new WP_Error('automation','Automation queue unavailable');
-        if(empty($context['production_approved'])) return new WP_Error('approval','Explicit production approval is required for recipe social publishing.');
+        if(!hcdecor_recipe_approval_fresh($context)) return new WP_Error('approval','Fresh explicit production approval is required for recipe social publishing.');
         $prepared=hcdecor_auto_prepare_social($project,$job);
         if(is_wp_error($prepared)) return $prepared;
         $prepared['production_approved']=true;
+        $prepared['production_approved_by']=(int)$context['production_approved_by'];
+        $prepared['production_approved_at']=(string)$context['production_approved_at'];
         return hcdecor_auto_enqueue('social_publish',$prepared,time(),'recipe:social:'.$project.':'.$job);
     }
     if($type==='save_drive'){
@@ -155,15 +163,15 @@ function hcdecor_recipe_execute_action($action,$context){
     }
     if($type==='send_webhook'){
         if(!function_exists('hcdecor_auto_enqueue')) return new WP_Error('automation','Automation queue unavailable');
-        if(empty($context['production_approved'])) return new WP_Error('approval','Explicit production approval is required for recipe webhook delivery.');
+        if(!hcdecor_recipe_approval_fresh($context)) return new WP_Error('approval','Fresh explicit production approval is required for recipe webhook delivery.');
         $outbound_context=$context;
         unset($outbound_context['production_approved'],$outbound_context['production_approved_by'],$outbound_context['production_approved_at']);
         return hcdecor_auto_enqueue('webhook',[
             'event'=>(string)($action['event']??'hcdecor.recipe'),
             'data'=>$outbound_context,
             'production_approved'=>true,
-            'production_approved_by'=>(int)($context['production_approved_by']??get_current_user_id()),
-            'production_approved_at'=>(string)($context['production_approved_at']??current_time('mysql'))
+            'production_approved_by'=>(int)$context['production_approved_by'],
+            'production_approved_at'=>(string)$context['production_approved_at']
         ],time());
     }
     return new WP_Error('action','Unknown recipe action: '.$type);

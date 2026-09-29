@@ -88,6 +88,12 @@ function hcdecor_auto_log($task_id,$event,$note=''){
     update_post_meta($task_id,'hc_auto_log',$log);
 }
 
+function hcdecor_auto_approval_fresh($payload){
+    if(empty($payload['production_approved']) || empty($payload['production_approved_by']) || empty($payload['production_approved_at'])) return false;
+    $at=strtotime((string)$payload['production_approved_at'])?:0;
+    return $at>0 && $at>=time()-15*MINUTE_IN_SECONDS && $at<=time()+5*MINUTE_IN_SECONDS;
+}
+
 function hcdecor_auto_webhook($event,$payload){
     $s=hcdecor_auto_settings();
     if(empty($s['webhook_enabled']) || empty($s['webhook_url'])) return new WP_Error('blocked','Webhook disabled.');
@@ -149,7 +155,7 @@ function hcdecor_auto_run_task($task_id){
             hcdecor_auto_log($task_id,'blocked','Webhook outbound is OFF');
             return false;
         }
-        if(empty($payload['production_approved'])){
+        if(!hcdecor_auto_approval_fresh($payload)){
             update_post_meta($task_id,'hc_auto_status','blocked');
             hcdecor_auto_log($task_id,'blocked','Fresh production approval is required for webhook outbound');
             return false;
@@ -167,9 +173,9 @@ function hcdecor_auto_run_task($task_id){
         }
     }
     elseif($type==='social_publish'){
-        if(empty($payload['production_approved'])){
+        if(!hcdecor_auto_approval_fresh($payload)){
             update_post_meta($task_id,'hc_auto_status','blocked');
-            hcdecor_auto_log($task_id,'blocked','Production approval is required for social outbound');
+            hcdecor_auto_log($task_id,'blocked','Fresh production approval is required for social outbound');
             return false;
         }
         if(empty($settings['social_enabled'])){

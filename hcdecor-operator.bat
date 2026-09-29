@@ -137,7 +137,7 @@ findstr /c:"delete_transient('hcdecor_drive_access_token')" "wordpress\hcdecor-c
 findstr /c:"delete_option('hcdecor_drive_tested_at')" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 189
 findstr /c:"Fresh production approval is required for webhook outbound" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 190
 findstr /c:"Webhook outbound attempted; fresh production approval is required before retry." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 191
-findstr /c:"Explicit production approval is required for recipe webhook delivery." "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 192
+findstr /c:"Fresh explicit production approval is required for recipe webhook delivery." "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 192
 findstr /c:"$outbound_context=$context;" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 193
 findstr /c:"hcdecor_full_audit_sanitize" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 194
 findstr /c:"return '[REDACTED]'" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 195
@@ -319,8 +319,10 @@ findstr /c:"Runtime delivery failed." "wordpress\hcdecor-core\modules\publish-ru
 findstr /c:"Restore source must be a JSON backup file." "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 330
 findstr /c:"Drive job import requires a JSON file." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 331
 findstr /c:"Drive prompt import requires a JSON file." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 332
-findstr /c:"function hcdecor_auto_retry" "wordpress\hcdecor-core\modules\automation-hub.php" >nul && exit /b 333
-findstr /c:"function hcdecor_runtime_enqueue" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul && exit /b 334
+findstr /c:"function hcdecor_auto_approval_fresh" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 335
+findstr /c:"Fresh production approval is required for social outbound" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 336
+findstr /c:"function hcdecor_recipe_approval_fresh" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 337
+findstr /c:"Fresh explicit production approval is required for recipe webhook delivery." "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 338
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
