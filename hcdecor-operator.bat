@@ -446,6 +446,9 @@ findstr /c:"HCDECOR_PROJECT_API_TOKEN=" ".env.example" >nul || exit /b 473
 findstr /c:"projectApiAuthConfigured" "lib\crm\config.js" >nul || exit /b 474
 findstr /c:"crypto.timingSafeEqual" "app\api\projects\route.js" >nul || exit /b 475
 findstr /c:"error:\"unauthorized\"" "app\api\projects\route.js" >nul || exit /b 476
+findstr /c:"$len>=32 && $len<=512" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 477
+findstr /c:"function hcdecor_ops_bridge_auth($request=null)" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 478
+findstr /c:"(int)$raw>65536" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 479
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

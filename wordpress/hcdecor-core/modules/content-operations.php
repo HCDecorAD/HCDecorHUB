@@ -120,14 +120,17 @@ add_action('admin_post_hcdecor_ops_publish_web', function(){
 
 function hcdecor_ops_bridge_tokens(){
     $tokens=[];
-    if(defined('HCDECOR_OPS_API_TOKEN') && (string)HCDECOR_OPS_API_TOKEN!=='') $tokens[]=(string)HCDECOR_OPS_API_TOKEN;
-    $env=(string)getenv('HCDECOR_OPS_API_TOKEN');
-    if($env!=='') $tokens[]=$env;
-    return array_values(array_unique($tokens));
+    if(defined('HCDECOR_OPS_API_TOKEN') && is_scalar(HCDECOR_OPS_API_TOKEN)) $tokens[]=trim((string)HCDECOR_OPS_API_TOKEN);
+    $env=getenv('HCDECOR_OPS_API_TOKEN');if(is_string($env)) $tokens[]=trim($env);
+    return array_values(array_unique(array_filter($tokens,function($token){$len=strlen($token);return $len>=32 && $len<=512;})));
 }
 function hcdecor_ops_bridge_configured(){ return count(hcdecor_ops_bridge_tokens())>0; }
-function hcdecor_ops_bridge_auth(){
+function hcdecor_ops_bridge_auth($request=null){
     if(is_user_logged_in() && current_user_can('manage_options')) return true;
+    if($request instanceof WP_REST_Request && !in_array($request->get_method(),['GET','HEAD'],true)){
+        $raw=(string)$request->get_header('content-length');
+        if($raw==='' || !ctype_digit($raw) || (int)$raw<1 || (int)$raw>65536) return false;
+    }
     $given=(string)($_SERVER['HTTP_X_HCDECOR_BRIDGE']??'');
     if($given===''){
         $auth=(string)($_SERVER['HTTP_AUTHORIZATION']??'');
