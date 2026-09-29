@@ -90,7 +90,7 @@ findstr /c:"wp_safe_remote_get(HCDECOR_SYNC_MANIFEST" "wordpress\hcdecor-core\mo
 findstr /c:"hcdecor_drive_workflow_auto_sync_enabled" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 104
 findstr /c:"hcdecor_drive_file_in_managed_folders($meta,['projects'])" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 145
 findstr /c:"hc_drive_project_file_id',true),$file_id" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 146
-findstr /c:"hc_drive_job_file_id',true),$file_id" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 147
+findstr /c:"hcdecor_drive_clip(get_post_meta($source,'hc_drive_job_file_id',true),300),$file_id" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 147
 findstr /c:"array_intersect(['web','facebook','tiktok','youtube']" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 148
 findstr /c:"hcdecor_drive_workflow_auto_sync_enabled',false" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 105
 findstr /c:"Automatic Drive workflow sync is disabled." "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 107
@@ -529,6 +529,9 @@ findstr /c:"$value=is_scalar($value)?(string)$value:''" "wordpress\hcdecor-core\
 findstr /c:"$status_raw=get_post_meta($job_id,'hc_agent_status',true)" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 557
 findstr /c:"hcdecor_ai_bounded_scalar(get_post_meta($job_id,'hc_agent_claim_token',true),128)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 558
 findstr /c:"sanitize_key(hcdecor_auto_safe_message(get_post_meta($t->ID,'hc_auto_status',true)))" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 559
+findstr /c:"sanitize_key(hcdecor_ops_limit_text(get_post_meta($id,'hc_agent_status',true),50))" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 560
+findstr /c:"sanitize_textarea_field(is_scalar($value)?(string)$value:'')" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 561
+findstr /c:"function hcdecor_full_scalar" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 562
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

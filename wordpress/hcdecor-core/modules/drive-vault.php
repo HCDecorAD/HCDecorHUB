@@ -306,7 +306,7 @@ function hcdecor_drive_save_json($name,$data,$folder_key,$existing_file_id=''){
 function hcdecor_drive_upload_attachment($attachment_id,$folder_key='media_input'){
     $attachment_id=(int)$attachment_id;
     if(get_post_type($attachment_id)!=='attachment') return new WP_Error('media','Invalid attachment.');
-    $existing=(string)get_post_meta($attachment_id,'hc_drive_file_id',true);
+    $existing=hcdecor_drive_clip(get_post_meta($attachment_id,'hc_drive_file_id',true),300);
     $path=get_attached_file($attachment_id);
     if(!$path||!is_readable($path)) return new WP_Error('file','Attachment file unavailable.');
     $size=@filesize($path);
@@ -337,7 +337,7 @@ function hcdecor_drive_job_data($job_id){
         $media[]=[
             'wp_id'=>$mid,
             'drive_file_id'=>hcdecor_drive_clip(get_post_meta($mid,'hc_drive_file_id',true),300),
-            'drive_url'=>esc_url_raw((string)get_post_meta($mid,'hc_drive_url',true)),
+            'drive_url'=>esc_url_raw(hcdecor_drive_clip(get_post_meta($mid,'hc_drive_url',true),2048)),
             'title'=>hcdecor_drive_clip(get_the_title($mid),500),
             'mime'=>hcdecor_drive_clip(get_post_mime_type($mid),200),
             'ai_summary'=>hcdecor_drive_clip(get_post_meta($mid,'hc_ai_summary',true),5000),
@@ -362,10 +362,10 @@ function hcdecor_drive_job_data($job_id){
         'job'=>[
             'title'=>hcdecor_drive_clip($job->post_title,500),
             'brief'=>hcdecor_drive_clip($job->post_content,20000),
-            'status'=>sanitize_key((string)get_post_meta($job_id,'hc_agent_status',true)),
+            'status'=>sanitize_key(hcdecor_drive_clip(get_post_meta($job_id,'hc_agent_status',true),50)),
             'channels'=>array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)get_post_meta($job_id,'hc_channels',true))),
             'cover_id'=>(int)get_post_meta($job_id,'hc_cover_id',true),
-            'ai_provider'=>sanitize_key((string)get_post_meta($job_id,'hc_ai_provider',true)),
+            'ai_provider'=>sanitize_key(hcdecor_drive_clip(get_post_meta($job_id,'hc_ai_provider',true),50)),
             'ai_model'=>hcdecor_drive_clip(get_post_meta($job_id,'hc_ai_model',true),200)
         ],
         'content'=>$fields,
@@ -388,15 +388,15 @@ function hcdecor_drive_save_job($job_id,$sync_media=true){
     if($sync_media){
         foreach(array_slice((array)get_post_meta($job_id,'hc_media_ids',true),0,60) as $mid){
             $mid=(int)$mid;
-            if($mid && !(string)get_post_meta($mid,'hc_drive_file_id',true)) hcdecor_drive_upload_attachment($mid,'media_input');
+            if($mid && hcdecor_drive_clip(get_post_meta($mid,'hc_drive_file_id',true),300)==='') hcdecor_drive_upload_attachment($mid,'media_input');
         }
         $data=hcdecor_drive_job_data($job_id);
     }
-    $status=(string)get_post_meta($job_id,'hc_agent_status',true);
+    $status=sanitize_key(hcdecor_drive_clip(get_post_meta($job_id,'hc_agent_status',true),50));
     $folder_key=hcdecor_drive_stage_folder_key($status);
     $slug=sanitize_file_name('JOB-'.$job_id.'-'.($data['project']['title']?:'content').'.json');
     $meta_key='hc_drive_job_file_'.$folder_key;
-    $existing=(string)get_post_meta($job_id,$meta_key,true);
+    $existing=hcdecor_drive_clip(get_post_meta($job_id,$meta_key,true),300);
     $res=hcdecor_drive_save_json($slug,$data,$folder_key,$existing);
     if(!is_wp_error($res)&&!empty($res['id'])){
         update_post_meta($job_id,$meta_key,sanitize_text_field($res['id']));
@@ -522,9 +522,9 @@ function hcdecor_drive_import_job($file_id){
     if(!is_array($d)||($d['schema']??'')!=='hcdecor.content-job.v1') return new WP_Error('schema','Invalid HCDecor content job file.');
     $source=(int)($d['source_job_id']??0);
     $id=0;
-    if($source && get_post_type($source)==='hc_content_job' && (string)get_post_meta($source,'hc_agent_status',true)==='draft' && hash_equals((string)get_post_meta($source,'hc_drive_job_file_id',true),$file_id)) $id=$source;
+    if($source && get_post_type($source)==='hc_content_job' && sanitize_key(hcdecor_drive_clip(get_post_meta($source,'hc_agent_status',true),50))==='draft' && hash_equals(hcdecor_drive_clip(get_post_meta($source,'hc_drive_job_file_id',true),300),$file_id)) $id=$source;
     $clip=function($value,$limit){
-        $text=sanitize_textarea_field((string)$value);
+        $text=sanitize_textarea_field(is_scalar($value)?(string)$value:'');
         return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
     };
     $post=[

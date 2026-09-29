@@ -371,7 +371,7 @@ function hcdecor_hub_dashboard_page(){
           <section class="hchub-panel hchub-section">
             <h2>RECENT CONTENT JOBS</h2>
             <div class="hchub-body hchub-list">
-              <?php foreach($jobs as $j): $st=(string)get_post_meta($j->ID,'hc_agent_status',true); $pid=(int)get_post_meta($j->ID,'hc_project_id',true);?>
+              <?php foreach($jobs as $j): $st=sanitize_key(hcdecor_hub_dashboard_scalar(get_post_meta($j->ID,'hc_agent_status',true),50)); $pid=(int)get_post_meta($j->ID,'hc_project_id',true);?>
                 <a href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-content-operations&job='.$j->ID));?>">
                   <strong>#<?php echo $j->ID;?> · <?php echo esc_html($j->post_title);?></strong>
                   <small><?php echo esc_html(strtoupper($st?:'draft'));?> · <?php echo esc_html(get_the_title($pid));?></small>
@@ -383,7 +383,7 @@ function hcdecor_hub_dashboard_page(){
           <section class="hchub-panel hchub-section">
             <h2>RECENT PROJECTS</h2>
             <div class="hchub-body hchub-list">
-              <?php foreach($projects as $p): $fid=(string)get_post_meta($p->ID,'hc_drive_project_file_id',true);?>
+              <?php foreach($projects as $p): $fid=hcdecor_hub_dashboard_scalar(get_post_meta($p->ID,'hc_drive_project_file_id',true),300);?>
                 <a href="<?php echo esc_url(get_edit_post_link($p->ID));?>">
                   <strong>#<?php echo $p->ID;?> · <?php echo esc_html($p->post_title);?></strong>
                   <small><?php echo esc_html(strtoupper($p->post_status));?> · Project Vault <?php echo $fid?'SYNCED':'PENDING';?></small>
