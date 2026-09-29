@@ -7,8 +7,8 @@ export default function Workspaces(){
   return <HubShell title="Workspaces" eyebrow="MASTER AGENT / BUSINESS CONTEXT">
     <div className="notice">Source: config/workspaces.json + config/adapters.json. Không hiển thị trạng thái runtime nếu source không cung cấp.</div>
     <section className="workspaceGrid">{workspaces.map(w=><article className="workspaceCard" key={w.workspace_id}>
-      <div className="workspaceHead"><span>{w.site_id}</span><em>{w.sourceState}</em></div>
-      <h2>{w.name}</h2><small>{w.adapterType}</small>
+      <div className="workspaceHead"><span>{w.site_id}</span><em>{w.configState}</em></div>
+      <h2>{w.name}</h2><small>{w.adapter}</small>
       <h3>{w.modules.length} modules</h3><p>{w.modules.join(" · ")}</p>
       {w.repository&&<p>Source: {w.repository}</p>}
       {w.rule&&<p>{w.rule}</p>}
