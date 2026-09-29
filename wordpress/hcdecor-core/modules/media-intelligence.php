@@ -166,11 +166,11 @@ function hcdecor_media_ai_apply_project_recommendations($project_id){
     $ranked=[];
     foreach($media as $mid){
         if(get_post_type($mid)!=='attachment') continue;
-        $analyzed=(string)get_post_meta($mid,'hc_ai_analyzed_at',true);
+        $analyzed_raw=get_post_meta($mid,'hc_ai_analyzed_at',true);$analyzed=is_scalar($analyzed_raw)?(string)$analyzed_raw:'';$analyzed=function_exists('mb_substr')?mb_substr($analyzed,0,64):substr($analyzed,0,64);
         $score=$analyzed!==''?(int)get_post_meta($mid,'hc_ai_cover_score',true):-1;
         $ranked[]=['id'=>$mid,'score'=>$score,'analyzed'=>$analyzed!==''?1:0];
-        $alt=(string)get_post_meta($mid,'hc_ai_alt',true);
-        $caption=(string)get_post_meta($mid,'hc_ai_caption',true);
+        $alt_raw=get_post_meta($mid,'hc_ai_alt',true);$alt=is_scalar($alt_raw)?(string)$alt_raw:'';
+        $caption_raw=get_post_meta($mid,'hc_ai_caption',true);$caption=is_scalar($caption_raw)?(string)$caption_raw:'';
         $alt=function_exists('mb_substr')?mb_substr($alt,0,1000):substr($alt,0,1000);
         $caption=function_exists('mb_substr')?mb_substr($caption,0,5000):substr($caption,0,5000);
         if($alt!=='' && get_post_meta($mid,'_wp_attachment_image_alt',true)==='') update_post_meta($mid,'_wp_attachment_image_alt',$alt);

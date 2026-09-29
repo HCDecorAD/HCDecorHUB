@@ -532,6 +532,9 @@ findstr /c:"sanitize_key(hcdecor_auto_safe_message(get_post_meta($t->ID,'hc_auto
 findstr /c:"sanitize_key(hcdecor_ops_limit_text(get_post_meta($id,'hc_agent_status',true),50))" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 560
 findstr /c:"sanitize_textarea_field(is_scalar($value)?(string)$value:'')" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 561
 findstr /c:"function hcdecor_full_scalar" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 562
+findstr /c:"$s=is_scalar($raw)?sanitize_key((string)$raw):''" "wordpress\hcdecor-core\modules\hub-suite.php" >nul || exit /b 563
+findstr /c:"$analyzed_raw=get_post_meta($mid,'hc_ai_analyzed_at',true)" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 564
+findstr /c:"hcdecor_media_limit_text(get_post_meta($edit_id,'hc_ai_summary',true),5000)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 565
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

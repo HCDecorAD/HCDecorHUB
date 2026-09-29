@@ -96,7 +96,7 @@ function hcdecor_media_manager_page(){
         <?php foreach($media as $m): $is_video=strpos($m->post_mime_type,'video/')===0; $thumb=wp_get_attachment_image_url($m->ID,'medium');?>
           <div class="hcm-item" data-id="<?php echo $m->ID;?>">
             <?php if($thumb):?><img src="<?php echo esc_url($thumb);?>" alt=""><?php else:?><div class="hcm-video">VIDEO</div><?php endif;?>
-            <span class="hcm-check">✓</span><small><?php echo esc_html($m->post_title?:basename(get_attached_file($m->ID)));?></small><?php $score=(int)get_post_meta($m->ID,'hc_ai_cover_score',true); $type=(string)get_post_meta($m->ID,'hc_ai_visual_type',true); if($score||$type):?><small style="color:#a5651d">AI <?php echo $score?esc_html($score.'/100'):'';?> <?php echo esc_html($type);?></small><?php endif;?>
+            <span class="hcm-check">✓</span><small><?php echo esc_html($m->post_title?:basename(get_attached_file($m->ID)));?></small><?php $score=(int)get_post_meta($m->ID,'hc_ai_cover_score',true); $type=hcdecor_media_limit_text(get_post_meta($m->ID,'hc_ai_visual_type',true),100); if($score||$type):?><small style="color:#a5651d">AI <?php echo $score?esc_html($score.'/100'):'';?> <?php echo esc_html($type);?></small><?php endif;?>
           </div>
         <?php endforeach;?>
         </div><div id="hcmHidden"></div>
@@ -115,7 +115,7 @@ function hcdecor_media_manager_page(){
           <label>Title</label><input type="text" name="title" value="<?php echo esc_attr($edit->post_title);?>">
           <label>Alt text</label><input type="text" name="alt" value="<?php echo esc_attr(get_post_meta($edit_id,'_wp_attachment_image_alt',true));?>">
           <label>Caption</label><textarea name="caption"><?php echo esc_textarea($edit->post_excerpt);?></textarea>
-          <label>Description</label><textarea name="description"><?php echo esc_textarea($edit->post_content);?></textarea><?php $ais=(string)get_post_meta($edit_id,'hc_ai_summary',true); $aiscore=(int)get_post_meta($edit_id,'hc_ai_cover_score',true); $aitags=(array)get_post_meta($edit_id,'hc_ai_tags',true); if($ais):?><hr><p><strong>AI Summary</strong><br><?php echo esc_html($ais);?></p><p><strong>Cover score:</strong> <?php echo $aiscore;?>/100</p><p><strong>Tags:</strong> <?php echo esc_html(implode(', ',$aitags));?></p><?php endif;?>
+          <label>Description</label><textarea name="description"><?php echo esc_textarea($edit->post_content);?></textarea><?php $ais=hcdecor_media_limit_text(get_post_meta($edit_id,'hc_ai_summary',true),5000); $aiscore=(int)get_post_meta($edit_id,'hc_ai_cover_score',true); $aitags=(array)get_post_meta($edit_id,'hc_ai_tags',true); if($ais):?><hr><p><strong>AI Summary</strong><br><?php echo esc_html($ais);?></p><p><strong>Cover score:</strong> <?php echo $aiscore;?>/100</p><p><strong>Tags:</strong> <?php echo esc_html(implode(', ',$aitags));?></p><?php endif;?>
           <p><button class="button button-primary">Lưu metadata</button></p>
         </form>
       <?php else:?><p>Chọn một media rồi mở <strong>Edit metadata</strong>.</p><div id="hcmMetaLink"></div><?php endif;?>
