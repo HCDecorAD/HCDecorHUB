@@ -1,8 +1,9 @@
 <?php
 if (!defined('ABSPATH')) exit;
-function hcdecor_conn_clip($value,$limit){ $value=(string)$value; return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit); }
-function hcdecor_conn_get(){ $v=get_option('hcdecor_connections',array()); return is_array($v)?array_slice($v,-100,null,true):array(); }
-function hcdecor_conn_save($v){ update_option('hcdecor_connections',array_slice((array)$v,-100,null,true),false); }
+function hcdecor_conn_clip($value,$limit){ $value=is_scalar($value)?(string)$value:''; return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit); }
+function hcdecor_conn_normalize($x){ $x=is_array($x)?$x:array(); return array('name'=>hcdecor_conn_clip($x['name']??'',500),'provider'=>hcdecor_conn_clip(sanitize_key(hcdecor_conn_clip($x['provider']??'',100)),100),'endpoint'=>hcdecor_conn_clip(esc_url_raw(hcdecor_conn_clip($x['endpoint']??'',2048)),2048),'account'=>hcdecor_conn_clip($x['account']??'',500),'secret'=>hcdecor_conn_clip($x['secret']??'',8192),'enabled'=>!empty($x['enabled']),'last_ok'=>hcdecor_conn_clip($x['last_ok']??'',64),'last_error'=>hcdecor_conn_clip($x['last_error']??'',500)); }
+function hcdecor_conn_get(){ $v=get_option('hcdecor_connections',array());$out=array();if(!is_array($v))return $out;foreach(array_slice($v,-100,null,true) as $id=>$x){$safe_id=hcdecor_conn_clip(sanitize_key((string)$id),64);if($safe_id!=='')$out[$safe_id]=hcdecor_conn_normalize($x);}return $out; }
+function hcdecor_conn_save($v){ $out=array();foreach(array_slice((array)$v,-100,null,true) as $id=>$x){$safe_id=hcdecor_conn_clip(sanitize_key((string)$id),64);if($safe_id!=='')$out[$safe_id]=hcdecor_conn_normalize($x);}update_option('hcdecor_connections',$out,false); }
 function hcdecor_conn_safe_error($message){
  $text=sanitize_text_field((string)$message);
  $text=preg_replace('/\bBearer\s+[A-Za-z0-9._~+\/-]{12,}\b/i','[REDACTED]',$text);
@@ -44,7 +45,7 @@ function hcdecor_conn_public_https($url){
 add_action('admin_post_hcdecor_conn_save',function(){
  if(!current_user_can('manage_options')) wp_die('Forbidden'); check_admin_referer('hcdecor_conn_save'); $all=hcdecor_conn_get();
  $id=hcdecor_conn_clip(sanitize_key(isset($_POST['id'])?$_POST['id']:''),64); if(!$id) $id='conn_'.wp_generate_password(8,false,false); $old=isset($all[$id])?$all[$id]:array();
- $secret=hcdecor_conn_clip(trim((string)wp_unslash(isset($_POST['secret'])?$_POST['secret']:'')),8192); if($secret==='') $secret=hcdecor_conn_clip($old['secret']??'',8192);
+ $secret_raw=trim((string)wp_unslash(isset($_POST['secret'])?$_POST['secret']:'')); if(strlen($secret_raw)>8192) wp_die('Connection secret is too long.'); $secret=hcdecor_conn_clip($secret_raw,8192); if($secret==='') $secret=hcdecor_conn_clip($old['secret']??'',8192);
  $name=hcdecor_conn_clip(sanitize_text_field(wp_unslash(isset($_POST['name'])?$_POST['name']:'')),500);
  $provider=hcdecor_conn_clip(sanitize_key(isset($_POST['provider'])?$_POST['provider']:''),100);
  $endpoint=hcdecor_conn_clip(esc_url_raw(isset($_POST['endpoint'])?$_POST['endpoint']:''),2048);

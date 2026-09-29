@@ -439,6 +439,9 @@ findstr /c:"function hcdecor_ai_bounded_scalar" "wordpress\hcdecor-core\modules\
 findstr /c:"HCDECOR_OPENAI_API_KEY,8000" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 452
 findstr /c:"AI model value too long." "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 453
 findstr /c:"AI credential value too long." "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 454
+findstr /c:"function hcdecor_conn_normalize" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 455
+findstr /c:"Connection secret is too long." "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 456
+findstr /c:"hcdecor_conn_clip($x['secret']" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 457
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
