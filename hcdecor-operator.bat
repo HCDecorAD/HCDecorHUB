@@ -429,6 +429,8 @@ findstr /c:"leadId.length>200" "app\api\projects\route.js" >nul || exit /b 441
 findstr /c:"buckets.size>=5000" "app\api\leads\route.js" >nul || exit /b 442
 findstr /c:"buckets.size>=5000" "app\api\projects\route.js" >nul || exit /b 443
 findstr /c:"trim().slice(0,256)" "app\api\leads\route.js" >nul || exit /b 444
+findstr /c:"foreach($defaults as $key=>$default)" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 445
+findstr /c:"preg_replace('/[^A-Za-z0-9_-]/','',$value)" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 446
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

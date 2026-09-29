@@ -38,7 +38,14 @@ function hcdecor_drive_default_folders(){
 }
 
 function hcdecor_drive_folders(){
-    return wp_parse_args((array)get_option('hcdecor_drive_folders',[]),hcdecor_drive_default_folders());
+    $defaults=hcdecor_drive_default_folders();
+    $saved=get_option('hcdecor_drive_folders',[]);$saved=is_array($saved)?$saved:[];$out=[];
+    foreach($defaults as $key=>$default){
+        $value=isset($saved[$key])&&is_scalar($saved[$key])?(string)$saved[$key]:(string)$default;
+        $value=preg_replace('/[^A-Za-z0-9_-]/','',$value);
+        $out[$key]=$value!==''?substr($value,0,200):(string)$default;
+    }
+    return $out;
 }
 
 function hcdecor_drive_approval_fresh(WP_REST_Request $r){
