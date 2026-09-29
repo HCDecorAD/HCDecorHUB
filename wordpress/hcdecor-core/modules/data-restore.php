@@ -18,7 +18,7 @@ function hcdecor_restore_read_backup($file_id){
     if(!in_array($mime,['application/json','text/json','text/plain'],true)) return new WP_Error('mime','Restore source must be a JSON backup file.');
     if((int)($meta['size']??0)<=0 || (int)($meta['size']??0)>25*1024*1024) return new WP_Error('size','Backup file must be between 1 byte and 25 MB.');
 
-    $body=hcdecor_drive_download($file_id);
+    $body=hcdecor_drive_download($file_id,25*1024*1024);
     if(is_wp_error($body)) return $body;
     if(strlen((string)$body)>25*1024*1024) return new WP_Error('size','Backup vượt giới hạn 25MB.');
 

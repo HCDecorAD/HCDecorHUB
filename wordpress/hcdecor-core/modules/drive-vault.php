@@ -113,6 +113,7 @@ add_action('admin_post_hcdecor_drive_oauth_callback',function(){
     if($code==='') wp_die('Missing OAuth code.');
     $r=wp_safe_remote_post('https://oauth2.googleapis.com/token',[
         'timeout'=>30,
+        'limit_response_size'=>1024*1024,
         'body'=>[
             'code'=>$code,
             'client_id'=>hcdecor_drive_secret('client_id'),
@@ -169,6 +170,7 @@ function hcdecor_drive_access_token($force=false){
     if(!hcdecor_drive_configured()) return new WP_Error('drive_auth','Google Drive chưa kết nối.');
     $r=wp_safe_remote_post('https://oauth2.googleapis.com/token',[
         'timeout'=>25,
+        'limit_response_size'=>1024*1024,
         'body'=>[
             'client_id'=>hcdecor_drive_secret('client_id'),
             'client_secret'=>hcdecor_drive_secret('client_secret'),
@@ -199,6 +201,7 @@ function hcdecor_drive_request($method,$url,$args=[]){
     $args['headers']=$headers;
     $args['method']=$method;
     $args['timeout']=$args['timeout']??60;
+    $args['limit_response_size']=$args['limit_response_size']??4*1024*1024;
     $r=wp_safe_remote_request($url,$args);
     if(is_wp_error($r)) return $r;
     $code=(int)wp_remote_retrieve_response_code($r);
@@ -214,7 +217,7 @@ function hcdecor_drive_request($method,$url,$args=[]){
     $body=wp_remote_retrieve_body($r);
     if($code<200||$code>=300){
         $j=json_decode($body,true);
-        return new WP_Error('drive_http',(string)($j['error']['message']??('Drive HTTP '.$code)),['status'=>$code,'body'=>$body]);
+        return new WP_Error('drive_http',hcdecor_drive_safe_error((string)($j['error']['message']??('Drive HTTP '.$code))),['status'=>$code]);
     }
     return ['code'=>$code,'body'=>$body,'headers'=>wp_remote_retrieve_headers($r)];
 }
@@ -415,7 +418,7 @@ function hcdecor_drive_import_media($file_id){
     ]);
     if($existing) return (int)$existing[0]->ID;
 
-    $bytes=hcdecor_drive_download($file_id);
+    $bytes=hcdecor_drive_download($file_id,50*1024*1024);
     if(is_wp_error($bytes)) return $bytes;
     $name=sanitize_file_name((string)($meta['name']??('drive-'.$file_id)));
     if($name==='') $name='drive-'.$file_id;
@@ -466,11 +469,15 @@ function hcdecor_drive_load_prompt($file_id){
     return true;
 }
 
-function hcdecor_drive_download($file_id){
+function hcdecor_drive_download($file_id,$max_bytes=4194304){
     $file_id=preg_replace('/[^A-Za-z0-9_-]/','',(string)$file_id);
     if(!$file_id) return new WP_Error('file','Invalid Drive file ID.');
-    $r=hcdecor_drive_request('GET','https://www.googleapis.com/drive/v3/files/'.rawurlencode($file_id).'?alt=media');
-    return is_wp_error($r)?$r:$r['body'];
+    $max_bytes=max(1,min(50*1024*1024,(int)$max_bytes));
+    $r=hcdecor_drive_request('GET','https://www.googleapis.com/drive/v3/files/'.rawurlencode($file_id).'?alt=media',['limit_response_size'=>$max_bytes+1]);
+    if(is_wp_error($r)) return $r;
+    $body=(string)$r['body'];
+    if(strlen($body)>$max_bytes) return new WP_Error('size','Drive download exceeds allowed size.');
+    return $body;
 }
 
 function hcdecor_drive_import_job($file_id){

@@ -370,6 +370,9 @@ findstr /c:"hcdecor_ai_limit_text" "wordpress\hcdecor-core\modules\ai-providers.
 findstr /c:"AI media response exceeds 2 MB." "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 383
 findstr /c:"limit_response_size'=>2*1024*1024" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 384
 findstr /c:"$title=$clip(get_the_title($attachment_id),500)" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 385
+findstr /c:"$args['limit_response_size']=$args['limit_response_size']??4*1024*1024" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 386
+findstr /c:"Drive download exceeds allowed size." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 387
+findstr /c:"hcdecor_drive_download($file_id,25*1024*1024)" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 388
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
