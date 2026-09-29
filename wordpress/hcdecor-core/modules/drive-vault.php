@@ -76,13 +76,13 @@ function hcdecor_drive_configured(){
     return hcdecor_drive_secret('client_id')!=='' && hcdecor_drive_secret('client_secret')!=='' && hcdecor_drive_secret('refresh_token')!=='';
 }
 function hcdecor_drive_safe_error($message){
-    $text=sanitize_text_field((string)$message);
+    $text=sanitize_text_field(is_scalar($message)?(string)$message:'');
     $text=preg_replace('/\b(?:ya29\.[A-Za-z0-9._-]{12,}|Bearer\s+[A-Za-z0-9._~+\/-]{12,}|1\/\/[A-Za-z0-9_-]{12,})\b/i','[REDACTED]',$text);
     return function_exists('mb_substr')?mb_substr($text,0,500):substr($text,0,500);
 }
 
 function hcdecor_drive_clip($value,$limit){
-    $value=(string)$value;
+    $value=is_scalar($value)?(string)$value:'';
     return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit);
 }
 function hcdecor_drive_job_log($value){

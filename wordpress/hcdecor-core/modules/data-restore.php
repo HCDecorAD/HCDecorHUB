@@ -14,7 +14,7 @@ function hcdecor_restore_read_backup($file_id){
     $meta=hcdecor_drive_file_meta($file_id);
     if(is_wp_error($meta)) return $meta;
     if(!hcdecor_drive_file_in_managed_folders($meta,['backups'])) return new WP_Error('scope','Restore source is outside the managed BACKUPS folder.');
-    $mime=strtolower((string)($meta['mimeType']??''));
+    $mime=strtolower(hcdecor_restore_clip($meta['mimeType']??'',100));
     if(!in_array($mime,['application/json','text/json','text/plain'],true)) return new WP_Error('mime','Restore source must be a JSON backup file.');
     if((int)($meta['size']??0)<=0 || (int)($meta['size']??0)>25*1024*1024) return new WP_Error('size','Backup file must be between 1 byte and 25 MB.');
 
@@ -45,7 +45,7 @@ function hcdecor_restore_read_backup($file_id){
 }
 
 function hcdecor_restore_clip($value,$limit,$html=false){
-    $text=$html?wp_kses_post((string)$value):sanitize_textarea_field((string)$value);
+    $value=is_scalar($value)?(string)$value:'';$text=$html?wp_kses_post($value):sanitize_textarea_field($value);
     return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
 }
 
@@ -55,7 +55,7 @@ function hcdecor_restore_media_map($backup){
         $old=(int)($m['id']??0);
         if(!$old) continue;
 
-        $drive_id=sanitize_text_field((string)($m['drive_file_id']??''));
+        $drive_id=sanitize_text_field(hcdecor_restore_clip($m['drive_file_id']??'',300));
         if($drive_id!==''){
             $found=get_posts([
                 'post_type'=>'attachment','post_status'=>'inherit','numberposts'=>1,'fields'=>'ids',
@@ -69,7 +69,7 @@ function hcdecor_restore_media_map($backup){
 }
 
 function hcdecor_restore_existing_by_identity($type,$row){
-    $identity=sanitize_text_field((string)($row['backup_identity']??''));
+    $identity=sanitize_text_field(hcdecor_restore_clip($row['backup_identity']??'',100));
     if($identity==='') return 0;
     $found=get_posts([
         'post_type'=>$type,'post_status'=>'any','numberposts'=>2,'fields'=>'ids',
@@ -142,7 +142,7 @@ function hcdecor_restore_projects($backup,$media_map){
         $r=$existing?wp_update_post($post,true):wp_insert_post($post,true);
         if(is_wp_error($r)) continue;
         $id=(int)$r;
-        $identity=sanitize_text_field((string)($p['backup_identity']??''));
+        $identity=sanitize_text_field(hcdecor_restore_clip($p['backup_identity']??'',100));
         if($identity!=='') update_post_meta($id,'hc_backup_identity',$identity);
         if($old) $project_map[$old]=$id;
         $existing?$updated++:$created++;
@@ -190,7 +190,7 @@ function hcdecor_restore_jobs($backup,$project_map,$media_map){
         $r=$existing?wp_update_post($post,true):wp_insert_post($post,true);
         if(is_wp_error($r)) continue;
         $id=(int)$r;
-        $identity=sanitize_text_field((string)($j['backup_identity']??''));
+        $identity=sanitize_text_field(hcdecor_restore_clip($j['backup_identity']??'',100));
         if($identity!=='') update_post_meta($id,'hc_backup_identity',$identity);
         $existing?$updated++:$created++;
 
@@ -198,7 +198,7 @@ function hcdecor_restore_jobs($backup,$project_map,$media_map){
         $project=(int)($project_map[$old_project]??0);
         update_post_meta($id,'hc_project_id',$project);
 
-        $status=sanitize_key((string)($j['status']??'draft'));
+        $status=sanitize_key(hcdecor_restore_clip($j['status']??'draft',50));
         if(in_array($status,['approved','published_web'],true)) $status='review';
         elseif($status==='processing') $status='draft';
         update_post_meta($id,'hc_agent_status',in_array($status,$allowed_status,true)?$status:'draft');
@@ -228,7 +228,7 @@ function hcdecor_restore_jobs($backup,$project_map,$media_map){
             hcdecor_ops_save_fields($id,(array)($j['content']??[]));
         }
 
-        update_post_meta($id,'hc_ai_provider',sanitize_key((string)($j['ai_provider']??'')));
+        update_post_meta($id,'hc_ai_provider',sanitize_key(hcdecor_restore_clip($j['ai_provider']??'',50)));
         update_post_meta($id,'hc_ai_model',hcdecor_restore_clip($j['ai_model']??'',200));
 
         if(!empty($j['workflow_log']) && is_array($j['workflow_log'])){
@@ -237,7 +237,7 @@ function hcdecor_restore_jobs($backup,$project_map,$media_map){
                 if(!is_array($entry)) continue;
                 $workflow_log[]=[
                     'time'=>hcdecor_restore_clip($entry['time']??'',64),
-                    'event'=>sanitize_key((string)($entry['event']??'')),
+                    'event'=>sanitize_key(hcdecor_restore_clip($entry['event']??'',100)),
                     'note'=>hcdecor_restore_clip($entry['note']??'',500),
                     'user'=>(int)($entry['user']??0)
                 ];
@@ -293,7 +293,7 @@ function hcdecor_restore_media_metadata($backup,$media_map){
 function hcdecor_restore_settings($backup){
     $s=(array)($backup['settings']??[]);
 
-    $primary=sanitize_key((string)($s['ai_primary']??'auto'));
+    $primary=sanitize_key(hcdecor_restore_clip($s['ai_primary']??'auto',50));
     if(in_array($primary,['auto','openai','gemini'],true)) update_option('hcdecor_ai_primary',$primary,false);
 
     if(isset($s['openai_model'])) update_option('hcdecor_ai_openai_model',hcdecor_restore_clip($s['openai_model'],200),false);
@@ -322,12 +322,12 @@ function hcdecor_restore_settings($backup){
         $saved_by_id=[];
         foreach($s['recipes'] as $recipe){
             if(!is_array($recipe)) continue;
-            $rid=sanitize_key((string)($recipe['id']??''));
+            $rid=sanitize_key(hcdecor_restore_clip($recipe['id']??'',100));
             if($rid!=='') $saved_by_id[$rid]=$recipe;
         }
         $recipes=[];
         foreach(hcdecor_recipe_defaults() as $default){
-            $rid=sanitize_key((string)($default['id']??''));
+            $rid=sanitize_key(hcdecor_restore_clip($default['id']??'',100));
             if($rid==='' || !isset($saved_by_id[$rid])) continue;
             $default['enabled']=false;
             $recipes[]=$default;
@@ -409,7 +409,7 @@ add_action('admin_post_hcdecor_restore_apply',function(){
         foreach((array)($backup['projects']??[]) as $project){
             if(($project['status']??'')==='publish'){ $restores_public=true; break; }
         }
-        if($restores_public && (string)($_POST['approve_public_projects']??'')!=='1'){
+        if($restores_public && (!is_scalar($_POST['approve_public_projects']??'') || (string)$_POST['approve_public_projects']!=='1')){
             wp_die('Explicit approval is required to restore public projects.');
         }
     }
@@ -450,7 +450,7 @@ function hcdecor_restore_page(){
         if(is_wp_error($files)) $files=[];
     }
     $last=(array)get_option('hcdecor_restore_last_result',[]);
-    $error=(string)get_option('hcdecor_restore_last_error','');
+    $error=hcdecor_restore_clip(get_option('hcdecor_restore_last_error',''),500);
     ?>
     <div class="wrap hcrs" style="max-width:1250px">
       <style>
@@ -473,7 +473,7 @@ function hcdecor_restore_page(){
             <div class="hcrs-file">
               <strong><?php echo esc_html($x['name']??'Backup');?></strong><br>
               <small><?php echo esc_html($x['modifiedTime']??'');?></small><br>
-              <a class="button button-small" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-restore-center&file_id='.rawurlencode((string)($x['id']??''))));?>">Preview Restore</a>
+              <a class="button button-small" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-restore-center&file_id='.rawurlencode(hcdecor_restore_clip($x['id']??'',300))));?>">Preview Restore</a>
             </div>
           <?php endforeach;?>
         </section>

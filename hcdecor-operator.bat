@@ -496,6 +496,10 @@ findstr /c:"hcdecor_backup_clip(get_option('hcdecor_backup_last_error',''),500)"
 findstr /c:"function hcdecor_runtime_jobs" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 524
 findstr /c:"$value=is_scalar($value)?(string)$value:''" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 525
 findstr /c:"sanitize_key(hcdecor_runtime_clip($j['status']??'',50))" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 526
+findstr /c:"sanitize_text_field(is_scalar($message)?(string)$message:'')" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 527
+findstr /c:"$value=is_scalar($value)?(string)$value:''" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 528
+findstr /c:"function hcdecor_restore_clip" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 529
+findstr /c:"sanitize_key(hcdecor_restore_clip($j['status']??'draft',50))" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 530
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
