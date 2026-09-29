@@ -381,6 +381,10 @@ findstr /c:"hcdecor_publish_clip($post->post_content,100000)" "wordpress\hcdecor
 findstr /c:"hcdecor_publish_clip($snapshot['seo_meta']??'',2000)" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 394
 findstr /c:"$approval_ts>time()+5*MINUTE_IN_SECONDS" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 395
 findstr /c:"Production publish approval is not fresh; approve again." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 396
+findstr /c:"limit_response_size'=>64*1024" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 397
+findstr /c:"limit_response_size'=>64*1024" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 398
+findstr /c:"limit_response_size'=>64*1024" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 399
+findstr /c:"limit_response_size'=>512*1024+1" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 400
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

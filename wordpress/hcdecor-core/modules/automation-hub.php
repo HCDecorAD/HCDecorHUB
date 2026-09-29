@@ -105,6 +105,7 @@ function hcdecor_auto_webhook($event,$payload){
     $r=wp_safe_remote_post($url,[
         'timeout'=>20,
         'redirection'=>0,
+        'limit_response_size'=>64*1024,
         'headers'=>['Content-Type'=>'application/json','X-HCDecor-Event'=>$event],
         'body'=>$encoded
     ]);
