@@ -1,4 +1,5 @@
 import {productionGuard} from "../../../lib/hub-policy";
+import {requireSameOriginMutation} from "../../../lib/request-guard";
 function productionUrl(){const raw=(process.env.HCDECOR_WP_BASE_URL||"").trim();if(!raw)return null;try{const u=new URL(raw);return /^https?:$/.test(u.protocol)?u.origin:null}catch{return null}}
 export async function GET(){const guard=productionGuard(),url=productionUrl();return Response.json({service:"ok",configured:Boolean(url),canDeploy:false,reason:"HCDECOR_DEPLOYMENT_MANAGED_BY_WORDPRESS",productionAuthority:"WordPress",productionUrl:url,productionGate:guard.guarded.includes("deploy"),checkedAt:new Date().toISOString()},{status:url?200:503})}
-export async function POST(){const url=productionUrl();return Response.json({ok:false,error:"HCDecor production deployment is managed by WordPress and requires explicit production approval.",productionAuthority:"WordPress",productionUrl:url},{status:403})}
+export async function POST(request){const mutationGuard=requireSameOriginMutation(request);if(mutationGuard)return mutationGuard;const url=productionUrl();return Response.json({ok:false,error:"HCDecor production deployment is managed by WordPress and requires explicit production approval.",productionAuthority:"WordPress",productionUrl:url},{status:403})}

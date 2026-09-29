@@ -11,4 +11,6 @@ for(const [w,adapter] of [["gsc-senior","vercel-github"],["amo-nguyen","vercel-g
 {const r=await fetch(base+"/api/master/approvals?limit=1");const x=await r.json();check("approval GET is read-only surface",r.status===200&&Array.isArray(x.approvals),r.status)}
 {const r=await fetch(base+"/api/master/readiness");const x=await r.json();check("master readiness truth contract",r.status===200&&x.workspaces?.length===3&&x.truth_contract?.production_write===false&&x.truth_contract?.local_spool_is_production_authority===false,r.status)}
 {const r=await fetch(base+"/api/master/readiness?live=1");const x=await r.json();check("live readiness probes fixed workspace sites",r.status===200&&x.live_probe===true&&x.workspaces?.every(w=>w.live_health?.state&&w.production_write===false),r.status)}
+{const r=await fetch(base+"/api/deploy",{method:"POST",headers:{"content-type":"application/json"},body:"{}"});const x=await r.json();check("deploy mutation requires origin guard",r.status===403&&x.error==="missing_origin_context",r.status)}
+{const r=await fetch(base+"/api/publishing/jobs",{method:"DELETE",headers:{origin:"https://invalid.example","content-length":"2"},body:"{}"});const x=await r.json();check("retired publishing mutation blocks cross origin",r.status===403&&x.error==="cross_origin_mutation_blocked",r.status)}
 process.exitCode=failed?1:0;
