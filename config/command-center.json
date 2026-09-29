@@ -48,6 +48,7 @@
     "delete": true,
     "manage": true,
     "deploy": true,
+    "rollback": true,
     "replace_core": true
   },
   "master_agent": {
