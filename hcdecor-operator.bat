@@ -163,9 +163,9 @@ findstr /c:"checked> Enabled" "wordpress\hcdecor-core\modules\workflow-crm.php" 
 findstr /c:"array_slice(array_values(array_filter(array_unique(array_merge" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 214
 findstr /c:"array_slice(array_values(array_filter(array_unique(array_map('intval',array_merge" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 215
 findstr /c:"else delete_post_thumbnail($id);" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 216
-findstr /c:"Explicit approval is required for Drive project writes." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 218
-findstr /c:"Explicit approval is required for bulk Drive project writes." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 219
-findstr /c:"Explicit approval is required for Drive job writes." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 220
+findstr /c:"Fresh explicit approval is required for Drive project writes." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 218
+findstr /c:"Fresh explicit approval is required for bulk Drive project writes." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 219
+findstr /c:"Fresh explicit approval is required for Drive job writes." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 220
 findstr /c:"Backup exceeds the 25 MB restore limit." "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 221
 findstr /c:"function hcdecor_social_accounts_safe" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 222
 findstr /c:"function hcdecor_social_accounts_safe" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 223
@@ -411,6 +411,10 @@ findstr /c:"strlen($code)>8192" "wordpress\hcdecor-core\modules\drive-vault.php"
 findstr /c:"[\"same-origin\",\"none\"]" "lib\request-guard.js" >nul || exit /b 424
 findstr /c:"function hcdecor_drive_inbox_approval_fresh" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 425
 findstr /c:"Fresh explicit approval is required for Drive Inbox import" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 426
+findstr /c:"function hcdecor_drive_approval_fresh" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 427
+findstr /c:"Fresh explicit approval is required for Drive imports." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 428
+findstr /c:"Fresh explicit approval is required for Drive project imports." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 429
+findstr /c:"$limit=max(1,min(100,(int)$limit));" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 430
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

@@ -41,6 +41,14 @@ function hcdecor_drive_folders(){
     return wp_parse_args((array)get_option('hcdecor_drive_folders',[]),hcdecor_drive_default_folders());
 }
 
+function hcdecor_drive_approval_fresh(WP_REST_Request $r){
+    if(!rest_sanitize_boolean($r->get_param('production_approved'))) return false;
+    $by=sanitize_text_field((string)$r->get_param('production_approved_by'));
+    $source=sanitize_key((string)$r->get_param('production_approval_source'));
+    $at=strtotime((string)$r->get_param('production_approved_at'))?:0;
+    return $by!=='' && in_array($source,['wp_user','service_bridge'],true) && $at>=time()-15*MINUTE_IN_SECONDS && $at<=time()+5*MINUTE_IN_SECONDS;
+}
+
 function hcdecor_drive_secret($name){
     $const=[
         'client_id'=>'HCDECOR_GOOGLE_CLIENT_ID',
@@ -715,7 +723,7 @@ add_action('rest_api_init',function(){
             $id=(int)$r['id'];
             if(!$id || get_post_type($id)!=='hc_content_job') return new WP_Error('job','Invalid content job.',['status'=>404]);
             if(get_current_user_id()>0 && !current_user_can('edit_post',$id)) return new WP_Error('forbidden','Forbidden.',['status'=>403]);
-            if(!rest_sanitize_boolean($r->get_param('production_approved'))) return new WP_Error('approval','Explicit approval is required for Drive job writes.',['status'=>403]);
+            if(!hcdecor_drive_approval_fresh($r)) return new WP_Error('approval','Fresh explicit approval is required for Drive job writes.',['status'=>403]);
             $res=hcdecor_drive_save_job($id,true);
             return is_wp_error($res)?$res:rest_ensure_response($res);
         }
@@ -723,6 +731,7 @@ add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/drive/import',[
         'methods'=>'POST','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
+            if(!hcdecor_drive_approval_fresh($r)) return new WP_Error('approval','Fresh explicit approval is required for Drive imports.',['status'=>403]);
             $file=preg_replace('/[^A-Za-z0-9_-]/','',(string)$r->get_param('file_id'));
             if($file==='') return new WP_Error('file','Invalid Drive file ID.',['status'=>400]);
             $res=hcdecor_drive_import_job($file);

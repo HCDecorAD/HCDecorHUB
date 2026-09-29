@@ -269,7 +269,7 @@ add_action('hcdecor_after_web_publish',function($job_id,$project_id){
 },45,2);
 
 function hcdecor_project_vault_sync_all($limit=100){
-    $limit=max(1,min(500,(int)$limit));
+    $limit=max(1,min(100,(int)$limit));
     if(!function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()) return new WP_Error('drive','Google Drive chưa kết nối.');
 
     $projects=get_posts([
@@ -349,7 +349,7 @@ add_action('rest_api_init',function(){
             $id=(int)$r['id'];
             if(!$id || get_post_type($id)!=='hc_project') return new WP_Error('project','Invalid project.',['status'=>404]);
             if(get_current_user_id()>0 && !current_user_can('edit_post',$id)) return new WP_Error('forbidden','Forbidden.',['status'=>403]);
-            if(!rest_sanitize_boolean($r->get_param('production_approved'))) return new WP_Error('approval','Explicit approval is required for Drive project writes.',['status'=>403]);
+            if(!function_exists('hcdecor_drive_approval_fresh') || !hcdecor_drive_approval_fresh($r)) return new WP_Error('approval','Fresh explicit approval is required for Drive project writes.',['status'=>403]);
             $res=hcdecor_project_vault_save($id,true);
             return is_wp_error($res)?$res:rest_ensure_response($res);
         }
@@ -357,7 +357,7 @@ add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/projects/drive-sync-all',[
         'methods'=>'POST','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
-            if(!rest_sanitize_boolean($r->get_param('production_approved'))) return new WP_Error('approval','Explicit approval is required for bulk Drive project writes.',['status'=>403]);
+            if(!function_exists('hcdecor_drive_approval_fresh') || !hcdecor_drive_approval_fresh($r)) return new WP_Error('approval','Fresh explicit approval is required for bulk Drive project writes.',['status'=>403]);
             $res=hcdecor_project_vault_sync_all((int)($r->get_param('limit')?:100));
             return is_wp_error($res)?$res:rest_ensure_response($res);
         }
@@ -365,6 +365,7 @@ add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/projects/drive-import',[
         'methods'=>'POST','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
+            if(!function_exists('hcdecor_drive_approval_fresh') || !hcdecor_drive_approval_fresh($r)) return new WP_Error('approval','Fresh explicit approval is required for Drive project imports.',['status'=>403]);
             $file=preg_replace('/[^A-Za-z0-9_-]/','',(string)$r->get_param('file_id'));
             if($file==='') return new WP_Error('file','Invalid Drive file ID.',['status'=>400]);
             $res=hcdecor_project_vault_import($file);
