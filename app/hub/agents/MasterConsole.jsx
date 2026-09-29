@@ -11,7 +11,7 @@ export function MasterConsole(){
  async function refreshRuns(){try{const r=await fetch(`/api/master/runs?limit=5&workspace=${encodeURIComponent(workspace)}`,{cache:"no-store"});const x=await r.json();setRuns(Array.isArray(x.runs)?x.runs:[])}catch{setRuns([])}}
  useEffect(()=>{refreshRuns();refreshPreflight()},[workspace]);
  async function run(e){e.preventDefault();if(!intent.trim())return;setBusy(true);setResult(null);
-  try{const body=JSON.stringify({workspace_id:workspace,module,action,intent,execute:action==="view"||(action==="create"&&["agents","reports","audit"].includes(module))});const r=await fetch("/api/master",{method:"POST",headers:{"content-type":"application/json"},body});setResult(await r.json())}
+  try{const body=JSON.stringify({workspace_id:workspace,module,action,intent,execute:action==="view"||(action==="create"&&["agents","reports","audit","content","media","publishing"].includes(module))});const r=await fetch("/api/master",{method:"POST",headers:{"content-type":"application/json"},body});setResult(await r.json())}
   catch{setResult({ok:false,error:"request_failed"})}finally{setBusy(false);await refreshRuns()}}
  return <section className="masterConsole"><div className="masterConsoleHead"><div><span>COMMAND CENTER</span><h2>Run Master Agent</h2></div><small>Plan-first · production guarded</small></div>
  {preflight&&<div className="masterPreflight"><b>Preflight</b><span>{preflight.summary.operational?"Operational":"Needs config"}</span><small>{preflight.summary.needs_config.length?preflight.summary.needs_config.join(" · "):`${preflight.summary.modules} modules ready`}</small></div>}
