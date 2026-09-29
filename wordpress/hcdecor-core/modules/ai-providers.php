@@ -145,6 +145,15 @@ function hcdecor_ai_safe_error($message){
     return function_exists('mb_substr')?mb_substr($text,0,500):substr($text,0,500);
 }
 
+function hcdecor_ai_usage_summary($usage){
+    $usage=is_array($usage)?$usage:[];
+    $out=[];
+    foreach(['input_tokens','output_tokens','total_tokens','prompt_token_count','candidates_token_count','total_token_count'] as $key){
+        if(isset($usage[$key]) && is_numeric($usage[$key])) $out[$key]=max(0,(int)$usage[$key]);
+    }
+    return $out;
+}
+
 function hcdecor_ai_call_openai($job_id){
     $key=hcdecor_ai_secret('openai');
     if($key==='') return new WP_Error('no_openai_key','OpenAI API key chưa cấu hình.');
@@ -173,7 +182,7 @@ function hcdecor_ai_call_openai($job_id){
     $text=hcdecor_ai_extract_openai_text((array)$data);
     $json=json_decode($text,true);
     if(!is_array($json)) return new WP_Error('openai_json','OpenAI trả về dữ liệu không hợp lệ.');
-    return ['provider'=>'openai','model'=>(string)($data['model']??hcdecor_ai_model('openai')),'content'=>$json,'usage'=>$data['usage']??[]];
+    return ['provider'=>'openai','model'=>(string)($data['model']??hcdecor_ai_model('openai')),'content'=>$json,'usage'=>hcdecor_ai_usage_summary($data['usage']??[])];
 }
 
 function hcdecor_ai_call_gemini($job_id){
@@ -208,7 +217,7 @@ function hcdecor_ai_call_gemini($job_id){
     $text=hcdecor_ai_extract_gemini_text((array)$data);
     $json=json_decode($text,true);
     if(!is_array($json)) return new WP_Error('gemini_json','Gemini trả về dữ liệu không hợp lệ.');
-    return ['provider'=>'gemini','model'=>(string)($data['model']??hcdecor_ai_model('gemini')),'content'=>$json,'usage'=>$data['usage']??[]];
+    return ['provider'=>'gemini','model'=>(string)($data['model']??hcdecor_ai_model('gemini')),'content'=>$json,'usage'=>hcdecor_ai_usage_summary($data['usage']??[])];
 }
 
 

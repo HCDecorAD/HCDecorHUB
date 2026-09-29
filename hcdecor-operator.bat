@@ -303,6 +303,7 @@ findstr /c:"'gallery'=>array_slice" "wordpress\hcdecor-core\modules\web-publishe
 findstr /c:"Invalid content job." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 314
 findstr /c:"'workflow_log'=>array_slice" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 315
 findstr /c:"hcdecor_drive_inbox_safe_text($imported->get_error_message())" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 316
+findstr /c:"function hcdecor_ai_usage_summary" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 317
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
