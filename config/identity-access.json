@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "principals": [
+    "human",
+    "agent",
+    "service"
+  ],
+  "roles": {
+    "owner": {
+      "scope": "all"
+    },
+    "workspace_admin": {
+      "scope": "one-workspace"
+    },
+    "store_admin": {
+      "scope": "one-store"
+    },
+    "staff": {
+      "scope": "granted-modules"
+    },
+    "viewer": {
+      "scope": "read-only"
+    }
+  },
+  "rules": {
+    "default": "deny",
+    "workspace_isolation": true,
+    "store_isolation": true,
+    "production_mutation": "explicit-approval",
+    "service_credentials": "server-side-only"
+  }
+}

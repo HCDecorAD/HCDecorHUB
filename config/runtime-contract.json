@@ -1,0 +1,37 @@
+{
+  "schema_version": "3.1.0",
+  "architecture": "One Core -> One Master Agent -> Multiple Workspaces -> Workers -> Tools/Adapters -> Verification/Audit",
+  "control_plane": {
+    "master_agent": "master-agent",
+    "planner": "task-dag",
+    "router": "capability-router",
+    "policy": "policy-engine",
+    "executor": "orchestration-kernel"
+  },
+  "task_states": [
+    "planned",
+    "blocked",
+    "ready",
+    "running",
+    "verifying",
+    "completed",
+    "failed",
+    "rolled_back"
+  ],
+  "dependency": {
+    "on_failure": "block-dependents",
+    "read_parallel": true,
+    "mutation_parallel": false
+  },
+  "release": {
+    "production": "approval-required",
+    "verification": "required",
+    "audit": "required",
+    "rollback": "required"
+  },
+  "tenant_isolation": {
+    "key": "workspace_id",
+    "commerce_key": "store_id",
+    "fail_closed": true
+  }
+}
