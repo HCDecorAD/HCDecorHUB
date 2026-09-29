@@ -396,6 +396,8 @@ findstr /c:"$ids=array_slice(array_values(array_unique($ids)),0,50)" "wordpress\
 findstr /c:"external_write_confirmation_required" "app\api\projects\route.js" >nul || exit /b 409
 findstr /c:"hcdecor_backup_clip(get_option('hcdecor_drive_active_prompt',''),20000)" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 410
 findstr /c:"hcdecor_backup_clip(get_option('hcdecor_ai_openai_model',''),200)" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 411
+findstr /c:"function hcdecor_hub_dashboard_safe_error" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 412
+findstr /c:"mb_substr($text,0,500)" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 413
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
