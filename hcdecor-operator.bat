@@ -575,6 +575,9 @@ findstr /c:"function hcdecor_publish_history" "wordpress\hcdecor-core\modules\we
 findstr /c:"hcdecor_publish_history(get_post_meta($job_id,'hc_publish_history',true))" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 603
 findstr /c:"function hcdecor_auto_settings_change" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 604
 findstr /c:"hcdecor_auto_settings_change(get_option('hcdecor_automation_settings_last_change',[]))" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 605
+findstr /c:"$mutex_token=is_scalar($mutex['token']" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 606
+findstr /c:"$production_approved=$_POST['production_approved']" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 607
+findstr /c:"$safe_key=hcdecor_social_limit_text" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 608
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

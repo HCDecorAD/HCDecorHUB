@@ -129,8 +129,8 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     $released=hcdecor_workflow_sweep_mutex_release($owned);
     if(!$released){
         $current=get_option('hcdecor_worker_mutex_sweep_mutex',[]);
-        $current_token=is_array($current)?(string)($current['token']??''):'';
-        if($current_token!=='' && hash_equals((string)($owned['token']??''),$current_token)) hcdecor_workflow_claim_mutex_delete_if_same('hcdecor_worker_mutex_sweep_mutex',$current);
+        $current_token=is_array($current)&&is_scalar($current['token']??'')?(string)$current['token']:'';
+        $owned_token=is_array($owned)&&is_scalar($owned['token']??'')?(string)$owned['token']:'';if($current_token!=='' && $owned_token!=='' && hash_equals($owned_token,$current_token)) hcdecor_workflow_claim_mutex_delete_if_same('hcdecor_worker_mutex_sweep_mutex',$current);
         $retry=wp_next_scheduled('hcdecor_worker_mutex_sweep_tick');
         if(!$retry || $retry<(time()-60)){
             if($retry) wp_clear_scheduled_hook('hcdecor_worker_mutex_sweep_tick');
@@ -182,7 +182,7 @@ function hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed=true,$clear_
 function hcdecor_workflow_claim_mutex_release($job_id,$claim_token){
     $key='hcdecor_claim_mutex_'.(int)$job_id;
     $mutex=(array)get_option($key,[]);
-    if($claim_token==='' || (string)($mutex['token']??'')!==$claim_token) return false;
+    $mutex_token=is_scalar($mutex['token']??'')?(string)$mutex['token']:'';if($claim_token==='' || $mutex_token!==$claim_token) return false;
     return hcdecor_workflow_claim_mutex_delete_if_same($key,$mutex);
 }
 
@@ -545,7 +545,7 @@ add_action('admin_post_hcdecor_review_action',function(){
         }
     }elseif($action==='approve_publish'){
         if(!current_user_can('publish_posts')) wp_die('Forbidden');
-        if((string)($_POST['production_approved']??'')!=='1') wp_die('Explicit production publish approval is required.');
+        $production_approved=$_POST['production_approved']??'';if(!is_scalar($production_approved) || (string)$production_approved!=='1') wp_die('Explicit production publish approval is required.');
         if(hcdecor_workflow_clip(get_post_meta($id,'hc_agent_status',true),50)!=='review') wp_die('Job is not ready for approval.');
         if(!function_exists('hcdecor_publish_job_to_web')) wp_die('Web publisher unavailable');
         update_post_meta($id,'hc_reviewed_by',get_current_user_id());

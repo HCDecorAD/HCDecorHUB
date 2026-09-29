@@ -21,20 +21,20 @@ function hcdecor_social_groups() {
 function hcdecor_social_accounts_safe() {
     return array_map(function($account){
         $account=is_array($account)?$account:[];
-        $channel=sanitize_key((string)($account['channel']??''));
+        $channel=sanitize_key(is_scalar($account['channel']??'')?(string)$account['channel']:'');
         return [
-            'id'=>hcdecor_social_limit_text(sanitize_key((string)($account['id']??'')),100),
+            'id'=>hcdecor_social_limit_text(sanitize_key(is_scalar($account['id']??'')?(string)$account['id']:''),100),
             'channel'=>in_array($channel,['facebook','tiktok','youtube'],true)?$channel:'',
             'name'=>hcdecor_social_limit_text($account['name']??'',300),
             'remote_id'=>hcdecor_social_limit_text($account['remote_id']??'',500),
-            'group'=>hcdecor_social_limit_text(sanitize_key((string)($account['group']??'')),100),
+            'group'=>hcdecor_social_limit_text(sanitize_key(is_scalar($account['group']??'')?(string)$account['group']:''),100),
             'enabled'=>!empty($account['enabled'])
         ];
     }, hcdecor_social_accounts());
 }
 function hcdecor_social_groups_safe(){
     $out=[];
-    foreach(hcdecor_social_groups() as $key=>$name){$out[hcdecor_social_limit_text(sanitize_key((string)$key),100)]=hcdecor_social_limit_text($name,300);}
+    foreach(hcdecor_social_groups() as $key=>$name){$safe_key=hcdecor_social_limit_text(sanitize_key(is_scalar($key)?(string)$key:''),100);if($safe_key!=='')$out[$safe_key]=hcdecor_social_limit_text($name,300);}
     return $out;
 }
 function hcdecor_social_account($id) {
