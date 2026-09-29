@@ -251,6 +251,8 @@ add_action('init',function(){
     }
 },50);
 
+function hcdecor_auto_time($value){$raw=is_scalar($value)?(string)$value:'';if($raw===''||strlen($raw)>64)return 0;return strtotime($raw)?:0;}
+
 function hcdecor_auto_recover_stale_running($limit=20){
     $ids=get_posts([
         'post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>max(1,min(50,(int)$limit)),'fields'=>'ids',
@@ -259,8 +261,8 @@ function hcdecor_auto_recover_stale_running($limit=20){
     ]);
     $recovered=0; $now=time();
     foreach($ids as $id){
-        $started=strtotime((string)get_post_meta($id,'hc_auto_started_at',true))?:0;
-        $modified=strtotime((string)get_post_field('post_modified',$id))?:0;
+        $started=hcdecor_auto_time(get_post_meta($id,'hc_auto_started_at',true));
+        $modified=hcdecor_auto_time(get_post_field('post_modified',$id));
         $reason='';
         if($started && $started<($now-900)) $reason='running_timeout';
         elseif(!$started && $modified && $modified<($now-1800)) $reason='missing_started_at';

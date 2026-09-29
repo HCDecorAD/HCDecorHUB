@@ -474,6 +474,9 @@ findstr /c:"$recipe['enabled']=$enabled[$id]" "wordpress\hcdecor-core\modules\au
 findstr /c:"function hcdecor_workflow_time" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 502
 findstr /c:"$heartbeat=hcdecor_workflow_time" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 503
 findstr /c:"$modified=hcdecor_workflow_time" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 504
+findstr /c:"function hcdecor_auto_time" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 505
+findstr /c:"$started=hcdecor_auto_time" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 506
+findstr /c:"$modified=hcdecor_auto_time" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 507
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
