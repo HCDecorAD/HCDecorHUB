@@ -573,6 +573,8 @@ findstr /c:"hcdecor_workflow_log_entries(get_post_meta($job_id,'hc_workflow_log'
 findstr /c:"function hcdecor_auto_log_entries" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 601
 findstr /c:"function hcdecor_publish_history" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 602
 findstr /c:"hcdecor_publish_history(get_post_meta($job_id,'hc_publish_history',true))" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 603
+findstr /c:"function hcdecor_auto_settings_change" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 604
+findstr /c:"hcdecor_auto_settings_change(get_option('hcdecor_automation_settings_last_change',[]))" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 605
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

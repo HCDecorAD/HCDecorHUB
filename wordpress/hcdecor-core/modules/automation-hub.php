@@ -308,6 +308,10 @@ function hcdecor_auto_cleanup_mutex_delete_if_same($observed){
     return $deleted===1;
 }
 
+function hcdecor_auto_settings_change($value){
+    if(!is_array($value)) return [];
+    return ['at'=>hcdecor_auto_safe_message($value['at']??''),'by'=>max(0,(int)($value['by']??0)),'enabled'=>!empty($value['enabled']),'social_enabled'=>!empty($value['social_enabled']),'webhook_enabled'=>!empty($value['webhook_enabled']),'evergreen_enabled'=>!empty($value['evergreen_enabled']),'blocked_tasks'=>max(0,(int)($value['blocked_tasks']??0)),'scanned_tasks'=>max(0,(int)($value['scanned_tasks']??0)),'cleanup_limited'=>!empty($value['cleanup_limited']),'cleanup_continued_at'=>hcdecor_auto_safe_message($value['cleanup_continued_at']??'')];
+}
 function hcdecor_auto_cleanup_mutex_state($raw=null){
     if($raw===null) $raw=get_option('hcdecor_automation_cleanup_mutex',[]);
     if(is_array($raw)){ $token=is_scalar($raw['token']??'')?(string)$raw['token']:''; if(strlen($token)>128)$token=''; return ['token'=>$token,'at'=>(int)($raw['at']??0),'raw'=>$raw]; }
@@ -334,7 +338,7 @@ function hcdecor_auto_cleanup_mutex_release($owned){
 
 add_action('hcdecor_automation_cleanup_tick',function(){
     $s=hcdecor_auto_settings();
-    $last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
+    $last_change=hcdecor_auto_settings_change(get_option('hcdecor_automation_settings_last_change',[]));
     if(empty($last_change['cleanup_limited'])) return;
     $cleanup_mutex=hcdecor_auto_cleanup_mutex_acquire();
     if(!$cleanup_mutex){
@@ -348,7 +352,7 @@ add_action('hcdecor_automation_cleanup_tick',function(){
     $last_change['scanned_tasks']=(int)($last_change['scanned_tasks']??0)+(int)($cleanup['scanned']??0);
     $last_change['cleanup_limited']=!empty($cleanup['limited']);
     $last_change['cleanup_continued_at']=current_time('mysql');
-    update_option('hcdecor_automation_settings_last_change',$last_change,false);
+    update_option('hcdecor_automation_settings_last_change',hcdecor_auto_settings_change($last_change),false);
     $released=hcdecor_auto_cleanup_mutex_release($cleanup_mutex);
     if($released){
         wp_unschedule_event($watchdog,'hcdecor_automation_cleanup_watchdog');
@@ -358,7 +362,7 @@ add_action('hcdecor_automation_cleanup_tick',function(){
 });
 
 add_action('hcdecor_automation_cleanup_watchdog',function(){
-    $last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
+    $last_change=hcdecor_auto_settings_change(get_option('hcdecor_automation_settings_last_change',[]));
     if(empty($last_change['cleanup_limited'])) return;
     $state=hcdecor_auto_cleanup_mutex_state();
     if($state['at'] && $state['at']<(time()-120)) hcdecor_auto_cleanup_mutex_delete_if_same($state['raw']);
