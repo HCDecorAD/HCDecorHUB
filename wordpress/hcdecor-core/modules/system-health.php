@@ -208,7 +208,7 @@ function hcdecor_health_snapshot(){
     $published_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'fields'=>'ids','meta_query'=>[['key'=>'hc_published_web_at','value'=>wp_date('Y-m-d H:i:s',current_time('timestamp')-7*DAY_IN_SECONDS),'compare'=>'>=','type'=>'DATETIME']]]))->found_posts;
     $created_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'date_query'=>[['after'=>'7 days ago']],'fields'=>'ids']))->found_posts;
     $backup_cron=(int)(wp_next_scheduled('hcdecor_backup_daily')?:0);
-    $last_auto_repair=(array)get_option('hcdecor_health_auto_repair_last',[]);
+    $last_auto_repair_raw=get_option('hcdecor_health_auto_repair_last',[]);$last_auto_repair=is_array($last_auto_repair_raw)?$last_auto_repair_raw:[];
     $last_auto_repair_ts=!empty($last_auto_repair['at'])?hcdecor_health_time($last_auto_repair['at']):0;
     $vault_stale=0;
     $vault_stale_scanned=0;
@@ -235,7 +235,7 @@ function hcdecor_health_snapshot(){
     if($drive_configured && $drive_test==='error') $issues[]='Google Drive connection error';
     if($auto['failed']>0) $issues[]='Automation failed: '.$auto['failed'];
     if($actionable_blocked>0) $issues[]='Automation blocked: '.$actionable_blocked;
-    $worker_mutex_sweep=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
+    $worker_mutex_sweep_raw=get_option('hcdecor_worker_mutex_sweep_last',[]);$worker_mutex_sweep=is_array($worker_mutex_sweep_raw)?$worker_mutex_sweep_raw:[];
     $worker_mutex_sweep_ts=(int)($worker_mutex_sweep['ts']??0);
     if(!$worker_mutex_sweep_ts && !empty($worker_mutex_sweep['at'])) $worker_mutex_sweep_ts=hcdecor_health_time($worker_mutex_sweep['at']);
     $worker_mutex_sweep_fresh=$worker_mutex_sweep_ts>=(time()-600);
@@ -244,7 +244,7 @@ function hcdecor_health_snapshot(){
     $worker_sweep_mutex_invalid=(is_array($worker_sweep_mutex_raw) && $worker_sweep_mutex_raw && (empty($worker_sweep_mutex_raw['token']) || !$worker_sweep_mutex_at))
         || (!is_array($worker_sweep_mutex_raw) && $worker_sweep_mutex_raw!==false && $worker_sweep_mutex_raw!=='' && $worker_sweep_mutex_at<=0);
     $worker_sweep_mutex_stale=$worker_sweep_mutex_invalid || ($worker_sweep_mutex_at>0 && $worker_sweep_mutex_at<(time()-30));
-    $automation_last_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
+    $automation_last_change_raw=get_option('hcdecor_automation_settings_last_change',[]);$automation_last_change=is_array($automation_last_change_raw)?$automation_last_change_raw:[];
     $automation_cleanup_raw=get_option('hcdecor_automation_cleanup_mutex',[]);
     $automation_cleanup_mutex=is_array($automation_cleanup_raw)?(int)($automation_cleanup_raw['at']??0):(int)$automation_cleanup_raw;
     $automation_cleanup_invalid=(is_array($automation_cleanup_raw) && $automation_cleanup_raw && (empty($automation_cleanup_raw['token']) || !$automation_cleanup_mutex))
@@ -433,9 +433,9 @@ function hcdecor_health_auto_repair_schedules(){
     $crons=hcdecor_health_crons();
     $required=hcdecor_health_required_schedules();
     $missing=array_filter($crons,function($v,$name)use($required){ return !empty($required[$name]) && empty($v['scheduled']); },ARRAY_FILTER_USE_BOTH);
-    $cleanup_change=(array)get_option('hcdecor_automation_settings_last_change',[]);
+    $cleanup_change_raw=get_option('hcdecor_automation_settings_last_change',[]);$cleanup_change=is_array($cleanup_change_raw)?$cleanup_change_raw:[];
     $cleanup_repairs=[];
-    $worker_sweep=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
+    $worker_sweep_raw=get_option('hcdecor_worker_mutex_sweep_last',[]);$worker_sweep=is_array($worker_sweep_raw)?$worker_sweep_raw:[];
     $worker_sweep_next=wp_next_scheduled('hcdecor_worker_mutex_sweep_tick');
     $worker_sweep_ts=(int)($worker_sweep['ts']??0);
     if(!$worker_sweep_ts && !empty($worker_sweep['at'])) $worker_sweep_ts=hcdecor_health_time($worker_sweep['at']);

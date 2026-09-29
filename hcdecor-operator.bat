@@ -598,6 +598,9 @@ findstr /c:"$stored_media=get_post_meta($job_id,'hc_media_ids',true)" "wordpress
 findstr /c:"$channels_raw=get_post_meta($job->ID,'hc_channels',true)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 626
 findstr /c:"$media_raw=get_post_meta($job->ID,'hc_media_ids',true)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 627
 findstr /c:"$aitags_raw=get_post_meta($edit_id,'hc_ai_tags',true)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 628
+findstr /c:"$last_raw=get_option('hcdecor_worker_mutex_sweep_last',[])" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 563
+findstr /c:"$last_auto_repair_raw=get_option('hcdecor_health_auto_repair_last',[])" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 564
+findstr /c:"$automation_last_change_raw=get_option('hcdecor_automation_settings_last_change',[])" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 565
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

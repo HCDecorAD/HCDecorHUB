@@ -86,7 +86,7 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
     }
     $limit=max(1,min(100,(int)$limit));
     $cutoff=time()-120;
-    $last=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
+    $last_raw=get_option('hcdecor_worker_mutex_sweep_last',[]);$last=is_array($last_raw)?$last_raw:[];
     $cursor=max(0,(int)($last['cursor']??0));
     $claim_like=$wpdb->esc_like('hcdecor_claim_mutex_').'%';
     $lifecycle_like=$wpdb->esc_like('hcdecor_lifecycle_mutex_').'%';
@@ -141,7 +141,7 @@ function hcdecor_workflow_sweep_claim_mutexes($limit=100){
 }
 
 add_action('init',function(){
-    $last=(array)get_option('hcdecor_worker_mutex_sweep_last',[]);
+    $last_raw=get_option('hcdecor_worker_mutex_sweep_last',[]);$last=is_array($last_raw)?$last_raw:[];
     $last_ts=(int)($last['ts']??0);
     if(!$last_ts && !empty($last['at'])) $last_ts=hcdecor_workflow_time($last['at']);
     if($last_ts && $last_ts>=time()-30) return;
@@ -181,7 +181,7 @@ function hcdecor_workflow_clear_worker_claim($job_id,$clear_claimed=true,$clear_
 
 function hcdecor_workflow_claim_mutex_release($job_id,$claim_token){
     $key='hcdecor_claim_mutex_'.(int)$job_id;
-    $mutex=(array)get_option($key,[]);
+    $mutex_raw=get_option($key,[]);$mutex=is_array($mutex_raw)?$mutex_raw:[];
     $mutex_token=is_scalar($mutex['token']??'')?(string)$mutex['token']:'';if($claim_token==='' || $mutex_token!==$claim_token) return false;
     return hcdecor_workflow_claim_mutex_delete_if_same($key,$mutex);
 }
@@ -297,7 +297,7 @@ function hcdecor_workflow_recover_orphan_draft_claims($limit=20){
         if($token==='') continue;
         $lock=(int)get_post_meta($job_id,'hc_agent_lock_until',true);
         if($lock>$now) continue;
-        $mutex=(array)get_option('hcdecor_claim_mutex_'.$job_id,[]);
+        $mutex_raw=get_option('hcdecor_claim_mutex_'.$job_id,[]);$mutex=is_array($mutex_raw)?$mutex_raw:[];
         if(!empty($mutex['at']) && (int)$mutex['at']>=($now-120)) continue;
         $claimed=hcdecor_workflow_time(get_post_meta($job_id,'hc_agent_claimed_at',true));
         $modified=hcdecor_workflow_time(get_post_field('post_modified',$job_id));
