@@ -567,6 +567,12 @@ findstr /c:"hcdecor_drive_inbox_result(get_option('hcdecor_drive_inbox_last_resu
 findstr /c:"function hcdecor_restore_last_result" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 595
 findstr /c:"hcdecor_restore_last_result(get_option('hcdecor_restore_last_result',[]))" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 596
 findstr /c:"$inbox_result=function_exists('hcdecor_drive_inbox_result')" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 597
+findstr /c:"function hcdecor_social_test_state" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 598
+findstr /c:"function hcdecor_workflow_log_entries" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 599
+findstr /c:"hcdecor_workflow_log_entries(get_post_meta($job_id,'hc_workflow_log',true))" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 600
+findstr /c:"function hcdecor_auto_log_entries" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 601
+findstr /c:"function hcdecor_publish_history" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 602
+findstr /c:"hcdecor_publish_history(get_post_meta($job_id,'hc_publish_history',true))" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 603
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

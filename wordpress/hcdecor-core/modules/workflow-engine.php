@@ -5,8 +5,13 @@ if (!defined('ABSPATH')) exit;
 
 function hcdecor_workflow_time($value){$raw=is_scalar($value)?(string)$value:'';if($raw===''||strlen($raw)>64)return 0;return strtotime($raw)?:0;}
 
+function hcdecor_workflow_log_entries($value){
+    if(!is_array($value)) return [];$out=[];
+    foreach(array_slice($value,-100) as $row){if(!is_array($row))continue;$out[]=['time'=>hcdecor_workflow_clip($row['time']??'',64),'event'=>sanitize_key(hcdecor_workflow_clip($row['event']??'',100)),'note'=>hcdecor_workflow_clip($row['note']??'',500),'user'=>max(0,(int)($row['user']??0))];}
+    return $out;
+}
 function hcdecor_workflow_log($job_id,$event,$note=''){
-    $log=(array)get_post_meta($job_id,'hc_workflow_log',true);
+    $log=hcdecor_workflow_log_entries(get_post_meta($job_id,'hc_workflow_log',true));
     $log[]=[
         'time'=>current_time('mysql'),
         'event'=>sanitize_key($event),

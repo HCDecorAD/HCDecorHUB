@@ -35,6 +35,11 @@ function hcdecor_publish_snapshot($project_id){
     ];
 }
 
+function hcdecor_publish_history($value){
+    if(!is_array($value)) return [];$out=[];
+    foreach(array_slice($value,-5) as $row){if(!is_array($row))continue;$snapshot=is_array($row['snapshot']??null)?$row['snapshot']:[];$out[]=['published_at'=>hcdecor_publish_clip($row['published_at']??'',64),'approved_by'=>max(0,(int)($row['approved_by']??0)),'approval_source'=>sanitize_key(hcdecor_publish_clip($row['approval_source']??'',50)),'approved_at'=>hcdecor_publish_clip($row['approved_at']??'',64),'snapshot'=>['time'=>hcdecor_publish_clip($snapshot['time']??'',64),'title'=>hcdecor_publish_clip($snapshot['title']??'',500),'excerpt'=>hcdecor_publish_clip($snapshot['excerpt']??'',5000),'content'=>hcdecor_publish_clip($snapshot['content']??'',100000),'gallery'=>array_slice(array_map('intval',(array)($snapshot['gallery']??[])),0,60),'gallery_legacy'=>array_slice(array_map('intval',(array)($snapshot['gallery_legacy']??[])),0,60),'cover'=>max(0,(int)($snapshot['cover']??0)),'seo_meta'=>hcdecor_publish_clip($snapshot['seo_meta']??'',2000)]];}
+    return $out;
+}
 function hcdecor_restore_project_snapshot($project_id,$snapshot){
     $project_id=(int)$project_id;
     if(!$project_id || get_post_type($project_id)!=='hc_project' || !is_array($snapshot)) return new WP_Error('snapshot','Invalid publish snapshot.');
@@ -123,7 +128,7 @@ function hcdecor_publish_job_to_web($job_id){
     $approval_by=(int)get_post_meta($job_id,'hc_publish_approved_by',true);
     $approval_source=sanitize_key(hcdecor_publish_clip(get_post_meta($job_id,'hc_publish_approval_source',true),50));
     $approval_at=hcdecor_publish_clip(get_post_meta($job_id,'hc_publish_approved_at',true),64);
-    $history=(array)get_post_meta($job_id,'hc_publish_history',true);
+    $history=hcdecor_publish_history(get_post_meta($job_id,'hc_publish_history',true));
     $history[]=['published_at'=>current_time('mysql'),'approved_by'=>$approval_by,'approval_source'=>$approval_source,'approved_at'=>$approval_at,'snapshot'=>$snapshot];
     if(count($history)>5) $history=array_slice($history,-5);
     update_post_meta($job_id,'hc_publish_history',$history);

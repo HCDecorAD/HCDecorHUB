@@ -88,8 +88,11 @@ function hcdecor_auto_safe_message($message){
     $text=sanitize_text_field(is_scalar($message)?(string)$message:'');
     return function_exists('mb_substr')?mb_substr($text,0,500):substr($text,0,500);
 }
+function hcdecor_auto_log_entries($value){
+    if(!is_array($value)) return [];$out=[];foreach(array_slice($value,-50) as $row){if(!is_array($row))continue;$out[]=['time'=>hcdecor_auto_safe_message($row['time']??''),'event'=>sanitize_key(hcdecor_auto_safe_message($row['event']??'')),'note'=>hcdecor_auto_safe_message($row['note']??'')];}return $out;
+}
 function hcdecor_auto_log($task_id,$event,$note=''){
-    $log=(array)get_post_meta($task_id,'hc_auto_log',true);
+    $log=hcdecor_auto_log_entries(get_post_meta($task_id,'hc_auto_log',true));
     $log[]=['time'=>current_time('mysql'),'event'=>sanitize_key($event),'note'=>hcdecor_auto_safe_message($note)];
     if(count($log)>50) $log=array_slice($log,-50);
     update_post_meta($task_id,'hc_auto_log',$log);

@@ -24,9 +24,13 @@ add_action('admin_post_hcdecor_social_test',function(){
     update_option('hcdecor_social_test_'.$channel,['configured'=>$ok,'at'=>current_time('mysql'),'message'=>$ok?'Credentials are configured; live API health was not checked.':'Connector credentials are incomplete.'],false);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-social-connectors&tested='.$channel));exit;
 });
+function hcdecor_social_test_state($value){
+    if(!is_array($value)) return [];
+    return ['configured'=>!empty($value['configured']),'at'=>hcdecor_social_clip($value['at']??'',64),'message'=>hcdecor_social_clip($value['message']??'',500)];
+}
 function hcdecor_social_connection_state($channel){
-    $s=hcdecor_social_settings();$ready=hcdecor_social_ready($channel,$s);$test=(array)get_option('hcdecor_social_test_'.$channel,[]);
-    return ['configured'=>$ready,'tested'=>false,'tested_at'=>hcdecor_social_clip($test['at']??'',64),'state'=>$ready?'configured':'requires-credentials','live_health'=>'not_checked'];
+    $s=hcdecor_social_settings();$ready=hcdecor_social_ready($channel,$s);$test=hcdecor_social_test_state(get_option('hcdecor_social_test_'.$channel,[]));
+    return ['configured'=>$ready,'tested'=>false,'tested_at'=>$test['at']??'','state'=>$ready?'configured':'requires-credentials','live_health'=>'not_checked'];
 }
 add_action('admin_post_hcdecor_social_save',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
@@ -93,7 +97,7 @@ function hcdecor_social_connectors_page(){
       <div class="hcs-row"><label><?php echo esc_html($x[2]);?></label><input name="<?php echo esc_attr($x[3]);?>" value="<?php echo esc_attr($s[$x[3]]);?>" placeholder="<?php echo esc_attr($x[2]);?>"></div>
       <?php if($key==='tiktok'):?><div class="hcs-row"><label>Client Secret</label><input type="password" name="tiktok_client_secret" placeholder="<?php echo esc_attr(hcdecor_social_mask($s['tiktok_client_secret']));?>"></div><?php endif;?>
       <div class="hcs-row"><label><?php echo esc_html($x[4]);?></label><input type="password" name="<?php echo esc_attr($x[5]);?>" placeholder="<?php echo esc_attr(hcdecor_social_mask($s[$x[5]]));?>"></div>
-      <div class="hcs-foot"><span class="hcs-secret"><?php echo esc_html($ready?'Credentials đã lưu':'Cần thông tin API'); ?></span><?php $test=(array)get_option('hcdecor_social_test_'.$key,[]);if(!empty($test['at'])):?><small><?php echo !empty($test['configured'])?' · CONFIGURED':' · CHECK';?></small><?php endif;?></div></section>
+      <div class="hcs-foot"><span class="hcs-secret"><?php echo esc_html($ready?'Credentials đã lưu':'Cần thông tin API'); ?></span><?php $test=hcdecor_social_test_state(get_option('hcdecor_social_test_'.$key,[]));if(!empty($test['at'])):?><small><?php echo !empty($test['configured'])?' · CONFIGURED':' · CHECK';?></small><?php endif;?></div></section>
     <?php endforeach;?></div><p><button class="button button-primary button-hero">Lưu Social Connectors</button></p></form>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0"><?php foreach(hcdecor_social_channels() as $key=>$label):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_social_test"><input type="hidden" name="channel" value="<?php echo esc_attr($key);?>"><?php wp_nonce_field('hcdecor_social_test_'.$key);?><button class="button">Test <?php echo esc_html($label);?></button></form><?php endforeach;?></div><div class="hcs-flow"><strong>Publishing Flow</strong><div class="hcs-steps"><span class="hcs-step">Project</span><span class="hcs-step">AI Content</span><span class="hcs-step">Review</span><span class="hcs-step">Facebook</span><span class="hcs-step">TikTok</span><span class="hcs-step">YouTube</span><span class="hcs-step">Analytics</span></div></div>
     </div><?php
