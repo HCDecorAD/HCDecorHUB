@@ -200,10 +200,10 @@ function hcdecor_health_snapshot(){
     $vault_errors=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_error','meta_compare'=>'EXISTS','fields'=>'ids']))->found_posts;
     $vault_retrying=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_retry_count','meta_value'=>0,'meta_compare'=>'>','fields'=>'ids']))->found_posts;
     $backup_retry=(int)get_option('hcdecor_backup_retry_count',0);
-    $vault_bulk=(array)get_option('hcdecor_project_vault_bulk_last_result',[]);
+    $vault_bulk=function_exists('hcdecor_project_vault_bulk_result')?hcdecor_project_vault_bulk_result(get_option('hcdecor_project_vault_bulk_last_result',[])):[];
     $vault_bulk_at=hcdecor_health_scalar(get_option('hcdecor_project_vault_bulk_last_at',''),64);
     $vault_bulk_ts=hcdecor_health_time($vault_bulk_at);
-    $inbox_result=(array)get_option('hcdecor_drive_inbox_last_result',[]);
+    $inbox_result=function_exists('hcdecor_drive_inbox_result')?hcdecor_drive_inbox_result(get_option('hcdecor_drive_inbox_last_result',[])):[];
     $inbox_unlinked=max(0,(int)($inbox_result['imported']??0)-(int)($inbox_result['linked']??0));
     $published_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'fields'=>'ids','meta_query'=>[['key'=>'hc_published_web_at','value'=>wp_date('Y-m-d H:i:s',current_time('timestamp')-7*DAY_IN_SECONDS),'compare'=>'>=','type'=>'DATETIME']]]))->found_posts;
     $created_7d=(int)(new WP_Query(['post_type'=>'hc_content_job','post_status'=>'publish','posts_per_page'=>1,'date_query'=>[['after'=>'7 days ago']],'fields'=>'ids']))->found_posts;
@@ -350,7 +350,7 @@ function hcdecor_health_snapshot(){
             'last_at'=>$inbox_last,
             'age_seconds'=>$inbox_age,
             'fresh'=>$inbox_ts>0 && $inbox_age<=1800,
-            'last_result'=>(array)get_option('hcdecor_drive_inbox_last_result',[]),
+            'last_result'=>$inbox_result,
             'error'=>hcdecor_health_scalar(get_option('hcdecor_drive_inbox_last_error',''),500)
         ],
         'automation'=>[
@@ -406,7 +406,7 @@ function hcdecor_health_snapshot(){
         'publisher'=>['ready'=>function_exists('hcdecor_publish_job_to_web') && post_type_exists('hc_content_job') && post_type_exists('hc_project')],
         'restore'=>[
             'ready'=>function_exists('hcdecor_restore_apply'),
-            'last'=>(array)get_option('hcdecor_restore_last_result',[]),
+            'last'=>function_exists('hcdecor_restore_last_result')?hcdecor_restore_last_result(get_option('hcdecor_restore_last_result',[])):[],
             'error'=>hcdecor_health_scalar(get_option('hcdecor_restore_last_error',''),500)
         ],
         'activity'=>[

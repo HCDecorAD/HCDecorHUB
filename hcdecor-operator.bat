@@ -564,6 +564,9 @@ findstr /c:"raw.githubusercontent.com" "wordpress\hcdecor-core\modules\backgroun
 findstr /c:"function hcdecor_project_vault_bulk_result" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 592
 findstr /c:"hcdecor_project_vault_bulk_result(get_option('hcdecor_project_vault_bulk_last_result',[]))" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 593
 findstr /c:"hcdecor_drive_inbox_result(get_option('hcdecor_drive_inbox_last_result',[]))" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 594
+findstr /c:"function hcdecor_restore_last_result" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 595
+findstr /c:"hcdecor_restore_last_result(get_option('hcdecor_restore_last_result',[]))" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 596
+findstr /c:"$inbox_result=function_exists('hcdecor_drive_inbox_result')" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 597
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

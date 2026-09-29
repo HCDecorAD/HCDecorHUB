@@ -48,6 +48,12 @@ function hcdecor_restore_clip($value,$limit,$html=false){
     $value=is_scalar($value)?(string)$value:'';$text=$html?wp_kses_post($value):sanitize_textarea_field($value);
     return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
 }
+function hcdecor_restore_last_result($value){
+    if(!is_array($value)) return [];
+    $sections=[];foreach(array_slice((array)($value['sections']??[]),0,8) as $section){$section=sanitize_key(hcdecor_restore_clip($section,50));if($section!=='')$sections[]=$section;}
+    $projects=is_array($value['projects']??null)?$value['projects']:[];$jobs=is_array($value['jobs']??null)?$value['jobs']:[];
+    return ['restored_at'=>hcdecor_restore_clip($value['restored_at']??'',64),'source_file_id'=>hcdecor_restore_clip($value['source_file_id']??'',300),'sections'=>$sections,'projects'=>['created'=>max(0,(int)($projects['created']??0)),'updated'=>max(0,(int)($projects['updated']??0))],'jobs'=>['created'=>max(0,(int)($jobs['created']??0)),'updated'=>max(0,(int)($jobs['updated']??0))],'media_updated'=>max(0,(int)($value['media_updated']??0)),'media_missing'=>max(0,(int)($value['media_missing']??0))];
+}
 
 function hcdecor_restore_media_map($backup){
     $map=[];
@@ -389,7 +395,7 @@ function hcdecor_restore_apply($file_id,$sections){
         'media_updated'=>$media_updated,
         'media_missing'=>count(array_filter($media_map,function($x){return !$x;}))
     ];
-    update_option('hcdecor_restore_last_result',$result,false);
+    update_option('hcdecor_restore_last_result',hcdecor_restore_last_result($result),false);
     return $result;
 }
 
@@ -449,7 +455,7 @@ function hcdecor_restore_page(){
         $files=hcdecor_drive_list(function_exists('hcdecor_backup_folder_id')?hcdecor_backup_folder_id():'',30);
         if(is_wp_error($files)) $files=[];
     }
-    $last=(array)get_option('hcdecor_restore_last_result',[]);
+    $last=hcdecor_restore_last_result(get_option('hcdecor_restore_last_result',[]));
     $error=hcdecor_restore_clip(get_option('hcdecor_restore_last_error',''),500);
     ?>
     <div class="wrap hcrs" style="max-width:1250px">
