@@ -19,8 +19,8 @@ if(-not $version){throw 'Plugin version missing'}
 Compress-Archive -Path $stage -DestinationPath $zip -CompressionLevel Optimal
 $files=Get-ChildItem $stage -Recurse -File
 $sha=(Get-FileHash $zip -Algorithm SHA256).Hash.ToLowerInvariant()
-$git=(& 'C:\Program Files\Git\cmd\git.exe' -C $repo rev-parse HEAD).Trim()
-$meta=[ordered]@{package='hcdecor-hub-runtime.zip';version=$version;sha256=$sha;files=$files.Count;bytes=(Get-Item $zip).Length;source_commit=$git;production_write=$false;requires_approval=$true;forbidden_files=$forbidden}
+$tree=(& 'C:\Program Files\Git\cmd\git.exe' -C $repo rev-parse 'HEAD:wordpress/hcdecor-core').Trim()
+$meta=[ordered]@{package='hcdecor-hub-runtime.zip';version=$version;sha256=$sha;files=$files.Count;bytes=(Get-Item $zip).Length;source_tree=$tree;production_write=$false;requires_approval=$true;forbidden_files=$forbidden}
 [IO.File]::WriteAllText($release,($meta|ConvertTo-Json -Depth 4),(New-Object Text.UTF8Encoding($false)))
 Write-Output ("PACKAGE="+$zip)
 Write-Output ("VERSION="+$version)
