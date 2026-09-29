@@ -323,6 +323,8 @@ findstr /c:"function hcdecor_auto_approval_fresh" "wordpress\hcdecor-core\module
 findstr /c:"Fresh production approval is required for social outbound" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 336
 findstr /c:"function hcdecor_recipe_approval_fresh" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 337
 findstr /c:"Fresh explicit production approval is required for recipe webhook delivery." "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 338
+findstr /c:"missing_origin_context" "lib\request-guard.js" >nul || exit /b 339
+findstr /c:"request_too_large" "lib\request-guard.js" >nul || exit /b 340
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
