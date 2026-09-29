@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) exit;
 /* HCDecor guarded Web publisher with snapshot + rollback. */
 
 function hcdecor_publish_clip($value,$limit){
-    $value=(string)$value;
+    $value=is_scalar($value)?(string)$value:'';
     return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit);
 }
 
@@ -55,11 +55,11 @@ function hcdecor_publish_preflight($job_id){
     $job_id=(int)$job_id;
     if(get_post_type($job_id)!=='hc_content_job') return new WP_Error('job','Invalid content job');
     if(!function_exists('hcdecor_workflow_set_status')) return new WP_Error('workflow','Workflow engine unavailable.');
-    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='approved') return new WP_Error('status','Job must be approved first.');
-    if(!(int)get_post_meta($job_id,'hc_reviewed_by',true) || !(string)get_post_meta($job_id,'hc_reviewed_at',true)) return new WP_Error('review','Reviewer audit is required before publish.');
+    if(hcdecor_publish_clip(get_post_meta($job_id,'hc_agent_status',true),50)!=='approved') return new WP_Error('status','Job must be approved first.');
+    if(!(int)get_post_meta($job_id,'hc_reviewed_by',true) || hcdecor_publish_clip(get_post_meta($job_id,'hc_reviewed_at',true),64)==='') return new WP_Error('review','Reviewer audit is required before publish.');
     $approval_by=(int)get_post_meta($job_id,'hc_publish_approved_by',true);
-    $approval_source=sanitize_key((string)get_post_meta($job_id,'hc_publish_approval_source',true));
-    $approval_at=(string)get_post_meta($job_id,'hc_publish_approved_at',true);
+    $approval_source=sanitize_key(hcdecor_publish_clip(get_post_meta($job_id,'hc_publish_approval_source',true),50));
+    $approval_at=hcdecor_publish_clip(get_post_meta($job_id,'hc_publish_approved_at',true),64);
     $approval_ts=$approval_at!=='' && strlen($approval_at)<=64?(strtotime($approval_at)?:0):0;
     if(!in_array($approval_source,['wp_user','service_bridge'],true) || ($approval_source==='wp_user' && !$approval_by) || !$approval_ts) return new WP_Error('approval','Explicit production publish approval is required.');
     if($approval_ts<time()-15*MINUTE_IN_SECONDS || $approval_ts>time()+5*MINUTE_IN_SECONDS){
@@ -70,11 +70,11 @@ function hcdecor_publish_preflight($job_id){
     }
     $project=(int)get_post_meta($job_id,'hc_project_id',true);
     if(!$project || get_post_type($project)!=='hc_project') return new WP_Error('project','Invalid project');
-    $title=trim((string)get_post_meta($job_id,'hc_web_title',true));
-    $body=trim((string)get_post_meta($job_id,'hc_web_body',true));
+    $title=trim(hcdecor_publish_clip(get_post_meta($job_id,'hc_web_title',true),501));
+    $body=trim(hcdecor_publish_clip(get_post_meta($job_id,'hc_web_body',true),100001));
     if($title==='') return new WP_Error('title','Web title is required.');
     if($body==='') return new WP_Error('body','Web body is required.');
-    $intro=(string)get_post_meta($job_id,'hc_web_intro',true);$seo=(string)get_post_meta($job_id,'hc_seo_meta',true);
+    $intro=hcdecor_publish_clip(get_post_meta($job_id,'hc_web_intro',true),5001);$seo=hcdecor_publish_clip(get_post_meta($job_id,'hc_seo_meta',true),2001);
     if(strlen($title)>500 || strlen($intro)>5000 || strlen($body)>100000 || strlen($seo)>2000) return new WP_Error('content_size','Web publish content exceeds safe limits.');
     $media=array_values(array_unique(array_filter(array_map('intval',array_slice((array)get_post_meta($job_id,'hc_media_ids',true),0,60)))));
     $media=array_values(array_filter($media,function($id){return get_post_type($id)==='attachment';}));
@@ -85,7 +85,7 @@ function hcdecor_publish_preflight($job_id){
 
 function hcdecor_publish_job_to_web($job_id){
     $job_id=(int)$job_id;
-    $approval_at=(string)get_post_meta($job_id,'hc_publish_approved_at',true);
+    $approval_at=hcdecor_publish_clip(get_post_meta($job_id,'hc_publish_approved_at',true),64);
     $approval_ts=$approval_at!=='' && strlen($approval_at)<=64?(strtotime($approval_at)?:0):0;
     if(!$approval_ts || $approval_ts<(time()-15*MINUTE_IN_SECONDS) || $approval_ts>(time()+5*MINUTE_IN_SECONDS)){
         delete_post_meta($job_id,'hc_publish_approved_by');
@@ -100,12 +100,12 @@ function hcdecor_publish_job_to_web($job_id){
     $snapshot=hcdecor_publish_snapshot($project);
     if(is_wp_error($snapshot)) return $snapshot;
 
-    $title=(string)get_post_meta($job_id,'hc_web_title',true);
-    $intro=(string)get_post_meta($job_id,'hc_web_intro',true);
-    $body=(string)get_post_meta($job_id,'hc_web_body',true);
+    $title=hcdecor_publish_clip(get_post_meta($job_id,'hc_web_title',true),500);
+    $intro=hcdecor_publish_clip(get_post_meta($job_id,'hc_web_intro',true),5000);
+    $body=hcdecor_publish_clip(get_post_meta($job_id,'hc_web_body',true),100000);
     $media=(array)$preflight['media_ids'];
     $cover=(int)$preflight['cover_id'];
-    $seo=(string)get_post_meta($job_id,'hc_seo_meta',true);
+    $seo=hcdecor_publish_clip(get_post_meta($job_id,'hc_seo_meta',true),2000);
 
     $result=wp_update_post([
         'ID'=>$project,
@@ -121,8 +121,8 @@ function hcdecor_publish_job_to_web($job_id){
     if($cover && wp_attachment_is_image($cover)) set_post_thumbnail($project,$cover);
 
     $approval_by=(int)get_post_meta($job_id,'hc_publish_approved_by',true);
-    $approval_source=sanitize_key((string)get_post_meta($job_id,'hc_publish_approval_source',true));
-    $approval_at=(string)get_post_meta($job_id,'hc_publish_approved_at',true);
+    $approval_source=sanitize_key(hcdecor_publish_clip(get_post_meta($job_id,'hc_publish_approval_source',true),50));
+    $approval_at=hcdecor_publish_clip(get_post_meta($job_id,'hc_publish_approved_at',true),64);
     $history=(array)get_post_meta($job_id,'hc_publish_history',true);
     $history[]=['published_at'=>current_time('mysql'),'approved_by'=>$approval_by,'approval_source'=>$approval_source,'approved_at'=>$approval_at,'snapshot'=>$snapshot];
     if(count($history)>5) $history=array_slice($history,-5);
@@ -155,7 +155,7 @@ function hcdecor_publish_job_to_web($job_id){
 function hcdecor_rollback_job_publish($job_id){
     $job_id=(int)$job_id;
     if(!function_exists('hcdecor_workflow_set_status')) return new WP_Error('workflow','Workflow engine unavailable.');
-    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='published_web') return new WP_Error('status','Only published Web jobs can be rolled back.');
+    if(hcdecor_publish_clip(get_post_meta($job_id,'hc_agent_status',true),50)!=='published_web') return new WP_Error('status','Only published Web jobs can be rolled back.');
     $snapshot=get_post_meta($job_id,'hc_publish_snapshot',true);
     $project=(int)get_post_meta($job_id,'hc_published_project_id',true);
     if(!$project || get_post_type($project)!=='hc_project' || !is_array($snapshot)) return new WP_Error('snapshot','No rollback snapshot.');
@@ -218,8 +218,8 @@ add_action('admin_footer',function(){
     if(($_GET['page']??'')!=='hcdecor-content-operations' || empty($_GET['job'])) return;
     $id=(int)$_GET['job'];
     if(get_post_type($id)!=='hc_content_job') return;
-    $status=(string)get_post_meta($id,'hc_agent_status',true);
-    $url=(string)get_post_meta($id,'hc_published_web_url',true);
+    $status=hcdecor_publish_clip(get_post_meta($id,'hc_agent_status',true),50);
+    $url=hcdecor_publish_clip(get_post_meta($id,'hc_published_web_url',true),2048);
     if($status!=='published_web' || !$url) return; ?>
     <script>
     (function(){

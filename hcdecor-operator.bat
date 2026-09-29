@@ -505,6 +505,9 @@ findstr /c:"hcdecor_drive_inbox_safe_text(get_option('hcdecor_drive_inbox_last_e
 findstr /c:"function hcdecor_health_scalar" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 533
 findstr /c:"hcdecor_health_scalar(get_option('hcdecor_sync_last_error',''),500)" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 534
 findstr /c:"hcdecor_health_scalar(get_option('hcdecor_backup_last_error',''),500)" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 535
+findstr /c:"$value=is_scalar($value)?(string)$value:''" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 536
+findstr /c:"hcdecor_publish_clip(get_post_meta($job_id,'hc_web_body',true),100001)" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 537
+findstr /c:"sanitize_key(hcdecor_publish_clip(get_post_meta($job_id,'hc_publish_approval_source',true),50))" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 538
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
