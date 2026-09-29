@@ -500,6 +500,8 @@ findstr /c:"sanitize_text_field(is_scalar($message)?(string)$message:'')" "wordp
 findstr /c:"$value=is_scalar($value)?(string)$value:''" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 528
 findstr /c:"function hcdecor_restore_clip" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 529
 findstr /c:"sanitize_key(hcdecor_restore_clip($j['status']??'draft',50))" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 530
+findstr /c:"function hcdecor_drive_inbox_safe_text" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 531
+findstr /c:"hcdecor_drive_inbox_safe_text(get_option('hcdecor_drive_inbox_last_error',''),500)" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 532
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

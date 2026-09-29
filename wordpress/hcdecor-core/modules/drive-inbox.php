@@ -29,7 +29,7 @@ function hcdecor_drive_inbox_approval_fresh(WP_REST_Request $r){
 }
 
 function hcdecor_drive_inbox_safe_text($value,$limit=500){
-    $text=function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($value):sanitize_text_field((string)$value);
+    $value=is_scalar($value)?(string)$value:'';$text=function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($value):sanitize_text_field($value);
     return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
 }
 function hcdecor_drive_inbox_log($event,$data=[]){
@@ -251,9 +251,9 @@ add_action('rest_api_init',function(){
         'callback'=>function(){
             return rest_ensure_response([
                 'settings'=>hcdecor_drive_inbox_settings(),
-                'last_at'=>(string)get_option('hcdecor_drive_inbox_last_at',''),
+                'last_at'=>hcdecor_drive_inbox_safe_text(get_option('hcdecor_drive_inbox_last_at',''),64),
                 'last_result'=>(array)get_option('hcdecor_drive_inbox_last_result',[]),
-                'last_error'=>(string)get_option('hcdecor_drive_inbox_last_error',''),
+                'last_error'=>hcdecor_drive_inbox_safe_text(get_option('hcdecor_drive_inbox_last_error',''),500),
                 'next'=>(int)(wp_next_scheduled('hcdecor_drive_inbox_tick')?:0)
             ]);
         }
@@ -277,8 +277,8 @@ function hcdecor_drive_inbox_page(){
     if(!current_user_can('manage_options')) return;
     $s=hcdecor_drive_inbox_settings();
     $last=(array)get_option('hcdecor_drive_inbox_last_result',[]);
-    $last_at=(string)get_option('hcdecor_drive_inbox_last_at','');
-    $error=(string)get_option('hcdecor_drive_inbox_last_error','');
+    $last_at=hcdecor_drive_inbox_safe_text(get_option('hcdecor_drive_inbox_last_at',''),64);
+    $error=hcdecor_drive_inbox_safe_text(get_option('hcdecor_drive_inbox_last_error',''),500);
     $next=(int)(wp_next_scheduled('hcdecor_drive_inbox_tick')?:0);
     $log=array_reverse((array)get_option('hcdecor_drive_inbox_log',[]));
     $folders=function_exists('hcdecor_drive_folders')?hcdecor_drive_folders():[];
