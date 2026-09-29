@@ -605,6 +605,9 @@ findstr /c:"$provider_raw=$_POST['provider']??''" "wordpress\hcdecor-core\module
 findstr /c:"$folder_raw=$_POST['folder_key']??'media_input'" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 567
 findstr /c:"$accounts_raw=$_POST['accounts']??[]" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 568
 findstr /c:"$trigger_raw=$_POST['trigger']??''" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 569
+findstr /c:"$media_raw=$_POST['media_ids']??[]" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 570
+findstr /c:"$channels_raw=$_POST['channels']??[]" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 571
+findstr /c:"$ids_raw=$_POST['media_ids']??[]" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 572
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

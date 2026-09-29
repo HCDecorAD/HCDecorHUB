@@ -43,8 +43,8 @@ add_action('admin_post_hcdecor_workspace_create',function(){
     if(!$project || get_post_type($project)!=='hc_project' || !current_user_can('edit_post',$project)) wp_die('Invalid project');
 
     $brief_raw=wp_unslash($_POST['brief']??'');$brief_raw=is_scalar($brief_raw)?(string)$brief_raw:'';$brief=function_exists('hcdecor_ops_limit_text')?hcdecor_ops_limit_text($brief_raw,20000):(function_exists('mb_substr')?mb_substr(sanitize_textarea_field($brief_raw),0,20000):substr(sanitize_textarea_field($brief_raw),0,20000));
-    $media=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)($_POST['media_ids']??[]))),function($id){ return get_post_type($id)==='attachment' && current_user_can('edit_post',$id); })),0,60);
-    $channels=array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)($_POST['channels']??[])));
+    $media_raw=$_POST['media_ids']??[];$media=array_slice(array_values(array_filter(array_unique(array_map('intval',array_filter(is_array($media_raw)?$media_raw:[],'is_scalar'))),function($id){ return get_post_type($id)==='attachment' && current_user_can('edit_post',$id); })),0,60);
+    $channels_raw=$_POST['channels']??[];$channels=array_values(array_intersect(['web','facebook','tiktok','youtube'],array_values(array_filter(is_array($channels_raw)?$channels_raw:[],'is_scalar'))));
 
     if(!function_exists('hcdecor_agent_create_job')) wp_die('Agent intake unavailable.');
     $job=hcdecor_agent_create_job($project,$media,$brief);
