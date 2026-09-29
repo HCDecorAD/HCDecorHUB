@@ -1,5 +1,6 @@
 import {HubShell} from "../../../components/HubShell";
 import {getWorkspaceView} from "../../../lib/hub-config";
+import {WorkspaceSmoke} from "./WorkspaceSmoke";
 
 export default function Workspaces(){
   const workspaces=getWorkspaceView();
@@ -13,6 +14,7 @@ export default function Workspaces(){
       {w.rule&&<p>{w.rule}</p>}
       {w.productionUrl?<a href={w.productionUrl} target="_blank" rel="noreferrer">Mở website ↗</a>:<span>Production URL: unknown</span>}
     </article>)}</section>
+    <WorkspaceSmoke/>
     <section className="masterArchitecture">
       <div><span>ISOLATION</span><h3>Independent by default</h3><p>Business data stays inside its workspace.</p></div>
       <div><span>ROUTING</span><h3>Context first</h3><p>Resolve workspace → adapter → worker/tool.</p></div>
