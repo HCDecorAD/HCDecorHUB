@@ -5,10 +5,13 @@ if (!defined('ABSPATH')) exit;
 
 function hcdecor_media_rest_approval_fresh(WP_REST_Request $r){
     if(!rest_sanitize_boolean($r->get_param('production_approved'))) return false;
-    $by=sanitize_text_field((string)$r->get_param('production_approved_by'));
-    $source=sanitize_key((string)$r->get_param('production_approval_source'));
-    $at=strtotime((string)$r->get_param('production_approved_at'))?:0;
-    return $by!=='' && in_array($source,['wp_user','service_bridge'],true) && $at>=time()-15*MINUTE_IN_SECONDS && $at<=time()+5*MINUTE_IN_SECONDS;
+    $by_raw=$r->get_param('production_approved_by');$source_raw=$r->get_param('production_approval_source');$at_raw=$r->get_param('production_approved_at');
+    $by=is_scalar($by_raw)?sanitize_text_field((string)$by_raw):'';
+    $source=is_scalar($source_raw)?sanitize_key((string)$source_raw):'';
+    $at_raw=is_scalar($at_raw)?(string)$at_raw:'';
+    if($by==='' || strlen($by)>200 || strlen($source)>50 || strlen($at_raw)>64 || !in_array($source,['wp_user','service_bridge'],true)) return false;
+    $at=strtotime($at_raw)?:0;
+    return $at>=time()-15*MINUTE_IN_SECONDS && $at<=time()+5*MINUTE_IN_SECONDS;
 }
 
 function hcdecor_media_ai_schema(){

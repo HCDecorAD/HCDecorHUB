@@ -417,6 +417,10 @@ findstr /c:"Fresh explicit approval is required for Drive project imports." "wor
 findstr /c:"$limit=max(1,min(100,(int)$limit));" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 430
 findstr /c:"function hcdecor_media_rest_approval_fresh" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 431
 findstr /c:"Fresh explicit approval is required for AI media analysis." "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 432
+findstr /c:"strlen($at_raw)>64" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 433
+findstr /c:"production_approval_source'=>sanitize_key" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 434
+findstr /c:"production_approval_source'=>hcdecor_runtime_clip" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 435
+findstr /c:"$at<=time()+5*MINUTE_IN_SECONDS" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 436
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

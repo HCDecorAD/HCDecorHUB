@@ -90,9 +90,11 @@ function hcdecor_auto_log($task_id,$event,$note=''){
 
 function hcdecor_auto_approval_fresh($payload){
     if(empty($payload['production_approved']) || empty($payload['production_approved_by']) || empty($payload['production_approved_at'])) return false;
-    $source=sanitize_key((string)($payload['production_approval_source']??''));
-    if(!in_array($source,['wp_user','service_bridge'],true)) return false;
-    $at=strtotime((string)$payload['production_approved_at'])?:0;
+    $by=is_scalar($payload['production_approved_by'])?(string)$payload['production_approved_by']:'';
+    $source=sanitize_key(is_scalar($payload['production_approval_source']??'')?(string)$payload['production_approval_source']:'');
+    $at_raw=is_scalar($payload['production_approved_at'])?(string)$payload['production_approved_at']:'';
+    if($by==='' || strlen($by)>200 || strlen($source)>50 || strlen($at_raw)>64 || !in_array($source,['wp_user','service_bridge'],true)) return false;
+    $at=strtotime($at_raw)?:0;
     return $at>0 && $at>=time()-15*MINUTE_IN_SECONDS && $at<=time()+5*MINUTE_IN_SECONDS;
 }
 

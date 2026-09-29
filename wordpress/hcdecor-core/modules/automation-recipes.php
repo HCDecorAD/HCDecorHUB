@@ -117,7 +117,11 @@ function hcdecor_recipe_matches($recipe,$trigger,$context){
 
 function hcdecor_recipe_approval_fresh($context){
     if(empty($context['production_approved']) || empty($context['production_approved_by']) || empty($context['production_approved_at'])) return false;
-    $at=strtotime((string)$context['production_approved_at'])?:0;
+    $by=is_scalar($context['production_approved_by'])?(string)$context['production_approved_by']:'';
+    $source=sanitize_key(is_scalar($context['production_approval_source']??'')?(string)$context['production_approval_source']:'');
+    $at_raw=is_scalar($context['production_approved_at'])?(string)$context['production_approved_at']:'';
+    if($by==='' || strlen($by)>200 || strlen($source)>50 || strlen($at_raw)>64 || !in_array($source,['wp_user','service_bridge'],true)) return false;
+    $at=strtotime($at_raw)?:0;
     return $at>0 && $at>=time()-15*MINUTE_IN_SECONDS && $at<=time()+5*MINUTE_IN_SECONDS;
 }
 
@@ -153,6 +157,7 @@ function hcdecor_recipe_execute_action($action,$context){
         $prepared['production_approved']=true;
         $prepared['production_approved_by']=(int)$context['production_approved_by'];
         $prepared['production_approved_at']=(string)$context['production_approved_at'];
+        $prepared['production_approval_source']=sanitize_key((string)$context['production_approval_source']);
         return hcdecor_auto_enqueue('social_publish',$prepared,time(),'recipe:social:'.$project.':'.$job);
     }
     if($type==='save_drive'){
@@ -165,13 +170,14 @@ function hcdecor_recipe_execute_action($action,$context){
         if(!function_exists('hcdecor_auto_enqueue')) return new WP_Error('automation','Automation queue unavailable');
         if(!hcdecor_recipe_approval_fresh($context)) return new WP_Error('approval','Fresh explicit production approval is required for recipe webhook delivery.');
         $outbound_context=$context;
-        unset($outbound_context['production_approved'],$outbound_context['production_approved_by'],$outbound_context['production_approved_at']);
+        unset($outbound_context['production_approved'],$outbound_context['production_approved_by'],$outbound_context['production_approved_at'],$outbound_context['production_approval_source']);
         return hcdecor_auto_enqueue('webhook',[
             'event'=>(string)($action['event']??'hcdecor.recipe'),
             'data'=>$outbound_context,
             'production_approved'=>true,
             'production_approved_by'=>(int)$context['production_approved_by'],
-            'production_approved_at'=>(string)$context['production_approved_at']
+            'production_approved_at'=>(string)$context['production_approved_at'],
+            'production_approval_source'=>sanitize_key((string)$context['production_approval_source'])
         ],time());
     }
     return new WP_Error('action','Unknown recipe action: '.$type);
