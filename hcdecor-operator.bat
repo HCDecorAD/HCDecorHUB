@@ -358,6 +358,8 @@ findstr /c:"strlen($body)>4*1024*1024" "wordpress\hcdecor-core\modules\backgroun
 findstr /c:"function hcdecor_conn_clip" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 371
 findstr /c:"8192" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 372
 findstr /c:"2048" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 373
+findstr /c:"Drive media upload must be between 1 byte and 50 MB." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 374
+findstr /c:"Cannot read attachment safely." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 375
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

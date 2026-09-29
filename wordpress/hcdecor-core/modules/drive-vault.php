@@ -278,8 +278,10 @@ function hcdecor_drive_upload_attachment($attachment_id,$folder_key='media_input
     $existing=(string)get_post_meta($attachment_id,'hc_drive_file_id',true);
     $path=get_attached_file($attachment_id);
     if(!$path||!is_readable($path)) return new WP_Error('file','Attachment file unavailable.');
+    $size=@filesize($path);
+    if($size===false || $size<=0 || $size>50*1024*1024) return new WP_Error('size','Drive media upload must be between 1 byte and 50 MB.');
     $bytes=file_get_contents($path);
-    if($bytes===false) return new WP_Error('file','Cannot read attachment.');
+    if($bytes===false || strlen($bytes)!==(int)$size) return new WP_Error('file','Cannot read attachment safely.');
     $folders=hcdecor_drive_folders();
     $folder=(string)($folders[$folder_key]??'');
     if($folder==='' || !array_key_exists($folder_key,$folders)) return new WP_Error('folder','Managed Drive folder is not configured.');
