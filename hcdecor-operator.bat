@@ -612,6 +612,10 @@ findstr /c:"$project_id=is_scalar($project_id)?(int)$project_id:0" "wordpress\hc
 findstr /c:"$project_raw=$_POST['project_id']??0" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 574
 findstr /c:"$approval_raw=$_POST['production_approved']??''" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 575
 findstr /c:"$job_raw=$_POST['job_id']??0" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 576
+findstr /c:"$approval_raw=$_POST['production_approved']??''" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 577
+findstr /c:"$task_raw=$_POST['task_id']??0" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 578
+findstr /c:"$job_raw=$_POST['job_id']??0" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 579
+findstr /c:"$attachment_raw=$_POST['attachment_id']??0" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 580
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

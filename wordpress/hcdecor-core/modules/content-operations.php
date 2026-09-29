@@ -88,7 +88,7 @@ add_action('admin_post_hcdecor_ops_create', function(){
 
 add_action('admin_post_hcdecor_ops_save', function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
-    $id=(int)($_POST['job_id']??0); check_admin_referer('hcdecor_ops_save_'.$id);
+    $job_raw=$_POST['job_id']??0;$id=is_scalar($job_raw)?(int)$job_raw:0; check_admin_referer('hcdecor_ops_save_'.$id);
     if(get_post_type($id)!=='hc_content_job' || !current_user_can('edit_post',$id)) wp_die('Invalid job');
     $status_raw=$_POST['agent_status']??'';$status=sanitize_key(is_scalar($status_raw)?(string)$status_raw:'');
     $current=sanitize_key(hcdecor_ops_limit_text(get_post_meta($id,'hc_agent_status',true),50));
@@ -101,9 +101,9 @@ add_action('admin_post_hcdecor_ops_save', function(){
 
 add_action('admin_post_hcdecor_ops_publish_web', function(){
     if(!current_user_can('publish_posts')) wp_die('Forbidden');
-    $id=(int)($_POST['job_id']??0); check_admin_referer('hcdecor_ops_publish_'.$id);
+    $job_raw=$_POST['job_id']??0;$id=is_scalar($job_raw)?(int)$job_raw:0; check_admin_referer('hcdecor_ops_publish_'.$id);
     if(get_post_type($id)!=='hc_content_job' || !current_user_can('edit_post',$id)) wp_die('Invalid job');
-    if((string)($_POST['production_approved']??'')!=='1') wp_die('Explicit production publish approval is required.');
+    $approval_raw=$_POST['production_approved']??'';if(!is_scalar($approval_raw) || (string)$approval_raw!=='1') wp_die('Explicit production publish approval is required.');
     if(!function_exists('hcdecor_publish_job_to_web')) wp_die('Web publisher unavailable');
     update_post_meta($id,'hc_publish_approved_by',get_current_user_id());
     update_post_meta($id,'hc_publish_approval_source','wp_user');

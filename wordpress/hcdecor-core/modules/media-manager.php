@@ -42,7 +42,7 @@ add_action('admin_post_hcdecor_media_assign',function(){
 
 add_action('admin_post_hcdecor_media_meta',function(){
     if(!current_user_can('upload_files')) wp_die('Forbidden');
-    $id=(int)($_POST['attachment_id']??0);
+    $attachment_raw=$_POST['attachment_id']??0;$id=is_scalar($attachment_raw)?(int)$attachment_raw:0;
     check_admin_referer('hcdecor_media_meta_'.$id);
     if(get_post_type($id)!=='attachment' || !current_user_can('edit_post',$id)) wp_die('Invalid media');
     wp_update_post([

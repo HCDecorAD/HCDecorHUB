@@ -336,7 +336,7 @@ add_action('hcdecor_ai_worker_tick',function(){
 
 add_action('admin_post_hcdecor_ai_run_job',function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
-    $id=(int)($_POST['job_id']??0);
+    $job_raw=$_POST['job_id']??0;$id=is_scalar($job_raw)?(int)$job_raw:0;
     check_admin_referer('hcdecor_ai_run_'.$id);
     if(get_post_type($id)!=='hc_content_job' || !current_user_can('edit_post',$id)) wp_die('Invalid job');
     $status=hcdecor_ai_bounded_scalar(get_post_meta($id,'hc_agent_status',true),50);

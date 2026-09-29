@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.194",
+    "version":  "2026.09.29.195",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -29,7 +29,7 @@
                   {
                       "path":  "modules/content-operations.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/content-operations.php",
-                      "git_sha1":  "0f96528d28f7efb58201ee5013c78e58204ada88"
+                      "git_sha1":  "6424adf043ced0df0001cbdf46fe07b62c6b41ab"
                   },
                   {
                       "path":  "modules/workflow-engine.php",
@@ -39,7 +39,7 @@
                   {
                       "path":  "modules/ai-providers.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/ai-providers.php",
-                      "git_sha1":  "1c2557e051a1a1fce2bded35b3fb84bd9ecc5cd9"
+                      "git_sha1":  "1b0aeb462b34a46e774d2ce6b300274335dd993a"
                   },
                   {
                       "path":  "modules/media-intelligence.php",
@@ -64,7 +64,7 @@
                   {
                       "path":  "modules/media-manager.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/media-manager.php",
-                      "git_sha1":  "b0836da72a67e93c1445fb1baec75f34c551ac42"
+                      "git_sha1":  "22543a8e644757df8959fb4ed7296134cac0dcc1"
                   },
                   {
                       "path":  "modules/admin-cleanup.php",
@@ -109,7 +109,7 @@
                   {
                       "path":  "modules/automation-hub.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/automation-hub.php",
-                      "git_sha1":  "4c01569c42971b4275e8b144f2a42a2dda27e605"
+                      "git_sha1":  "89bcdc1611018dcd43f65dd5074fcc7efe6db66d"
                   },
                   {
                       "path":  "modules/automation-recipes.php",

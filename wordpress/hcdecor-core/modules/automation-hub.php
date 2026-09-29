@@ -476,7 +476,7 @@ add_action('admin_post_hcdecor_automation_settings',function(){
 
 add_action('admin_post_hcdecor_automation_retry',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
-    $id=(int)($_POST['task_id']??0); check_admin_referer('hcdecor_automation_retry_'.$id);
+    $task_raw=$_POST['task_id']??0;$id=is_scalar($task_raw)?(int)$task_raw:0; check_admin_referer('hcdecor_automation_retry_'.$id);
     if(get_post_type($id)!=='hc_automation_task') wp_die('Invalid task');
     $current_status=sanitize_key(hcdecor_auto_safe_message(get_post_meta($id,'hc_auto_status',true)));
     if(!in_array($current_status,['failed','blocked'],true)) wp_die('Only failed or blocked automation tasks can be retried.');
@@ -485,7 +485,7 @@ add_action('admin_post_hcdecor_automation_retry',function(){
     $type=sanitize_key(hcdecor_auto_safe_message(get_post_meta($id,'hc_auto_type',true)));
     if($type==='social_publish' && empty($s['social_enabled'])) wp_die('Social outbound is disabled.');
     if(in_array($type,['social_publish','webhook'],true)){
-        if((string)($_POST['production_approved']??'')!=='1') wp_die('Explicit production approval is required to retry outbound delivery.');
+        $approval_raw=$_POST['production_approved']??'';if(!is_scalar($approval_raw) || (string)$approval_raw!=='1') wp_die('Explicit production approval is required to retry outbound delivery.');
         $payload=hcdecor_auto_payload($id);
         $payload['production_approved']=true;
         $payload['production_approved_by']=get_current_user_id();
