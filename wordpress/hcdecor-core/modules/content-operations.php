@@ -76,7 +76,7 @@ add_action('admin_post_hcdecor_ops_create', function(){
         'post_title'=>'Content · '.get_the_title($project).' · '.current_time('Y-m-d H:i'),
         'post_content'=>$brief
     ]);
-    if(is_wp_error($id)) wp_die($id->get_error_message());
+    if(is_wp_error($id)) wp_die(function_exists('hcdecor_ai_safe_error')?hcdecor_ai_safe_error($id->get_error_message()):'Unable to create content job.');
     update_post_meta($id,'hc_project_id',$project);
     if(!function_exists('hcdecor_workflow_set_status') || !hcdecor_workflow_set_status($id,'draft','Created from Content Operations')){
         wp_delete_post($id,true);
@@ -112,7 +112,7 @@ add_action('admin_post_hcdecor_ops_publish_web', function(){
         delete_post_meta($id,'hc_publish_approved_by');
         delete_post_meta($id,'hc_publish_approved_at');
         delete_post_meta($id,'hc_publish_approval_source');
-        wp_die($r->get_error_message());
+        wp_die(function_exists('hcdecor_ai_safe_error')?hcdecor_ai_safe_error($r->get_error_message()):'Web publish failed.');
     }
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$id.'&published=1')); exit;
 });

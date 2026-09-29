@@ -167,7 +167,7 @@ add_action('admin_post_hcdecor_publish_rollback',function(){
     check_admin_referer('hcdecor_publish_rollback_'.$id);
     if((string)($_POST['production_approved']??'')!=='1') wp_die('Explicit production rollback approval is required.');
     $r=hcdecor_rollback_job_publish($id);
-    if(is_wp_error($r)) wp_die($r->get_error_message());
+    if(is_wp_error($r)) wp_die(function_exists('hcdecor_ai_safe_error')?hcdecor_ai_safe_error($r->get_error_message()):'Web rollback failed.');
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$id.'&rolledback=1')); exit;
 });
 

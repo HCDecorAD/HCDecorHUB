@@ -84,6 +84,6 @@ add_action('admin_post_hcdecor_agent_from_project',function(){
     $media=(array)get_post_meta($project,'hc_project_gallery',true);
     if(!$media) $media=(array)get_post_meta($project,'hc_gallery_ids',true);
     $id=hcdecor_agent_create_job($project,$media,'');
-    if(is_wp_error($id)) wp_die($id->get_error_message());
+    if(is_wp_error($id)) wp_die(function_exists('hcdecor_ai_safe_error')?hcdecor_ai_safe_error($id->get_error_message()):'Unable to create content job.');
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$id.'&created=1')); exit;
 });

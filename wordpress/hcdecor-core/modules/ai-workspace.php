@@ -46,7 +46,7 @@ add_action('admin_post_hcdecor_workspace_create',function(){
 
     if(!function_exists('hcdecor_agent_create_job')) wp_die('Agent intake unavailable.');
     $job=hcdecor_agent_create_job($project,$media,$brief);
-    if(is_wp_error($job)) wp_die($job->get_error_message());
+    if(is_wp_error($job)) wp_die(function_exists('hcdecor_ai_safe_error')?hcdecor_ai_safe_error($job->get_error_message()):'Unable to create content job.');
 
     if($channels) update_post_meta($job,'hc_channels',$channels);
 

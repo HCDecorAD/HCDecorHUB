@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.088",
+    "version":  "2026.09.29.089",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -29,12 +29,12 @@
                   {
                       "path":  "modules/content-operations.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/content-operations.php",
-                      "git_sha1":  "4d7f2e231ad2a46a0936d544ca27de26ef861bde"
+                      "git_sha1":  "f369be141beeb4156154e1ac2b177631df8f7091"
                   },
                   {
                       "path":  "modules/workflow-engine.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/workflow-engine.php",
-                      "git_sha1":  "5c75f2d87dfc3fa2ad02e04c62ba2dc48c89266c"
+                      "git_sha1":  "d6e57098cae8a85609251dc022b4cb1b49b7ae4a"
                   },
                   {
                       "path":  "modules/ai-providers.php",
@@ -49,12 +49,12 @@
                   {
                       "path":  "modules/agent-intake.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/agent-intake.php",
-                      "git_sha1":  "a06975cc38828798396ef942aa6d6c8a525e9e13"
+                      "git_sha1":  "e2ee1f9f9fb9884264d1fb719ac3f1ec69ab4c7a"
                   },
                   {
                       "path":  "modules/web-publisher.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/web-publisher.php",
-                      "git_sha1":  "6b425f3b2c86ec40611e7c68dce803bd6c3d2fdf"
+                      "git_sha1":  "c60372dd5b36486c8fdd92d9a6e01ab57432fa0e"
                   },
                   {
                       "path":  "modules/project-publishing.php",
@@ -124,7 +124,7 @@
                   {
                       "path":  "modules/ai-workspace.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/ai-workspace.php",
-                      "git_sha1":  "e9febdb24d026234bb4f8177ca62d3175ab1e404"
+                      "git_sha1":  "5a457dbd5a1f4f6b4d1e86014e15b6d955e3ce85"
                   },
                   {
                       "path":  "modules/system-health.php",
@@ -139,7 +139,7 @@
                   {
                       "path":  "modules/data-restore.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/data-restore.php",
-                      "git_sha1":  "7d7e26828dab148543ae796ea74170db000d6b57"
+                      "git_sha1":  "ae1381da9625b1c1f41793d98d365159094be63f"
                   },
                   {
                       "path":  "modules/drive-inbox.php",

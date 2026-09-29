@@ -548,7 +548,7 @@ add_action('admin_post_hcdecor_review_action',function(){
             delete_post_meta($id,'hc_publish_approved_by');
             delete_post_meta($id,'hc_publish_approved_at');
             delete_post_meta($id,'hc_publish_approval_source');
-            wp_die($published->get_error_message());
+            wp_die(function_exists('hcdecor_ai_safe_error')?hcdecor_ai_safe_error($published->get_error_message()):'Web publish failed.');
         }
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-review&job='.$id.'&published=1')); exit;
     }elseif($action==='changes'){

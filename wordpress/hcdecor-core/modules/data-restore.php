@@ -349,7 +349,7 @@ function hcdecor_restore_apply($file_id,$sections){
     // Disaster-recovery guardrail: snapshot current state first.
     if(function_exists('hcdecor_backup_save')){
         $safety=hcdecor_backup_save();
-        if(is_wp_error($safety)) return new WP_Error('safety_backup','Không tạo được safety backup: '.$safety->get_error_message());
+        if(is_wp_error($safety)) return new WP_Error('safety_backup','Không tạo được safety backup: '.(function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($safety->get_error_message()):'backup failed'));
     }
 
     $sections=array_values(array_intersect(['projects','jobs','media','settings'],(array)$sections));
@@ -402,7 +402,7 @@ add_action('admin_post_hcdecor_restore_apply',function(){
     $sections=(array)($_POST['sections']??[]);
     if(in_array('projects',$sections,true)){
         $backup=hcdecor_restore_read_backup($file);
-        if(is_wp_error($backup)) wp_die(esc_html($backup->get_error_message()));
+        if(is_wp_error($backup)) wp_die(esc_html(function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($backup->get_error_message()):'Backup validation failed.'));
         $restores_public=false;
         foreach((array)($backup['projects']??[]) as $project){
             if(($project['status']??'')==='publish'){ $restores_public=true; break; }
