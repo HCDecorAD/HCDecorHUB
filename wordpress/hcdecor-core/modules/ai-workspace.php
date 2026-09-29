@@ -214,7 +214,7 @@ function hcdecor_ai_workspace_page(){
             <div class="hcaw-body">
               <?php if(!$jobs):?><p>Chưa có Content Job.</p><?php endif;?>
               <?php foreach($jobs as $j):
-                $s=(string)get_post_meta($j->ID,'hc_agent_status',true);
+                $s=hcdecor_workspace_scalar(get_post_meta($j->ID,'hc_agent_status',true),50);
                 $pid=(int)get_post_meta($j->ID,'hc_project_id',true);
               ?>
                 <a class="hcaw-job" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-content-operations&job='.$j->ID));?>">

@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.176",
+    "version":  "2026.09.29.177",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -39,7 +39,7 @@
                   {
                       "path":  "modules/ai-providers.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/ai-providers.php",
-                      "git_sha1":  "455289d631ef63e0b1a007dac428f4580bef2a9b"
+                      "git_sha1":  "7180c71b0aa8e39e8bded00fb4ed674f9238c1a5"
                   },
                   {
                       "path":  "modules/media-intelligence.php",
@@ -49,7 +49,7 @@
                   {
                       "path":  "modules/agent-intake.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/agent-intake.php",
-                      "git_sha1":  "e2ee1f9f9fb9884264d1fb719ac3f1ec69ab4c7a"
+                      "git_sha1":  "1cc7289f7e045ea481b838aa6eb983b93f7db374"
                   },
                   {
                       "path":  "modules/web-publisher.php",
@@ -109,7 +109,7 @@
                   {
                       "path":  "modules/automation-hub.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/automation-hub.php",
-                      "git_sha1":  "f4d83f6d0eeb9176689a2afde46838189d50936c"
+                      "git_sha1":  "e9d6c95bd95911303378a1f34e87fbd5d99c6e3b"
                   },
                   {
                       "path":  "modules/automation-recipes.php",
@@ -124,7 +124,7 @@
                   {
                       "path":  "modules/ai-workspace.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/ai-workspace.php",
-                      "git_sha1":  "0ebf737d50faf15174ba4cd9c4f700d31e9d2fbb"
+                      "git_sha1":  "b09b9eac14ec5566423e2b71ca272118dc9a55ac"
                   },
                   {
                       "path":  "modules/system-health.php",

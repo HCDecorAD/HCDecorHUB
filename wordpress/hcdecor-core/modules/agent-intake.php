@@ -47,7 +47,7 @@ add_action('hcdecor_ai_process_job',function($job_id){
     if(!function_exists('hcdecor_ai_worker_enabled') || !hcdecor_ai_worker_enabled()) return;
     $job_id=(int)$job_id;
     if(get_post_type($job_id)!=='hc_content_job') return;
-    $status=(string)get_post_meta($job_id,'hc_agent_status',true);
+    $status_raw=get_post_meta($job_id,'hc_agent_status',true);$status=is_scalar($status_raw)?sanitize_key((string)$status_raw):'';
     if($status!=='draft') return;
     if(!function_exists('hcdecor_ai_generate_job')) return;
     if(function_exists('hcdecor_workflow_finalize_claim')){

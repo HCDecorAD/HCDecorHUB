@@ -526,6 +526,9 @@ findstr /c:"$note_raw=wp_unslash($_POST['review_note']??'')" "wordpress\hcdecor-
 findstr /c:"$brief_raw=wp_unslash($_POST['brief']??'')" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 554
 findstr /c:"$openai_model_raw=wp_unslash($_POST['openai_model']??'')" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 555
 findstr /c:"$value=is_scalar($value)?(string)$value:''" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 556
+findstr /c:"$status_raw=get_post_meta($job_id,'hc_agent_status',true)" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 557
+findstr /c:"hcdecor_ai_bounded_scalar(get_post_meta($job_id,'hc_agent_claim_token',true),128)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 558
+findstr /c:"sanitize_key(hcdecor_auto_safe_message(get_post_meta($t->ID,'hc_auto_status',true)))" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 559
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

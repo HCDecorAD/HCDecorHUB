@@ -269,7 +269,7 @@ function hcdecor_ai_store_test($provider,$result){
 
 function hcdecor_ai_generate_job($job_id){
     if(get_post_type($job_id)!=='hc_content_job') return new WP_Error('invalid_job','Invalid content job.');
-    if((string)get_post_meta($job_id,'hc_agent_status',true)!=='processing') return new WP_Error('invalid_status','Job must be processing before AI generation.');
+    if(hcdecor_ai_bounded_scalar(get_post_meta($job_id,'hc_agent_status',true),50)!=='processing') return new WP_Error('invalid_status','Job must be processing before AI generation.');
     $errors=[];
     foreach(hcdecor_ai_provider_order() as $provider){
         if(!hcdecor_ai_available($provider)) continue;
@@ -284,7 +284,7 @@ function hcdecor_ai_generate_job($job_id){
         update_post_meta($job_id,'hc_ai_usage',$result['usage']);
         update_post_meta($job_id,'hc_ai_generated_at',current_time('mysql'));
         delete_post_meta($job_id,'hc_ai_error');
-        $claim_token=(string)get_post_meta($job_id,'hc_agent_claim_token',true);
+        $claim_token=hcdecor_ai_bounded_scalar(get_post_meta($job_id,'hc_agent_claim_token',true),128);
         $finished=$claim_token!=='' && function_exists('hcdecor_workflow_finish_owned_claim')
             ? hcdecor_workflow_finish_owned_claim($job_id,$claim_token,'review','AI generation completed via '.$result['provider'])
             : (function_exists('hcdecor_workflow_set_status') && hcdecor_workflow_set_status($job_id,'review','AI generation completed via '.$result['provider']));
@@ -294,7 +294,7 @@ function hcdecor_ai_generate_job($job_id){
     }
     $message=hcdecor_ai_safe_error($errors?implode(' | ',array_map(function($k,$v){return $k.': '.$v;},array_keys($errors),$errors)):'Chưa có AI API key.');
     update_post_meta($job_id,'hc_ai_error',$message);
-    $claim_token=(string)get_post_meta($job_id,'hc_agent_claim_token',true);
+    $claim_token=hcdecor_ai_bounded_scalar(get_post_meta($job_id,'hc_agent_claim_token',true),128);
     $finished=$claim_token!=='' && function_exists('hcdecor_workflow_finish_owned_claim')
         ? hcdecor_workflow_finish_owned_claim($job_id,$claim_token,'failed',$message)
         : (function_exists('hcdecor_workflow_set_status') && hcdecor_workflow_set_status($job_id,'failed',$message));
@@ -339,7 +339,7 @@ add_action('admin_post_hcdecor_ai_run_job',function(){
     $id=(int)($_POST['job_id']??0);
     check_admin_referer('hcdecor_ai_run_'.$id);
     if(get_post_type($id)!=='hc_content_job' || !current_user_can('edit_post',$id)) wp_die('Invalid job');
-    $status=(string)get_post_meta($id,'hc_agent_status',true);
+    $status=hcdecor_ai_bounded_scalar(get_post_meta($id,'hc_agent_status',true),50);
     if($status==='failed'){
         if(!function_exists('hcdecor_workflow_set_status') || !hcdecor_workflow_set_status($id,'draft','Manual AI retry requested')) wp_die('Unable to reset failed job for retry.');
         $status='draft';
@@ -358,7 +358,7 @@ add_action('admin_post_hcdecor_ai_run_job',function(){
 add_action('admin_footer',function(){
     if(!isset($_GET['page']) || $_GET['page']!=='hcdecor-content-operations' || empty($_GET['job'])) return;
     $id=(int)$_GET['job']; if(get_post_type($id)!=='hc_content_job') return;
-    $status=(string)get_post_meta($id,'hc_agent_status',true);
+    $status=hcdecor_ai_bounded_scalar(get_post_meta($id,'hc_agent_status',true),50);
     if(!in_array($status,['draft','failed'],true)) return;
     ?>
     <script>

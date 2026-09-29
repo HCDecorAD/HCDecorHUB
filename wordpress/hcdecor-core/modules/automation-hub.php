@@ -141,7 +141,7 @@ function hcdecor_auto_prepare_social($project_id,$job_id=0){
         $text='';
         if($job_id){
             $key=$ch==='facebook'?'hc_facebook_caption':($ch==='tiktok'?'hc_tiktok_script':'hc_youtube_description');
-            $text=(string)get_post_meta($job_id,$key,true);
+            $text_raw=get_post_meta($job_id,$key,true);$text=is_scalar($text_raw)?(string)$text_raw:'';
         }
         $limit=$ch==='facebook'?10000:20000;
         $text=function_exists('hcdecor_ops_limit_text')?hcdecor_ops_limit_text($text,$limit):(function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit));
@@ -157,7 +157,7 @@ function hcdecor_auto_run_task($task_id){
         hcdecor_auto_log($task_id,'blocked','Automation HUB is OFF');
         return false;
     }
-    $type=(string)get_post_meta($task_id,'hc_auto_type',true);
+    $type=sanitize_key(hcdecor_auto_safe_message(get_post_meta($task_id,'hc_auto_type',true)));
     $payload=hcdecor_auto_payload($task_id);
     update_post_meta($task_id,'hc_auto_status','running');
     update_post_meta($task_id,'hc_auto_started_at',current_time('mysql'));
@@ -405,7 +405,7 @@ function hcdecor_auto_block_pending_for_settings($settings,$limit=100){
     $limited=count($ids)>$limit;
     if($limited) $ids=array_slice($ids,0,$limit);
     foreach($ids as $id){
-        $type=(string)get_post_meta($id,'hc_auto_type',true);
+        $type=sanitize_key(hcdecor_auto_safe_message(get_post_meta($id,'hc_auto_type',true)));
         $reason=$master_off?'Automation HUB is OFF':($type==='social_publish'?'Social outbound is OFF':($type==='webhook'?'Webhook outbound is OFF':'Evergreen social outbound is OFF'));
         update_post_meta($id,'hc_auto_status','blocked');
         hcdecor_auto_log($id,'blocked',$reason.' after settings change');
@@ -470,11 +470,11 @@ add_action('admin_post_hcdecor_automation_retry',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     $id=(int)($_POST['task_id']??0); check_admin_referer('hcdecor_automation_retry_'.$id);
     if(get_post_type($id)!=='hc_automation_task') wp_die('Invalid task');
-    $current_status=(string)get_post_meta($id,'hc_auto_status',true);
+    $current_status=sanitize_key(hcdecor_auto_safe_message(get_post_meta($id,'hc_auto_status',true)));
     if(!in_array($current_status,['failed','blocked'],true)) wp_die('Only failed or blocked automation tasks can be retried.');
     $s=hcdecor_auto_settings();
     if(empty($s['enabled'])) wp_die('Automation HUB is disabled.');
-    $type=(string)get_post_meta($id,'hc_auto_type',true);
+    $type=sanitize_key(hcdecor_auto_safe_message(get_post_meta($id,'hc_auto_type',true)));
     if($type==='social_publish' && empty($s['social_enabled'])) wp_die('Social outbound is disabled.');
     if(in_array($type,['social_publish','webhook'],true)){
         if((string)($_POST['production_approved']??'')!=='1') wp_die('Explicit production approval is required to retry outbound delivery.');
@@ -530,11 +530,11 @@ add_action('rest_api_init',function(){
         'callback'=>function(){
             $tasks=get_posts(['post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>50,'orderby'=>'date','order'=>'DESC']);
             return rest_ensure_response(array_map(function($t){return [
-                'id'=>$t->ID,'type'=>(string)get_post_meta($t->ID,'hc_auto_type',true),
-                'status'=>(string)get_post_meta($t->ID,'hc_auto_status',true),
+                'id'=>$t->ID,'type'=>sanitize_key(hcdecor_auto_safe_message(get_post_meta($t->ID,'hc_auto_type',true))),
+                'status'=>sanitize_key(hcdecor_auto_safe_message(get_post_meta($t->ID,'hc_auto_status',true))),
                 'run_at'=>(int)get_post_meta($t->ID,'hc_auto_run_at',true),
                 'attempts'=>(int)get_post_meta($t->ID,'hc_auto_attempts',true),
-                'error'=>(string)get_post_meta($t->ID,'hc_auto_last_error',true)
+                'error'=>hcdecor_auto_safe_message(get_post_meta($t->ID,'hc_auto_last_error',true))
             ];},$tasks));
         }
     ]);
@@ -556,8 +556,8 @@ function hcdecor_automation_page(){
     <div class="hca-head"><div><h1>⚙ Automation HUB</h1><p class="hca-sub">Nội dung → AI → Review → Web → Social → Evergreen → Báo cáo</p></div><div><a class="button" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-social-connectors'));?>">Social Accounts</a> <a class="button button-primary" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-agent'));?>">+ Tạo nội dung</a></div></div>
     <div class="hca-kpi"><div class="hca-card"><div class="hca-num"><?php echo (int)$counts['queued']+(int)$counts['scheduled'];?></div><small>Đang chờ</small></div><div class="hca-card"><div class="hca-num"><?php echo (int)$counts['running'];?></div><small>Đang xử lý</small></div><div class="hca-card"><div class="hca-num"><?php echo (int)$counts['done'];?></div><small>Đã hoàn thành</small></div><div class="hca-card"><div class="hca-num"><?php echo (int)$counts['failed']+(int)$counts['blocked'];?></div><small>Lỗi / Cần xử lý</small></div></div>
     <div class="hca-flow"><?php foreach([['Tạo nội dung','Project / Media'],['AI xử lý','Văn bản + hình ảnh'],['Review','Phê duyệt'],['Đăng Web','WordPress'],['Phân phối đa kênh','Facebook · TikTok · YouTube'],['Evergreen','Tái sử dụng'],['Báo cáo','Thống kê']] as $x):?><div class="hca-step"><?php echo esc_html($x[0]);?><small><?php echo esc_html($x[1]);?></small></div><?php endforeach;?></div>
-    <div class="hca-main"><section class="hca-panel"><div class="hca-title"><h2>↕ Hàng đợi tự động</h2><a class="button button-primary" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-agent'));?>">+ Tạo job</a></div><table class="hca-table"><thead><tr><th>#</th><th>Nội dung</th><th>Loại</th><th>Lịch chạy</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody><?php foreach(array_slice($tasks,0,8) as $t):$st=(string)get_post_meta($t->ID,'hc_auto_status',true);$run=(int)get_post_meta($t->ID,'hc_auto_run_at',true);$type=(string)get_post_meta($t->ID,'hc_auto_type',true);?><tr><td>#<?php echo $t->ID;?></td><td><?php echo esc_html($t->post_title);?></td><td><?php echo esc_html($type);?></td><td><?php echo $run?esc_html(wp_date('d/m H:i',$run)):'—';?></td><td><span class="hca-pill <?php echo esc_attr($st);?>"><?php echo esc_html(strtoupper($st));?></span></td><td><?php if(in_array($st,['blocked','failed'],true)):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_automation_retry"><input type="hidden" name="task_id" value="<?php echo (int)$t->ID;?>"><?php wp_nonce_field('hcdecor_automation_retry_'.$t->ID);?><?php if(in_array($type,['social_publish','webhook'],true)):?><label><input type="checkbox" name="production_approved" value="1" required> Phê duyệt production</label><?php endif;?><button class="button">Retry</button></form><?php else:?>—<?php endif;?></td></tr><?php endforeach;if(!$tasks):?><tr><td colspan="6">Queue trống.</td></tr><?php endif;?></tbody></table></section>
-    <section class="hca-panel"><div class="hca-title"><h2>📅 Lịch đăng</h2><span>7 ngày</span></div><div class="hca-cal"><?php foreach($days as $day):?><div class="hca-day"><strong><?php echo esc_html(wp_date('D d/m',$day['ts']));?></strong><?php foreach(array_slice($day['items'],0,4) as $t):?><div class="hca-event"><?php $r=(int)get_post_meta($t->ID,'hc_auto_run_at',true);echo esc_html(wp_date('H:i',$r).' · '.get_post_meta($t->ID,'hc_auto_type',true));?></div><?php endforeach;?></div><?php endforeach;?></div></section></div>
+    <div class="hca-main"><section class="hca-panel"><div class="hca-title"><h2>↕ Hàng đợi tự động</h2><a class="button button-primary" href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-agent'));?>">+ Tạo job</a></div><table class="hca-table"><thead><tr><th>#</th><th>Nội dung</th><th>Loại</th><th>Lịch chạy</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody><?php foreach(array_slice($tasks,0,8) as $t):$st=sanitize_key(hcdecor_auto_safe_message(get_post_meta($t->ID,'hc_auto_status',true)));$run=(int)get_post_meta($t->ID,'hc_auto_run_at',true);$type=sanitize_key(hcdecor_auto_safe_message(get_post_meta($t->ID,'hc_auto_type',true)));?><tr><td>#<?php echo $t->ID;?></td><td><?php echo esc_html($t->post_title);?></td><td><?php echo esc_html($type);?></td><td><?php echo $run?esc_html(wp_date('d/m H:i',$run)):'—';?></td><td><span class="hca-pill <?php echo esc_attr($st);?>"><?php echo esc_html(strtoupper($st));?></span></td><td><?php if(in_array($st,['blocked','failed'],true)):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_automation_retry"><input type="hidden" name="task_id" value="<?php echo (int)$t->ID;?>"><?php wp_nonce_field('hcdecor_automation_retry_'.$t->ID);?><?php if(in_array($type,['social_publish','webhook'],true)):?><label><input type="checkbox" name="production_approved" value="1" required> Phê duyệt production</label><?php endif;?><button class="button">Retry</button></form><?php else:?>—<?php endif;?></td></tr><?php endforeach;if(!$tasks):?><tr><td colspan="6">Queue trống.</td></tr><?php endif;?></tbody></table></section>
+    <section class="hca-panel"><div class="hca-title"><h2>📅 Lịch đăng</h2><span>7 ngày</span></div><div class="hca-cal"><?php foreach($days as $day):?><div class="hca-day"><strong><?php echo esc_html(wp_date('D d/m',$day['ts']));?></strong><?php foreach(array_slice($day['items'],0,4) as $t):?><div class="hca-event"><?php $r=(int)get_post_meta($t->ID,'hc_auto_run_at',true);echo esc_html(wp_date('H:i',$r).' · '.sanitize_key(hcdecor_auto_safe_message(get_post_meta($t->ID,'hc_auto_type',true))));?></div><?php endforeach;?></div><?php endforeach;?></div></section></div>
     <div class="hca-bottom"><section class="hca-panel"><div class="hca-title"><h2>Social Accounts</h2><a href="<?php echo esc_url(admin_url('admin.php?page=hcdecor-social-connectors'));?>">Quản lý kết nối</a></div><div class="hca-connect"><?php foreach($ready as $name=>$state):$ok=!empty($state['configured']);?><div class="hca-social"><strong><?php echo esc_html($name);?></strong><p><span class="hca-dot <?php echo $ok?'ok':'';?>"></span><?php echo esc_html($ok?(!empty($state['tested'])?'Sẵn sàng':'Đã cấu hình · cần Test'):'Chưa kết nối');?></p></div><?php endforeach;?></div></section>
     <section class="hca-panel"><div class="hca-title"><h2>Automation Settings</h2></div><form class="hca-settings" method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_automation_settings"><?php wp_nonce_field('hcdecor_automation_settings');?><label><input type="checkbox" name="enabled" <?php checked($s['enabled']);?>> Master automation</label><label><input type="checkbox" name="webhook_enabled" <?php checked($s['webhook_enabled']);?>> Webhook connector</label><input type="url" name="webhook_url" value="<?php echo esc_attr($s['webhook_url']);?>" placeholder="https://.../webhook"><label><input type="checkbox" name="social_enabled" <?php checked($s['social_enabled']);?>> Social publishing</label><label><input type="checkbox" name="evergreen_enabled" <?php checked($s['evergreen_enabled']);?>> Evergreen</label><input type="hidden" name="evergreen_days" value="<?php echo (int)$s['evergreen_days'];?>"><input type="hidden" name="max_attempts" value="<?php echo (int)$s['max_attempts'];?>"><input type="hidden" name="retry_minutes" value="<?php echo (int)$s['retry_minutes'];?>"><p><button class="button button-primary">Lưu Automation</button></p></form></section></div>
     </div><?php
