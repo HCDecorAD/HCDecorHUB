@@ -1,9 +1,4 @@
-import crypto from "node:crypto";
-import fs from "node:fs";
-const env=fs.readFileSync(".env.local","utf8").split(/\r?\n/).filter(Boolean).reduce((a,l)=>{const i=l.indexOf("=");if(i>0)a[l.slice(0,i)]=l.slice(i+1);return a},{});
-const cred=JSON.parse(fs.readFileSync(env.GOOGLE_APPLICATION_CREDENTIALS,"utf8")),sheet=env.HCDECOR_CRM_SHEET_ID,folder=env.HCDECOR_DRIVE_PROJECTS_FOLDER_ID;
-const enc=v=>Buffer.from(v).toString("base64url");
-async function token(){const now=Math.floor(Date.now()/1000),h=enc(JSON.stringify({alg:"RS256",typ:"JWT"})),b=enc(JSON.stringify({iss:cred.client_email,scope:"https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive",aud:"https://oauth2.googleapis.com/token",iat:now,exp:now+600})),input=h+"."+b,s=crypto.createSign("RSA-SHA256");s.update(input);s.end();const assertion=input+"."+s.sign(cred.private_key).toString("base64url"),r=await fetch("https://oauth2.googleapis.com/token",{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body:new URLSearchParams({grant_type:"urn:ietf:params:oauth:grant-type:jwt-bearer",assertion})});if(!r.ok)throw Error("auth");return (await r.json()).access_token}
-const t=await token();async function g(url,opt={}){const r=await fetch(url,{...opt,headers:{authorization:"Bearer "+t,"content-type":"application/json",...(opt.headers||{})}});if(!r.ok)throw Error("api_"+r.status);return r.status===204?null:r.json()}
-const marker="HCDECOR_SMOKE_"+Date.now();let fid=null,drive=false,sheets=false,cleanup=false;
-try{const f=await g("https://www.googleapis.com/drive/v3/files?fields=id",{method:"POST",body:JSON.stringify({name:marker,mimeType:"application/vnd.google-apps.folder",parents:[folder]})});fid=f.id;drive=true;await g("https://sheets.googleapis.com/v4/spreadsheets/"+sheet+"/values/Leads!K1?valueInputOption=RAW",{method:"PUT",body:JSON.stringify({values:[[marker]]})});sheets=true;await g("https://sheets.googleapis.com/v4/spreadsheets/"+sheet+"/values/Leads!K1:clear",{method:"POST",body:"{}"});await g("https://www.googleapis.com/drive/v3/files/"+fid,{method:"DELETE"});fid=null;cleanup=true;console.log(JSON.stringify({ok:true,drive_write:drive,sheets_write:sheets,cleanup}))}catch(e){if(fid)try{await g("https://www.googleapis.com/drive/v3/files/"+fid,{method:"DELETE"})}catch{}console.log(JSON.stringify({ok:false,drive_write:drive,sheets_write:sheets,cleanup,error:e.message}));process.exitCode=1}
+// Deprecated: destructive smoke logic intentionally disabled.
+// Use live read probes or a dedicated disposable test spreadsheet/folder.
+console.log(JSON.stringify({ok:false,disabled:true,reason:"unsafe_legacy_smoke_retired"}));
+process.exitCode=2;
