@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.166",
+    "version":  "2026.09.29.167",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -104,7 +104,7 @@
                   {
                       "path":  "modules/publish-runtime.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/publish-runtime.php",
-                      "git_sha1":  "5448984bb7548cf16cd2087aebf6b16f5317c447"
+                      "git_sha1":  "aaac0427309597a45ef49a9863aba9b1fd4251bc"
                   },
                   {
                       "path":  "modules/automation-hub.php",

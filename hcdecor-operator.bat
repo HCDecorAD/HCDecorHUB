@@ -348,7 +348,7 @@ findstr /c:"Cannot read attachment safely." "wordpress\hcdecor-core\modules\driv
 findstr /c:"hcdecor_ops_valid_media_ids" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 376
 findstr /c:"strlen($token)>128" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 377
 findstr /c:"function hcdecor_runtime_clip" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 378
-findstr /c:"hcdecor_runtime_prune(is_array($v)?$v:array())" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 379
+findstr /c:"return hcdecor_runtime_prune($v)" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 379
 findstr /c:"limit_response_size'=>2*1024*1024" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 380
 findstr /c:"AI response exceeds 2 MB." "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 381
 findstr /c:"hcdecor_ai_limit_text" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 382
@@ -404,7 +404,7 @@ findstr /c:"function hcdecor_media_rest_approval_fresh" "wordpress\hcdecor-core\
 findstr /c:"Fresh explicit approval is required for AI media analysis." "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 432
 findstr /c:"strlen($at_raw)>64" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 433
 findstr /c:"production_approval_source'=>sanitize_key" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 434
-findstr /c:"production_approval_source'=>hcdecor_runtime_clip" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 435
+findstr /c:"production_approval_source'=>sanitize_key(hcdecor_runtime_clip" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 435
 findstr /c:"$at<=time()+5*MINUTE_IN_SECONDS" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 436
 findstr /c:"function hcdecor_runtime_time" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 437
 findstr /c:"Invalid runtime schedule." "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 438
@@ -493,6 +493,9 @@ findstr /c:"hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_openai_test_message
 findstr /c:"hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_gemini_test_message',''),500)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 521
 findstr /c:"function hcdecor_backup_clip" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 522
 findstr /c:"hcdecor_backup_clip(get_option('hcdecor_backup_last_error',''),500)" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 523
+findstr /c:"function hcdecor_runtime_jobs" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 524
+findstr /c:"$value=is_scalar($value)?(string)$value:''" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 525
+findstr /c:"sanitize_key(hcdecor_runtime_clip($j['status']??'',50))" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 526
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
