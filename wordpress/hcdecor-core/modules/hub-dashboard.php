@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) exit;
  */
 add_action('admin_menu',function(){
     add_menu_page('HCDecor HUB','HCDecor HUB','edit_posts','hcdecor-hub','hcdecor_hub_dashboard_page','dashicons-screenoptions',3);
+    add_submenu_page('hcdecor-hub','HCDecor HUB Dashboard','Dashboard','edit_posts','hcdecor-hub','hcdecor_hub_dashboard_page',0);
 },20);
 
 function hcdecor_hub_dashboard_scalar($value,$limit=500){if(!is_scalar($value))return '';$value=(string)$value;return strlen($value)<=$limit?$value:'';}
