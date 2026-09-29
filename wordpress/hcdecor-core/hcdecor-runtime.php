@@ -2,12 +2,22 @@
 /**
  * Plugin Name: HCDecor HUB Runtime
  * Description: HCDecor operational runtime. Safe-by-default; production writes remain explicitly gated.
- * Version: 2026.09.29.199
+ * Version: 2026.09.29.200
  * Author: HCDecor
  */
 if (!defined('ABSPATH')) exit;
 
-define('HCDECOR_RUNTIME_VERSION','2026.09.29.199');
+define('HCDECOR_RUNTIME_VERSION','2026.09.29.200');
+
+add_action('rest_api_init',function(){
+    register_rest_route('hcdecor/v1','/runtime/status',[
+        'methods'=>'GET','permission_callback'=>'__return_true',
+        'callback'=>function(){
+            $modules=glob(__DIR__.'/modules/*.php')?:[];
+            return rest_ensure_response(['ok'=>true,'version'=>HCDECOR_RUNTIME_VERSION,'module_files'=>count($modules),'production_write'=>false]);
+        }
+    ]);
+});
 
 function hcdecor_runtime_register_content_types(){
     register_post_type('hc_project',[
