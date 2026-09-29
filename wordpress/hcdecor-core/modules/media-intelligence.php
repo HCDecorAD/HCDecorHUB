@@ -158,8 +158,8 @@ function hcdecor_media_ai_analyze($attachment_id){
 function hcdecor_media_ai_apply_project_recommendations($project_id){
     $project_id=(int)$project_id;
     if(!$project_id || get_post_type($project_id)!=='hc_project') return new WP_Error('project','Invalid project.');
-    $media=(array)get_post_meta($project_id,'hc_project_gallery',true);
-    if(!$media) $media=(array)get_post_meta($project_id,'hc_gallery_ids',true);
+    $media_raw=get_post_meta($project_id,'hc_project_gallery',true);$media=is_array($media_raw)?$media_raw:[];
+    if(!$media){$legacy_raw=get_post_meta($project_id,'hc_gallery_ids',true);$media=is_array($legacy_raw)?$legacy_raw:[];}
     $media=array_slice(array_values(array_filter(array_unique(array_map('intval',$media)),function($id){return get_post_type($id)==='attachment';})),0,60);
     if(!$media) return new WP_Error('media','Project has no media.');
 

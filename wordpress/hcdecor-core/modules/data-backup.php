@@ -28,7 +28,7 @@ function hcdecor_backup_clip($value,$limit){
 
 function hcdecor_backup_workflow_log($value){
     $out=[];
-    foreach(array_slice((array)$value,-100) as $entry){
+    foreach(array_slice(is_array($value)?$value:[],-100) as $entry){
         if(!is_array($entry)) continue;
         $out[]=['time'=>hcdecor_backup_clip($entry['time']??'',64),'event'=>sanitize_key(hcdecor_backup_clip($entry['event']??'',100)),'note'=>hcdecor_backup_clip($entry['note']??'',500),'user'=>(int)($entry['user']??0)];
     }
@@ -37,9 +37,11 @@ function hcdecor_backup_workflow_log($value){
 
 function hcdecor_backup_tags($value){
     $out=[];
-    foreach(array_slice((array)$value,0,30) as $tag){$tag=hcdecor_backup_clip($tag,100);if($tag!=='')$out[]=$tag;}
+    foreach(array_slice(is_array($value)?$value:[],0,30) as $tag){$tag=hcdecor_backup_clip($tag,100);if($tag!=='')$out[]=$tag;}
     return array_values(array_unique($out));
 }
+
+function hcdecor_backup_ids($value,$limit=60){return array_slice(array_values(array_filter(array_unique(array_map('intval',is_array($value)?$value:[])))),0,max(1,min(100,(int)$limit)));}
 
 function hcdecor_backup_project($p){
     return [
@@ -50,8 +52,8 @@ function hcdecor_backup_project($p){
         'excerpt'=>hcdecor_backup_clip($p->post_excerpt,5000),
         'content'=>hcdecor_backup_clip($p->post_content,100000),
         'modified'=>$p->post_modified,
-        'gallery'=>array_slice((array)get_post_meta($p->ID,'hc_project_gallery',true),0,60),
-        'gallery_legacy'=>array_slice((array)get_post_meta($p->ID,'hc_gallery_ids',true),0,60),
+        'gallery'=>hcdecor_backup_ids(get_post_meta($p->ID,'hc_project_gallery',true),60),
+        'gallery_legacy'=>hcdecor_backup_ids(get_post_meta($p->ID,'hc_gallery_ids',true),60),
         'thumbnail_id'=>(int)get_post_thumbnail_id($p->ID),
         'seo_meta'=>hcdecor_backup_clip(get_post_meta($p->ID,'hc_seo_meta',true),2000),
         'client'=>hcdecor_backup_clip(get_post_meta($p->ID,'hc_client',true),2000),
@@ -75,8 +77,8 @@ function hcdecor_backup_job($p){
         'modified'=>$p->post_modified,
         'status'=>sanitize_key(hcdecor_backup_clip(get_post_meta($p->ID,'hc_agent_status',true),50)),
         'project_id'=>(int)get_post_meta($p->ID,'hc_project_id',true),
-        'channels'=>array_values(array_intersect(['web','facebook','tiktok','youtube'],(array)get_post_meta($p->ID,'hc_channels',true))),
-        'media_ids'=>array_slice((array)get_post_meta($p->ID,'hc_media_ids',true),0,60),
+        'channels'=>array_values(array_intersect(['web','facebook','tiktok','youtube'],is_array(get_post_meta($p->ID,'hc_channels',true))?get_post_meta($p->ID,'hc_channels',true):[])),
+        'media_ids'=>hcdecor_backup_ids(get_post_meta($p->ID,'hc_media_ids',true),60),
         'cover_id'=>(int)get_post_meta($p->ID,'hc_cover_id',true),
         'ai_provider'=>sanitize_key(hcdecor_backup_clip(get_post_meta($p->ID,'hc_ai_provider',true),50)),
         'ai_model'=>hcdecor_backup_clip(get_post_meta($p->ID,'hc_ai_model',true),200),
