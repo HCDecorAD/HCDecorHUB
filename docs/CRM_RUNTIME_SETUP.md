@@ -1,13 +1,29 @@
-# HCDecor CRM runtime
+# HCDecor durable runtime setup
 
-Durable store: Google Sheets `HCDecor CRM - Leads & Projects`.
+The Master Agent reports runtime capability as booleans only. Secrets must remain server-side and must never be committed.
 
-Required server-side environment variables:
-- HCDECOR_CRM_SHEET_ID
-- HCDECOR_CRM_SHEET_URL
+## WordPress
+- HCDECOR_WP_BASE_URL=https://hcdecorhub.com
+- HCDECOR_WP_API_TOKEN (secret)
+
+## CRM / Google Sheets
 - HCDECOR_CRM_WRITE_PROVIDER=google-sheets-api
-- GOOGLE_SERVICE_ACCOUNT_JSON (secret; never commit)
-- HCDECOR_DRIVE_PROJECTS_FOLDER_ID
-- HCDECOR_DRIVE_MEDIA_FOLDER_ID
+- HCDECOR_CRM_SHEET_ID
+- GOOGLE_SERVICE_ACCOUNT_JSON (secret)
 
-Policy: Web forms must return unavailable until authenticated server-side Google Sheets write access exists. Never simulate a successful Lead or Project write.
+## Google Drive
+- HCDECOR_DRIVE_ROOT_FOLDER_ID
+- HCDECOR_DRIVE_PROJECTS_FOLDER_ID
+
+## Protected project provisioning
+- HCDECOR_PROJECT_API_TOKEN (secret)
+
+Capability contract:
+- cmsRead requires HCDECOR_WP_BASE_URL.
+- cmsWrite requires HCDECOR_WP_API_TOKEN.
+- driveConfigured requires HCDECOR_DRIVE_ROOT_FOLDER_ID.
+- driveWrite requires service account + Drive root.
+- leadWrite requires google-sheets-api + service account + CRM sheet.
+- projectWrite additionally requires projects folder + project API token.
+
+Policy: web forms and Master Agent durable writes must report unavailable until authenticated server-side access exists. Never simulate a successful Lead, Project, Drive, or WordPress write. Runtime readiness is not production health and does not grant production-write authority.
