@@ -452,6 +452,8 @@ findstr /c:"(int)$raw>65536" "wordpress\hcdecor-core\modules\content-operations.
 findstr /c:"HCDECOR_OPS_API_TOKEN=" ".env.example" >nul || exit /b 480
 findstr /c:"strlen($claimed_raw)<=64" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 481
 findstr /c:"$token_raw=$r->get_param('claim_token')" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 482
+findstr /c:"const projectApiAuth=Boolean" "lib\data\store.js" >nul || exit /b 483
+findstr /c:"&&projectFolder&&projectApiAuth" "lib\data\store.js" >nul || exit /b 484
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
