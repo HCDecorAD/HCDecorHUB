@@ -317,7 +317,7 @@ add_action('admin_post_hcdecor_project_vault_sync_all',function(){
 
 add_action('admin_post_hcdecor_project_vault_import',function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
-    $file=preg_replace('/[^A-Za-z0-9_-]/','',(string)wp_unslash($_POST['file_id']??''));
+    $file_raw=wp_unslash($_POST['file_id']??'');$file=preg_replace('/[^A-Za-z0-9_-]/','',is_scalar($file_raw)?(string)$file_raw:'');
     if($file==='') wp_die('Invalid Drive file ID.');
     check_admin_referer('hcdecor_project_vault_import_'.$file);
     $r=hcdecor_project_vault_import($file);
@@ -383,7 +383,7 @@ function hcdecor_project_vault_page(){
         $drive_files=hcdecor_drive_list((string)($folders['projects']??''),60);
         if(is_wp_error($drive_files)) $drive_files=[];
     }
-    $error=(string)get_option('hcdecor_project_vault_last_error','');
+    $error=hcdecor_project_vault_clip(get_option('hcdecor_project_vault_last_error',''),500);
     ?>
     <div class="wrap hcpv" style="max-width:1400px">
       <style>

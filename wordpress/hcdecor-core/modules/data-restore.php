@@ -397,8 +397,8 @@ add_action('admin_post_hcdecor_restore_apply',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_restore_apply');
 
-    $file=sanitize_text_field(wp_unslash($_POST['file_id']??''));
-    $confirm=strtoupper(trim((string)wp_unslash($_POST['confirm']??'')));
+    $file_raw=wp_unslash($_POST['file_id']??'');$file=sanitize_text_field(is_scalar($file_raw)?(string)$file_raw:'');
+    $confirm_raw=wp_unslash($_POST['confirm']??'');$confirm=strtoupper(is_scalar($confirm_raw)?trim((string)$confirm_raw):'');
     if($confirm!=='RESTORE') wp_die('Nhập RESTORE để xác nhận.');
 
     $sections=(array)($_POST['sections']??[]);
@@ -441,7 +441,7 @@ add_action('rest_api_init',function(){
 
 function hcdecor_restore_page(){
     if(!current_user_can('manage_options')) return;
-    $file=preg_replace('/[^A-Za-z0-9_-]/','',(string)wp_unslash($_GET['file_id']??''));
+    $file_raw=wp_unslash($_GET['file_id']??'');$file=preg_replace('/[^A-Za-z0-9_-]/','',is_scalar($file_raw)?(string)$file_raw:'');
     $backup=$file?hcdecor_restore_read_backup($file):null;
     $plan=is_array($backup)?hcdecor_restore_plan($backup):null;
     $files=[];

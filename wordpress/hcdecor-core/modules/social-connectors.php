@@ -1,13 +1,14 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
+function hcdecor_social_clip($value,$limit=500){$value=is_scalar($value)?(string)$value:'';return function_exists('mb_substr')?mb_substr($value,0,$limit):substr($value,0,$limit);}
 function hcdecor_social_settings(){
     $v=get_option('hcdecor_social_connectors',[]);$v=is_array($v)?$v:[];
     $limits=['facebook_page_id'=>500,'facebook_token'=>8192,'tiktok_client_key'=>500,'tiktok_client_secret'=>8192,'tiktok_access_token'=>8192,'youtube_channel_id'=>500,'youtube_access_token'=>8192];$out=[];
     foreach($limits as $key=>$limit){$value=is_scalar($v[$key]??'')?trim((string)$v[$key]):'';$out[$key]=strlen($value)<=$limit?$value:'';}
     return $out;
 }
-function hcdecor_social_mask($v){$v=(string)$v;if($v==='')return 'Chưa cấu hình';$n=strlen($v);return $n<9?'••••••••':substr($v,0,4).'••••'.substr($v,-4);}
+function hcdecor_social_mask($v){$v=hcdecor_social_clip($v,8192);if($v==='')return 'Chưa cấu hình';$n=strlen($v);return $n<9?'••••••••':substr($v,0,4).'••••'.substr($v,-4);}
 function hcdecor_social_channels(){ return ['facebook'=>'Facebook / Meta','tiktok'=>'TikTok','youtube'=>'YouTube']; }
 function hcdecor_social_ready($channel,$s){
     if($channel==='facebook') return $s['facebook_page_id']!=='' && $s['facebook_token']!=='';
@@ -25,7 +26,7 @@ add_action('admin_post_hcdecor_social_test',function(){
 });
 function hcdecor_social_connection_state($channel){
     $s=hcdecor_social_settings();$ready=hcdecor_social_ready($channel,$s);$test=(array)get_option('hcdecor_social_test_'.$channel,[]);
-    return ['configured'=>$ready,'tested'=>false,'tested_at'=>(string)($test['at']??''),'state'=>$ready?'configured':'requires-credentials','live_health'=>'not_checked'];
+    return ['configured'=>$ready,'tested'=>false,'tested_at'=>hcdecor_social_clip($test['at']??'',64),'state'=>$ready?'configured':'requires-credentials','live_health'=>'not_checked'];
 }
 add_action('admin_post_hcdecor_social_save',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
@@ -97,4 +98,4 @@ function hcdecor_social_connectors_page(){
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0"><?php foreach(hcdecor_social_channels() as $key=>$label):?><form method="post" action="<?php echo esc_url(admin_url('admin-post.php'));?>"><input type="hidden" name="action" value="hcdecor_social_test"><input type="hidden" name="channel" value="<?php echo esc_attr($key);?>"><?php wp_nonce_field('hcdecor_social_test_'.$key);?><button class="button">Test <?php echo esc_html($label);?></button></form><?php endforeach;?></div><div class="hcs-flow"><strong>Publishing Flow</strong><div class="hcs-steps"><span class="hcs-step">Project</span><span class="hcs-step">AI Content</span><span class="hcs-step">Review</span><span class="hcs-step">Facebook</span><span class="hcs-step">TikTok</span><span class="hcs-step">YouTube</span><span class="hcs-step">Analytics</span></div></div>
     </div><?php
 }
-add_action('rest_api_init',function(){register_rest_route('hcdecor/v1','/social/status',['methods'=>'GET','permission_callback'=>'hcdecor_ops_bridge_auth','callback'=>function(){$s=hcdecor_social_settings();return rest_ensure_response(['facebook'=>hcdecor_social_connection_state('facebook'),'tiktok'=>hcdecor_social_connection_state('tiktok'),'youtube'=>hcdecor_social_connection_state('youtube'),'updated_at'=>(string)get_option('hcdecor_social_connectors_updated_at','')]);}]);});
+add_action('rest_api_init',function(){register_rest_route('hcdecor/v1','/social/status',['methods'=>'GET','permission_callback'=>'hcdecor_ops_bridge_auth','callback'=>function(){$s=hcdecor_social_settings();return rest_ensure_response(['facebook'=>hcdecor_social_connection_state('facebook'),'tiktok'=>hcdecor_social_connection_state('tiktok'),'youtube'=>hcdecor_social_connection_state('youtube'),'updated_at'=>hcdecor_social_clip(get_option('hcdecor_social_connectors_updated_at',''),64)]);}]);});

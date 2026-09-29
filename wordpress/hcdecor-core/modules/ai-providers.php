@@ -414,7 +414,7 @@ add_action('admin_post_hcdecor_ai_settings',function(){
     foreach(['openai','gemini'] as $p){
         $changed=$old_models[$p]!==$new_models[$p];
         if(!empty($_POST[$p.'_clear'])){ delete_option('hcdecor_ai_'.$p.'_key'); $changed=true; }
-        $v=trim((string)wp_unslash($_POST[$p.'_key']??''));
+        $raw=wp_unslash($_POST[$p.'_key']??'');$v=is_scalar($raw)?trim((string)$raw):'';
         if(strlen($v)>8000) wp_die('AI credential value too long.');
         if($v!==''){ update_option('hcdecor_ai_'.$p.'_key',$v,false); $changed=true; }
         if($changed){
