@@ -9,9 +9,11 @@ add_action('admin_menu',function(){
     add_menu_page('HCDecor HUB','HCDecor HUB','edit_posts','hcdecor-hub','hcdecor_hub_dashboard_page','dashicons-screenoptions',3);
 },20);
 
+function hcdecor_hub_dashboard_scalar($value,$limit=500){if(!is_scalar($value))return '';$value=(string)$value;return strlen($value)<=$limit?$value:'';}
+
 function hcdecor_hub_dashboard_safe_error($message){
     if(function_exists('hcdecor_drive_safe_error')) return hcdecor_drive_safe_error($message);
-    $text=sanitize_text_field((string)$message);
+    $text=sanitize_text_field(hcdecor_hub_dashboard_scalar($message,500));
     return function_exists('mb_substr')?mb_substr($text,0,500):substr($text,0,500);
 }
 
@@ -65,18 +67,18 @@ function hcdecor_hub_dashboard_state(){
         'health'=>$health,
         'counts'=>$counts,
         'drive'=>$drive,
-        'drive_test'=>(string)get_option('hcdecor_drive_test_status',''),
+        'drive_test'=>hcdecor_hub_dashboard_scalar(get_option('hcdecor_drive_test_status',''),20),
         'automation'=>$automation,
         'inbox'=>$inbox,
         'project_vault_synced'=>$pv,
-        'sync_version'=>(string)get_option('hcdecor_sync_version',''),
-        'sync_last'=>(string)get_option('hcdecor_sync_last',''),
-        'sync_last_error'=>(string)get_option('hcdecor_sync_last_error',''),
-        'backup_last'=>(string)get_option('hcdecor_backup_last_at',''),
-        'inbox_last'=>(string)get_option('hcdecor_drive_inbox_last_at',''),
+        'sync_version'=>hcdecor_hub_dashboard_scalar(get_option('hcdecor_sync_version',''),100),
+        'sync_last'=>hcdecor_hub_dashboard_scalar(get_option('hcdecor_sync_last',''),64),
+        'sync_last_error'=>hcdecor_hub_dashboard_scalar(get_option('hcdecor_sync_last_error',''),500),
+        'backup_last'=>hcdecor_hub_dashboard_scalar(get_option('hcdecor_backup_last_at',''),64),
+        'inbox_last'=>hcdecor_hub_dashboard_scalar(get_option('hcdecor_drive_inbox_last_at',''),64),
         'inbox_result'=>(array)get_option('hcdecor_drive_inbox_last_result',[]),
         'vault_bulk_result'=>(array)get_option('hcdecor_project_vault_bulk_last_result',[]),
-        'vault_bulk_at'=>(string)get_option('hcdecor_project_vault_bulk_last_at','')
+        'vault_bulk_at'=>hcdecor_hub_dashboard_scalar(get_option('hcdecor_project_vault_bulk_last_at',''),64)
     ];
 }
 
@@ -311,7 +313,7 @@ function hcdecor_hub_dashboard_page(){
       </div>
 
       <?php if(isset($_GET['maintenance'])):?><div class="notice notice-success inline"><p>Safe Maintenance đã chạy: sync + repair schedules + health snapshot.</p></div><?php endif;?>
-      <?php if(isset($_GET['hub_action'])): $hub_error=(string)get_option('hcdecor_hub_action_error','');?><div class="notice <?php echo $hub_error?'notice-error':'notice-success';?> inline"><p><?php echo esc_html($hub_error?:'Safe operation completed.');?></p></div><?php endif;?>
+      <?php if(isset($_GET['hub_action'])): $hub_error=hcdecor_hub_dashboard_scalar(get_option('hcdecor_hub_action_error',''),500);?><div class="notice <?php echo $hub_error?'notice-error':'notice-success';?> inline"><p><?php echo esc_html($hub_error?:'Safe operation completed.');?></p></div><?php endif;?>
 
       <div class="hchub-kpis">
         <div class="hchub-card"><div class="num"><?php echo (int)$c['projects_publish'];?></div><strong>Projects Live</strong><br><small><?php echo (int)$c['projects_draft'];?> draft</small></div>

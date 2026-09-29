@@ -514,6 +514,8 @@ findstr /c:"sanitize_textarea_field(is_scalar($value)?(string)$value:'')" "wordp
 findstr /c:"sanitize_textarea_field(is_scalar($value)?(string)$value:'')" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 542
 findstr /c:"function hcdecor_project_vault_clip" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 543
 findstr /c:"sanitize_text_field(is_scalar($message)?(string)$message:'')" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 544
+findstr /c:"function hcdecor_hub_dashboard_scalar" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 545
+findstr /c:"hcdecor_hub_dashboard_scalar(get_option('hcdecor_sync_last_error',''),500)" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 546
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
