@@ -311,6 +311,7 @@ findstr /c:"Web rollback failed." "wordpress\hcdecor-core\modules\web-publisher.
 findstr /c:"Backup validation failed." "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 322
 findstr /c:"Invalid project." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 323
 findstr /c:"Invalid media." "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 324
+findstr /c:"Invalid Drive file ID." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 325
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
