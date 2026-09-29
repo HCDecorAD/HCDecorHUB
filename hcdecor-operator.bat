@@ -403,6 +403,8 @@ findstr /c:"max(7,min(3650" "wordpress\hcdecor-core\modules\automation-hub.php" 
 findstr /c:"max(1,min(1440" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 416
 findstr /c:"function hcdecor_social_groups_safe" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 417
 findstr /c:"'remote_id'=>hcdecor_social_limit_text" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 418
+findstr /c:"function hcdecor_full_audit_entries" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 419
+findstr /c:"array_slice($v,-100,null,true)" "wordpress\hcdecor-core\modules\hub-suite.php" >nul || exit /b 420
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
