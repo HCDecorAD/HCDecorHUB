@@ -78,7 +78,9 @@ function hcdecor_auto_enqueue($type,$payload=[],$run_at=null,$dedupe=''){
 }
 
 function hcdecor_auto_payload($task_id){
-    $p=json_decode((string)get_post_field('post_content',$task_id),true);
+    $raw=get_post_field('post_content',$task_id);$raw=is_scalar($raw)?(string)$raw:'';
+    if($raw===''||strlen($raw)>256*1024)return [];
+    $p=json_decode($raw,true);
     return is_array($p)?$p:[];
 }
 

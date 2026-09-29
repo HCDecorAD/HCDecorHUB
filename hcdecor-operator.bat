@@ -480,6 +480,8 @@ findstr /c:"$modified=hcdecor_auto_time" "wordpress\hcdecor-core\modules\automat
 findstr /c:"function hcdecor_health_time" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 508
 findstr /c:"$heartbeat=hcdecor_health_time" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 509
 findstr /c:"$synced=hcdecor_health_time" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 510
+findstr /c:"strlen($raw)>256*1024" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 511
+findstr /c:"$p=json_decode($raw,true)" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 512
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
