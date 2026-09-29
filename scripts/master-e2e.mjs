@@ -4,5 +4,5 @@ for(const m of ["content","media","publishing"]){const r=await post("/api/master
 {const r=await post("/api/master",{workspace_id:"hcdecor",module:"publishing",action:"publish",intent:"must require approval",execute:true});check("publish guarded",r.status===403&&r.x.plan?.execution?.requires_approval===true,r.status)}
 {const r=await post("/api/master/batch",{tasks:[{workspace_id:"hcdecor",module:"reports",action:"create",intent:"must block batch"}]});check("batch mutation blocked",r.status===409,r.status)}
 {const r=await post("/api/master",{workspace_id:"hcdecor",module:"website",action:"view",intent:"bad capability",capability:"content"});check("capability mismatch blocked",r.status===400,r.status)}
-{const r=await post("/api/master/workflows/preview",{workspace_id:"hcdecor",intent:"workflow regression"});check("preview workflow",r.status===201&&r.x.status==="preview-ready"&&r.x.steps?.length===3&&r.x.production_write===false,r.status)}
+{const r=await post("/api/master/workflows/preview",{workspace_id:"hcdecor",intent:"workflow regression"});check("preview workflow",r.status===201&&r.x.status==="preview-ready"&&r.x.steps?.length===3&&r.x.steps?.[0]?.artifact?.type==="content-brief"&&r.x.steps?.[2]?.artifact?.publish===false&&r.x.production_write===false,r.status)}
 process.exitCode=failed?1:0;
