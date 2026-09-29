@@ -76,8 +76,8 @@ function hcdecor_hub_dashboard_state(){
         'sync_last_error'=>hcdecor_hub_dashboard_scalar(get_option('hcdecor_sync_last_error',''),500),
         'backup_last'=>hcdecor_hub_dashboard_scalar(get_option('hcdecor_backup_last_at',''),64),
         'inbox_last'=>hcdecor_hub_dashboard_scalar(get_option('hcdecor_drive_inbox_last_at',''),64),
-        'inbox_result'=>(array)get_option('hcdecor_drive_inbox_last_result',[]),
-        'vault_bulk_result'=>(array)get_option('hcdecor_project_vault_bulk_last_result',[]),
+        'inbox_result'=>function_exists('hcdecor_drive_inbox_result')?hcdecor_drive_inbox_result(get_option('hcdecor_drive_inbox_last_result',[])):[],
+        'vault_bulk_result'=>function_exists('hcdecor_project_vault_bulk_result')?hcdecor_project_vault_bulk_result(get_option('hcdecor_project_vault_bulk_last_result',[])):[],
         'vault_bulk_at'=>hcdecor_hub_dashboard_scalar(get_option('hcdecor_project_vault_bulk_last_at',''),64)
     ];
 }

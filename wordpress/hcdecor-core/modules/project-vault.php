@@ -269,6 +269,11 @@ add_action('hcdecor_after_web_publish',function($job_id,$project_id){
     }
 },45,2);
 
+function hcdecor_project_vault_bulk_result($value){
+    if(!is_array($value)) return [];
+    $errors=[];foreach(array_slice((array)($value['errors']??[]),0,10) as $error){if(is_scalar($error))$errors[]=hcdecor_project_vault_clip($error,500);}
+    return ['scanned'=>max(0,(int)($value['scanned']??0)),'synced'=>max(0,(int)($value['synced']??0)),'failed'=>max(0,(int)($value['failed']??0)),'errors'=>$errors,'completed_at'=>hcdecor_project_vault_clip($value['completed_at']??'',64)];
+}
 function hcdecor_project_vault_sync_all($limit=100){
     $limit=max(1,min(100,(int)$limit));
     if(!function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()) return new WP_Error('drive','Google Drive chưa kết nối.');
@@ -288,7 +293,7 @@ function hcdecor_project_vault_sync_all($limit=100){
         }
     }
     $result['completed_at']=current_time('mysql');
-    update_option('hcdecor_project_vault_bulk_last_result',$result,false);
+    update_option('hcdecor_project_vault_bulk_last_result',hcdecor_project_vault_bulk_result($result),false);
     update_option('hcdecor_project_vault_bulk_last_at',$result['completed_at'],false);
     if($result['failed']>0) update_option('hcdecor_project_vault_last_error','Bulk sync failed for '.$result['failed'].' project(s).',false);
     else delete_option('hcdecor_project_vault_last_error');
@@ -413,7 +418,7 @@ function hcdecor_project_vault_page(){
       </div>
 
       <?php if(isset($_GET['saved'])):?><div class="notice notice-success inline"><p>Project đã lưu vào Drive Vault.</p></div><?php endif;?>
-      <?php if(isset($_GET['bulk_done'])): $br=(array)get_option('hcdecor_project_vault_bulk_last_result',[]);?><div class="notice notice-success inline"><p>Bulk sync hoàn tất: <?php echo (int)($br['synced']??0);?> synced · <?php echo (int)($br['failed']??0);?> failed.</p></div><?php endif;?>
+      <?php if(isset($_GET['bulk_done'])): $br=hcdecor_project_vault_bulk_result(get_option('hcdecor_project_vault_bulk_last_result',[]));?><div class="notice notice-success inline"><p>Bulk sync hoàn tất: <?php echo (int)($br['synced']??0);?> synced · <?php echo (int)($br['failed']??0);?> failed.</p></div><?php endif;?>
       <?php if(isset($_GET['failed'])||isset($_GET['import_failed'])||isset($_GET['bulk_failed'])):?><div class="notice notice-error inline"><p><?php echo esc_html($error?:'Project Vault operation failed.');?></p></div><?php endif;?>
 
       <div class="hcpv-grid">

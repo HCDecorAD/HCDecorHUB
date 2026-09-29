@@ -561,6 +561,9 @@ findstr /c:"hcdecor_drive_inbox_safe_text($row['time']" "wordpress\hcdecor-core\
 findstr /c:"$event=sanitize_key(is_scalar($payload['event']" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 589
 findstr /c:"is_array($parts)" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 590
 findstr /c:"raw.githubusercontent.com" "wordpress\hcdecor-core\modules\background-sync.php" >nul || exit /b 591
+findstr /c:"function hcdecor_project_vault_bulk_result" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 592
+findstr /c:"hcdecor_project_vault_bulk_result(get_option('hcdecor_project_vault_bulk_last_result',[]))" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 593
+findstr /c:"hcdecor_drive_inbox_result(get_option('hcdecor_drive_inbox_last_result',[]))" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 594
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
