@@ -104,12 +104,15 @@ add_action('admin_post_hcdecor_drive_oauth_start',function(){
 
 add_action('admin_post_hcdecor_drive_oauth_callback',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
-    $state=(string)($_GET['state']??'');
-    if(!$state || !wp_verify_nonce($state,'hcdecor_drive_oauth_state')) wp_die('Invalid OAuth state.');
+    $state=sanitize_text_field((string)wp_unslash($_GET['state']??''));
+    if(strlen($state)>256 || !$state || !wp_verify_nonce($state,'hcdecor_drive_oauth_state')) wp_die('Invalid OAuth state.');
     if(!empty($_GET['error'])){
-        wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&oauth_error='.rawurlencode(sanitize_text_field(wp_unslash($_GET['error']))))); exit;
+        $oauth_error=sanitize_text_field(wp_unslash($_GET['error']));
+        $oauth_error=function_exists('mb_substr')?mb_substr($oauth_error,0,500):substr($oauth_error,0,500);
+        wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&oauth_error='.rawurlencode($oauth_error))); exit;
     }
-    $code=(string)wp_unslash($_GET['code']??'');
+    $code=sanitize_text_field((string)wp_unslash($_GET['code']??''));
+    if(strlen($code)>8192) wp_die('Invalid OAuth code.');
     if($code==='') wp_die('Missing OAuth code.');
     $r=wp_safe_remote_post('https://oauth2.googleapis.com/token',[
         'timeout'=>30,

@@ -406,6 +406,8 @@ findstr /c:"'remote_id'=>hcdecor_social_limit_text" "wordpress\hcdecor-core\modu
 findstr /c:"function hcdecor_full_audit_entries" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 419
 findstr /c:"array_slice($v,-100,null,true)" "wordpress\hcdecor-core\modules\hub-suite.php" >nul || exit /b 420
 findstr /c:"mb_substr($prompt_title,0,300)" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 421
+findstr /c:"strlen($state)>256" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 422
+findstr /c:"strlen($code)>8192" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 423
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
