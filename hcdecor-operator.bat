@@ -300,6 +300,8 @@ findstr /c:"hc_publish_approval_source" "wordpress\hcdecor-core\modules\content-
 findstr /c:"hc_publish_approval_source" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 311
 findstr /c:"hc_publish_approval_source" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 312
 findstr /c:"'gallery'=>array_slice" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 313
+findstr /c:"Invalid content job." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 314
+findstr /c:"'workflow_log'=>array_slice" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 315
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
