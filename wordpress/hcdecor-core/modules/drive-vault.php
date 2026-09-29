@@ -732,7 +732,7 @@ add_action('rest_api_init',function(){
             $folder=sanitize_key((string)$r['folder']);$folders=hcdecor_drive_folders();
             if(!isset($folders[$folder])) return new WP_Error('folder','Unknown managed Drive folder',['status'=>400]);
             $id=$folders[$folder];
-            $limit=max(1,min(100,(int)($r->get_param('limit')?:100)));
+            $limit_raw=$r->get_param('limit');$limit=is_scalar($limit_raw)?(int)$limit_raw:100;$limit=max(1,min(100,$limit));
             $res=hcdecor_drive_list($id,$limit);
             return is_wp_error($res)?$res:rest_ensure_response($res);
         }

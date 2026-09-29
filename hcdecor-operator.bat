@@ -197,7 +197,7 @@ findstr /c:"Webhook payload exceeds 256 KB." "wordpress\hcdecor-core\modules\aut
 findstr /c:"Only failed or blocked automation tasks can be retried." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 252
 findstr /c:"'completed'=>true,'type'=>$type" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 253
 findstr /c:"mb_substr($caption, 0, 10000)" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 254
-findstr /c:"$limit=max(1,min(100,(int)($r->get_param('limit')?:100)))" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 255
+findstr /c:"limit_raw" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 255
 findstr /c:"$limits=['projects'=>2000,'content_jobs'=>5000,'media_index'=>10000]" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 256
 findstr /c:"'numberposts'=>2001" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 257
 findstr /c:"'numberposts'=>5001" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 258
@@ -549,6 +549,9 @@ findstr /c:"function hcdecor_drive_inbox_log_entries" "wordpress\hcdecor-core\mo
 findstr /c:"function hcdecor_backup_counts" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 577
 findstr /c:"$file_id=hcdecor_backup_clip($r['id']??'',300)" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 578
 findstr /c:"$file_id=hcdecor_project_vault_clip($r['id']??'',300)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 579
+findstr /c:"hcdecor_project_vault_sync_all" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 580
+findstr /c:"status_raw" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 581
+findstr /c:"limit_raw" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 582
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

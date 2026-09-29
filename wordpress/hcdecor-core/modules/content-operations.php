@@ -146,7 +146,7 @@ add_action('rest_api_init',function(){
     register_rest_route('hcdecor/v1','/operations/queue',[
         'methods'=>'GET','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
-            $status=sanitize_key($r->get_param('status')?:'');
+            $status_raw=$r->get_param('status');$status=sanitize_key(is_scalar($status_raw)?(string)$status_raw:'');
             if($status!=='' && !array_key_exists($status,hcdecor_ops_statuses())) return new WP_Error('status','Invalid workflow status.',['status'=>400]);
             $meta=$status?[['key'=>'hc_agent_status','value'=>$status]]:[];
             $jobs=get_posts(['post_type'=>'hc_content_job','post_status'=>'publish','numberposts'=>50,'orderby'=>'modified','order'=>'ASC','meta_query'=>$meta]);

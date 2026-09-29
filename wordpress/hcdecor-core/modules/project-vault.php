@@ -359,7 +359,8 @@ add_action('rest_api_init',function(){
         'methods'=>'POST','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
             if(!function_exists('hcdecor_drive_approval_fresh') || !hcdecor_drive_approval_fresh($r)) return new WP_Error('approval','Fresh explicit approval is required for bulk Drive project writes.',['status'=>403]);
-            $res=hcdecor_project_vault_sync_all((int)($r->get_param('limit')?:100));
+            $limit_raw=$r->get_param('limit');$limit=is_scalar($limit_raw)?(int)$limit_raw:100;$limit=max(1,min(100,$limit));
+            $res=hcdecor_project_vault_sync_all($limit);
             return is_wp_error($res)?$res:rest_ensure_response($res);
         }
     ]);

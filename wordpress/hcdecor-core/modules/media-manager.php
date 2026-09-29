@@ -60,7 +60,7 @@ add_action('rest_api_init',function(){
         'methods'=>'GET',
         'permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
-            $limit=max(1,min(100,(int)($r->get_param('limit')?:50)));
+            $limit_raw=$r->get_param('limit');$limit=is_scalar($limit_raw)?(int)$limit_raw:50;$limit=max(1,min(100,$limit));
             $items=get_posts(['post_type'=>'attachment','post_status'=>'inherit','post_mime_type'=>['image','video'],'numberposts'=>$limit,'orderby'=>'date','order'=>'DESC']);
             return rest_ensure_response(array_map(function($m){
                 $meta=wp_get_attachment_metadata($m->ID);
