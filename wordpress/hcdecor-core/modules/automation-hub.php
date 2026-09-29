@@ -88,23 +88,6 @@ function hcdecor_auto_log($task_id,$event,$note=''){
     update_post_meta($task_id,'hc_auto_log',$log);
 }
 
-function hcdecor_auto_retry($task_id,$message){
-    $s=hcdecor_auto_settings();
-    $attempts=(int)get_post_meta($task_id,'hc_auto_attempts',true)+1;
-    update_post_meta($task_id,'hc_auto_attempts',$attempts);
-    update_post_meta($task_id,'hc_auto_last_error',hcdecor_auto_safe_message($message));
-    if($attempts >= max(1,(int)$s['max_attempts'])){
-        update_post_meta($task_id,'hc_auto_status','failed');
-        hcdecor_auto_log($task_id,'failed',$message);
-        return false;
-    }
-    $delay=max(60,(int)$s['retry_minutes']*60) * max(1,$attempts);
-    update_post_meta($task_id,'hc_auto_run_at',time()+$delay);
-    update_post_meta($task_id,'hc_auto_status','scheduled');
-    hcdecor_auto_log($task_id,'retry','Attempt '.$attempts.' · '.$message);
-    return true;
-}
-
 function hcdecor_auto_webhook($event,$payload){
     $s=hcdecor_auto_settings();
     if(empty($s['webhook_enabled']) || empty($s['webhook_url'])) return new WP_Error('blocked','Webhook disabled.');

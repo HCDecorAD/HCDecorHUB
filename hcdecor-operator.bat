@@ -319,6 +319,8 @@ findstr /c:"Runtime delivery failed." "wordpress\hcdecor-core\modules\publish-ru
 findstr /c:"Restore source must be a JSON backup file." "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 330
 findstr /c:"Drive job import requires a JSON file." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 331
 findstr /c:"Drive prompt import requires a JSON file." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 332
+findstr /c:"function hcdecor_auto_retry" "wordpress\hcdecor-core\modules\automation-hub.php" >nul && exit /b 333
+findstr /c:"function hcdecor_runtime_enqueue" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul && exit /b 334
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

@@ -3,14 +3,6 @@ if (!defined('ABSPATH')) exit;
 function hcdecor_runtime_jobs(){ $v=get_option('hcdecor_runtime_jobs',array()); return is_array($v)?$v:array(); }
 function hcdecor_runtime_prune($jobs,$limit=100){ if(!is_array($jobs)) return array(); if(count($jobs)<=$limit) return $jobs; uasort($jobs,function($a,$b){ return strcmp((string)($b['created']??''),(string)($a['created']??'')); }); return array_slice($jobs,0,$limit,true); }
 function hcdecor_runtime_safe_jobs(){ $out=array(); foreach(hcdecor_runtime_jobs() as $id=>$j){ $out[$id]=array('type'=>(string)($j['type']??''),'target'=>(string)($j['target']??''),'status'=>(string)($j['status']??''),'attempts'=>(int)($j['attempts']??0),'scheduled'=>(string)($j['scheduled']??''),'created'=>(string)($j['created']??''),'last_error'=>(string)($j['last_error']??''),'production_approved'=>!empty($j['production_approved']),'production_approved_by'=>(int)($j['production_approved_by']??0),'production_approved_at'=>(string)($j['production_approved_at']??'')); } return $out; }
-function hcdecor_runtime_enqueue($type,$target,$payload=array(),$when='',$production_approved=false){
-    $v=hcdecor_runtime_jobs(); $id='job_'.wp_generate_password(10,false,false);
-    $encoded=wp_json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
-    if(!is_string($encoded) || strlen($encoded)>256*1024) return new WP_Error('payload_size','Runtime payload exceeds 256 KB.');
-    $approved=(bool)$production_approved && get_current_user_id()>0 && current_user_can('manage_options');
-    $v[$id]=array('type'=>sanitize_key($type),'target'=>sanitize_key($target),'payload'=>$payload,'status'=>'queued','attempts'=>0,'scheduled'=>$when?$when:current_time('mysql'),'created'=>current_time('mysql'),'last_error'=>'','result'=>array(),'production_approved'=>$approved,'production_approved_by'=>$approved?get_current_user_id():0,'production_approved_at'=>$approved?current_time('mysql'):'');
-    $v=hcdecor_runtime_prune($v); update_option('hcdecor_runtime_jobs',$v,false); if(!wp_next_scheduled('hcdecor_runtime_tick')) wp_schedule_single_event(time()+5,'hcdecor_runtime_tick'); return $id;
-}
 function hcdecor_runtime_approval_fresh($job){
     if(empty($job['production_approved']) || empty($job['production_approved_by']) || empty($job['production_approved_at'])) return false;
     $at=strtotime((string)$job['production_approved_at'])?:0;
