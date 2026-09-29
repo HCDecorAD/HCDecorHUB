@@ -340,6 +340,8 @@ findstr /c:"AbortSignal.timeout(5000)" "app\api\wp\status\route.js" >nul || exit
 findstr /c:"AbortSignal.timeout(5000)" "lib\cms\wordpress.js" >nul || exit /b 353
 findstr /c:".env.*" ".gitignore" >nul || exit /b 354
 findstr /c:"!.env.example" ".gitignore" >nul || exit /b 355
+findstr /c:"Project Vault operation failed." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 356
+findstr /c:"Project media sync failed." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 357
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
