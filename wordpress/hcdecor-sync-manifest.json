@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.123",
+    "version":  "2026.09.29.124",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -109,7 +109,7 @@
                   {
                       "path":  "modules/automation-hub.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/automation-hub.php",
-                      "git_sha1":  "0baf500753f681b46910ed1156594687b4b8a548"
+                      "git_sha1":  "6383cc6a1812e9ef3dffca0e1f7b79f6bca6d32f"
                   },
                   {
                       "path":  "modules/automation-recipes.php",
@@ -139,7 +139,7 @@
                   {
                       "path":  "modules/data-restore.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/data-restore.php",
-                      "git_sha1":  "980e538081b28f4d25cdf10f7f888761290c0fad"
+                      "git_sha1":  "4d9966db28383f0ab02ddb9bfb8547242737fb93"
                   },
                   {
                       "path":  "modules/drive-inbox.php",

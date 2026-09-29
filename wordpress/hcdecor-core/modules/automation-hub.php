@@ -412,7 +412,7 @@ add_action('admin_post_hcdecor_automation_settings',function(){
         'webhook_enabled'=>!empty($_POST['webhook_enabled']),
         'webhook_url'=>esc_url_raw(wp_unslash($_POST['webhook_url']??'')),
         'evergreen_enabled'=>!empty($_POST['evergreen_enabled']),
-        'evergreen_days'=>max(7,(int)($_POST['evergreen_days']??30)),
+        'evergreen_days'=>max(7,min(3650,(int)($_POST['evergreen_days']??30))),
         'max_attempts'=>max(1,min(10,(int)($_POST['max_attempts']??4))),
         'retry_minutes'=>max(1,min(1440,(int)($_POST['retry_minutes']??15)))
     ];

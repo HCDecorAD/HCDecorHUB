@@ -99,9 +99,9 @@ function hcdecor_restore_plan($backup){
     }
 
     return [
-        'backup_created_at'=>(string)($backup['created_at']??''),
-        'backup_site'=>(string)($backup['site']['url']??''),
-        'sync_version'=>(string)($backup['site']['sync_version']??''),
+        'backup_created_at'=>hcdecor_restore_clip($backup['created_at']??'',64),
+        'backup_site'=>hcdecor_restore_clip($backup['site']['url']??'',500),
+        'sync_version'=>hcdecor_restore_clip($backup['site']['sync_version']??'',100),
         'projects'=>$projects,
         'jobs'=>$jobs,
         'media'=>$media,
@@ -301,7 +301,7 @@ function hcdecor_restore_settings($backup){
 
     if(isset($s['active_prompt'])) update_option('hcdecor_drive_active_prompt',hcdecor_restore_clip($s['active_prompt'],20000,true),false);
     if(isset($s['active_prompt_title'])) update_option('hcdecor_drive_active_prompt_title',hcdecor_restore_clip($s['active_prompt_title'],300),false);
-    if(isset($s['active_prompt_file'])) update_option('hcdecor_drive_active_prompt_file',sanitize_text_field((string)$s['active_prompt_file']),false);
+    if(isset($s['active_prompt_file'])) update_option('hcdecor_drive_active_prompt_file',hcdecor_restore_clip($s['active_prompt_file'],300),false);
 
     if(!empty($s['automation']) && is_array($s['automation'])){
         $current=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
@@ -310,9 +310,9 @@ function hcdecor_restore_settings($backup){
         $current['social_enabled']=false;
         $current['webhook_enabled']=false;
         $current['evergreen_enabled']=false;
-        foreach(['evergreen_days','max_attempts','retry_minutes'] as $k){
-            if(array_key_exists($k,$s['automation'])) $current[$k]=(int)$s['automation'][$k];
-        }
+        if(array_key_exists('evergreen_days',$s['automation'])) $current['evergreen_days']=max(7,min(3650,(int)$s['automation']['evergreen_days']));
+        if(array_key_exists('max_attempts',$s['automation'])) $current['max_attempts']=max(1,min(10,(int)$s['automation']['max_attempts']));
+        if(array_key_exists('retry_minutes',$s['automation'])) $current['retry_minutes']=max(1,min(1440,(int)$s['automation']['retry_minutes']));
         // Preserve current webhook URL/credentials. Backup intentionally excludes secrets.
         update_option('hcdecor_automation_settings',$current,false);
     }

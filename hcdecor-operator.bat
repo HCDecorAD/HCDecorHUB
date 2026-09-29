@@ -398,6 +398,9 @@ findstr /c:"hcdecor_backup_clip(get_option('hcdecor_drive_active_prompt',''),200
 findstr /c:"hcdecor_backup_clip(get_option('hcdecor_ai_openai_model',''),200)" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 411
 findstr /c:"function hcdecor_hub_dashboard_safe_error" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 412
 findstr /c:"mb_substr($text,0,500)" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 413
+findstr /c:"active_prompt_file'],300" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 414
+findstr /c:"max(7,min(3650" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 415
+findstr /c:"max(1,min(1440" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 416
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
