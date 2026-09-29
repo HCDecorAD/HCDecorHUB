@@ -442,6 +442,8 @@ findstr /c:"AI credential value too long." "wordpress\hcdecor-core\modules\ai-pr
 findstr /c:"function hcdecor_conn_normalize" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 455
 findstr /c:"Connection secret is too long." "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 456
 findstr /c:"hcdecor_conn_clip($x['secret']" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 457
+findstr /c:"$limits=['client_id'=>1000,'client_secret'=>4000,'refresh_token'=>8000]" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 458
+findstr /c:"strlen($cached)<=16000" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 459
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

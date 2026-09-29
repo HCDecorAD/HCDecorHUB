@@ -65,8 +65,11 @@ function hcdecor_drive_secret($name){
         'client_secret'=>'HCDECOR_GOOGLE_CLIENT_SECRET',
         'refresh_token'=>'HCDECOR_GOOGLE_REFRESH_TOKEN'
     ];
-    if(isset($const[$name]) && defined($const[$name])) return trim((string)constant($const[$name]));
-    return trim((string)get_option('hcdecor_drive_'.$name,''));
+    $limits=['client_id'=>1000,'client_secret'=>4000,'refresh_token'=>8000];
+    if(!isset($limits[$name])) return '';
+    $value=isset($const[$name]) && defined($const[$name])?constant($const[$name]):get_option('hcdecor_drive_'.$name,'');
+    if(!is_scalar($value)) return '';$value=trim((string)$value);
+    return strlen($value)<=$limits[$name]?$value:'';
 }
 
 function hcdecor_drive_configured(){
@@ -188,7 +191,8 @@ add_action('admin_post_hcdecor_drive_disconnect',function(){
 function hcdecor_drive_access_token($force=false){
     if(!$force){
         $cached=get_transient('hcdecor_drive_access_token');
-        if(is_string($cached)&&$cached!=='') return $cached;
+        if(is_string($cached)&&$cached!==''&&strlen($cached)<=16000) return $cached;
+        if($cached!==false) delete_transient('hcdecor_drive_access_token');
     }
     if(!hcdecor_drive_configured()) return new WP_Error('drive_auth','Google Drive chưa kết nối.');
     $r=wp_safe_remote_post('https://oauth2.googleapis.com/token',[
