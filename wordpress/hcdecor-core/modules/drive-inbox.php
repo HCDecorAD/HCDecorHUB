@@ -32,15 +32,22 @@ function hcdecor_drive_inbox_safe_text($value,$limit=500){
     $value=is_scalar($value)?(string)$value:'';$text=function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($value):sanitize_text_field($value);
     return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
 }
+function hcdecor_drive_inbox_result($value){
+    if(!is_array($value)) return [];
+    $out=[];foreach(array_slice($value,0,20,true) as $key=>$item){$safe_key=sanitize_key(is_scalar($key)?(string)$key:'');if($safe_key==='')continue;$out[$safe_key]=is_scalar($item)?hcdecor_drive_inbox_safe_text($item,500):'';}return $out;
+}
+function hcdecor_drive_inbox_log_entries(){
+    $log=get_option('hcdecor_drive_inbox_log',[]);return is_array($log)?array_slice($log,-100):[];
+}
 function hcdecor_drive_inbox_log($event,$data=[]){
     $safe=[];
     foreach(array_slice((array)$data,0,12,true) as $key=>$value){
-        $safe[sanitize_key((string)$key)]=is_scalar($value)?hcdecor_drive_inbox_safe_text($value,500):'';
+        $safe_key=sanitize_key(is_scalar($key)?(string)$key:'');if($safe_key!=='')$safe[$safe_key]=is_scalar($value)?hcdecor_drive_inbox_safe_text($value,500):'';
     }
-    $log=(array)get_option('hcdecor_drive_inbox_log',[]);
+    $log=hcdecor_drive_inbox_log_entries();
     $log[]=[
         'time'=>current_time('mysql'),
-        'event'=>sanitize_key($event),
+        'event'=>sanitize_key(is_scalar($event)?(string)$event:''),
         'data'=>$safe
     ];
     if(count($log)>100) $log=array_slice($log,-100);
@@ -48,7 +55,7 @@ function hcdecor_drive_inbox_log($event,$data=[]){
 }
 
 function hcdecor_drive_inbox_existing_attachment($drive_id){
-    $drive_id=sanitize_text_field((string)$drive_id);
+    $drive_id=hcdecor_drive_inbox_safe_text($drive_id,300);
     if($drive_id==='') return 0;
     $found=get_posts([
         'post_type'=>'attachment',
@@ -62,7 +69,7 @@ function hcdecor_drive_inbox_existing_attachment($drive_id){
 }
 
 function hcdecor_drive_inbox_project_from_name($name){
-    $name=(string)$name;
+    $name=hcdecor_drive_inbox_safe_text($name,500);
     if(!preg_match('/(?:^|[^A-Z0-9])(?:P|PROJECT)[-_ ]?(\d+)(?:[^0-9]|$)/i',$name,$m)) return 0;
     $id=(int)$m[1];
     return $id && get_post_type($id)==='hc_project' ? $id : 0;
@@ -72,11 +79,11 @@ function hcdecor_drive_inbox_project_from_parent($file){
     $parents=(array)($file['parents']??[]);
     if(!$parents || !function_exists('hcdecor_drive_file_meta')) return 0;
     foreach(array_slice($parents,0,3) as $parent_id){
-        $parent_id=sanitize_text_field((string)$parent_id);
+        $parent_id=hcdecor_drive_inbox_safe_text($parent_id,300);
         if($parent_id==='') continue;
         $meta=hcdecor_drive_file_meta($parent_id);
         if(is_wp_error($meta)) continue;
-        $project_id=hcdecor_drive_inbox_project_from_name((string)($meta['name']??''));
+        $project_id=hcdecor_drive_inbox_project_from_name($meta['name']??'');
         if($project_id) return $project_id;
     }
     return 0;
@@ -252,7 +259,7 @@ add_action('rest_api_init',function(){
             return rest_ensure_response([
                 'settings'=>hcdecor_drive_inbox_settings(),
                 'last_at'=>hcdecor_drive_inbox_safe_text(get_option('hcdecor_drive_inbox_last_at',''),64),
-                'last_result'=>(array)get_option('hcdecor_drive_inbox_last_result',[]),
+                'last_result'=>hcdecor_drive_inbox_result(get_option('hcdecor_drive_inbox_last_result',[])),
                 'last_error'=>hcdecor_drive_inbox_safe_text(get_option('hcdecor_drive_inbox_last_error',''),500),
                 'next'=>(int)(wp_next_scheduled('hcdecor_drive_inbox_tick')?:0)
             ]);
@@ -276,11 +283,11 @@ add_action('rest_api_init',function(){
 function hcdecor_drive_inbox_page(){
     if(!current_user_can('manage_options')) return;
     $s=hcdecor_drive_inbox_settings();
-    $last=(array)get_option('hcdecor_drive_inbox_last_result',[]);
+    $last=hcdecor_drive_inbox_result(get_option('hcdecor_drive_inbox_last_result',[]));
     $last_at=hcdecor_drive_inbox_safe_text(get_option('hcdecor_drive_inbox_last_at',''),64);
     $error=hcdecor_drive_inbox_safe_text(get_option('hcdecor_drive_inbox_last_error',''),500);
     $next=(int)(wp_next_scheduled('hcdecor_drive_inbox_tick')?:0);
-    $log=array_reverse((array)get_option('hcdecor_drive_inbox_log',[]));
+    $log=array_reverse(hcdecor_drive_inbox_log_entries());
     $folders=function_exists('hcdecor_drive_folders')?hcdecor_drive_folders():[];
     $connected=function_exists('hcdecor_drive_configured')&&hcdecor_drive_configured();
     ?>

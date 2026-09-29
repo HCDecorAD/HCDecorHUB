@@ -544,6 +544,11 @@ findstr /c:"hcdecor_workflow_clip(get_post_meta($job_id,'hc_web_body',true),5000
 findstr /c:"hcdecor_project_vault_clip(get_post_meta($source,'hc_drive_project_file_id',true),300)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 572
 findstr /c:"hcdecor_health_scalar(get_post_meta($did,'hc_agent_claim_token',true),128)" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 573
 findstr /c:"sanitize_key(hcdecor_health_scalar(get_post_meta($rid,'hc_agent_recovery_reason',true),100))" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 574
+findstr /c:"function hcdecor_drive_inbox_result" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 575
+findstr /c:"function hcdecor_drive_inbox_log_entries" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 576
+findstr /c:"function hcdecor_backup_counts" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 577
+findstr /c:"$file_id=hcdecor_backup_clip($r['id']??'',300)" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 578
+findstr /c:"$file_id=hcdecor_project_vault_clip($r['id']??'',300)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 579
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

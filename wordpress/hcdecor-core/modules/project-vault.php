@@ -119,8 +119,9 @@ function hcdecor_project_vault_save($project_id,$sync_media=true){
         return $r;
     }
 
-    update_post_meta($project_id,'hc_drive_project_file_id',sanitize_text_field((string)($r['id']??'')));
-    update_post_meta($project_id,'hc_drive_project_url',esc_url_raw((string)($r['webViewLink']??'')));
+    $file_id=hcdecor_project_vault_clip($r['id']??'',300);$file_url=hcdecor_project_vault_clip($r['webViewLink']??'',2048);
+    update_post_meta($project_id,'hc_drive_project_file_id',sanitize_text_field($file_id));
+    update_post_meta($project_id,'hc_drive_project_url',esc_url_raw($file_url));
     update_post_meta($project_id,'hc_drive_project_synced_at',current_time('mysql'));
     delete_post_meta($project_id,'hc_drive_project_error');
     delete_post_meta($project_id,'hc_drive_project_retry_count');

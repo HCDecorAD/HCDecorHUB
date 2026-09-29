@@ -191,8 +191,9 @@ function hcdecor_backup_save(){
         return $r;
     }
     update_option('hcdecor_backup_last_at',current_time('mysql'),false);
-    update_option('hcdecor_backup_last_file_id',sanitize_text_field((string)($r['id']??'')),false);
-    update_option('hcdecor_backup_last_url',esc_url_raw((string)($r['webViewLink']??'')),false);
+    $file_id=hcdecor_backup_clip($r['id']??'',300);$file_url=hcdecor_backup_clip($r['webViewLink']??'',2048);
+    update_option('hcdecor_backup_last_file_id',sanitize_text_field($file_id),false);
+    update_option('hcdecor_backup_last_url',esc_url_raw($file_url),false);
     update_option('hcdecor_backup_last_counts',$snap['counts'],false);
     delete_option('hcdecor_backup_last_error');
     delete_transient('hcdecor_backup_running');
@@ -268,7 +269,7 @@ add_action('rest_api_init',function(){
             return rest_ensure_response([
                 'last_at'=>hcdecor_backup_clip(get_option('hcdecor_backup_last_at',''),64),
                 'has_backup_file'=>(bool)get_option('hcdecor_backup_last_file_id',''),
-                'counts'=>(array)get_option('hcdecor_backup_last_counts',[]),
+                'counts'=>hcdecor_backup_counts(get_option('hcdecor_backup_last_counts',[])),
                 'error'=>hcdecor_backup_clip(get_option('hcdecor_backup_last_error',''),500),
                 'next'=>(int)(wp_next_scheduled('hcdecor_backup_daily')?:0)
             ]);
@@ -276,11 +277,14 @@ add_action('rest_api_init',function(){
     ]);
 });
 
+function hcdecor_backup_counts($value){
+    if(!is_array($value)) return [];$out=[];foreach(array_slice($value,0,20,true) as $key=>$count){$safe=sanitize_key(is_scalar($key)?(string)$key:'');if($safe!=='')$out[$safe]=max(0,(int)$count);}return $out;
+}
 function hcdecor_backup_page(){
     if(!current_user_can('manage_options')) return;
     $last=hcdecor_backup_clip(get_option('hcdecor_backup_last_at',''),64);
     $url=hcdecor_backup_clip(get_option('hcdecor_backup_last_url',''),2048);
-    $counts=(array)get_option('hcdecor_backup_last_counts',[]);
+    $counts=hcdecor_backup_counts(get_option('hcdecor_backup_last_counts',[]));
     $error=hcdecor_backup_clip(get_option('hcdecor_backup_last_error',''),500);
     $next=(int)(wp_next_scheduled('hcdecor_backup_daily')?:0);
     $files=[];
