@@ -18,7 +18,7 @@
       "name": "GSC Senior Living & Wellness",
       "modules": ["website","digital_twin","hotspots","media","leads","content","reports"],
       "repositories": [{"role":"app","repository":"HCDecorAD/GSC","branch":"main"}],
-      "domains": [{"role":"production","url":"https://gscsenior.vercel.app"}],
+      "domains": [{"role":"production","url":"https://gscsenior.hcdecorhub.com"}],
       "hosting": {"primary":{"provider":"vercel","state":"configured-source"},"fallback":null,"preview":{"provider":"vercel"}},
       "policy": {"production_write":"approval-required","provider_change":"adapter-change"}
     },
@@ -28,7 +28,7 @@
       "name": "AMO Nguyen",
       "modules": ["website","catalog","inventory","orders","customers","media","content","publishing","reports"],
       "repositories": [{"role":"app","repository":"HCDecorAD/AMONguyen","branch":"main"}],
-      "domains": [{"role":"production","url":"https://amonguyen.vercel.app"}],
+      "domains": [{"role":"production","url":"https://amonguyen.hcdecorhub.com"}],
       "hosting": {"primary":{"provider":"vercel","state":"configured-source"},"fallback":null,"preview":{"provider":"vercel"}},
       "policy": {"production_write":"approval-required","provider_change":"adapter-change","commerce_data":"verified-only"}
     }

@@ -6,8 +6,8 @@
 
 ## Managed sites
 - HCDecor — https://hcdecorhub.com
-- GSC Senior — https://gscsenior.vercel.app
-- AMO Nguyen — https://amonguyen.vercel.app
+- GSC Senior — https://gscsenior.hcdecorhub.com
+- AMO Nguyen — https://amonguyen.hcdecorhub.com
 
 ## Source-of-truth
 Read `docs/MASTER-IMPLEMENTATION.md` and `config/site-registry.json` before changing deployment or automation targets.
