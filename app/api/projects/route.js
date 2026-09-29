@@ -4,8 +4,8 @@ import {appendProject,createProjectFolder,deleteDriveFile,newProjectId} from "..
 import {requireSameOriginMutation} from "../../../lib/request-guard";
 const clean=v=>typeof v==="string"?v.trim():"";
 const buckets=new Map();
-function clientKey(request){const raw=(request.headers.get("x-forwarded-for")||request.headers.get("x-real-ip")||"unknown").split(",")[0].trim();return crypto.createHash("sha256").update(raw+"|hcdecor-projects").digest("hex").slice(0,24)}
-function rateLimited(request){const now=Date.now(),key=clientKey(request),windowMs=10*60*1000,limit=10;for(const [k,v] of buckets){if(v.reset<=now)buckets.delete(k)}const row=buckets.get(key);if(!row||row.reset<=now){buckets.set(key,{count:1,reset:now+windowMs});return false}row.count++;return row.count>limit}
+function clientKey(request){const raw=(request.headers.get("x-forwarded-for")||request.headers.get("x-real-ip")||"unknown").split(",")[0].trim().slice(0,256);return crypto.createHash("sha256").update(raw+"|hcdecor-projects").digest("hex").slice(0,24)}
+function rateLimited(request){const now=Date.now(),key=clientKey(request),windowMs=10*60*1000,limit=10;for(const [k,v] of buckets){if(v.reset<=now)buckets.delete(k)}const row=buckets.get(key);if(!row&&buckets.size>=5000)return true;if(!row||row.reset<=now){buckets.set(key,{count:1,reset:now+windowMs});return false}row.count++;return row.count>limit}
 export async function POST(req){
  const blocked=requireSameOriginMutation(req);if(blocked)return blocked;
  const r=crmRuntime();if(!r.projectProvisionEnabled)return Response.json({ok:false,error:"project_runtime_not_configured"},{status:503});

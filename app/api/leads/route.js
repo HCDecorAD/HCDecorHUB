@@ -5,13 +5,14 @@ const clean=v=>typeof v==="string"?v.trim():"";
 const SERVICES=new Set(["Bảng hiệu","Nội thất","Kiến trúc / 3D","Khác"]);
 const buckets=new Map();
 function clientKey(request){
-  const raw=(request.headers.get("x-forwarded-for")||request.headers.get("x-real-ip")||"unknown").split(",")[0].trim();
+  const raw=(request.headers.get("x-forwarded-for")||request.headers.get("x-real-ip")||"unknown").split(",")[0].trim().slice(0,256);
   return crypto.createHash("sha256").update(raw+"|hcdecor-leads").digest("hex").slice(0,24);
 }
 function rateLimited(request){
   const now=Date.now(),key=clientKey(request),windowMs=10*60*1000,limit=5;
   for(const [k,v] of buckets){if(v.reset<=now)buckets.delete(k)}
   const row=buckets.get(key);
+  if(!row&&buckets.size>=5000)return true;
   if(!row||row.reset<=now){buckets.set(key,{count:1,reset:now+windowMs});return false}
   row.count++; return row.count>limit;
 }
