@@ -485,6 +485,8 @@ findstr /c:"$p=json_decode($raw,true)" "wordpress\hcdecor-core\modules\automatio
 findstr /c:"hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_primary','auto'),20)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 513
 findstr /c:"hcdecor_ai_bounded_scalar(get_post_meta($job_id,'hc_review_note',true),5000)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 514
 findstr /c:"hcdecor_ai_bounded_scalar(get_option('hcdecor_drive_active_prompt',''),20000)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 515
+findstr /c:"function hcdecor_workspace_scalar" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 516
+findstr /c:"hcdecor_workspace_scalar(get_option('hcdecor_drive_active_prompt',''),20000)" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 517
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

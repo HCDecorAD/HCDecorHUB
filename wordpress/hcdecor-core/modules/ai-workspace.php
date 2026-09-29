@@ -16,16 +16,18 @@ add_action('admin_enqueue_scripts',function($hook){
     wp_enqueue_media();
 });
 
+function hcdecor_workspace_scalar($value,$limit){if(!is_scalar($value))return '';$value=trim((string)$value);return strlen($value)<=$limit?$value:'';}
+
 function hcdecor_workspace_provider_state($provider){
     if(!function_exists('hcdecor_ai_available')) return 'off';
     if(!hcdecor_ai_available($provider)) return 'off';
-    $test=(string)get_option('hcdecor_ai_'.$provider.'_test_status','');
+    $test=hcdecor_workspace_scalar(get_option('hcdecor_ai_'.$provider.'_test_status',''),20);
     return $test==='ok'?'ok':($test==='error'?'error':'saved');
 }
 
 function hcdecor_workspace_drive_state(){
     if(!function_exists('hcdecor_drive_configured') || !hcdecor_drive_configured()) return 'off';
-    return (string)get_option('hcdecor_drive_test_status','')==='ok'?'ok':'saved';
+    return hcdecor_workspace_scalar(get_option('hcdecor_drive_test_status',''),20)==='ok'?'ok':'saved';
 }
 
 function hcdecor_workspace_badge($state){
@@ -86,8 +88,8 @@ function hcdecor_ai_workspace_page(){
     $gemini=hcdecor_workspace_provider_state('gemini');
     $drive=hcdecor_workspace_drive_state();
     $automation=function_exists('hcdecor_auto_settings')&&!empty(hcdecor_auto_settings()['enabled'])?'ok':'off';
-    $prompt=(string)get_option('hcdecor_drive_active_prompt','');
-    $prompt_title=sanitize_text_field((string)get_option('hcdecor_drive_active_prompt_title',''));
+    $prompt=hcdecor_workspace_scalar(get_option('hcdecor_drive_active_prompt',''),20000);
+    $prompt_title=sanitize_text_field(hcdecor_workspace_scalar(get_option('hcdecor_drive_active_prompt_title',''),300));
     $prompt_title=function_exists('mb_substr')?mb_substr($prompt_title,0,300):substr($prompt_title,0,300);
     $created=(int)($_GET['job']??0);
     ?>
