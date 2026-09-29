@@ -89,13 +89,13 @@ function hcdecor_recipe_defaults(){
 function hcdecor_recipes(){
     $defaults=hcdecor_recipe_defaults();$saved=get_option('hcdecor_automation_recipes',[]);$enabled=[];
     if(is_array($saved)){foreach(array_slice($saved,0,100) as $recipe){if(!is_array($recipe))continue;$id=sanitize_key(is_scalar($recipe['id']??'')?(string)$recipe['id']:'');if($id!=='')$enabled[$id]=!empty($recipe['enabled']);}}
-    foreach($defaults as &$recipe){$id=(string)($recipe['id']??'');if(array_key_exists($id,$enabled))$recipe['enabled']=$enabled[$id];}unset($recipe);
+    foreach($defaults as &$recipe){$id=sanitize_key(is_scalar($recipe['id']??'')?(string)$recipe['id']:'');if(array_key_exists($id,$enabled))$recipe['enabled']=$enabled[$id];}unset($recipe);
     return $defaults;
 }
 
 function hcdecor_recipe_condition_match($condition,$context){
-    $field=(string)($condition['field']??'');
-    $op=(string)($condition['op']??'==');
+    $field=sanitize_key(is_scalar($condition['field']??'')?(string)$condition['field']:'');
+    $op=is_scalar($condition['op']??'')?(string)$condition['op']:'==';
     $want=$condition['value']??null;
     $got=$context[$field]??null;
     switch($op){
@@ -128,13 +128,13 @@ function hcdecor_recipe_approval_fresh($context){
 }
 
 function hcdecor_recipe_execute_action($action,$context){
-    $type=(string)($action['type']??'');
+    $type=sanitize_key(is_scalar($action['type']??'')?(string)$action['type']:'');
     if($type==='create_content_job'){
         if(!function_exists('hcdecor_agent_create_job')) return new WP_Error('agent','Agent intake unavailable');
         return hcdecor_agent_create_job(
             (int)($context['project_id']??0),
             (array)($context['media_ids']??[]),
-            (string)($context['brief']??'')
+            is_scalar($context['brief']??'')?(string)$context['brief']:''
         );
     }
     if($type==='run_ai'){
@@ -158,8 +158,8 @@ function hcdecor_recipe_execute_action($action,$context){
         if(is_wp_error($prepared)) return $prepared;
         $prepared['production_approved']=true;
         $prepared['production_approved_by']=(int)$context['production_approved_by'];
-        $prepared['production_approved_at']=(string)$context['production_approved_at'];
-        $prepared['production_approval_source']=sanitize_key((string)$context['production_approval_source']);
+        $prepared['production_approved_at']=is_scalar($context['production_approved_at']??'')?(string)$context['production_approved_at']:'';
+        $prepared['production_approval_source']=sanitize_key(is_scalar($context['production_approval_source']??'')?(string)$context['production_approval_source']:'');
         return hcdecor_auto_enqueue('social_publish',$prepared,time(),'recipe:social:'.$project.':'.$job);
     }
     if($type==='save_drive'){
@@ -174,12 +174,12 @@ function hcdecor_recipe_execute_action($action,$context){
         $outbound_context=$context;
         unset($outbound_context['production_approved'],$outbound_context['production_approved_by'],$outbound_context['production_approved_at'],$outbound_context['production_approval_source']);
         return hcdecor_auto_enqueue('webhook',[
-            'event'=>(string)($action['event']??'hcdecor.recipe'),
+            'event'=>sanitize_key(is_scalar($action['event']??'')?(string)$action['event']:'hcdecor.recipe'),
             'data'=>$outbound_context,
             'production_approved'=>true,
             'production_approved_by'=>(int)$context['production_approved_by'],
-            'production_approved_at'=>(string)$context['production_approved_at'],
-            'production_approval_source'=>sanitize_key((string)$context['production_approval_source'])
+            'production_approved_at'=>is_scalar($context['production_approved_at']??'')?(string)$context['production_approved_at']:'',
+            'production_approval_source'=>sanitize_key(is_scalar($context['production_approval_source']??'')?(string)$context['production_approval_source']:'')
         ],time());
     }
     return new WP_Error('action','Unknown recipe action: '.$type);

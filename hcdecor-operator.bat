@@ -552,6 +552,9 @@ findstr /c:"$file_id=hcdecor_project_vault_clip($r['id']??'',300)" "wordpress\hc
 findstr /c:"hcdecor_project_vault_sync_all" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 580
 findstr /c:"status_raw" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 581
 findstr /c:"limit_raw" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 582
+findstr /c:"hcdecor_drive_inbox_safe_text($file['id']??'',300)" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 583
+findstr /c:"function hcdecor_recipe_approval_fresh" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 584
+findstr /c:"sanitize_key(is_scalar($action['type']" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 585
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

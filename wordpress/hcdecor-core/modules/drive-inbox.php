@@ -116,7 +116,7 @@ function hcdecor_drive_inbox_scan($limit=null){
     if(!function_exists('hcdecor_drive_list') || !function_exists('hcdecor_drive_import_media')) return new WP_Error('drive','Drive media bridge unavailable.');
 
     $folders=hcdecor_drive_folders();
-    $folder=(string)($folders['media_input']??'');
+    $folder=hcdecor_drive_inbox_safe_text($folders['media_input']??'',300);
     if($folder==='') return new WP_Error('folder','Drive Media Input chưa cấu hình.');
 
     $limit=$limit===null?(int)$settings['limit']:(int)$limit;
@@ -131,9 +131,9 @@ function hcdecor_drive_inbox_scan($limit=null){
 
     foreach($files as $file){
         $result['scanned']++;
-        $id=sanitize_text_field((string)($file['id']??''));
-        $name=sanitize_text_field((string)($file['name']??''));
-        $mime=sanitize_text_field((string)($file['mimeType']??''));
+        $id=hcdecor_drive_inbox_safe_text($file['id']??'',300);
+        $name=hcdecor_drive_inbox_safe_text($file['name']??'',500);
+        $mime=hcdecor_drive_inbox_safe_text($file['mimeType']??'',100);
 
         if($id==='' || (strpos($mime,'image/')!==0 && strpos($mime,'video/')!==0)){
             $result['skipped']++;
