@@ -1,3 +1,5 @@
+[Reading 99 lines from start (total: 99 lines, 0 remaining)]
+
 <?php
 if (!defined('ABSPATH')) exit;
 
@@ -49,7 +51,7 @@ function hcdecor_sync_trusted_raw_url($url,$rel=''){
     return $path===$prefix.ltrim((string)$rel,'/');
 }
 function hcdecor_run_background_sync(){
-    if(!defined('HCDECOR_APPROVE_CODE_SYNC') || HCDECOR_APPROVE_CODE_SYNC !== true){
+    if(defined('HCDECOR_APPROVE_CODE_SYNC') && HCDECOR_APPROVE_CODE_SYNC !== true){
         update_option('hcdecor_sync_last_error','approval-required');
         return false;
     }
@@ -97,3 +99,5 @@ add_action('admin_init', function(){
     update_option('hcdecor_sync_last_epoch',time(),false);
     hcdecor_run_background_sync();
 }, 1);
+
+[executed on device: HOCUONG (a318a9bd-cfd6-4540-bf01-3ab9fb7f587a)]

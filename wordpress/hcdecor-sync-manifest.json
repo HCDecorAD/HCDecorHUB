@@ -24,7 +24,7 @@
     {
       "path": "modules/background-sync.php",
       "url": "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/background-sync.php",
-      "git_sha1": "cb572e6df7b149b5a09e571c149652423eb5af9f"
+      "git_sha1": "87ce76110661592008ec7f848146ac6b807201e3"
     },
     {
       "path": "modules/content-operations.php",
