@@ -186,7 +186,10 @@ add_action('rest_api_init',function(){
         'methods'=>'POST',
         'permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
-            $res=hcdecor_media_ai_analyze((int)$r['id']);
+            $id=(int)$r['id'];
+            if(!$id || get_post_type($id)!=='attachment') return new WP_Error('media','Invalid media.',['status'=>404]);
+            if(get_current_user_id()>0 && !current_user_can('edit_post',$id)) return new WP_Error('forbidden','Forbidden.',['status'=>403]);
+            $res=hcdecor_media_ai_analyze($id);
             return is_wp_error($res)?$res:rest_ensure_response($res);
         }
     ]);

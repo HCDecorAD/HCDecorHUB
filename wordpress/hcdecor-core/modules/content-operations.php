@@ -155,6 +155,7 @@ add_action('rest_api_init',function(){
         'permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
             $id=(int)$r['id']; if(get_post_type($id)!=='hc_content_job') return new WP_Error('not_found','Job not found',['status'=>404]);
+            if(get_current_user_id()>0 && !current_user_can('edit_post',$id)) return new WP_Error('forbidden','Forbidden.',['status'=>403]);
             if($r->get_method()==='POST'){
                 $current=(string)get_post_meta($id,'hc_agent_status',true);
                 if(in_array($current,['approved','published_web'],true)) return new WP_Error('immutable','Approved or published jobs must be returned for changes before editing',['status'=>409]);

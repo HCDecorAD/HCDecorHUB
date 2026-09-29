@@ -309,6 +309,8 @@ findstr /c:"Unable to create content job." "wordpress\hcdecor-core\modules\ai-wo
 findstr /c:"Web publish failed." "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 320
 findstr /c:"Web rollback failed." "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 321
 findstr /c:"Backup validation failed." "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 322
+findstr /c:"Invalid project." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 323
+findstr /c:"Invalid media." "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 324
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
