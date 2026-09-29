@@ -19,7 +19,9 @@ try{
  foreach($name in @($m.forbidden_files)){
   if($entries.FullName|Where-Object{($_ -replace '\\','/') -match ('(^|/)'+[regex]::Escape($name)+'$')}){throw "Forbidden runtime package file: $name"}
  }
- if(-not($entries.FullName|Where-Object{($_ -replace '\\','/') -match '(^|/)hcdecor-runtime\.php$'})){throw 'Runtime entrypoint missing'}
+ $normalized=@($entries.FullName|ForEach-Object{$_ -replace '\\','/'})
+ if($normalized -notcontains 'hcdecor-runtime.php'){throw 'Runtime entrypoint must be at ZIP root (nested plugin directory detected)'}
+ if($normalized|Where-Object{$_ -match '^[^/]+/hcdecor-runtime\.php$'}){throw 'Nested runtime entrypoint detected'}
 }finally{$z.Dispose()}
 Write-Output 'VERIFY=PASS'
 Write-Output ("VERSION="+$m.version)

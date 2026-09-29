@@ -16,7 +16,7 @@ $entry=Get-Content (Join-Path $stage 'hcdecor-runtime.php') -Raw
 if($entry -notmatch 'Plugin Name: HCDecor HUB Runtime'){throw 'Plugin header missing'}
 $version=([regex]::Match($entry,'Version:\s*([^\r\n]+)')).Groups[1].Value.Trim()
 if(-not $version){throw 'Plugin version missing'}
-Compress-Archive -Path $stage -DestinationPath $zip -CompressionLevel Optimal
+Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zip -CompressionLevel Optimal
 $files=Get-ChildItem $stage -Recurse -File
 $sha=(Get-FileHash $zip -Algorithm SHA256).Hash.ToLowerInvariant()
 $tree=(& 'C:\Program Files\Git\cmd\git.exe' -C $repo rev-parse 'HEAD:wordpress/hcdecor-core').Trim()
