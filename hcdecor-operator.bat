@@ -535,6 +535,10 @@ findstr /c:"function hcdecor_full_scalar" "wordpress\hcdecor-core\modules\full-o
 findstr /c:"$s=is_scalar($raw)?sanitize_key((string)$raw):''" "wordpress\hcdecor-core\modules\hub-suite.php" >nul || exit /b 563
 findstr /c:"$analyzed_raw=get_post_meta($mid,'hc_ai_analyzed_at',true)" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 564
 findstr /c:"hcdecor_media_limit_text(get_post_meta($edit_id,'hc_ai_summary',true),5000)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 565
+findstr /c:"$file_raw=$r->get_param('file_id')" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 566
+findstr /c:"$file_raw=$r->get_param('file_id')" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 567
+findstr /c:"$message_raw=$r->get_param('message')" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 568
+findstr /c:"$approved_at_raw=$r->get_param('production_approved_at')" "wordpress\hcdecor-core\modules\web-publisher.php" >nul || exit /b 569
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

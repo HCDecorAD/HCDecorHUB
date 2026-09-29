@@ -196,7 +196,7 @@ add_action('rest_api_init',function(){
             if(!hcdecor_publish_rest_approval_fresh($r)) return new WP_Error('approval','Fresh explicit production publish approval is required.',['status'=>403]);
             update_post_meta($id,'hc_publish_approved_by',get_current_user_id());
             update_post_meta($id,'hc_publish_approval_source',get_current_user_id()>0?'wp_user':'service_bridge');
-            update_post_meta($id,'hc_publish_approved_at',sanitize_text_field((string)$r->get_param('production_approved_at')));
+            $approved_at_raw=$r->get_param('production_approved_at');update_post_meta($id,'hc_publish_approved_at',sanitize_text_field(is_scalar($approved_at_raw)?(string)$approved_at_raw:''));
             $res=hcdecor_publish_job_to_web($id);
             if(is_wp_error($res)){
                 delete_post_meta($id,'hc_publish_approved_by');

@@ -431,7 +431,7 @@ add_action('rest_api_init',function(){
         'methods'=>'GET',
         'permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
-            $file=preg_replace('/[^A-Za-z0-9_-]/','',(string)$r->get_param('file_id'));
+            $file_raw=$r->get_param('file_id');$file=preg_replace('/[^A-Za-z0-9_-]/','',is_scalar($file_raw)?(string)$file_raw:'');
             if($file==='') return new WP_Error('file','Invalid Drive file ID.',['status'=>400]);
             $backup=hcdecor_restore_read_backup($file);
             return is_wp_error($backup)?$backup:rest_ensure_response(hcdecor_restore_plan($backup));

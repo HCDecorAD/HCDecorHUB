@@ -752,7 +752,7 @@ add_action('rest_api_init',function(){
         'methods'=>'POST','permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
             if(!hcdecor_drive_approval_fresh($r)) return new WP_Error('approval','Fresh explicit approval is required for Drive imports.',['status'=>403]);
-            $file=preg_replace('/[^A-Za-z0-9_-]/','',(string)$r->get_param('file_id'));
+            $file_raw=$r->get_param('file_id');$file=preg_replace('/[^A-Za-z0-9_-]/','',is_scalar($file_raw)?(string)$file_raw:'');
             if($file==='') return new WP_Error('file','Invalid Drive file ID.',['status'=>400]);
             $res=hcdecor_drive_import_job($file);
             return is_wp_error($res)?$res:rest_ensure_response(['job_id'=>$res]);
