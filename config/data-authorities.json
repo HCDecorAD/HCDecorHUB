@@ -3,7 +3,7 @@
   "authorities":{
     "crm":{"provider":"google-sheets","spreadsheet_id":"1vZcpqZETYAticin2MyeO9UeJgMpDBYMEV16J1o6ouSg","title":"HCDecor CRM - Leads & Projects","tabs":["Leads","Projects"],"schema_verified":true,"connector_read_verified":true,"server_write_runtime":"requires-credentials"},
     "master_database":{"provider":"google-sheets","spreadsheet_id":"1UM6hs6yZevy-DNzUTvfirTKGo-zIgTIv3tYw-TPxCts","title":"HCDecor Hub - Master Database","role":"control-and-data-plane","canonical_mode":"SAFE_INTERNAL","connector_read_verified":true,"server_write_runtime":"not-bound"},
-    "drive":{"provider":"google-drive","connector_read_verified":true,"root_folder_id":null,"projects_folder_id":null,"selection_state":"requires-authority-selection","note":"Multiple HCDecor/HUB folders exist; do not select by title alone."}
+    "drive":{"provider":"google-drive","connector_read_verified":true,"root_folder_id":"1NqJuLhum63XVea8wPjZtTETl29bm3U7r","root_title":"HCDecor Hub","projects_folder_id":"1bKNzYBoDQ-FKb0KegVk1NUinmvV6B5xy","projects_folder_title":"01_PROJECTS","selection_state":"verified-by-control-plane-structure"}
   },
   "policy":{"identifiers_are_not_credentials":true,"connector_auth_is_not_server_runtime_auth":true,"production_write":false}
 }

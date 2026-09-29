@@ -15,6 +15,13 @@ The Master Agent reports runtime capability as booleans only. Secrets must remai
 - HCDECOR_DRIVE_ROOT_FOLDER_ID
 - HCDECOR_DRIVE_PROJECTS_FOLDER_ID
 
+## Verified non-secret data authorities
+- CRM Sheet ID: `1vZcpqZETYAticin2MyeO9UeJgMpDBYMEV16J1o6ouSg` (`Leads`, `Projects` schema verified)
+- Business Drive root ID: `1NqJuLhum63XVea8wPjZtTETl29bm3U7r` (`HCDecor Hub`)
+- Projects folder ID: `1bKNzYBoDQ-FKb0KegVk1NUinmvV6B5xy` (`01_PROJECTS`)
+- Master Database ID: `1UM6hs6yZevy-DNzUTvfirTKGo-zIgTIv3tYw-TPxCts` (`SAFE_INTERNAL` control/data plane)
+- These identifiers are not credentials. Chat connector authorization does not make the HCDecor server runtime writable.
+
 ## Protected project provisioning
 - HCDECOR_PROJECT_API_TOKEN (secret)
 
