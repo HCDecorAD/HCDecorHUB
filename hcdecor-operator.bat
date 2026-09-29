@@ -502,6 +502,9 @@ findstr /c:"function hcdecor_restore_clip" "wordpress\hcdecor-core\modules\data-
 findstr /c:"sanitize_key(hcdecor_restore_clip($j['status']??'draft',50))" "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 530
 findstr /c:"function hcdecor_drive_inbox_safe_text" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 531
 findstr /c:"hcdecor_drive_inbox_safe_text(get_option('hcdecor_drive_inbox_last_error',''),500)" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 532
+findstr /c:"function hcdecor_health_scalar" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 533
+findstr /c:"hcdecor_health_scalar(get_option('hcdecor_sync_last_error',''),500)" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 534
+findstr /c:"hcdecor_health_scalar(get_option('hcdecor_backup_last_error',''),500)" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 535
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

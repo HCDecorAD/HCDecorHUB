@@ -6,7 +6,8 @@ if (!defined('ABSPATH')) exit;
  * Production readiness, cron repair, queue visibility, daily Drive report.
  */
 
-function hcdecor_health_time($value){$raw=is_scalar($value)?(string)$value:'';if($raw===''||strlen($raw)>64)return 0;return strtotime($raw)?:0;}
+function hcdecor_health_scalar($value,$limit=500){if(!is_scalar($value))return '';$value=(string)$value;return strlen($value)<=$limit?$value:'';}
+function hcdecor_health_time($value){$raw=hcdecor_health_scalar($value,64);if($raw==='')return 0;return strtotime($raw)?:0;}
 
 function hcdecor_health_required_modules(){
     return [
@@ -93,7 +94,7 @@ function hcdecor_health_modules(){
 
 function hcdecor_health_provider($provider){
     $configured=function_exists('hcdecor_ai_available') && hcdecor_ai_available($provider);
-    $test=(string)get_option('hcdecor_ai_'.$provider.'_test_status','');
+    $test=hcdecor_health_scalar(get_option('hcdecor_ai_'.$provider.'_test_status',''),20);
     return [
         'configured'=>$configured,
         'config_state'=>$configured?'configured':'requires_credentials',
@@ -125,7 +126,7 @@ function hcdecor_health_snapshot(){
     $queue=hcdecor_health_queue_counts();
     $auto=hcdecor_health_automation_counts();
     $drive_configured=function_exists('hcdecor_drive_configured')&&hcdecor_drive_configured();
-    $drive_test=(string)get_option('hcdecor_drive_test_status','');
+    $drive_test=hcdecor_health_scalar(get_option('hcdecor_drive_test_status',''),20);
     $auto_settings=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
     $inbox_settings=function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[];
     $cron_required=hcdecor_health_required_schedules();
@@ -144,10 +145,10 @@ function hcdecor_health_snapshot(){
             if(isset($auto_recovery_reasons[$reason])) $auto_recovery_reasons[$reason]++;
         }
     }
-    $backup_last=(string)get_option('hcdecor_backup_last_at','');
+    $backup_last=hcdecor_health_scalar(get_option('hcdecor_backup_last_at',''),64);
     $backup_ts=hcdecor_health_time($backup_last);
     $backup_age=$backup_ts?max(0,current_time('timestamp')-$backup_ts):null;
-    $inbox_last=(string)get_option('hcdecor_drive_inbox_last_at','');
+    $inbox_last=hcdecor_health_scalar(get_option('hcdecor_drive_inbox_last_at',''),64);
     $inbox_ts=hcdecor_health_time($inbox_last);
     $inbox_age=$inbox_ts?max(0,current_time('timestamp')-$inbox_ts):null;
     $stale_processing=0;
@@ -200,7 +201,7 @@ function hcdecor_health_snapshot(){
     $vault_retrying=(int)(new WP_Query(['post_type'=>'hc_project','post_status'=>['publish','draft','private'],'posts_per_page'=>1,'meta_key'=>'hc_drive_project_retry_count','meta_value'=>0,'meta_compare'=>'>','fields'=>'ids']))->found_posts;
     $backup_retry=(int)get_option('hcdecor_backup_retry_count',0);
     $vault_bulk=(array)get_option('hcdecor_project_vault_bulk_last_result',[]);
-    $vault_bulk_at=(string)get_option('hcdecor_project_vault_bulk_last_at','');
+    $vault_bulk_at=hcdecor_health_scalar(get_option('hcdecor_project_vault_bulk_last_at',''),64);
     $vault_bulk_ts=hcdecor_health_time($vault_bulk_at);
     $inbox_result=(array)get_option('hcdecor_drive_inbox_last_result',[]);
     $inbox_unlinked=max(0,(int)($inbox_result['imported']??0)-(int)($inbox_result['linked']??0));
@@ -315,10 +316,10 @@ function hcdecor_health_snapshot(){
         'score'=>$score,
         'state'=>$score>=90?'healthy':($score>=70?'attention':'action_required'),
         'sync'=>[
-            'version'=>(string)get_option('hcdecor_sync_version',''),
-            'last'=>(string)get_option('hcdecor_sync_last',''),
+            'version'=>hcdecor_health_scalar(get_option('hcdecor_sync_version',''),100),
+            'last'=>hcdecor_health_scalar(get_option('hcdecor_sync_last',''),64),
             'changed'=>(int)get_option('hcdecor_sync_last_changed',0),
-            'error'=>(string)get_option('hcdecor_sync_last_error','')
+            'error'=>hcdecor_health_scalar(get_option('hcdecor_sync_last_error',''),500)
         ],
         'modules'=>$modules,
         'cron'=>$crons,
@@ -330,7 +331,7 @@ function hcdecor_health_snapshot(){
             'configured'=>$drive_configured,
             'config_state'=>$drive_configured?'configured':'requires_credentials',
             'live_health'=>!$drive_configured?'not_checked':($drive_test==='ok'?'healthy':($drive_test==='error'?'unreachable':'not_checked')),
-            'identity_present'=>(string)get_option('hcdecor_drive_connected_email','')!==''
+            'identity_present'=>hcdecor_health_scalar(get_option('hcdecor_drive_connected_email',''),320)!==''
         ],
         'project_vault'=>[
             'ready'=>function_exists('hcdecor_project_vault_save'),
@@ -350,7 +351,7 @@ function hcdecor_health_snapshot(){
             'age_seconds'=>$inbox_age,
             'fresh'=>$inbox_ts>0 && $inbox_age<=1800,
             'last_result'=>(array)get_option('hcdecor_drive_inbox_last_result',[]),
-            'error'=>(string)get_option('hcdecor_drive_inbox_last_error','')
+            'error'=>hcdecor_health_scalar(get_option('hcdecor_drive_inbox_last_error',''),500)
         ],
         'automation'=>[
             'enabled'=>!empty($auto_settings['enabled']),
@@ -406,7 +407,7 @@ function hcdecor_health_snapshot(){
         'restore'=>[
             'ready'=>function_exists('hcdecor_restore_apply'),
             'last'=>(array)get_option('hcdecor_restore_last_result',[]),
-            'error'=>(string)get_option('hcdecor_restore_last_error','')
+            'error'=>hcdecor_health_scalar(get_option('hcdecor_restore_last_error',''),500)
         ],
         'activity'=>[
             'backup_running'=>$backup_running,
@@ -420,7 +421,7 @@ function hcdecor_health_snapshot(){
             'retry_count'=>$backup_retry,
             'next_scheduled'=>$backup_cron,
             'running'=>$backup_running,
-            'error'=>(string)get_option('hcdecor_backup_last_error',''),
+            'error'=>hcdecor_health_scalar(get_option('hcdecor_backup_last_error',''),500),
             'ready'=>function_exists('hcdecor_backup_save') && $drive_configured
         ],
         'issues'=>$issues
