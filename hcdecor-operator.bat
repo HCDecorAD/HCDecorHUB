@@ -335,6 +335,11 @@ findstr /c:"function hcdecor_project_vault_clip" "wordpress\hcdecor-core\modules
 findstr /c:"0,60" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 348
 findstr /c:"0,60" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 349
 findstr /c:"mb_substr($caption,0,5000)" "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 350
+findstr /c:"AbortSignal.timeout(10000)" "lib\crm\google.js" >nul || exit /b 351
+findstr /c:"AbortSignal.timeout(5000)" "app\api\wp\status\route.js" >nul || exit /b 352
+findstr /c:"AbortSignal.timeout(5000)" "lib\cms\wordpress.js" >nul || exit /b 353
+findstr /c:".env.*" ".gitignore" >nul || exit /b 354
+findstr /c:"!.env.example" ".gitignore" >nul || exit /b 355
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
