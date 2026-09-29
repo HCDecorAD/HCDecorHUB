@@ -312,6 +312,10 @@ findstr /c:"Backup validation failed." "wordpress\hcdecor-core\modules\data-rest
 findstr /c:"Invalid project." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 323
 findstr /c:"Invalid media." "wordpress\hcdecor-core\modules\media-intelligence.php" >nul || exit /b 324
 findstr /c:"Invalid Drive file ID." "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 325
+findstr /c:"Invalid Drive file ID." "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 326
+findstr /c:"Invalid Drive file ID." "wordpress\hcdecor-core\modules\data-restore.php" >nul || exit /b 327
+findstr /c:"Backup snapshot failed." "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 328
+findstr /c:"Runtime delivery failed." "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 329
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

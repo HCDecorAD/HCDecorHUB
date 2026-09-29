@@ -599,7 +599,8 @@ add_action('admin_post_hcdecor_drive_save_job',function(){
 add_action('admin_post_hcdecor_drive_import_job',function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
     check_admin_referer('hcdecor_drive_import_job');
-    $file=sanitize_text_field(wp_unslash($_POST['file_id']??''));
+    $file=preg_replace('/[^A-Za-z0-9_-]/','',(string)wp_unslash($_POST['file_id']??''));
+    if($file==='') wp_die('Invalid Drive file ID.');
     $r=hcdecor_drive_import_job($file);
     if(is_wp_error($r)) wp_safe_redirect(admin_url('admin.php?page=hcdecor-drive-vault&import_error=1'));
     else wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.(int)$r.'&drive_loaded=1'));
@@ -609,7 +610,8 @@ add_action('admin_post_hcdecor_drive_import_job',function(){
 
 add_action('admin_post_hcdecor_drive_import_media',function(){
     if(!current_user_can('upload_files')) wp_die('Forbidden');
-    $file=sanitize_text_field(wp_unslash($_POST['file_id']??''));
+    $file=preg_replace('/[^A-Za-z0-9_-]/','',(string)wp_unslash($_POST['file_id']??''));
+    if($file==='') wp_die('Invalid Drive file ID.');
     $folder=sanitize_key($_POST['folder_key']??'media_input');
     check_admin_referer('hcdecor_drive_import_media_'.$file);
     $r=hcdecor_drive_import_media($file);
@@ -620,7 +622,8 @@ add_action('admin_post_hcdecor_drive_import_media',function(){
 
 add_action('admin_post_hcdecor_drive_activate_prompt',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
-    $file=sanitize_text_field(wp_unslash($_POST['file_id']??''));
+    $file=preg_replace('/[^A-Za-z0-9_-]/','',(string)wp_unslash($_POST['file_id']??''));
+    if($file==='') wp_die('Invalid Drive file ID.');
     check_admin_referer('hcdecor_drive_activate_prompt_'.$file);
     $r=hcdecor_drive_load_prompt($file);
     $url=admin_url('admin.php?page=hcdecor-drive-vault&browse=prompts');

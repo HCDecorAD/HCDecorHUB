@@ -27,7 +27,7 @@ add_action('hcdecor_runtime_tick',function(){
   $v[$id]['production_approved']=false; $v[$id]['approval_consumed_at']=current_time('mysql');
   update_option('hcdecor_runtime_jobs',$v,false);
   $res=hcdecor_runtime_execute($id,$approved_job);
-  if(is_wp_error($res)){ $msg=sanitize_text_field($res->get_error_message()); $v[$id]['last_error']=function_exists('mb_substr')?mb_substr($msg,0,500):substr($msg,0,500); $v[$id]['status']='failed'; }
+  if(is_wp_error($res)){ $msg=function_exists('hcdecor_conn_safe_error')?hcdecor_conn_safe_error($res->get_error_message()):'Runtime delivery failed.'; $v[$id]['last_error']=function_exists('mb_substr')?mb_substr($msg,0,500):substr($msg,0,500); $v[$id]['status']='failed'; }
   else { $v[$id]['status']='done'; $v[$id]['result']=$res; }
   $v[$id]['payload']=array(); $changed=true;
  }

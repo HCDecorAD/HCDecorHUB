@@ -140,7 +140,7 @@ function hcdecor_backup_save(){
     }
     $snap=hcdecor_backup_snapshot();
     if(is_wp_error($snap)){
-        update_option('hcdecor_backup_last_error',sanitize_text_field($snap->get_error_message()),false);
+        update_option('hcdecor_backup_last_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($snap->get_error_message()):'Backup snapshot failed.',false);
         delete_transient('hcdecor_backup_running');
         return $snap;
     }
@@ -165,7 +165,7 @@ function hcdecor_backup_save(){
     }
     $r=hcdecor_drive_multipart('',$name,'application/json',$json,hcdecor_backup_folder_id());
     if(is_wp_error($r)){
-        update_option('hcdecor_backup_last_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($r->get_error_message()):sanitize_text_field($r->get_error_message()),false);
+        update_option('hcdecor_backup_last_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($r->get_error_message()):'Drive backup upload failed.',false);
         delete_transient('hcdecor_backup_running');
         return $r;
     }

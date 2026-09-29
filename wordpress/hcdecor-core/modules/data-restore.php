@@ -413,7 +413,7 @@ add_action('admin_post_hcdecor_restore_apply',function(){
     }
     $r=hcdecor_restore_apply($file,$sections);
     if(is_wp_error($r)){
-        update_option('hcdecor_restore_last_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($r->get_error_message()):sanitize_text_field($r->get_error_message()),false);
+        update_option('hcdecor_restore_last_error',function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($r->get_error_message()):'Restore failed.',false);
         wp_safe_redirect(admin_url('admin.php?page=hcdecor-restore-center&file_id='.rawurlencode($file).'&failed=1')); exit;
     }
     delete_option('hcdecor_restore_last_error');
@@ -429,7 +429,9 @@ add_action('rest_api_init',function(){
         'methods'=>'GET',
         'permission_callback'=>'hcdecor_ops_bridge_auth',
         'callback'=>function(WP_REST_Request $r){
-            $backup=hcdecor_restore_read_backup((string)$r->get_param('file_id'));
+            $file=preg_replace('/[^A-Za-z0-9_-]/','',(string)$r->get_param('file_id'));
+            if($file==='') return new WP_Error('file','Invalid Drive file ID.',['status'=>400]);
+            $backup=hcdecor_restore_read_backup($file);
             return is_wp_error($backup)?$backup:rest_ensure_response(hcdecor_restore_plan($backup));
         }
     ]);
@@ -437,7 +439,7 @@ add_action('rest_api_init',function(){
 
 function hcdecor_restore_page(){
     if(!current_user_can('manage_options')) return;
-    $file=sanitize_text_field(wp_unslash($_GET['file_id']??''));
+    $file=preg_replace('/[^A-Za-z0-9_-]/','',(string)wp_unslash($_GET['file_id']??''));
     $backup=$file?hcdecor_restore_read_backup($file):null;
     $plan=is_array($backup)?hcdecor_restore_plan($backup):null;
     $files=[];
@@ -477,7 +479,7 @@ function hcdecor_restore_page(){
         <section class="hcrs-card">
           <h2>Restore Preview</h2>
           <?php if($backup instanceof WP_Error):?>
-            <p><?php echo esc_html($backup->get_error_message());?></p>
+            <p><?php echo esc_html(function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($backup->get_error_message()):'Backup validation failed.');?></p>
           <?php elseif(!$plan):?>
             <p>Chọn một backup bên trái để xem kế hoạch restore.</p>
           <?php else:?>
