@@ -1,0 +1,2 @@
+import {listMasterRuns,masterRunStoreInfo} from "../../../../lib/run-store";
+export async function GET(request){const raw=new URL(request.url).searchParams.get("limit");const parsed=raw===null?30:Number(raw);const limit=Number.isFinite(parsed)?Math.max(1,Math.min(Math.trunc(parsed),100)):30;const runs=await listMasterRuns(limit);return Response.json({ok:true,store:masterRunStoreInfo(),count:runs.length,runs})}
