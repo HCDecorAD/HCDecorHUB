@@ -429,6 +429,7 @@ findstr /c:"Connection secret is too long." "wordpress\hcdecor-core\modules\conn
 findstr /c:"hcdecor_conn_clip($x['secret']" "wordpress\hcdecor-core\modules\connection-center.php" >nul || exit /b 457
 findstr /c:"$limits=['client_id'=>1000,'client_secret'=>4000,'refresh_token'=>8000]" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 458
 findstr /c:"strlen($cached)<=16000" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 459
+findstr /c:"add_menu_page('HCDecor HUB','HCDecor HUB','edit_posts','hcdecor-hub','hcdecor_hub_dashboard_page'" "wordpress\hcdecor-core\modules\hub-dashboard.php" >nul || exit /b 460
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

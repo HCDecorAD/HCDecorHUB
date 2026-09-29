@@ -5,6 +5,9 @@ if (!defined('ABSPATH')) exit;
  * HCDecor HUB V2 Dashboard
  * Production command center for the full HCDecor workflow.
  */
+add_action('admin_menu',function(){
+    add_menu_page('HCDecor HUB','HCDecor HUB','edit_posts','hcdecor-hub','hcdecor_hub_dashboard_page','dashicons-screenoptions',3);
+},20);
 
 function hcdecor_hub_dashboard_safe_error($message){
     if(function_exists('hcdecor_drive_safe_error')) return hcdecor_drive_safe_error($message);
