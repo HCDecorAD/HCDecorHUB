@@ -118,8 +118,6 @@ add_action('admin_post_hcdecor_ops_publish_web', function(){
 
 function hcdecor_ops_bridge_tokens(){
     $tokens=[];
-    $legacy=(string)get_option('hcdecor_bridge_token','');
-    if($legacy!=='') $tokens[]=$legacy;
     if(defined('HCDECOR_OPS_API_TOKEN') && (string)HCDECOR_OPS_API_TOKEN!=='') $tokens[]=(string)HCDECOR_OPS_API_TOKEN;
     $env=(string)getenv('HCDECOR_OPS_API_TOKEN');
     if($env!=='') $tokens[]=$env;

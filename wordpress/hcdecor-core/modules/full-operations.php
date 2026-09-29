@@ -1,10 +1,11 @@
 <?php
 if (!defined('ABSPATH')) exit;
 function hcdecor_full_calendar_items(){ $ids=get_posts(array('post_type'=>'hc_automation_task','post_status'=>'publish','numberposts'=>200,'fields'=>'ids','orderby'=>'date','order'=>'DESC')); $out=array(); foreach($ids as $id){$out[]=array('id'=>$id,'title'=>get_the_title($id),'status'=>(string)get_post_meta($id,'hc_auto_status',true),'type'=>(string)get_post_meta($id,'hc_auto_type',true),'date'=>get_post_field('post_date',$id));} return $out; }
-function hcdecor_full_audit_sanitize($value,$key=''){
+function hcdecor_full_audit_sanitize($value,$key='',$depth=0){
     $key=strtolower((string)$key);
     if(preg_match('/(?:token|secret|password|authorization|api[_-]?key|cookie|refresh|credential)/',$key)) return '[REDACTED]';
-    if(is_array($value)){ $out=array(); foreach($value as $k=>$v) $out[$k]=hcdecor_full_audit_sanitize($v,(string)$k); return $out; }
+    if($depth>=5) return '[DEPTH_LIMIT]';
+    if(is_array($value)){ $out=array(); foreach(array_slice($value,0,30,true) as $k=>$v) $out[$k]=hcdecor_full_audit_sanitize($v,(string)$k,$depth+1); return $out; }
     if(is_object($value)) return '[OBJECT]';
     if(is_bool($value)||is_int($value)||is_float($value)||$value===null) return $value;
     $text=sanitize_text_field((string)$value);

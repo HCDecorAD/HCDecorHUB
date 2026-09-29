@@ -218,6 +218,12 @@ findstr /c:"$clip($project['content']??'',100000,true)" "wordpress\hcdecor-core\
 findstr /c:"array_slice((array)$project['types'],0,30)" "wordpress\hcdecor-core\modules\project-vault.php" >nul || exit /b 270
 findstr /c:"hcdecor_ops_limit_text($brief,20000)" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 271
 findstr /c:"hcdecor_ops_limit_text(wp_unslash($_POST['brief']??''),20000)" "wordpress\hcdecor-core\modules\ai-workspace.php" >nul || exit /b 272
+findstr /c:"if($depth>=5) return '[DEPTH_LIMIT]';" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 290
+findstr /c:"array_slice($value,0,30,true)" "wordpress\hcdecor-core\modules\full-operations.php" >nul || exit /b 291
+findstr /c:"get_option('hcdecor_bridge_token'" "wordpress\hcdecor-core\modules\content-operations.php" >nul && exit /b 292
+findstr /c:"getenv('HCDECOR_OPS_API_TOKEN')" "wordpress\hcdecor-core\modules\content-operations.php" >nul || exit /b 293
+findstr /c:"hcdecor_ops_bridge_configured():false" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 294
+findstr /c:"get_option('hcdecor_bridge_token'" "wordpress\hcdecor-core\modules\system-health.php" >nul && exit /b 295
 findstr /c:"hcdecor_ops_limit_text(wp_unslash($_POST['agent_brief']??''),20000)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 273
 findstr /c:"Runtime payload exceeds 256 KB." "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 274
 findstr /c:"'Publish Runtime','Publish Runtime','manage_options'" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 275

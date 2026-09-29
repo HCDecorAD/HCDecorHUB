@@ -127,7 +127,7 @@ function hcdecor_health_snapshot(){
     $auto_settings=function_exists('hcdecor_auto_settings')?hcdecor_auto_settings():[];
     $inbox_settings=function_exists('hcdecor_drive_inbox_settings')?hcdecor_drive_inbox_settings():[];
     $cron_required=hcdecor_health_required_schedules();
-    $bridge_configured=function_exists('hcdecor_ops_bridge_configured')?hcdecor_ops_bridge_configured():((string)get_option('hcdecor_bridge_token','')!=='');
+    $bridge_configured=function_exists('hcdecor_ops_bridge_configured')?hcdecor_ops_bridge_configured():false;
     $actionable_blocked=hcdecor_health_actionable_blocked_count();
     $auto_recovered_24h=0;
     $auto_recovery_reasons=['running_timeout'=>0,'missing_started_at'=>0];
