@@ -328,6 +328,8 @@ findstr /c:"request_too_large" "lib\request-guard.js" >nul || exit /b 340
 findstr /c:"function hcdecor_backup_clip" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 341
 findstr /c:"function hcdecor_backup_workflow_log" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 342
 findstr /c:"function hcdecor_backup_tags" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 343
+findstr /c:"0,60" "wordpress\hcdecor-core\modules\project-publishing.php" >nul || exit /b 344
+findstr /c:"mb_substr((string)$p->post_excerpt,0,2000)" "wordpress\hcdecor-core\modules\project-publishing.php" >nul || exit /b 345
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

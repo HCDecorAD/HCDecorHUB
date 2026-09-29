@@ -32,7 +32,8 @@ add_action('wp_enqueue_scripts',function(){
 
 add_filter('the_content',function($content){
     if(!is_singular('hc_project') || !in_the_loop() || !is_main_query()) return $content;
-    $ids=(array)get_post_meta(get_the_ID(),'hc_project_gallery',true); $ids=array_values(array_filter(array_map('intval',$ids)));
+    $ids=(array)get_post_meta(get_the_ID(),'hc_project_gallery',true);
+    $ids=array_slice(array_values(array_filter(array_unique(array_map('intval',$ids)),function($id){return get_post_type($id)==='attachment';})),0,60);
     if(!$ids) return $content;
     $html='<div class="hc-project-gallery" aria-label="Project gallery">';
     foreach($ids as $id){$img=wp_get_attachment_image($id,'large',false,['loading'=>'lazy']);if(!$img)continue;$cap=wp_get_attachment_caption($id);$html.='<figure>'.$img.($cap?'<figcaption>'.esc_html($cap).'</figcaption>':'').'</figure>';}
@@ -44,7 +45,9 @@ add_action('rest_api_init',function(){
         $posts=get_posts(['post_type'=>'hc_project','post_status'=>'publish','numberposts'=>50,'orderby'=>'modified','order'=>'DESC']);
         return rest_ensure_response(array_map(function($p){
             $media=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)get_post_meta($p->ID,'hc_project_gallery',true))),function($id){ return get_post_type($id)==='attachment'; })),0,60);
-            return ['id'=>$p->ID,'title'=>$p->post_title,'excerpt'=>$p->post_excerpt,'url'=>get_permalink($p),'featured'=>get_the_post_thumbnail_url($p->ID,'large')?:null,'media'=>array_values(array_filter(array_map(function($id){return wp_get_attachment_url($id);},$media)))];
+            $title=function_exists('mb_substr')?mb_substr((string)$p->post_title,0,500):substr((string)$p->post_title,0,500);
+            $excerpt=function_exists('mb_substr')?mb_substr((string)$p->post_excerpt,0,2000):substr((string)$p->post_excerpt,0,2000);
+            return ['id'=>$p->ID,'title'=>$title,'excerpt'=>$excerpt,'url'=>get_permalink($p),'featured'=>get_the_post_thumbnail_url($p->ID,'large')?:null,'media'=>array_values(array_filter(array_map(function($id){return wp_get_attachment_url($id);},$media)))];
         },$posts));
     }]);
 });
