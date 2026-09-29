@@ -435,6 +435,10 @@ findstr /c:"strlen($client_id)>1000" "wordpress\hcdecor-core\modules\drive-vault
 findstr /c:"'refresh_token'=>8000" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 448
 findstr /c:"strlen($access)>16000" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 449
 findstr /c:"min(DAY_IN_SECONDS" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 450
+findstr /c:"function hcdecor_ai_bounded_scalar" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 451
+findstr /c:"HCDECOR_OPENAI_API_KEY,8000" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 452
+findstr /c:"AI model value too long." "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 453
+findstr /c:"AI credential value too long." "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 454
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

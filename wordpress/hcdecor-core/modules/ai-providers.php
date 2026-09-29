@@ -7,19 +7,22 @@ if (!defined('ABSPATH')) exit;
  * Secrets stay in wp-config.php constants or WordPress options, never in Git.
  */
 
+function hcdecor_ai_bounded_scalar($value,$limit){
+    if(!is_scalar($value)) return '';$value=trim((string)$value);return strlen($value)<=$limit?$value:'';
+}
 function hcdecor_ai_secret($provider){
-    if($provider==='openai' && defined('HCDECOR_OPENAI_API_KEY')) return trim((string)HCDECOR_OPENAI_API_KEY);
-    if($provider==='gemini' && defined('HCDECOR_GEMINI_API_KEY')) return trim((string)HCDECOR_GEMINI_API_KEY);
-    return trim((string)get_option('hcdecor_ai_'.$provider.'_key',''));
+    if($provider==='openai' && defined('HCDECOR_OPENAI_API_KEY')) return hcdecor_ai_bounded_scalar(HCDECOR_OPENAI_API_KEY,8000);
+    if($provider==='gemini' && defined('HCDECOR_GEMINI_API_KEY')) return hcdecor_ai_bounded_scalar(HCDECOR_GEMINI_API_KEY,8000);
+    return hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_'.$provider.'_key',''),8000);
 }
 function hcdecor_ai_model($provider){
     if($provider==='openai'){
-        if(defined('HCDECOR_OPENAI_MODEL') && HCDECOR_OPENAI_MODEL) return (string)HCDECOR_OPENAI_MODEL;
-        return trim((string)get_option('hcdecor_ai_openai_model',''));
+        if(defined('HCDECOR_OPENAI_MODEL') && HCDECOR_OPENAI_MODEL) return hcdecor_ai_bounded_scalar(HCDECOR_OPENAI_MODEL,200);
+        return hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_openai_model',''),200);
     }
     if($provider==='gemini'){
-        if(defined('HCDECOR_GEMINI_MODEL') && HCDECOR_GEMINI_MODEL) return (string)HCDECOR_GEMINI_MODEL;
-        return trim((string)get_option('hcdecor_ai_gemini_model',''));
+        if(defined('HCDECOR_GEMINI_MODEL') && HCDECOR_GEMINI_MODEL) return hcdecor_ai_bounded_scalar(HCDECOR_GEMINI_MODEL,200);
+        return hcdecor_ai_bounded_scalar(get_option('hcdecor_ai_gemini_model',''),200);
     }
     return '';
 }
@@ -405,12 +408,14 @@ add_action('admin_post_hcdecor_ai_settings',function(){
         'openai'=>sanitize_text_field(wp_unslash($_POST['openai_model']??'')),
         'gemini'=>sanitize_text_field(wp_unslash($_POST['gemini_model']??''))
     ];
+    if(strlen($new_models['openai'])>200 || strlen($new_models['gemini'])>200) wp_die('AI model value too long.');
     update_option('hcdecor_ai_openai_model',$new_models['openai'],false);
     update_option('hcdecor_ai_gemini_model',$new_models['gemini'],false);
     foreach(['openai','gemini'] as $p){
         $changed=$old_models[$p]!==$new_models[$p];
         if(!empty($_POST[$p.'_clear'])){ delete_option('hcdecor_ai_'.$p.'_key'); $changed=true; }
         $v=trim((string)wp_unslash($_POST[$p.'_key']??''));
+        if(strlen($v)>8000) wp_die('AI credential value too long.');
         if($v!==''){ update_option('hcdecor_ai_'.$p.'_key',$v,false); $changed=true; }
         if($changed){
             delete_option('hcdecor_ai_'.$p.'_test_status');
