@@ -66,8 +66,11 @@ function hcdecor_recovery_sync($force=false) {
         if (!$rel || strpos($rel, '..') !== false || empty($f['url']) || empty($f['git_sha1'])) { continue; }
         $target = $base . $rel;
         if (!$force && is_file($target)) {
-            $local = @file_get_contents($target);
-            if ($local !== false && hash_equals(strtolower($f['git_sha1']), hcdecor_recovery_git_sha($local))) { continue; }
+            $local_size=@filesize($target);
+            if($local_size!==false && $local_size>=0 && $local_size<=4*1024*1024){
+                $local = @file_get_contents($target);
+                if ($local !== false && strlen($local)===(int)$local_size && hash_equals(strtolower($f['git_sha1']), hcdecor_recovery_git_sha($local))) { continue; }
+            }
         }
         if (!hcdecor_recovery_trusted_raw_url($f['url'], $rel)) { continue; }
         $url = $f['url'] . (strpos($f['url'],'?') === false ? '?' : '&') . 'v=' . rawurlencode((string)($m['version'] ?? time()));

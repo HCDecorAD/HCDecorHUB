@@ -70,7 +70,7 @@ function hcdecor_run_background_sync(){
         $body=(string)wp_remote_retrieve_body($rr);
         if($body==='' || strlen($body)>4*1024*1024) continue;
         $git_sha=sha1('blob '.strlen($body)."\0".$body); if(!hash_equals(strtolower($f['git_sha1']),$git_sha)) continue;
-        if(file_exists($target)){ $local=file_get_contents($target); if($local!==false && sha1('blob '.strlen($local)."\0".$local)===strtolower($f['git_sha1'])) continue; }
+        if(file_exists($target)){ $local_size=@filesize($target); if($local_size!==false && $local_size>=0 && $local_size<=4*1024*1024){ $local=file_get_contents($target); if($local!==false && strlen($local)===(int)$local_size && sha1('blob '.strlen($local)."\0".$local)===strtolower($f['git_sha1'])) continue; } }
         if(hcdecor_sync_atomic($target,$body)) $changed++;
     }
     update_option('hcdecor_sync_version',sanitize_text_field($m['version']??''));
