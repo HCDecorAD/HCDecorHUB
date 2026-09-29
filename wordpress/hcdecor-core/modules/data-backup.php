@@ -126,12 +126,12 @@ function hcdecor_backup_snapshot(){
             'sync_version'=>(string)get_option('hcdecor_sync_version','')
         ],
         'settings'=>[
-            'ai_primary'=>(string)get_option('hcdecor_ai_primary','auto'),
-            'openai_model'=>(string)get_option('hcdecor_ai_openai_model',''),
-            'gemini_model'=>(string)get_option('hcdecor_ai_gemini_model',''),
-            'active_prompt'=>(string)get_option('hcdecor_drive_active_prompt',''),
-            'active_prompt_title'=>(string)get_option('hcdecor_drive_active_prompt_title',''),
-            'active_prompt_file'=>(string)get_option('hcdecor_drive_active_prompt_file',''),
+            'ai_primary'=>hcdecor_backup_clip(get_option('hcdecor_ai_primary','auto'),50),
+            'openai_model'=>hcdecor_backup_clip(get_option('hcdecor_ai_openai_model',''),200),
+            'gemini_model'=>hcdecor_backup_clip(get_option('hcdecor_ai_gemini_model',''),200),
+            'active_prompt'=>hcdecor_backup_clip(get_option('hcdecor_drive_active_prompt',''),20000),
+            'active_prompt_title'=>hcdecor_backup_clip(get_option('hcdecor_drive_active_prompt_title',''),300),
+            'active_prompt_file'=>hcdecor_backup_clip(get_option('hcdecor_drive_active_prompt_file',''),300),
             'automation'=>$auto,
             'recipes'=>function_exists('hcdecor_recipes')?hcdecor_recipes():[]
         ],
