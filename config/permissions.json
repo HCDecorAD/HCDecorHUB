@@ -19,6 +19,6 @@
     "crm":["view","create","edit","export"],
     "report":["view","export"]
   },
-  "restricted_actions": ["delete","publish","manage","deploy","rollback"],
+  "restricted_actions": ["create","edit","delete","publish","manage","deploy","rollback"],
   "rule": "Restricted actions require an explicit role grant for the exact workspace/site/module."
 }

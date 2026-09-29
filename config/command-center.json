@@ -42,6 +42,8 @@
     "return-result"
   ],
   "production_guard": {
+    "create": true,
+    "edit": true,
     "publish": true,
     "delete": true,
     "manage": true,
