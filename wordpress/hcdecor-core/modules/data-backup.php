@@ -30,7 +30,7 @@ function hcdecor_backup_workflow_log($value){
     $out=[];
     foreach(array_slice((array)$value,-100) as $entry){
         if(!is_array($entry)) continue;
-        $out[]=['time'=>hcdecor_backup_clip($entry['time']??'',64),'event'=>sanitize_key((string)($entry['event']??'')),'note'=>hcdecor_backup_clip($entry['note']??'',500),'user'=>(int)($entry['user']??0)];
+        $out[]=['time'=>hcdecor_backup_clip($entry['time']??'',64),'event'=>sanitize_key(hcdecor_backup_clip($entry['event']??'',100)),'note'=>hcdecor_backup_clip($entry['note']??'',500),'user'=>(int)($entry['user']??0)];
     }
     return $out;
 }

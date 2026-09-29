@@ -555,6 +555,9 @@ findstr /c:"limit_raw" "wordpress\hcdecor-core\modules\media-manager.php" >nul |
 findstr /c:"hcdecor_drive_inbox_safe_text($file['id']??'',300)" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 583
 findstr /c:"function hcdecor_recipe_approval_fresh" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 584
 findstr /c:"sanitize_key(is_scalar($action['type']" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 585
+findstr /c:"hcdecor_ai_safe_error($data['error']['message']" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 586
+findstr /c:"sanitize_key(hcdecor_backup_clip($entry['event']" "wordpress\hcdecor-core\modules\data-backup.php" >nul || exit /b 587
+findstr /c:"hcdecor_drive_inbox_safe_text($row['time']" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 588
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

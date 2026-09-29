@@ -343,12 +343,12 @@ function hcdecor_drive_inbox_page(){
           <?php if(!$log):?><p>Chưa có activity.</p><?php endif;?>
           <?php foreach(array_slice($log,0,40) as $row): $d=(array)($row['data']??[]);?>
             <div class="hcdi-log">
-              <strong><?php echo esc_html(strtoupper((string)($row['event']??'')));?></strong>
-              · <?php echo esc_html((string)($row['time']??''));?>
-              <?php if(!empty($d['name'])):?><br><?php echo esc_html($d['name']);?><?php endif;?>
+              <strong><?php echo esc_html(strtoupper(hcdecor_drive_inbox_safe_text($row['event']??'',100)));?></strong>
+              · <?php echo esc_html(hcdecor_drive_inbox_safe_text($row['time']??'',64));?>
+              <?php if(!empty($d['name'])):?><br><?php echo esc_html(hcdecor_drive_inbox_safe_text($d['name'],500));?><?php endif;?>
               <?php if(!empty($d['attachment_id'])):?> · WP #<?php echo (int)$d['attachment_id'];?><?php endif;?>
               <?php if(!empty($d['project_id'])):?> · Project #<?php echo (int)$d['project_id'];?><?php endif;?>
-              <?php if(!empty($d['error'])):?><br><span style="color:#b32d2e"><?php echo esc_html($d['error']);?></span><?php endif;?>
+              <?php if(!empty($d['error'])):?><br><span style="color:#b32d2e"><?php echo esc_html(hcdecor_drive_inbox_safe_text($d['error'],500));?></span><?php endif;?>
             </div>
           <?php endforeach;?>
         </section>

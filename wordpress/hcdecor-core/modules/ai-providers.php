@@ -182,13 +182,13 @@ function hcdecor_ai_call_openai($job_id){
     if(strlen($body)>2*1024*1024) return new WP_Error('ai_response_size','AI response exceeds 2 MB.');
     $data=json_decode($body,true);
     if($status<200 || $status>=300){
-        $msg=hcdecor_ai_safe_error((string)($data['error']['message']??('OpenAI HTTP '.$status)));
+        $msg=hcdecor_ai_safe_error($data['error']['message']??('OpenAI HTTP '.$status));
         return new WP_Error('openai_api',$msg,['status'=>$status]);
     }
     $text=hcdecor_ai_extract_openai_text((array)$data);
     $json=json_decode($text,true);
     if(!is_array($json)) return new WP_Error('openai_json','OpenAI trả về dữ liệu không hợp lệ.');
-    $model=hcdecor_ai_limit_text((string)($data['model']??hcdecor_ai_model('openai')),200);
+    $model=hcdecor_ai_limit_text($data['model']??hcdecor_ai_model('openai'),200);
     return ['provider'=>'openai','model'=>$model,'content'=>$json,'usage'=>hcdecor_ai_usage_summary($data['usage']??[])];
 }
 
@@ -221,13 +221,13 @@ function hcdecor_ai_call_gemini($job_id){
     if(strlen($body)>2*1024*1024) return new WP_Error('ai_response_size','AI response exceeds 2 MB.');
     $data=json_decode($body,true);
     if($status<200 || $status>=300){
-        $msg=hcdecor_ai_safe_error((string)($data['error']['message']??('Gemini HTTP '.$status)));
+        $msg=hcdecor_ai_safe_error($data['error']['message']??('Gemini HTTP '.$status));
         return new WP_Error('gemini_api',$msg,['status'=>$status]);
     }
     $text=hcdecor_ai_extract_gemini_text((array)$data);
     $json=json_decode($text,true);
     if(!is_array($json)) return new WP_Error('gemini_json','Gemini trả về dữ liệu không hợp lệ.');
-    $model=hcdecor_ai_limit_text((string)($data['model']??hcdecor_ai_model('gemini')),200);
+    $model=hcdecor_ai_limit_text($data['model']??hcdecor_ai_model('gemini'),200);
     return ['provider'=>'gemini','model'=>$model,'content'=>$json,'usage'=>hcdecor_ai_usage_summary($data['usage']??[])];
 }
 
@@ -251,7 +251,7 @@ function hcdecor_ai_test_provider($provider){
     if(strlen($body)>2*1024*1024) return new WP_Error('ai_response_size','AI response exceeds 2 MB.');
     $data=json_decode($body,true);
     if($status<200 || $status>=300){
-        $msg=hcdecor_ai_safe_error((string)($data['error']['message']??('HTTP '.$status)));
+        $msg=hcdecor_ai_safe_error($data['error']['message']??('HTTP '.$status));
         return new WP_Error('api_test',$msg,['status'=>$status]);
     }
     return ['provider'=>$provider,'model'=>$model,'ok'=>true];
