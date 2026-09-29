@@ -364,6 +364,9 @@ findstr /c:"hcdecor_ops_valid_media_ids" "wordpress\hcdecor-core\modules\workflo
 findstr /c:"strlen($token)>128" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 377
 findstr /c:"function hcdecor_runtime_clip" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 378
 findstr /c:"hcdecor_runtime_prune(is_array($v)?$v:array())" "wordpress\hcdecor-core\modules\publish-runtime.php" >nul || exit /b 379
+findstr /c:"limit_response_size'=>2*1024*1024" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 380
+findstr /c:"AI response exceeds 2 MB." "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 381
+findstr /c:"hcdecor_ai_limit_text" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 382
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
