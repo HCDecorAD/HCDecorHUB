@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "actions": ["view","create","edit","delete","approve","publish","export","manage"],
+  "actions": ["view","create","edit","delete","approve","publish","export","manage","deploy","rollback"],
   "roles": {
     "owner": {"scope":"all","actions":["view","create","edit","delete","approve","publish","export","manage"]},
     "admin": {"scope":"assigned-workspaces","actions":["view","create","edit","delete","approve","publish","export","manage"]},
@@ -19,6 +19,6 @@
     "crm":["view","create","edit","export"],
     "report":["view","export"]
   },
-  "restricted_actions": ["delete","publish","manage"],
+  "restricted_actions": ["delete","publish","manage","deploy","rollback"],
   "rule": "Restricted actions require an explicit role grant for the exact workspace/site/module."
 }

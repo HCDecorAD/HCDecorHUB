@@ -1,0 +1,2 @@
+import {resolveCapability} from "../../../../lib/capability-router";
+export async function GET(request){const u=new URL(request.url);const x=resolveCapability({workspace_id:u.searchParams.get("workspace"),module:u.searchParams.get("module"),capability:u.searchParams.get("capability"),action:u.searchParams.get("action")||"view"});return Response.json({...x,production_execution_started:false},{status:x.ok?200:400})}

@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "routing_policy": "workspace-worker-capability-adapter",
+  "capabilities": {
+    "website": {"worker":"website","modes":["view","create","edit"],"production_write":false},
+    "ui": {"worker":"website","modes":["view","create","edit"],"production_write":false},
+    "code": {"worker":"website","modes":["view","create","edit"],"production_write":false},
+    "content": {"worker":"content","modes":["view","create","edit"],"production_write":false},
+    "media": {"worker":"media","modes":["view","create","edit"],"production_write":false},
+    "publishing": {"worker":"publishing","modes":["view","create","edit","publish"],"production_write":"approval-required"},
+    "project": {"worker":"project-assistant","modes":["view","create","edit"],"production_write":"approval-required"},
+    "report": {"worker":"project-assistant","modes":["view","export"],"production_write":false},
+    "qa": {"worker":"qa","modes":["view"],"production_write":false},
+    "deployment": {"worker":"qa","modes":["deploy","rollback"],"production_write":"approval-required"}
+  }
+}
