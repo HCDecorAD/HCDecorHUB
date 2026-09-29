@@ -601,6 +601,10 @@ findstr /c:"$aitags_raw=get_post_meta($edit_id,'hc_ai_tags',true)" "wordpress\hc
 findstr /c:"$last_raw=get_option('hcdecor_worker_mutex_sweep_last',[])" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 563
 findstr /c:"$last_auto_repair_raw=get_option('hcdecor_health_auto_repair_last',[])" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 564
 findstr /c:"$automation_last_change_raw=get_option('hcdecor_automation_settings_last_change',[])" "wordpress\hcdecor-core\modules\system-health.php" >nul || exit /b 565
+findstr /c:"$provider_raw=$_POST['provider']??''" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 566
+findstr /c:"$folder_raw=$_POST['folder_key']??'media_input'" "wordpress\hcdecor-core\modules\drive-vault.php" >nul || exit /b 567
+findstr /c:"$accounts_raw=$_POST['accounts']??[]" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 568
+findstr /c:"$trigger_raw=$_POST['trigger']??''" "wordpress\hcdecor-core\modules\workflow-crm.php" >nul || exit /b 569
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

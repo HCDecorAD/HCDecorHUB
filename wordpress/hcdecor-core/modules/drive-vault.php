@@ -674,7 +674,7 @@ add_action('admin_post_hcdecor_drive_import_media',function(){
     if(!current_user_can('upload_files')) wp_die('Forbidden');
     $file_raw=wp_unslash($_POST['file_id']??'');$file=preg_replace('/[^A-Za-z0-9_-]/','',is_scalar($file_raw)?(string)$file_raw:'');
     if($file==='') wp_die('Invalid Drive file ID.');
-    $folder=sanitize_key($_POST['folder_key']??'media_input');
+    $folder_raw=$_POST['folder_key']??'media_input';$folder=sanitize_key(is_scalar($folder_raw)?(string)$folder_raw:'media_input');
     check_admin_referer('hcdecor_drive_import_media_'.$file);
     $r=hcdecor_drive_import_media($file);
     $url=admin_url('admin.php?page=hcdecor-drive-vault&browse='.$folder);
@@ -769,7 +769,7 @@ function hcdecor_drive_vault_page(){
     $prompt_files=hcdecor_drive_configured()?hcdecor_drive_list($folders['prompts'],20):[];
     if(is_wp_error($prompt_files)) $prompt_files=[];
     $browse_allowed=['prompts','media_input','media_ai','media_approved','content_draft','content_review','content_approved','content_published','projects','knowledge','templates','automation','archive'];
-    $browse_key=sanitize_key($_GET['browse']??'media_input');
+    $browse_raw=$_GET['browse']??'media_input';$browse_key=sanitize_key(is_scalar($browse_raw)?(string)$browse_raw:'media_input');
     if(!in_array($browse_key,$browse_allowed,true)) $browse_key='media_input';
     $browse_files=hcdecor_drive_configured()?hcdecor_drive_list($folders[$browse_key]??$folders['root'],60):[];
     if(is_wp_error($browse_files)) $browse_files=[];

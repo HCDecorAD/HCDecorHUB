@@ -216,7 +216,7 @@ add_action('hcdecor_after_web_publish',function($job_id,$project_id){
 
 add_action('admin_post_hcdecor_recipe_toggle',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
-    $id=sanitize_key($_POST['recipe_id']??'');
+    $id_raw=$_POST['recipe_id']??'';$id=sanitize_key(is_scalar($id_raw)?(string)$id_raw:'');
     check_admin_referer('hcdecor_recipe_toggle_'.$id);
     $recipes=hcdecor_recipes();
     foreach($recipes as &$recipe){

@@ -530,7 +530,7 @@ add_action('admin_post_hcdecor_review_action',function(){
     $id=(int)($_POST['job_id']??0);
     check_admin_referer('hcdecor_review_'.$id);
     if(get_post_type($id)!=='hc_content_job' || !current_user_can('edit_post',$id)) wp_die('Invalid job');
-    $action=sanitize_key($_POST['review_action']??'');
+    $action_raw=$_POST['review_action']??'';$action=sanitize_key(is_scalar($action_raw)?(string)$action_raw:'');
     $note_raw=wp_unslash($_POST['review_note']??'');$note=sanitize_textarea_field(is_scalar($note_raw)?(string)$note_raw:'');
     $note=function_exists('mb_substr')?mb_substr($note,0,5000):substr($note,0,5000);
     if($action==='approve'){

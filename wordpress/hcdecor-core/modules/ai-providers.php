@@ -379,7 +379,7 @@ add_action('admin_menu',function(){
 
 add_action('admin_post_hcdecor_ai_test_provider',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
-    $provider=sanitize_key($_POST['provider']??'');
+    $provider_raw=$_POST['provider']??'';$provider=sanitize_key(is_scalar($provider_raw)?(string)$provider_raw:'');
     check_admin_referer('hcdecor_ai_test_'.$provider);
     $result=hcdecor_ai_test_provider($provider);
     hcdecor_ai_store_test($provider,$result);
@@ -400,7 +400,7 @@ add_action('admin_init',function(){
 add_action('admin_post_hcdecor_ai_settings',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_ai_settings');
-    $primary=sanitize_key($_POST['primary']??'auto');
+    $primary_raw=$_POST['primary']??'auto';$primary=sanitize_key(is_scalar($primary_raw)?(string)$primary_raw:'auto');
     if(!in_array($primary,['auto','openai','gemini'],true)) $primary='auto';
     update_option('hcdecor_ai_primary',$primary,false);
     $old_models=['openai'=>hcdecor_ai_model('openai'),'gemini'=>hcdecor_ai_model('gemini')];

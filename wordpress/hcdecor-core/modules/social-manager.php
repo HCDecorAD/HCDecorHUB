@@ -82,7 +82,7 @@ add_action('admin_post_hcdecor_social_group_save', function () {
     if (!current_user_can('manage_options')) { wp_die('Forbidden'); }
     check_admin_referer('hcdecor_social_group_save');
     $groups = hcdecor_social_groups();
-    $key = sanitize_key($_POST['group_key'] ?? '');
+    $key_raw=$_POST['group_key']??'';$key=sanitize_key(is_scalar($key_raw)?(string)$key_raw:'');
     if ($key) { $groups[$key] = hcdecor_social_limit_text(wp_unslash($_POST['group_name'] ?? $key), 300); }
     update_option('hcdecor_social_groups', array_slice($groups, -50, null, true), false);
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-social-manager'));
@@ -92,11 +92,11 @@ add_action('admin_post_hcdecor_social_group_save', function () {
 add_action('admin_post_hcdecor_social_bulk_publish', function () {
     if (!current_user_can('manage_options')) { wp_die('Forbidden'); }
     check_admin_referer('hcdecor_social_bulk_publish');
-    if (empty($_POST['production_approved']) || (string) $_POST['production_approved'] !== '1') {
+    $approval_raw=$_POST['production_approved']??'';if (!is_scalar($approval_raw) || (string)$approval_raw !== '1') {
         wp_die('Explicit production approval is required before social publishing can be queued.');
     }
-    $ids = array_values(array_filter(array_map('sanitize_key', (array) ($_POST['accounts'] ?? []))));
-    $group = sanitize_key($_POST['account_group'] ?? '');
+    $accounts_raw=$_POST['accounts']??[];$ids=array_values(array_filter(array_map(function($id){return is_scalar($id)?sanitize_key((string)$id):'';},is_array($accounts_raw)?$accounts_raw:[])));
+    $group_raw=$_POST['account_group']??'';$group=sanitize_key(is_scalar($group_raw)?(string)$group_raw:'');
     if ($group) {
         foreach (hcdecor_social_accounts() as $account) {
             if (($account['group'] ?? '') === $group) { $ids[] = $account['id']; }

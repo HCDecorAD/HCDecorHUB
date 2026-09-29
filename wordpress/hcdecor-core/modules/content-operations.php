@@ -90,7 +90,7 @@ add_action('admin_post_hcdecor_ops_save', function(){
     if(!current_user_can('edit_posts')) wp_die('Forbidden');
     $id=(int)($_POST['job_id']??0); check_admin_referer('hcdecor_ops_save_'.$id);
     if(get_post_type($id)!=='hc_content_job' || !current_user_can('edit_post',$id)) wp_die('Invalid job');
-    $status=sanitize_key($_POST['agent_status']??'');
+    $status_raw=$_POST['agent_status']??'';$status=sanitize_key(is_scalar($status_raw)?(string)$status_raw:'');
     $current=sanitize_key(hcdecor_ops_limit_text(get_post_meta($id,'hc_agent_status',true),50));
     if($status!=='' && $status!==$current) wp_die('Workflow status is read-only here. Use Review Center or worker lifecycle actions.');
     if(in_array($current,['approved','published_web'],true)) wp_die('Approved or published jobs are immutable here. Return the job for changes and review again.');
