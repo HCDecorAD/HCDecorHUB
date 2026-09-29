@@ -18,6 +18,14 @@ function hcdecor_drive_inbox_settings(){
     return wp_parse_args(is_array($saved)?$saved:[],$defaults);
 }
 
+function hcdecor_drive_inbox_approval_fresh(WP_REST_Request $r){
+    if(!rest_sanitize_boolean($r->get_param('production_approved'))) return false;
+    $by=sanitize_text_field((string)$r->get_param('production_approved_by'));
+    $source=sanitize_key((string)$r->get_param('production_approval_source'));
+    $at=strtotime((string)$r->get_param('production_approved_at'))?:0;
+    return $by!=='' && in_array($source,['wp_user','service_bridge'],true) && $at>=time()-15*MINUTE_IN_SECONDS && $at<=time()+5*MINUTE_IN_SECONDS;
+}
+
 function hcdecor_drive_inbox_safe_text($value,$limit=500){
     $text=function_exists('hcdecor_drive_safe_error')?hcdecor_drive_safe_error($value):sanitize_text_field((string)$value);
     return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
@@ -254,8 +262,8 @@ add_action('rest_api_init',function(){
         'callback'=>function(WP_REST_Request $r){
             $settings=hcdecor_drive_inbox_settings();
             if(empty($settings['enabled'])) return new WP_Error('inbox_disabled','Drive Inbox is disabled.',['status'=>503]);
-            if((!empty($settings['auto_analyze']) || !empty($settings['auto_link_project'])) && !rest_sanitize_boolean($r->get_param('production_approved'))){
-                return new WP_Error('approval','Explicit approval is required for Drive Inbox mutation or AI side effects.',['status'=>403]);
+            if(!hcdecor_drive_inbox_approval_fresh($r)){
+                return new WP_Error('approval','Fresh explicit approval is required for Drive Inbox import or AI side effects.',['status'=>403]);
             }
             $result=hcdecor_drive_inbox_scan();
             return is_wp_error($result)?$result:rest_ensure_response($result);
