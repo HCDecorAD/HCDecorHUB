@@ -1,5 +1,5 @@
 {
-    "version":  "2026.09.29.184",
+    "version":  "2026.09.29.186",
     "files":  [
                   {
                       "path":  "hcdecor-core.php",
@@ -39,7 +39,7 @@
                   {
                       "path":  "modules/ai-providers.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/ai-providers.php",
-                      "git_sha1":  "f5a476264bde0a56f3c8575d8ce9dc950cba4a7b"
+                      "git_sha1":  "fdfcf5df95d7e8360369d1b08f8d642eab62f60a"
                   },
                   {
                       "path":  "modules/media-intelligence.php",
@@ -49,7 +49,7 @@
                   {
                       "path":  "modules/agent-intake.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/agent-intake.php",
-                      "git_sha1":  "1cc7289f7e045ea481b838aa6eb983b93f7db374"
+                      "git_sha1":  "7d166baeaab216a7cfa02eaeb0a004cf360f4e91"
                   },
                   {
                       "path":  "modules/web-publisher.php",
@@ -59,12 +59,12 @@
                   {
                       "path":  "modules/project-publishing.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/project-publishing.php",
-                      "git_sha1":  "d88c7cf95b477f0b15e9cb892b2cc551107c6161"
+                      "git_sha1":  "58f48d9ab80275e0987f07b452e53c9b3fba302c"
                   },
                   {
                       "path":  "modules/media-manager.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/modules/media-manager.php",
-                      "git_sha1":  "76e0613c85c7dde05e1e971bfc88452c2a97fa44"
+                      "git_sha1":  "7f773a5b58d386d9da3343c065eaf7659a0d59a1"
                   },
                   {
                       "path":  "modules/admin-cleanup.php",

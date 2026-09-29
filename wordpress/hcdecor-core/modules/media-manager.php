@@ -21,15 +21,15 @@ add_action('admin_post_hcdecor_media_assign',function(){
     if(!current_user_can('upload_files')) wp_die('Forbidden');
     check_admin_referer('hcdecor_media_assign');
     $project=(int)($_POST['project_id']??0);
-    $ids=array_slice(array_values(array_filter(array_unique(array_map('intval',(array)($_POST['media_ids']??[]))),function($id){ return get_post_type($id)==='attachment' && current_user_can('edit_post',$id); })),0,60);
+    $ids_raw=$_POST['media_ids']??[];$ids=array_slice(array_values(array_filter(array_unique(array_map('intval',is_array($ids_raw)?$ids_raw:[])),function($id){ return get_post_type($id)==='attachment' && current_user_can('edit_post',$id); })),0,60);
     if(!$project || get_post_type($project)!=='hc_project' || !current_user_can('edit_post',$project)) wp_die('Invalid project');
-    $existing=(array)get_post_meta($project,'hc_project_gallery',true);
+    $existing_raw=get_post_meta($project,'hc_project_gallery',true);$existing=is_array($existing_raw)?$existing_raw:[];
     $merged=array_slice(array_values(array_filter(array_unique(array_merge(array_map('intval',$existing),$ids)),function($id){ return get_post_type($id)==='attachment'; })),0,60);
     update_post_meta($project,'hc_project_gallery',$merged);
     update_post_meta($project,'hc_gallery_ids',$merged);
     if(!has_post_thumbnail($project) && !empty($ids[0]) && wp_attachment_is_image($ids[0])) set_post_thumbnail($project,$ids[0]);
     do_action('hcdecor_project_data_changed',$project);
-    $next=sanitize_key($_POST['next_action']??'assign');
+    $next_raw=$_POST['next_action']??'assign';$next=sanitize_key(is_scalar($next_raw)?(string)$next_raw:'assign');
     if($next==='agent' && function_exists('hcdecor_agent_create_job')){
         $brief_raw=wp_unslash($_POST['agent_brief']??'');$brief_raw=is_scalar($brief_raw)?(string)$brief_raw:'';$brief=function_exists('hcdecor_ops_limit_text')?hcdecor_ops_limit_text($brief_raw,20000):(function_exists('mb_substr')?mb_substr(sanitize_textarea_field($brief_raw),0,20000):substr(sanitize_textarea_field($brief_raw),0,20000));
         $job=hcdecor_agent_create_job($project,$ids,$brief);

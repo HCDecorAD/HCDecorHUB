@@ -60,14 +60,14 @@ function hcdecor_ai_schema(){
 
 function hcdecor_ai_prompt($job_id){
     $clip=function($value,$limit){
-        $text=wp_strip_all_tags((string)$value);
+        $text=wp_strip_all_tags(is_scalar($value)?(string)$value:'');
         return function_exists('mb_substr')?mb_substr($text,0,$limit):substr($text,0,$limit);
     };
     $job=get_post($job_id);
     if(!$job || $job->post_type!=='hc_content_job') return '';
     $project_id=(int)get_post_meta($job_id,'hc_project_id',true);
     $project=$project_id?get_post($project_id):null;
-    $channels=(array)get_post_meta($job_id,'hc_channels',true);
+    $channels_raw=get_post_meta($job_id,'hc_channels',true);$channels=is_array($channels_raw)?array_slice(array_values(array_filter(array_map(function($v){return is_scalar($v)?sanitize_key((string)$v):'';},$channels_raw))),0,10):[];
     $review_note=hcdecor_ai_bounded_scalar(get_post_meta($job_id,'hc_review_note',true),5000);
 
     $parts=[
@@ -82,10 +82,10 @@ function hcdecor_ai_prompt($job_id){
         'CHANNELS: '.implode(', ',$channels?:['web']),
     ];
     $media_notes=[];
-    foreach(array_slice((array)get_post_meta($job_id,'hc_media_ids',true),0,12) as $mid){
+    $media_ids_raw=get_post_meta($job_id,'hc_media_ids',true);foreach(array_slice(is_array($media_ids_raw)?$media_ids_raw:[],0,12) as $mid){
         $mid=(int)$mid; $summary=hcdecor_ai_bounded_scalar(get_post_meta($mid,'hc_ai_summary',true),5000);
         if($summary==='') continue;
-        $tags=array_slice((array)get_post_meta($mid,'hc_ai_tags',true),0,30);
+        $tags_raw=get_post_meta($mid,'hc_ai_tags',true);$tags=array_slice(is_array($tags_raw)?array_values(array_filter(array_map(function($v){return is_scalar($v)?sanitize_text_field((string)$v):'';},$tags_raw))):[],0,30);
         $media_notes[]='#'.$mid.' '.$clip($summary,5000).' | cover_score='.(int)get_post_meta($mid,'hc_ai_cover_score',true).' | tags='.$clip(implode(',',$tags),3000);
     }
     if($media_notes) $parts[]='MEDIA ANALYSIS:\n'.implode("\n",$media_notes);
@@ -98,7 +98,7 @@ function hcdecor_ai_prompt($job_id){
 }
 
 function hcdecor_ai_media_parts($job_id,$provider){
-    $ids=(array)get_post_meta($job_id,'hc_media_ids',true);
+    $ids_raw=get_post_meta($job_id,'hc_media_ids',true);$ids=is_array($ids_raw)?$ids_raw:[];
     $ids=array_slice(array_values(array_filter(array_map('intval',$ids))),0,4);
     $parts=[]; $bytes_total=0; $limit=12*1024*1024;
     foreach($ids as $id){

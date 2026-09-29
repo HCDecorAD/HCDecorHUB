@@ -250,7 +250,7 @@ findstr /c:"8192:500" "wordpress\hcdecor-core\modules\social-connectors.php" >nu
 findstr /c:"array_key_exists" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 300
 findstr /c:"mb_substr($note,0,5000)" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 273
 findstr /c:"$clip($project->post_content,30000)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 274
-findstr /c:"array_slice((array)get_post_meta($job_id,'hc_media_ids',true),0,12)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 275
+findstr /c:"$media_ids_raw=get_post_meta($job_id,'hc_media_ids',true)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 275
 findstr /c:"$clip($drive_prompt,20000)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 276
 findstr /c:"!=='attachment'" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 116
 findstr /c:"wp_attachment_is_image" "wordpress\hcdecor-core\modules\drive-inbox.php" >nul || exit /b 117
@@ -578,6 +578,12 @@ findstr /c:"hcdecor_auto_settings_change(get_option('hcdecor_automation_settings
 findstr /c:"$mutex_token=is_scalar($mutex['token']" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 606
 findstr /c:"$production_approved=$_POST['production_approved']" "wordpress\hcdecor-core\modules\workflow-engine.php" >nul || exit /b 607
 findstr /c:"$safe_key=hcdecor_social_limit_text" "wordpress\hcdecor-core\modules\social-manager.php" >nul || exit /b 608
+findstr /c:"$channels_raw=get_post_meta($job_id,'hc_channels',true)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 609
+findstr /c:"$media_ids_raw=get_post_meta($job_id,'hc_media_ids',true)" "wordpress\hcdecor-core\modules\ai-providers.php" >nul || exit /b 610
+findstr /c:"$media_raw=get_post_meta($project,'hc_project_gallery',true)" "wordpress\hcdecor-core\modules\agent-intake.php" >nul || exit /b 611
+findstr /c:"$ids_raw=get_post_meta(get_the_ID(),'hc_project_gallery',true)" "wordpress\hcdecor-core\modules\project-publishing.php" >nul || exit /b 612
+findstr /c:"$ids_raw=$_POST['media_ids']" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 613
+findstr /c:"$existing_raw=get_post_meta($project,'hc_project_gallery',true)" "wordpress\hcdecor-core\modules\media-manager.php" >nul || exit /b 614
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

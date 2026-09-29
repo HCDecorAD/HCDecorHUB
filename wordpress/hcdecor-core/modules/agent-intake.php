@@ -81,8 +81,8 @@ add_action('admin_post_hcdecor_agent_from_project',function(){
     $project=(int)($_GET['project_id']??0);
     if(!$project || !current_user_can('edit_post',$project)) wp_die('Forbidden');
     check_admin_referer('hcdecor_agent_from_project_'.$project);
-    $media=(array)get_post_meta($project,'hc_project_gallery',true);
-    if(!$media) $media=(array)get_post_meta($project,'hc_gallery_ids',true);
+    $media_raw=get_post_meta($project,'hc_project_gallery',true);$media=is_array($media_raw)?array_slice(array_values(array_filter(array_map('intval',$media_raw))),0,60):[];
+    if(!$media){$legacy_raw=get_post_meta($project,'hc_gallery_ids',true);$media=is_array($legacy_raw)?array_slice(array_values(array_filter(array_map('intval',$legacy_raw))),0,60):[];}
     $id=hcdecor_agent_create_job($project,$media,'');
     if(is_wp_error($id)) wp_die(function_exists('hcdecor_ai_safe_error')?hcdecor_ai_safe_error($id->get_error_message()):'Unable to create content job.');
     wp_safe_redirect(admin_url('admin.php?page=hcdecor-content-operations&job='.$id.'&created=1')); exit;
