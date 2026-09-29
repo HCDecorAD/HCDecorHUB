@@ -7,8 +7,8 @@ export function MasterConsole(){
  const [intent,setIntent]=useState("");
  const [result,setResult]=useState(null);
  const [busy,setBusy]=useState(false);const [runs,setRuns]=useState([]);
- async function refreshRuns(){try{const r=await fetch("/api/master/runs?limit=5",{cache:"no-store"});const x=await r.json();setRuns(Array.isArray(x.runs)?x.runs:[])}catch{setRuns([])}}
- useEffect(()=>{refreshRuns()},[]);
+ async function refreshRuns(){try{const r=await fetch(`/api/master/runs?limit=5&workspace=${encodeURIComponent(workspace)}`,{cache:"no-store"});const x=await r.json();setRuns(Array.isArray(x.runs)?x.runs:[])}catch{setRuns([])}}
+ useEffect(()=>{refreshRuns()},[workspace]);
  async function run(e){e.preventDefault();if(!intent.trim())return;setBusy(true);setResult(null);
   try{const body=JSON.stringify({workspace_id:workspace,module,action,intent,execute:action==="view"||(action==="create"&&["agents","reports","audit"].includes(module))});const r=await fetch("/api/master",{method:"POST",headers:{"content-type":"application/json"},body});setResult(await r.json())}
   catch{setResult({ok:false,error:"request_failed"})}finally{setBusy(false);await refreshRuns()}}
