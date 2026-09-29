@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) exit;
 
 define('HCDECOR_RUNTIME_VERSION','2026.09.29.199');
 
-add_action('init',function(){
+function hcdecor_runtime_register_content_types(){
     register_post_type('hc_project',[
         'labels'=>['name'=>'HCDecor Projects','singular_name'=>'HCDecor Project'],
         'public'=>true,'show_in_rest'=>true,'supports'=>['title','editor','thumbnail','excerpt'],
@@ -23,7 +23,10 @@ add_action('init',function(){
         'labels'=>['name'=>'HCDecor Content Jobs','singular_name'=>'HCDecor Content Job'],
         'public'=>false,'show_ui'=>true,'show_in_rest'=>false,'supports'=>['title','editor']
     ]);
-},5);
+}
+add_action('init','hcdecor_runtime_register_content_types',5);
+register_activation_hook(__FILE__,function(){hcdecor_runtime_register_content_types();flush_rewrite_rules();});
+register_deactivation_hook(__FILE__,function(){flush_rewrite_rules();});
 
 $hcdecor_modules=[
     'workflow-engine.php','content-operations.php','media-manager.php','media-intelligence.php',

@@ -159,7 +159,7 @@
                   {
                       "path":  "hcdecor-runtime.php",
                       "url":  "https://raw.githubusercontent.com/HCDecorAD/HCDecorHUB/main/wordpress/hcdecor-core/hcdecor-runtime.php",
-                      "git_sha1":  "09f598c5b66721f08427005310178c540d2356b1"
+                      "git_sha1":  "9559f1b40a732517b2f77ac7753a509bda974ddd"
                   }
               ]
 }
