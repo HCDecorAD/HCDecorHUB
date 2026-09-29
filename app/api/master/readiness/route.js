@@ -1,1 +1,1 @@
-import {operationalSummary} from "../../../../lib/operational-summary";export async function GET(){return Response.json({ok:true,...await operationalSummary()})}
+import {operationalSummary} from "../../../../lib/operational-summary";export async function GET(request){const live=new URL(request.url).searchParams.get("live")==="1";return Response.json({ok:true,...await operationalSummary({live})})}
