@@ -465,6 +465,9 @@ findstr /c:"if(strlen($token)>8192)$token=''" "wordpress\hcdecor-core\modules\so
 findstr /c:"$limits=['facebook_page_id'=>500" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 493
 findstr /c:"Social connector credential is too long." "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 494
 findstr /c:"is_scalar($channel_raw)" "wordpress\hcdecor-core\modules\social-connectors.php" >nul || exit /b 495
+findstr /c:"strlen($url)<=2048" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 496
+findstr /c:"Webhook URL is too long." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 497
+findstr /c:"hcdecor_conn_public_https($out['webhook_url'])" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 498
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45

@@ -25,8 +25,13 @@ function hcdecor_auto_settings(){
         'max_attempts'=>4,
         'retry_minutes'=>15
     ];
-    $v=get_option('hcdecor_automation_settings',[]);
-    return wp_parse_args(is_array($v)?$v:[],$d);
+    $v=get_option('hcdecor_automation_settings',[]);$v=is_array($v)?$v:[];
+    $url=is_scalar($v['webhook_url']??'')?trim((string)$v['webhook_url']):'';$url=strlen($url)<=2048?esc_url_raw($url):'';
+    $out=['enabled'=>!empty($v['enabled']),'social_enabled'=>!empty($v['social_enabled']),'webhook_enabled'=>!empty($v['webhook_enabled']),'webhook_url'=>$url,'evergreen_enabled'=>!empty($v['evergreen_enabled']),'evergreen_days'=>max(7,min(3650,(int)($v['evergreen_days']??$d['evergreen_days']))),'max_attempts'=>max(1,min(10,(int)($v['max_attempts']??$d['max_attempts']))),'retry_minutes'=>max(1,min(1440,(int)($v['retry_minutes']??$d['retry_minutes'])) )];
+    if($out['webhook_enabled'] && (!$out['webhook_url'] || !function_exists('hcdecor_conn_public_https') || !hcdecor_conn_public_https($out['webhook_url']))){$out['webhook_enabled']=false;$out['webhook_url']='';}
+    if($out['social_enabled'] && !$out['webhook_enabled']) $out['social_enabled']=false;
+    if($out['evergreen_enabled'] && !$out['social_enabled']) $out['evergreen_enabled']=false;
+    return $out;
 }
 
 function hcdecor_auto_statuses(){
@@ -408,11 +413,13 @@ add_action('admin_post_hcdecor_automation_settings',function(){
     if(!current_user_can('manage_options')) wp_die('Forbidden');
     check_admin_referer('hcdecor_automation_settings');
     $old=hcdecor_auto_settings();
+    $webhook_raw=wp_unslash($_POST['webhook_url']??'');$webhook_raw=is_scalar($webhook_raw)?trim((string)$webhook_raw):'';
+    if(strlen($webhook_raw)>2048) wp_die('Webhook URL is too long.');
     $new=[
         'enabled'=>!empty($_POST['enabled']),
         'social_enabled'=>!empty($_POST['social_enabled']),
         'webhook_enabled'=>!empty($_POST['webhook_enabled']),
-        'webhook_url'=>esc_url_raw(wp_unslash($_POST['webhook_url']??'')),
+        'webhook_url'=>esc_url_raw($webhook_raw),
         'evergreen_enabled'=>!empty($_POST['evergreen_enabled']),
         'evergreen_days'=>max(7,min(3650,(int)($_POST['evergreen_days']??30))),
         'max_attempts'=>max(1,min(10,(int)($_POST['max_attempts']??4))),
