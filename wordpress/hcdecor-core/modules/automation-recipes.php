@@ -87,8 +87,10 @@ function hcdecor_recipe_defaults(){
 }
 
 function hcdecor_recipes(){
-    $saved=get_option('hcdecor_automation_recipes',[]);
-    return is_array($saved)&&$saved?$saved:hcdecor_recipe_defaults();
+    $defaults=hcdecor_recipe_defaults();$saved=get_option('hcdecor_automation_recipes',[]);$enabled=[];
+    if(is_array($saved)){foreach(array_slice($saved,0,100) as $recipe){if(!is_array($recipe))continue;$id=sanitize_key(is_scalar($recipe['id']??'')?(string)$recipe['id']:'');if($id!=='')$enabled[$id]=!empty($recipe['enabled']);}}
+    foreach($defaults as &$recipe){$id=(string)($recipe['id']??'');if(array_key_exists($id,$enabled))$recipe['enabled']=$enabled[$id];}unset($recipe);
+    return $defaults;
 }
 
 function hcdecor_recipe_condition_match($condition,$context){

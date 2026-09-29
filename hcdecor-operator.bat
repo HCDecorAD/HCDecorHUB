@@ -468,6 +468,9 @@ findstr /c:"is_scalar($channel_raw)" "wordpress\hcdecor-core\modules\social-conn
 findstr /c:"strlen($url)<=2048" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 496
 findstr /c:"Webhook URL is too long." "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 497
 findstr /c:"hcdecor_conn_public_https($out['webhook_url'])" "wordpress\hcdecor-core\modules\automation-hub.php" >nul || exit /b 498
+findstr /c:"$defaults=hcdecor_recipe_defaults()" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 499
+findstr /c:"array_slice($saved,0,100)" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 500
+findstr /c:"$recipe['enabled']=$enabled[$id]" "wordpress\hcdecor-core\modules\automation-recipes.php" >nul || exit /b 501
 echo Guards OK.
 echo [6/7] Next.js build
 call npm run build || exit /b 45
