@@ -22,7 +22,7 @@ async function comment(n,obj){return api(`repos/${RELAY}/issues/${n}/comments`,"
 async function close(n){try{await api(`repos/${RELAY}/issues/${n}`,"PATCH",[["state","closed"]])}catch{}}
 async function runJob(issue){
  const body=JSON.parse(issue.body||"{}"); if(body.schema!=="hcdr-relay/v1") throw Error("bad_schema");
- const allowed=new Set(["health","list_directory","read_file","git_status","git_diff","build"]);
+ const allowed=new Set(["health","list_directory","read_file","write_file","edit_file","run_command","start_process","process_output","git_status","git_diff","git_commit","build"]);
  if(!allowed.has(body.tool)) throw Error("tool_not_allowed");
  if(body.tool==="read_file" && /(^|[\\/])(\.env|.*secret.*|.*credential.*|.*token.*|.*\.key|.*\.pem)([\\/]|$)/i.test(String(body.args?.path||""))) throw Error("secret_path_denied");
  return hybrid.execute(body.tool,body.args||{},{localReachable:true});
