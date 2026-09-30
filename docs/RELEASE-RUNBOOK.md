@@ -1,22 +1,31 @@
 # HCDecor HUB Release Runbook
 
-## Gate
+## Production authorities
+- HCDecor public website: WordPress at https://hcdecorhub.com
+- HCDecor Agent/API control plane: Cloudflare Worker `hcdecor-hub`
+- GSC public frontend: GitHub Pages at https://gscsenior.hcdecorhub.com
+- AMO public frontend: GitHub Pages at https://amonguyen.hcdecorhub.com
+- GitHub `main`: source/version/rollback authority
+
+## Release gate
 1. Resolve Workspace and Site from Registry.
-2. Confirm repository/runtime authority.
-3. Verify permissions.
-4. Create or confirm rollback point.
-5. Build/preview.
-6. QA responsive + critical flows.
-7. Production promotion only after gate passes.
-8. Verify public URL.
-9. Write audit event.
+2. Confirm repository/runtime authority and permissions.
+3. Create or confirm rollback point.
+4. Pass Architecture, Commerce and Persistence contracts.
+5. Pass production build, Master Agent local E2E and Cloudflare build.
+6. Production promotion only through `.github/workflows/production-deploy.yml` using the GitHub `production` environment.
+7. The deploy workflow must run strict production smoke after Wrangler deploy.
+8. Independent `production-verify.yml` remains strict and must expose source/production drift rather than masking it.
+
+## Safety boundary
+Production mutation execution remains disabled until a concrete durable state provider and authenticated identity/approval authority are bound and verified. Local `.runtime` files are non-authoritative. An environment flag alone is never durable execution authority. Do not change DNS, frontend hosting authority, or weaken smoke checks to make a release pass.
 
 ## Site rules
 ### HCDecor
-Production is WordPress + Elementor at https://hcdecorhub.com. GitHub Next/legacy-host source is reference/command-center source, not production authority.
+WordPress remains public website authority. The Next.js/Cloudflare Worker is the Agent/API control plane, not the HCDecor public website replacement.
 
 ### GSC
-Repository HCDecorAD/GSC. Preserve 11 hotspots. Hotspots 1â€“10 use configured real videos; hotspot 11 has no video. Never replace the large index blindly.
+Repository `HCDecorAD/GSC`; GitHub Pages is production frontend authority. Preserve the 11 hotspot contract; hotspots 1–10 use configured videos and hotspot 11 has no video.
 
 ### AMO
-Repository HCDecorAD/AMONguyen. Production frontend is verified live at https://amonnguyen.hcdecorhub.com. Deployment provider remains registry-controlled; verify the current adapter before any promotion. Never fabricate products, prices, stock, brands, reviews, or order history.
+Repository `HCDecorAD/AMONguyen`; GitHub Pages is production frontend authority at https://amonguyen.hcdecorhub.com. Never fabricate products, prices, stock, brands, reviews, or order history. Commerce data authority is the verified Shop Engine.
