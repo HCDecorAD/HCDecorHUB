@@ -2,6 +2,11 @@ name: HCDecor HUB Production Deploy
 
 on:
   workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Exact main commit SHA approved for production
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -16,7 +21,13 @@ jobs:
     timeout-minutes: 20
     environment: production
     steps:
+      - name: Verify approved source is current main
+        shell: bash
+        run: |
+          test "${{ github.event.inputs.source_sha }}" = "${{ github.sha }}" || { echo "source_sha must equal current main ${{ github.sha }}"; exit 1; }
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.source_sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
