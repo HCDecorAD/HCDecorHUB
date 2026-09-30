@@ -1,0 +1,2 @@
+import {commerceAdminCapability,commerceAdminDraft} from "../../../../lib/commerce/admin";
+export async function POST(req){const cap=commerceAdminCapability();if(!cap.configured)return Response.json({...cap,ok:false,error:"credential_not_configured"},{status:503});const body=await req.json().catch(()=>({}));const x=await commerceAdminDraft(body.action,body.payload||{});return Response.json({...cap,...x},{status:x.status})}
