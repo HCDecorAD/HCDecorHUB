@@ -23,3 +23,10 @@ Local backup is supplementary only. Production recovery requires off-device back
 
 ## Security
 Default deny, exact workspace/site/module grants, explicit approval for production mutation, no test-mode production writes, no secrets in source, audit every production-impacting action.
+
+
+## Durable execution gate
+
+Production mutation execution remains disabled until a concrete durable state provider and authenticated identity/approval authority are bound and verified. Local `.runtime` run and approval spools are diagnostic/development state only and are never production authority. Setting an environment flag alone must not make readiness or runtime report durable execution as available. Approval POST is fail-closed until authenticated durable approval is implemented.
+
+Release quality requires architecture, commerce, persistence, production build, Master Agent local E2E, and Cloudflare build gates to pass. Independent production verification must validate the deployed Worker separately from source CI.
