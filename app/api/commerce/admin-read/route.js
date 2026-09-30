@@ -1,0 +1,2 @@
+import {commerceAdminCapability,commerceAdminRead} from "../../../../lib/commerce/admin";
+export async function GET(req){const resource=new URL(req.url).searchParams.get("resource")||"products";const cap=commerceAdminCapability();if(!cap.configured)return Response.json({...cap,ok:false,error:"credential_not_configured",items:[]},{status:503});const x=await commerceAdminRead(resource);return Response.json({...cap,...x},{status:x.status})}
