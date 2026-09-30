@@ -1,12 +1,14 @@
 import {runtimeCapabilities} from "../../../lib/data/store";
 import {getHubConfig} from "../../../lib/hub-config";
 import {productionGuard} from "../../../lib/hub-policy";
+import {durableRuntimeStatus} from "../../../lib/durable-runtime";
 export async function GET(){
  const capabilities=runtimeCapabilities();
  const {agents}=getHubConfig();
  const guard=productionGuard();
- const durableExecution=false;
- const durableExecutionReason="durable-provider-not-bound";
+ const durable=durableRuntimeStatus();
+ const durableExecution=durable.available;
+ const durableExecutionReason=durable.reason;
  return Response.json({
   service:"ok",architecture:agents.architecture,masterAgent:agents.master_agent.id,
   masterRuntime:{
