@@ -2,14 +2,16 @@ import {operationalSummary} from "../../../../lib/operational-summary";
 export async function GET(request){
  const live=new URL(request.url).searchParams.get("live")==="1";
  const summary=await operationalSummary({live});
- const durableExecution=process.env.HC_DURABLE_EXECUTION_ENABLED==="true";
+ const durableExecution=false;
+ const durableExecutionReason="durable-provider-not-bound";
  return Response.json({
   ok:true,
   ...summary,
   production_readiness:{
    durable_execution:durableExecution,
+   durable_execution_reason:durableExecutionReason,
    local_spool_authority:false,
-   mutation_execution_enabled:durableExecution,
+   mutation_execution_enabled:false,
    production_write:"approval-required"
   }
  });
