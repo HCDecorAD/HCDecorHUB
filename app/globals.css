@@ -74,3 +74,5 @@ html[data-theme="dark"] .realStat span,html[data-theme="dark"] .guard span{color
 .commerceLink{display:inline-flex;align-items:center;padding:10px 13px;border:1px solid #263242;border-radius:8px;color:#dce6f2;text-decoration:none;background:#0d131b}.commerceLink:hover{border-color:#4a6480}
 
 .taxonomyGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.taxonomyGrid article{display:grid;gap:4px;padding:12px;border:1px solid #263242;border-radius:8px;background:#0d131b}.taxonomyGrid small{color:#7f8b9a}
+
+.draftActions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.draftActions button{font-size:11px;padding:5px 7px;border:1px solid #263242;border-radius:6px;background:#111a24;color:#dce6f2}
