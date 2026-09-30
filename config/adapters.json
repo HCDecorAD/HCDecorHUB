@@ -23,7 +23,7 @@
                                  },
                      "GSC":  {
                                  "type":  "cloudflare",
-                                 "production_url":  "https://gsc-senior.huycuongonline.workers.dev",
+                                 "production_url":  "https://gscsenior.hcdecorhub.com",
                                  "repository":  "HCDecorAD/GSC",
                                  "config_source":  "gsc-config.json",
                                  "config_state":  "configured-source",
@@ -55,7 +55,7 @@
                              },
                      "AMO":  {
                                  "type":  "cloudflare",
-                                 "production_url":  "https://amo-nguyen.huycuongonline.workers.dev",
+                                 "production_url":  "https://amonguyen.hcdecorhub.com",
                                  "repository":  "HCDecorAD/AMONguyen",
                                  "config_state":  "configured-source",
                                  "live_health":  "migration-pending",
