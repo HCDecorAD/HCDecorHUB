@@ -33,7 +33,7 @@ jobs:
       - name: Master Agent local E2E
         shell: bash
         run: |
-          npm run start -- -p 3219 > /tmp/hcdecor-next.log 2>&1 &
+          NODE_ENV=test npm run start -- -p 3219 > /tmp/hcdecor-next.log 2>&1 &
           pid=$!
           trap 'kill $pid || true' EXIT
           for i in {1..45}; do
@@ -41,6 +41,6 @@ jobs:
             sleep 1
           done
           curl -fsS http://127.0.0.1:3219/api/master/readiness >/dev/null
-          npm run test:master
+          NODE_ENV=test npm run test:master
       - name: Cloudflare build
         run: npm run cf:build
