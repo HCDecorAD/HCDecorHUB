@@ -8,11 +8,19 @@
     "start": "next start",
     "test:master": "node scripts/master-e2e.mjs",
     "test:google-write": "node scripts/google-write-smoke.mjs",
-    "test:architecture": "node scripts/architecture-check.mjs"
+    "test:architecture": "node scripts/architecture-check.mjs",
+    "cf:build": "opennextjs-cloudflare build",
+    "cf:preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "cf:deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
   "dependencies": {
     "next": "16.3.6",
     "react": "19.2.0",
     "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "^1.20.7",
+    "cloudflare": "^4.5.0",
+    "wrangler": "^4.144.0"
   }
 }

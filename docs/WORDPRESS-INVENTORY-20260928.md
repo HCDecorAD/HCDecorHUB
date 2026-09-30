@@ -1,4 +1,4 @@
-# HCDecor WordPress Inventory — 2026-09-28
+# HCDecor WordPress Inventory â€” 2026-09-28
 
 - Production: https://hcdecorhub.com
 - WordPress blog ID: 162890150
@@ -16,7 +16,7 @@
 - No plugin updates were reported at inventory time.
 
 ## Deployment rule
-This site is the HCDecor production authority. Legacy Vercel/Next assets in the repository are not production.
+This site is the HCDecor production authority. Legacy legacy-host/Next assets in the repository are not production.
 
 ## Safety
 No theme/site-wide write is made without reading current state and retaining rollback. WordPress connector requires explicit confirmation for site-wide writes.

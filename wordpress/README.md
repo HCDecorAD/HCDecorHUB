@@ -1,22 +1,22 @@
 # HCDecor WordPress + Elementor
 
-Mục tiêu: thay Visual Builder tự phát triển bằng WordPress + Elementor Free, trong khi production Vercel hiện tại vẫn giữ nguyên để rollback.
+MÃ¡Â»Â¥c tiÃƒÂªu: thay Visual Builder tÃ¡Â»Â± phÃƒÂ¡t triÃ¡Â»Æ’n bÃ¡ÂºÂ±ng WordPress + Elementor Free, trong khi legacy production host hiÃ¡Â»â€¡n tÃ¡ÂºÂ¡i vÃ¡ÂºÂ«n giÃ¡Â»Â¯ nguyÃƒÂªn Ã„â€˜Ã¡Â»Æ’ rollback.
 
-## Kiến trúc
-- Production hiện tại: Vercel (không thay đổi)
-- Visual website mới: WordPress + Elementor Free
-- Theme nền: Hello Elementor
+## KiÃ¡ÂºÂ¿n trÃƒÂºc
+- Agent Public production: Cloudflare Workers
+- Visual website mÃ¡Â»â€ºi: WordPress + Elementor Free
+- Theme nÃ¡Â»Ân: Hello Elementor
 - Website Data: WordPress REST API
-- HCDecor HUB: tích hợp REST API sau khi staging ổn định
+- HCDecor HUB: tÃƒÂ­ch hÃ¡Â»Â£p REST API sau khi staging Ã¡Â»â€¢n Ã„â€˜Ã¡Â»â€¹nh
 
-## Cài staging
-1. Tạo WordPress staging trên hosting/VPS có PHP + MySQL.
-2. Cài theme **Hello Elementor**.
-3. Cài plugin **Elementor Website Builder** bản Free.
-4. Copy thư mục plugin `wordpress/hcdecor-core` vào `wp-content/plugins/hcdecor-core`.
+## CÃƒÂ i staging
+1. TÃ¡ÂºÂ¡o WordPress staging trÃƒÂªn hosting/VPS cÃƒÂ³ PHP + MySQL.
+2. CÃƒÂ i theme **Hello Elementor**.
+3. CÃƒÂ i plugin **Elementor Website Builder** bÃ¡ÂºÂ£n Free.
+4. Copy thÃ†Â° mÃ¡Â»Â¥c plugin `wordpress/hcdecor-core` vÃƒÂ o `wp-content/plugins/hcdecor-core`.
 5. Activate **HCDecor Core**.
-6. Vào Settings > Permalinks > Post name.
-7. Tạo các trang: Trang chủ, Giới thiệu, Dịch vụ, Dự án, Liên hệ.
-8. Dùng Elementor dựng Trang chủ theo `design-system.md`.
+6. VÃƒÂ o Settings > Permalinks > Post name.
+7. TÃ¡ÂºÂ¡o cÃƒÂ¡c trang: Trang chÃ¡Â»Â§, GiÃ¡Â»â€ºi thiÃ¡Â»â€¡u, DÃ¡Â»â€¹ch vÃ¡Â»Â¥, DÃ¡Â»Â± ÃƒÂ¡n, LiÃƒÂªn hÃ¡Â»â€¡.
+8. DÃƒÂ¹ng Elementor dÃ¡Â»Â±ng Trang chÃ¡Â»Â§ theo `design-system.md`.
 
-Không chuyển domain production cho đến khi staging đạt kiểm thử Desktop/Tablet/Mobile.
+KhÃƒÂ´ng chuyÃ¡Â»Æ’n domain production cho Ã„â€˜Ã¡ÂºÂ¿n khi staging Ã„â€˜Ã¡ÂºÂ¡t kiÃ¡Â»Æ’m thÃ¡Â»Â­ Desktop/Tablet/Mobile.

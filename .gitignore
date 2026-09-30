@@ -4,10 +4,10 @@ node_modules/
 .env.local
 .env.*
 !.env.example
-.vercel/
 .runtime/
 dist/
 
 public/.runtime-install/
-.vercel
 .env*
+.open-next/
+.wrangler/

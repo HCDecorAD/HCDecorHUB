@@ -1,7 +1,7 @@
 const TARGETS=[
  ["hcdecor","https://hcdecorhub.com"],
- ["gsc","https://gscsenior.vercel.app"],
- ["amo","https://amonguyen.vercel.app"],
+ ["gsc","https://gscsenior.hcdecorhub.com"],
+ ["amo","https://amonnguyen.hcdecorhub.com"],
  ["shop-engine","https://hc-shop-engine.huycuongonline.workers.dev/api/health"]
 ];
 async function probe([id,url]){const started=Date.now();try{const r=await fetch(url,{cache:"no-store",signal:AbortSignal.timeout(8000)});return {id,ok:r.ok,status:r.status,latency_ms:Date.now()-started}}catch{return {id,ok:false,status:0,latency_ms:Date.now()-started}}}

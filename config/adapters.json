@@ -1,4 +1,4 @@
-﻿{
+{
     "schema_version":  "1.1.0",
     "adapters":  {
                      "HCDECOR":  {
@@ -22,12 +22,12 @@
                                                 }
                                  },
                      "GSC":  {
-                                 "type":  "vercel",
-                                 "production_url":  "https://gscsenior.vercel.app",
+                                 "type":  "cloudflare",
+                                 "production_url":  "https://gscsenior.hcdecorhub.com",
                                  "repository":  "HCDecorAD/GSC",
                                  "config_source":  "gsc-config.json",
                                  "config_state":  "configured-source",
-                                 "live_health":  "healthy",
+                                 "live_health":  "migration-pending",
                                  "invariants":  {
                                                     "hotspots":  11,
                                                     "video_hotspots":  [
@@ -54,11 +54,11 @@
                                         }
                              },
                      "AMO":  {
-                                 "type":  "vercel",
-                                 "production_url":  "https://amonguyen.vercel.app",
+                                 "type":  "cloudflare",
+                                 "production_url":  "https://amonnguyen.hcdecorhub.com",
                                  "repository":  "HCDecorAD/AMONguyen",
                                  "config_state":  "configured-source",
-                                 "live_health":  "healthy",
+                                 "live_health":  "migration-pending",
                                  "rule":  "No fabricated products, prices, inventory, or brands.",
                                  "source_state":  "storefront-foundation-present",
                                  "qa":  {

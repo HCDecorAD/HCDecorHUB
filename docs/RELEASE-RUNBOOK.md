@@ -13,10 +13,10 @@
 
 ## Site rules
 ### HCDecor
-Production is WordPress + Elementor at https://hcdecorhub.com. GitHub Next/Vercel source is reference/command-center source, not production authority.
+Production is WordPress + Elementor at https://hcdecorhub.com. GitHub Next/legacy-host source is reference/command-center source, not production authority.
 
 ### GSC
-Repository HCDecorAD/GSC. Preserve 11 hotspots. Hotspots 1–10 use configured real videos; hotspot 11 has no video. Never replace the large index blindly.
+Repository HCDecorAD/GSC. Preserve 11 hotspots. Hotspots 1â€“10 use configured real videos; hotspot 11 has no video. Never replace the large index blindly.
 
 ### AMO
-Repository HCDecorAD/AMONguyen. Production frontend is verified live at https://amonguyen.vercel.app. Deployment provider remains registry-controlled; verify the current adapter before any promotion. Never fabricate products, prices, stock, brands, reviews, or order history.
+Repository HCDecorAD/AMONguyen. Production frontend is verified live at https://amonnguyen.hcdecorhub.com. Deployment provider remains registry-controlled; verify the current adapter before any promotion. Never fabricate products, prices, stock, brands, reviews, or order history.
