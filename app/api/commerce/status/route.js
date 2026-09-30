@@ -1,6 +1,6 @@
 const ENGINE="https://hc-shop-engine.huycuongonline.workers.dev";
 const STORE="store_amo";
-async function get(path){try{const r=await fetch(ENGINE+path,{headers:{"x-store-id":STORE},cache:"no-store"});const data=await r.json();return {ok:r.ok,status:r.status,data}}catch{return {ok:false,status:0,data:null}}}
+async function get(path){try{let binding=null;try{binding=(await import("@opennextjs/cloudflare")).getCloudflareContext().env.HC_SHOP_ENGINE}catch{};const target=binding||{fetch};const url=binding?("https://hc-shop-engine.internal"+path):(ENGINE+path);const r=await target.fetch(url,{headers:{"x-store-id":STORE},cache:"no-store"});const data=await r.json();return {ok:r.ok,status:r.status,data}}catch{return {ok:false,status:0,data:null}}}
 export async function GET(){
  const [health,store,catalog]=await Promise.all([get("/api/health"),get("/api/store"),get("/api/catalog")]);
  const items=Array.isArray(catalog.data?.items)?catalog.data.items:[];

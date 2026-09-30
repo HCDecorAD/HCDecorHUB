@@ -5,5 +5,6 @@
   "compatibility_date": "2026-09-30",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {"directory": ".open-next/assets","binding":"ASSETS"},
+  "services": [{"binding":"HC_SHOP_ENGINE","service":"hc-shop-engine"}],
   "observability": {"enabled": true}
 }
