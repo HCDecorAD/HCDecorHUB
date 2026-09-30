@@ -6,6 +6,8 @@ const execFileAsync=promisify(execFile);
 const ROOT=process.env.HCDR_ROOT||"D:/HCDecorHUB";
 const RELAY=process.env.HCDR_RELAY_REPO;
 const INTERVAL=Math.max(5000,Number(process.env.HCDR_RELAY_INTERVAL||10000));
+const SELF_UPDATE=process.env.HCDR_RELAY_SELF_UPDATE==="1";
+const REPO_ROOT=ROOT+"/repos/HCDecorHUB";
 if(!RELAY) throw new Error("HCDR_RELAY_REPO is required");
 const runtime=ROOT+"/runtime", stateFile=runtime+"/hcdr-relay-state-v2.json", lockFile=runtime+"/hcdr-relay.lock", heartbeatFile=runtime+"/hcdr-relay-heartbeat.json";
 await fs.mkdir(runtime,{recursive:true});
@@ -20,6 +22,15 @@ async function load(){try{return JSON.parse(await fs.readFile(stateFile,"utf8"))
 async function save(s){await fs.writeFile(stateFile,JSON.stringify(s,null,2))}
 async function comment(n,obj){return api(`repos/${RELAY}/issues/${n}/comments`,"POST",[["body","```json\n"+JSON.stringify(obj,null,2)+"\n```"]])}
 async function close(n){try{await api(`repos/${RELAY}/issues/${n}`,"PATCH",[["state","closed"]])}catch{}}
+async function refreshSource(){
+ if(!SELF_UPDATE)return {updated:false,disabled:true};
+ try{
+  const before=(await execFileAsync("git",["rev-parse","HEAD"],{cwd:REPO_ROOT,windowsHide:true})).stdout.trim();
+  await execFileAsync("git",["pull","--ff-only"],{cwd:REPO_ROOT,windowsHide:true});
+  const after=(await execFileAsync("git",["rev-parse","HEAD"],{cwd:REPO_ROOT,windowsHide:true})).stdout.trim();
+  return {updated:before!==after,before,after};
+ }catch(e){return {updated:false,error:String(e?.message||e)}}
+}
 async function runJob(issue){
  const body=JSON.parse(issue.body||"{}"); if(body.schema!=="hcdr-relay/v1") throw Error("bad_schema");
  const allowed=new Set(["health","list_directory","read_file","write_file","edit_file","run_command","start_process","process_output","git_status","git_diff","git_commit","build"]);
@@ -32,7 +43,8 @@ async function tick(){
  if(busy)return;busy=true;
  try{
   const s=await load();
-  await fs.writeFile(heartbeatFile,JSON.stringify({ok:true,pid:process.pid,at:new Date().toISOString(),relay:RELAY},null,2));
+  const refresh=await refreshSource();
+  await fs.writeFile(heartbeatFile,JSON.stringify({ok:true,pid:process.pid,at:new Date().toISOString(),relay:RELAY,source_refresh:refresh},null,2));
   const issues=await api(`repos/${RELAY}/issues?state=open&labels=hcdr-job&per_page=100&sort=created&direction=asc`);
   for(const i of issues){
    if(s.jobs[String(i.number)]?.status==="completed")continue;
