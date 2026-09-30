@@ -16,8 +16,8 @@ Updated: 2026-09-30
 
 ## Workspace migration state
 - HCDecor public website authority remains WordPress at https://hcdecorhub.com.
-- GSC target provider is Cloudflare; custom domain currently still resolves to a legacy origin and requires DNS/origin migration verification.
-- AMO target provider is Cloudflare; custom domain DNS is not yet active.
+- GSC frontend authority is GitHub Pages at https://gscsenior.hcdecorhub.com; Cloudflare is backend/API/D1 only. HTTPS/custom-domain verification remains a release gate.
+- AMO frontend authority is GitHub Pages at https://amonguyen.hcdecorhub.com; Cloudflare is backend/API/D1 only. HTTPS/custom-domain verification remains a release gate.
 - HC Shop Engine remains live on Cloudflare Workers; commerce reference/demo data is not verified production authority.
 
 ## Release gate
