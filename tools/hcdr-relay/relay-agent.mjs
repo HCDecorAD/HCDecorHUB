@@ -1,12 +1,14 @@
 import {execFile} from "node:child_process";
 import {promisify} from "node:util";
 import fs from "node:fs/promises";
+import {pathToFileURL} from "node:url";
 const execFileAsync=promisify(execFile);
 const ROOT=process.env.HCDR_ROOT||"D:/HCDecorHUB";
 const RELAY=process.env.HCDR_RELAY_REPO;
 const INTERVAL=Number(process.env.HCDR_RELAY_INTERVAL||10000);
 if(!RELAY) throw new Error("HCDR_RELAY_REPO is required (owner/private-repo)");
 const stateFile=ROOT+"/runtime/hcdr-relay-state.json";
+const hybrid=await import(pathToFileURL(ROOT+"/tools/hybrid-remote/src/server.js").href);
 async function gh(args,input){const o=await execFileAsync("gh",args,{input,windowsHide:true,maxBuffer:1024*1024});return o.stdout}
 async function load(){try{return JSON.parse(await fs.readFile(stateFile,"utf8"))}catch{return {seen:[]}}}
 async function save(s){await fs.mkdir(ROOT+"/runtime",{recursive:true});await fs.writeFile(stateFile,JSON.stringify(s,null,2))}
@@ -15,10 +17,8 @@ async function runJob(issue){
  const body=JSON.parse(issue.body||"{}"); if(body.schema!=="hcdr-relay/v1") throw Error("bad_schema");
  const allowed=new Set(["health","list_directory","read_file","git_status","git_diff","build"]);
  if(!allowed.has(body.tool)) throw Error("tool_not_allowed");
- const payload=JSON.stringify({tool:body.tool,args:body.args||{}});
- const ps=`$p='${payload.replace(/'/g,"''")}'; Invoke-RestMethod -Uri http://127.0.0.1:17322/api/execute -Method POST -ContentType 'application/json' -Body $p | ConvertTo-Json -Depth 20`;
- const {stdout,stderr}=await execFileAsync("powershell.exe",["-NoProfile","-Command",ps],{cwd:ROOT,windowsHide:true,maxBuffer:1024*1024});
- return {ok:true,stdout:stdout.slice(0,50000),stderr:stderr.slice(0,8000)};
+ const r=await hybrid.execute(body.tool,body.args||{},{localReachable:true});
+ return r;
 }
 async function tick(){
  const s=await load();
