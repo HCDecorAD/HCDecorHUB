@@ -3,9 +3,10 @@ const root=process.cwd(),read=p=>fs.readFileSync(path.join(root,p),"utf8");let p
 const must=(ok,msg)=>{if(!ok)throw Error(msg);pass++};
 const runs=read("lib/run-store.js");must(runs.includes('mode:"local-spool"')&&runs.includes("productionAuthority:false"),"run store must remain non-authoritative");
 const approvals=read("lib/approval-store.js");must(approvals.includes('status:"approved-not-executed"'),"approval must not imply execution");
-const runtime=read("app/api/runtime/route.js");must(runtime.includes('const durableExecution=false')&&runtime.includes('durable-provider-not-bound')&&runtime.includes("localSpoolAuthority:false"),"runtime must fail closed without durable provider");
-const readiness=read("app/api/master/readiness/route.js");must(readiness.includes('const durableExecution=false')&&readiness.includes('mutation_execution_enabled:false'),"readiness must fail closed without durable provider");
+const durable=read("lib/durable-runtime.js");must(durable.includes("available:false")&&durable.includes('reason:"durable-provider-not-bound"')&&durable.includes("productionAuthority:false"),"durable runtime authority must fail closed");
+const runtime=read("app/api/runtime/route.js");must(runtime.includes("durableRuntimeStatus")&&runtime.includes("localSpoolAuthority:false"),"runtime must use durable authority helper");
+const readiness=read("app/api/master/readiness/route.js");must(readiness.includes("durableRuntimeStatus")&&readiness.includes('mutation_execution_enabled:false'),"readiness must use durable authority helper");
 const contract=read("app/api/public/contract/route.js");must(contract.includes('production_state:"durable-provider-required"')&&contract.includes("local_spool_authority:false")&&contract.includes("mutation_execution_enabled:false"),"public persistence contract unsafe");
-const policy=read("lib/policy-engine.js");must(policy.includes("durable_execution_required"),"policy durable gate missing");
-const master=read("app/api/master/route.js");must(master.includes("durable_execution_required")&&master.includes("isMutation(result.plan.task.action)"),"master durable mutation gate missing");
+const policy=read("lib/policy-engine.js");must(policy.includes("durable_execution_required")&&policy.includes("durableExecutionAvailable()")&&!policy.includes("HC_DURABLE_EXECUTION_ENABLED"),"policy durable gate must not trust env flag");
+const master=read("app/api/master/route.js");must(master.includes("durable_execution_required")&&master.includes("isMutation(result.plan.task.action)")&&master.includes("durableExecutionAvailable()")&&!master.includes("HC_DURABLE_EXECUTION_ENABLED"),"master durable mutation gate must use authority helper");
 console.log("PERSISTENCE CONTRACT PASS "+pass+"/"+pass);
