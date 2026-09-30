@@ -1,0 +1,34 @@
+name: HCDecor HUB Quality Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hcdecor-hub-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Architecture contract
+        run: npm run test:architecture
+      - name: Commerce contract
+        run: node scripts/commerce-contract-check.mjs
+      - name: Production build
+        run: npm run build
+      - name: Cloudflare build
+        run: npm run cf:build
