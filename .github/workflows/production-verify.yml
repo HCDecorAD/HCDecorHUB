@@ -2,6 +2,8 @@ name: HCDecor HUB Production Verify
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
   schedule:
     - cron: '17 * * * *'
 
@@ -9,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: hcdecor-production-verify
+  group: hcdecor-production-verify-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
