@@ -1,22 +1,28 @@
-# HCDecor HUB Ã¢â‚¬â€ Source of Truth
+# HCDecor HUB — Source of Truth
 
 ## Role
-HCDecor HUB is the Multi-Business AI Command Center and the public HCDecor website.
+HCDecor HUB is the Multi-Business AI Command Center. The HCDecor public website is a separate WordPress production authority.
 
 ## Production map
-- HCDecor: https://hcdecorhub.com Ã¢â‚¬â€ WordPress + Elementor.
-- GSC: https://gscsenior.hcdecorhub.com Ã¢â‚¬â€ independent GitHub Pages frontend, repo HCDecorAD/GSC.
-- AMO: https://amonguyen.hcdecorhub.com Ã¢â‚¬â€ independent GitHub Pages frontend, repo HCDecorAD/AMONguyen.
+- HCDecor public website: https://hcdecorhub.com — WordPress.
+- HCDecor Agent/API control plane: Cloudflare Worker `hcdecor-hub`.
+- GSC: https://gscsenior.hcdecorhub.com — GitHub Pages, repository `HCDecorAD/GSC`.
+- AMO: https://amonguyen.hcdecorhub.com — GitHub Pages, repository `HCDecorAD/AMONguyen`.
+- Commerce live-data authority: HC Shop Engine; health endpoint `/api/health`.
 
 ## Non-negotiable rules
-1. Read `config/site-registry.json` before automation targets a website.
-2. Agent Public production uses Cloudflare Workers; HCDecor public website authority remains WordPress.
-3. GSC and AMO source remain independent from HCDecor frontend source.
-4. GitHub is code/version/rollback authority; Drive is media/data/backup; production runtimes stay platform-specific.
-5. No secret values in GitHub. Use environment/secret storage.
-6. Development -> Preview/Staging -> Production.
-7. Production Publish/Delete/Manage actions require explicit permission.
-8. Legacy legacy-host/Next files in this repository are reference material until archived deliberately; they are not HCDecor production authority.
+1. Resolve the target from the registry before automation acts on a workspace/site.
+2. GitHub `main` is source/version/rollback authority.
+3. Cloudflare is Agent/API control-plane authority; it does not replace HCDecor WordPress or the GSC/AMO GitHub Pages frontends.
+4. No secret values in GitHub. Use protected environment/secret storage.
+5. Production release must pass Architecture, Commerce, Persistence, production build, Master Agent local E2E and Cloudflare build gates.
+6. Production Worker promotion uses the gated `production-deploy.yml` workflow and must pass strict production smoke.
+7. Production mutation remains disabled until durable state plus authenticated identity/approval/executor authority are implemented and verified.
+8. Local `.runtime` run/approval state is diagnostic only and is never production authority.
+9. Do not weaken verification, change DNS, or move frontend hosting to hide a release failure.
+
+## Runtime safety state
+The public contract declares durable provider required, local spool non-authoritative, and mutation execution disabled. Approval decision and approval execution API surfaces fail closed until authenticated durable authority exists. An environment flag alone cannot enable durable execution.
 
 ## Core modules
 Registry, Business Profile, Workspace, Website, Users/Roles/Permissions, CRM, Projects, Media, Content, Publishing, AI Agents, Integrations, Reports, Audit.
@@ -24,8 +30,5 @@ Registry, Business Profile, Workspace, Website, Users/Roles/Permissions, CRM, Pr
 ## Workflow
 Customer -> Lead -> Project -> Media -> Design/AI/Content -> Review -> Approve -> Publish -> Social -> Report.
 
-## Current implementation phase
-Phase 01 Inventory & Freeze completed baseline branch:
-`backup/pre-master-implementation-20260928`
-
-Phase 02 starts with Registry + Business Profile. Missing owner values remain null; never fabricate them.
+## Release status
+Source is validated continuously by `quality-gate.yml`. Production state is independently validated by `production-verify.yml`; a failed production verification must remain visible when deployed production is behind source.
