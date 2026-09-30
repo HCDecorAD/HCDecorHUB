@@ -1,0 +1,29 @@
+name: HCDecor HUB Production Verify
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify public control plane
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $base='https://hcdecor-hub.huycuongonline.workers.dev'
+          $paths=@('/hub/agents','/api/public/status','/api/public/contract','/api/runtime','/api/master/readiness','/api/commerce/status')
+          foreach($p in $paths){ $r=Invoke-WebRequest -UseBasicParsing ($base+$p) -TimeoutSec 20; if($r.StatusCode -notin 200,207){ throw "$p status $($r.StatusCode)" } }
+          $c=Invoke-RestMethod ($base+'/api/public/contract')
+          if($c.contract_version -ne '1.1'){throw 'contract version mismatch'}
+          if($c.authorities.commerce -ne 'engine-live-data-verified'){throw 'commerce authority mismatch'}
+          if(-not $c.blockers.commerce_verified -or -not $c.blockers.custom_domain_verified){throw 'public blockers not verified'}
+          if($c.guarantees.production_write){throw 'production write must remain false'}
+          $commerce=Invoke-RestMethod ($base+'/api/commerce/status')
+          if(-not $commerce.ready -or -not $commerce.catalog.production_authority -or -not $commerce.catalog.verified_commerce_data){throw 'commerce not ready'}
+          Write-Output 'PRODUCTION_VERIFY_PASS'
