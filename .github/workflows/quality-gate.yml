@@ -28,6 +28,8 @@ jobs:
         run: npm run test:architecture
       - name: Commerce contract
         run: node scripts/commerce-contract-check.mjs
+      - name: Persistence contract
+        run: node scripts/persistence-contract-check.mjs
       - name: Production build
         run: npm run build
       - name: Master Agent local E2E
