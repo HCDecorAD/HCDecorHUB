@@ -72,3 +72,5 @@ html[data-theme="dark"] .realStat span,html[data-theme="dark"] .guard span{color
 .draftRow{grid-template-columns:2fr 1fr 1fr 1fr 1fr 1.4fr}.jobDetail pre{max-height:420px;overflow:auto;background:#080d13;border:1px solid #263242;border-radius:8px;padding:12px;font-size:12px}.commerceActions input{background:#0d131b;border:1px solid #263242;border-radius:8px;color:#eef3f8;padding:10px 12px;min-width:260px}
 
 .commerceLink{display:inline-flex;align-items:center;padding:10px 13px;border:1px solid #263242;border-radius:8px;color:#dce6f2;text-decoration:none;background:#0d131b}.commerceLink:hover{border-color:#4a6480}
+
+.taxonomyGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.taxonomyGrid article{display:grid;gap:4px;padding:12px;border:1px solid #263242;border-radius:8px;background:#0d131b}.taxonomyGrid small{color:#7f8b9a}
