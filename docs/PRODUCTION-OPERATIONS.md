@@ -18,6 +18,12 @@ Two consecutive failed health snapshots establish confirmed degradation. Do not 
 ## Persistence
 Local .runtime files are non-authoritative spool/cache only. Production run, approval, workflow and audit history must use durable provider storage before mutation execution can be considered production-grade.
 
+## 2026-10-01 deployment action
+- Approved source SHA: `36f9c32a3d388d0fc64dd34a0a2a9e4e3cfd46e2`.
+- Quality Gate: PASS.
+- Production Verify: FAIL at `/api/public/contract`; deployed Worker remains behind source contract.
+- Required action: manual Production Deploy dispatch with the exact SHA above; no source or gate bypass.
+
 ## Current production blocker
 - Independent Production Verify continues to report the deployed Worker contract behind the source contract. This is a deployment/state-drift issue, not a reason to weaken source gates or alter frontend authority.
 - Promotion remains gated until the deployed Worker satisfies the production contract.
