@@ -1,0 +1,1 @@
+Get-ChildItem 'D:\Softs\Font\Font Tong hop' -Recurse -File -ErrorAction Stop | Where-Object { $_.Name -match '(?i)(EVO|UTM)' } | Select-Object FullName,Name,Extension,Length | ConvertTo-Json -Depth 3
