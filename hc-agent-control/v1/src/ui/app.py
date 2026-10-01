@@ -1,35 +1,60 @@
 import pathlib,tkinter as tk
-from tkinter import ttk
+from tkinter import ttk,messagebox
 from src.adapters.cdp import CDPDiscovery
-from src.core.registry import ChatRegistry
+from src.core.registry import ChatRegistry,RegistryConflict
 from src.core.queue import CommandQueue
 from src.core.resolver import AliasResolver,AliasResolutionError
+from src.core.theme import resolve_theme
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 class AutoChatApp(tk.Tk):
  def __init__(self):
-  super().__init__();self.title("HC Agent Control — AutoChat V1");self.geometry("1180x720");self.minsize(920,600)
-  self.registry=ChatRegistry(ROOT/"data"/"chats.json");self.queue=CommandQueue(ROOT/"data"/"queue.json");self.discovery=CDPDiscovery();self.status=tk.StringVar(value="SAFE · SEND OFF");self.alias=tk.StringVar(value="MASTER");self.command=tk.StringVar(value="/auto");self._build();self.refresh()
+  super().__init__();self.title("HC Agent Control — AutoChat V1");self.geometry("1220x760");self.minsize(960,620)
+  self.registry=ChatRegistry(ROOT/"data"/"chats.json");self.queue=CommandQueue(ROOT/"data"/"queue.json");self.discovery=CDPDiscovery()
+  self.status=tk.StringVar(value="SAFE · SEND OFF");self.alias=tk.StringVar(value="MASTER");self.command=tk.StringVar(value="/auto");self.theme=tk.StringVar(value="system");self.pages=[];self._build();self.apply_theme();self.refresh()
  def _build(self):
-  top=ttk.Frame(self,padding=12);top.pack(fill="x");ttk.Label(top,text="HC Agent Control",font=("Segoe UI",18,"bold")).pack(side="left");ttk.Label(top,textvariable=self.status).pack(side="right")
+  top=ttk.Frame(self,padding=12);top.pack(fill="x");ttk.Label(top,text="HC Agent Control",font=("Segoe UI",18,"bold")).pack(side="left")
+  ttk.Combobox(top,textvariable=self.theme,values=("system","dark","light"),width=9,state="readonly").pack(side="right",padx=8);ttk.Button(top,text="Theme",command=self.apply_theme).pack(side="right");ttk.Label(top,textvariable=self.status).pack(side="right",padx=12)
   body=ttk.Panedwindow(self,orient="horizontal");body.pack(fill="both",expand=True,padx=12,pady=(0,12));left=ttk.Frame(body,padding=10);right=ttk.Frame(body,padding=10);body.add(left,weight=2);body.add(right,weight=3)
-  ttk.Label(left,text="Chat Windows",font=("Segoe UI",12,"bold")).pack(anchor="w");self.tree=ttk.Treeview(left,columns=("alias","status","id"),show="headings",height=14)
-  for c,t in (("alias","Alias"),("status","Status"),("id","Conversation")):self.tree.heading(c,text=t)
-  self.tree.pack(fill="both",expand=True,pady=8);ttk.Button(left,text="Refresh",command=self.refresh).pack(side="left");ttk.Button(left,text="STOP ALL",command=self.stop_all).pack(side="right")
+  ttk.Label(left,text="Chat Windows",font=("Segoe UI",12,"bold")).pack(anchor="w");self.tree=ttk.Treeview(left,columns=("alias","status","id","title"),show="headings",height=15)
+  for c,t in (("alias","Alias"),("status","Status"),("id","Conversation"),("title","Title")):self.tree.heading(c,text=t)
+  self.tree.pack(fill="both",expand=True,pady=8)
+  bar=ttk.Frame(left);bar.pack(fill="x");ttk.Button(bar,text="Refresh",command=self.refresh).pack(side="left");ttk.Button(bar,text="Bind",command=self.bind_selected).pack(side="left",padx=4);ttk.Button(bar,text="Unbind",command=self.unbind).pack(side="left");ttk.Button(bar,text="Pause/Resume",command=self.toggle_pause).pack(side="left",padx=4);ttk.Button(bar,text="STOP ALL",command=self.stop_all).pack(side="right")
   ttk.Label(right,text="Command",font=("Segoe UI",12,"bold")).pack(anchor="w");row=ttk.Frame(right);row.pack(fill="x",pady=8);ttk.Combobox(row,textvariable=self.alias,values=("MASTER","GSC","VISUAL","VIDEO","WORKER-01"),width=16,state="readonly").pack(side="left");ttk.Entry(row,textvariable=self.command).pack(side="left",fill="x",expand=True,padx=8);ttk.Button(row,text="Dry Run",command=self.dry_run).pack(side="right")
   quick=ttk.Frame(right);quick.pack(fill="x")
   for v in ("/auto","Tiếp tục","Kiểm tra tiến độ"):ttk.Button(quick,text=v,command=lambda x=v:self.command.set(x)).pack(side="left",padx=(0,6))
   ttk.Label(right,text="Live Log",font=("Segoe UI",12,"bold")).pack(anchor="w",pady=(18,6));self.log=tk.Text(right,height=22,state="disabled");self.log.pack(fill="both",expand=True)
  def write_log(self,s):self.log.configure(state="normal");self.log.insert("end",s+"\n");self.log.see("end");self.log.configure(state="disabled")
+ def apply_theme(self):
+  name,p=resolve_theme(self.theme.get(),system_dark=True);self.configure(bg=p["bg"]);self.option_add("*TCombobox*Listbox.background",p["bg"]);self.option_add("*TCombobox*Listbox.foreground",p["fg"]);self.write_log("THEME "+name) if hasattr(self,"log") else None
  def refresh(self):
   self.tree.delete(*self.tree.get_children())
-  try:pages=self.discovery.pages();self.status.set("ONLINE · SAFE · SEND OFF")
-  except Exception as e:pages=[];self.status.set("OFFLINE · SEND OFF");self.write_log("CDP ERROR "+str(e))
-  for saved in self.registry.all():
-   try:cur=AliasResolver.resolve(saved,pages);state="ONLINE";cid=cur["conversation_id"]
-   except AliasResolutionError:state="OFFLINE";cid=saved.get("conversation_id","")
-   self.tree.insert("","end",values=(saved["alias"],state,cid))
+  try:self.pages=self.discovery.pages();self.status.set("ONLINE · SAFE · SEND OFF")
+  except Exception as e:self.pages=[];self.status.set("OFFLINE · SEND OFF");self.write_log("CDP ERROR "+str(e))
+  bound={x["conversation_id"]:x["alias"] for x in self.registry.all()}
+  for p in self.pages:
+   cid=p.get("conversation_id","");alias=bound.get(cid,"");state="ONLINE" if cid else "ROOT";self.tree.insert("","end",values=(alias,state,cid,p.get("title","")),tags=(p.get("target_id",""),))
+ def selected_page(self):
+  s=self.tree.selection()
+  if not s:return None
+  vals=self.tree.item(s[0],"values");cid=vals[2]
+  return next((p for p in self.pages if p.get("conversation_id")==cid and cid),None)
+ def bind_selected(self):
+  p=self.selected_page()
+  if not p:messagebox.showwarning("HC Agent Control","Select a real /c/ conversation first.");return
+  try:self.registry.bind(self.alias.get(),p);self.write_log("BOUND "+self.alias.get()+" -> "+p["conversation_id"]);self.refresh()
+  except RegistryConflict as e:messagebox.showerror("Bind blocked",str(e))
+ def unbind(self):self.registry.unbind(self.alias.get());self.write_log("UNBOUND "+self.alias.get());self.refresh()
+ def toggle_pause(self):
+  a=self.alias.get()
+  if a in self.queue.paused_aliases:self.queue.resume(a);self.write_log("RESUME "+a)
+  else:self.queue.pause(a);self.write_log("PAUSE "+a)
  def stop_all(self):self.queue.stop_all();self.status.set("STOPPED · SEND OFF");self.write_log("STOP ALL")
  def dry_run(self):
-  if self.queue.global_paused:self.write_log("BLOCKED global pause");return
-  item=self.queue.enqueue(self.alias.get(),self.command.get());self.write_log(f"DRY RUN {item['alias']} {item['text']} [{item['id']}]")
+  a=self.alias.get()
+  if self.queue.global_paused or a in self.queue.paused_aliases:self.write_log("BLOCKED paused "+a);return
+  saved=self.registry.get(a)
+  if not saved:self.write_log("BLOCKED alias not bound "+a);return
+  try:AliasResolver.resolve(saved,self.pages)
+  except AliasResolutionError as e:self.write_log("BLOCKED identity "+str(e));return
+  item=self.queue.enqueue(a,self.command.get());self.write_log(f"DRY RUN {item['alias']} {item['text']} [{item['id']}]")
 if __name__=="__main__":AutoChatApp().mainloop()
