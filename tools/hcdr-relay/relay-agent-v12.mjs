@@ -8,6 +8,7 @@ const ROOT=process.env.HCDR_V11_ROOT||"D:/HCDecorHUB/HCDR Remote MCP";
 const RELAY=process.env.HCDR_RELAY_REPO||"HCDecorAD/HCDecor-HCDR-Relay";
 const LABEL=process.env.HCDR_V12_LABEL||"hcdr-v12-test";
 const SOURCE=process.env.HCDR_V12_SOURCE||"hocuong-v12-production";
+const SOURCES=new Set((process.env.HCDR_V12_SOURCES||"hocuong-v12-production,chatgpt-hc-autochat-v1,chatgpt-hc-autochat-heartbeat").split(",").map(x=>x.trim()).filter(Boolean));
 const INTERVAL=Math.max(5000,Number(process.env.HCDR_RELAY_INTERVAL||10000));
 const runtime=ROOT+"/runtime",lockFile=runtime+"/hcdr-v12.lock",heartbeatFile=runtime+"/hcdr-v12-heartbeat.json",stateFile=runtime+"/hcdr-v12-state.json";
 await fs.mkdir(runtime,{recursive:true});
@@ -34,7 +35,7 @@ const allowed=new Set(["health","list_directory","read_file","git_status","git_d
 async function runJob(issue){
  const b=JSON.parse(issue.body||"{}");
  if(b.schema!=="hcdr-relay/v1.2")throw Error("bad_schema");
- if(b.source && b.source!==SOURCE)throw Error("source_denied");
+ if(!b.source || !SOURCES.has(b.source))throw Error("source_denied");
  if(!allowed.has(b.tool))throw Error("tool_not_allowed");
  return hybrid.execute(b.tool,b.args||{},{localReachable:true});
 }
