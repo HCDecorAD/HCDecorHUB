@@ -2,10 +2,10 @@ import uiautomation as auto
 def _walk(c,d=0):
  if d>14:return
  for x in c.GetChildren():yield x;yield from _walk(x,d+1)
-def selected_activity(window_name):
+def selected_activity(window_name=None,window_handle=None):
  """Read-only UIA facts for the currently selected browser tab."""
  root=auto.GetRootControl()
- w=next((x for x in root.GetChildren() if (x.Name or "")==window_name),None)
+ w=next((x for x in root.GetChildren() if (window_handle and x.NativeWindowHandle==window_handle) or (not window_handle and (x.Name or "")==window_name)),None)
  if not w:return {}
  facts={"conversation_visible":False,"composer_enabled":None,"composer_disabled":False,"stop_button":False,"assistant_busy":False,"explicit_error":False,"retry_button":False,"blocked_banner":False}
  for c in _walk(w):
