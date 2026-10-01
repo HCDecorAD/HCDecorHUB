@@ -1,0 +1,1 @@
+{"product":"HC Agent Control","edition":"AutoChat V1","version":"0.1.0-staging","send_armed":false,"cost_mode":"FREE_LOCAL","runtime_target":"D:\\HCDecorHUB\\HC_AutoChat","entrypoint":"src/ui/app.py","gates":{"CP0":"PASS_LOCAL","CP1":"AUTOMATED_PASS_LIVE_OPEN","CP2":"DRY_RUN_PASS_REAL_SEND_LOCKED","CP3":"SHELL_STAGED"}}
