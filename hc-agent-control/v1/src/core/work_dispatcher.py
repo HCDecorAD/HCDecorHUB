@@ -1,4 +1,4 @@
-import time
+import time,json,pathlib
 from src.adapters.uia_exact_transport import UIAExactTransport
 PROMPTS={
  "HC AutoDebug":"Tiếp tục hỗ trợ debug theo checkpoint hiện tại. Diagnose trước, không redo PASS; fix tối thiểu, test targeted rồi full regression. Nếu không có lỗi mới thì báo PASS và chờ.",
@@ -8,12 +8,21 @@ PROMPTS={
  "HC Design AI Studio":"Tiếp tục HC Design AI Studio từ checkpoint hiện tại. Không redo PASS; xử lý bước kế tiếp, test/demo rồi cập nhật checkpoint.",
 }
 class WorkDispatcher:
- def __init__(self,cooldown=600):self.cooldown=cooldown;self.last={};self.locked=set()
+ def __init__(self,cooldown=600,ledger=None):
+  self.cooldown=cooldown;self.ledger=pathlib.Path(ledger) if ledger else None;self.last={};self.locked=set();self._load()
+ def _load(self):
+  if not self.ledger or not self.ledger.exists():return
+  try:
+   d=json.loads(self.ledger.read_text(encoding="utf-8"));self.last={k:float(v) for k,v in d.get("last",{}).items()};self.locked=set(d.get("locked",[]))
+  except Exception:pass
+ def _save(self):
+  if not self.ledger:return
+  self.ledger.parent.mkdir(parents=True,exist_ok=True);tmp=self.ledger.with_suffix(".tmp");tmp.write_text(json.dumps({"last":self.last,"locked":sorted(self.locked)},indent=2),encoding="utf-8");tmp.replace(self.ledger)
  def eligible(self,row,now=None):
   now=now or time.time();cid=row.get("conversation_id")
   return bool(cid and row.get("stable_state")=="READY_STABLE" and row.get("decision")=="CONTINUE_EXISTING" and cid not in self.locked and now-self.last.get(cid,0)>=self.cooldown and row.get("title") in PROMPTS)
  def dispatch(self,window,row,now=None):
   now=now or time.time();cid=row["conversation_id"];r=UIAExactTransport().send_once(window,row["title"],cid,PROMPTS[row["title"]])
-  if r.get("ok"):self.last[cid]=now
-  elif r.get("side_effect_uncertain"):self.locked.add(cid)
+  if r.get("ok"):self.last[cid]=now;self._save()
+  elif r.get("side_effect_uncertain"):self.locked.add(cid);self._save()
   return r

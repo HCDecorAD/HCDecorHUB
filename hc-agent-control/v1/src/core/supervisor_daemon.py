@@ -10,7 +10,7 @@ ROOT=pathlib.Path(__file__).resolve().parents[2];OUT=ROOT/"runtime"/"supervisor-
 # Compatibility safety markers retained for regression contracts: OBSERVE_ONLY_NO_EXACT_CID, MANAGED_NOT_SELECTED
 LEGACY_SCOPE={"scope":"TAB_ALLOWLIST"}
 ALLOW=("ChatGPT HCDecor V9","HC AutoDebug","HC Agent Control","HC AutoChat","HC Video Download","HC Video Downloader","HC Insight","HC Design AI Studio")
-FUSION=StateFusion();DEBOUNCE=StateDebouncer(2);POLICY=WorkPolicy();DISPATCH=WorkDispatcher(600)
+FUSION=StateFusion();DEBOUNCE=StateDebouncer(2);POLICY=WorkPolicy();DISPATCH=WorkDispatcher(600,ROOT/"runtime"/"dispatch-ledger.json")
 def allowed(title):return any(x.lower() in (title or "").lower() for x in ALLOW)
 def cycle():
  rows=[]
