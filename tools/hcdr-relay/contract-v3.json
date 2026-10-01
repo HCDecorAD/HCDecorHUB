@@ -1,0 +1,12 @@
+{
+  "schema": "hcdr-contract/v3",
+  "lanes": {
+    "production": {"label":"hcdr-job","request_schema":"hcdr-relay/v1","mutation":false},
+    "migration": {"label":"hcdr-v12-test","request_schema":"hcdr-relay/v1.2","mutation":false}
+  },
+  "result_schema":"hcdr-result/v2",
+  "source_required":true,
+  "runtime_update":"pinned-release-only",
+  "heartbeat_max_age_seconds":90,
+  "side_effect_retry":"never-after-executing"
+}
