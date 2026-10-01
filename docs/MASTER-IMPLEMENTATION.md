@@ -45,5 +45,10 @@ Customer -> Lead -> Project -> Media -> Design/AI/Content -> Review -> Approve -
 - Durable and identity providers remain intentionally unbound; no production credentials are present.
 - Production Worker promotion remains blocked by independent live contract verification until the deployed Worker matches the approved source contract.
 
+## Gate status — 2026-10-01
+- Quality Gate: **PASS** for current source.
+- Independent Production Verify: **FAIL** on deployed Worker contract drift.
+- Therefore the source is releasable by quality gates, but production promotion is not complete.
+
 ## Release status
 Source is validated continuously by `quality-gate.yml`. Production state is independently validated by `production-verify.yml`; a failed production verification must remain visible when deployed production is behind source.
