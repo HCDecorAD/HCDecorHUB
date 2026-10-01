@@ -17,7 +17,4 @@ $hb='D:\HCDecorHUB\runtime\hcdr-relay-heartbeat.json'
 if(!(Test-Path $hb)){throw 'HCDR heartbeat missing'}
 $j=Get-Content $hb -Raw|ConvertFrom-Json
 if(-not $j.ok){throw 'HCDR heartbeat not OK'}
-$task='HCDecor-HCDR-Watchdog'
-$watch='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "'+(Join-Path $repo 'tools\hcdr-relay\watchdog.ps1')+'"'
-schtasks /Create /F /SC MINUTE /MO 2 /TN $task /TR $watch | Out-Null
 Write-Host ('HCDR_REPAIR_PASS pid='+$j.pid)
