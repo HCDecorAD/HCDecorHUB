@@ -11,6 +11,7 @@ from src.core.dpi import enable_windows_dpi
 from src.ui.first_run import FirstRunWizard
 from src.core.live_status import LiveStatusTracker
 from src.core.transitions import TransitionTracker
+from src.core.win_notify import notify
 from src.core.alerts import AlertTracker
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 class AutoChatApp(tk.Tk):
@@ -36,7 +37,7 @@ class AutoChatApp(tk.Tk):
   ttk.Label(right,text="Live Log",font=("Segoe UI",12,"bold")).pack(anchor="w",pady=(12,6));self.log=tk.Text(right,height=14,state="disabled");self.log.pack(fill="both",expand=True)
  def schedule_refresh(self):
   if self.refresh_job:self.after_cancel(self.refresh_job)
-  self.refresh_job=self.after(5000,self.auto_refresh)
+  self.refresh_job=self.after(int(self.settings.get("auto_refresh_ms",5000)),self.auto_refresh)
  def auto_refresh(self):
   try:self.refresh()
   finally:self.schedule_refresh()
@@ -59,7 +60,9 @@ class AutoChatApp(tk.Tk):
   bound={x["conversation_id"]:x["alias"] for x in self.registry.all()}
   current={cid:self.live.state(cid) for cid in bound}
   for e in self.transitions.update(current):
-   if e["to"] in ("OFFLINE","LOST"):self.write_log("ALERT "+str(e))
+   if e["to"] in ("OFFLINE","LOST"):
+    self.write_log("ALERT "+str(e))
+    if self.settings.get("notifications",True):notify("HC Agent Control",e["id"]+" "+e["to"])
    elif e["from"] in ("OFFLINE","LOST") and e["to"] in ("IDLE","WAITING"):self.write_log("RECOVERED "+str(e))
   states={}
   for p in self.pages:
