@@ -1,18 +1,19 @@
-# HCDecor Public Website V4 Operations
+# HCDecor Website Operations
 
-Target workspace: `D:\HCDecorHUB\HCDecor_Public_Web_v4`
+Production architecture:
+- HCDecor main website: WordPress / Elementor.
+- HCDecor Public V4 static workspace: design prototype and migration source only.
+- GSC and AMO remain separate GitHub Pages websites.
+- Vercel is not part of HCDecor website architecture.
 
-Safety:
-- Preview deployment only.
-- No `vercel --prod`.
-- No modification of hcdecorhub.com WordPress production.
-- QA gates run before deployment.
+V4 source workspace:
+`D:\HCDecorHUB\HCDecor_Public_Web_v4`
 
-Recommended order:
-1. 02_QA_SITE.bat
-2. 03_AUDIT_LINKS.bat
-3. 07_AUDIT_MEDIA.bat
-4. 08_AUDIT_SEO.bat
-5. 04_CHECKPOINT.bat
-6. 05_DEPLOY_PREVIEW.bat
-7. 06_VERIFY_PREVIEW.bat <preview-url>
+Safe workflow:
+1. Audit/checkpoint static V4 design source.
+2. Backup WordPress before mutations.
+3. Rebuild approved sections in WordPress/Elementor.
+4. Verify desktop/mobile, links, forms, media, SEO.
+5. Publish only after WordPress QA.
+
+Never run Vercel deployment for HCDecor.
