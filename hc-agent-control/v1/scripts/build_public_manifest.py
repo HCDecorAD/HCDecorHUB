@@ -1,7 +1,7 @@
 import json,pathlib,datetime,sys
 root=pathlib.Path(__file__).resolve().parents[1]
 run=json.loads((root/"runtime"/"acceptance-run.json").read_text(encoding="utf-8"));rid=run["run_id"]
-required=["cp1-real-cdp.json","ui-runtime-probe.json","a5-live-verify.json","cp1-alias-restart.json","autochat-public-status.json"]
+required=["cp1-real-cdp.json","ui-runtime-probe.json","a5-live-verifies.json","cp1-alias-restart.json","stop-all-evidence.json","autochat-public-status.json"]
 ev={}
 for name in required:
  p=root/"logs"/name

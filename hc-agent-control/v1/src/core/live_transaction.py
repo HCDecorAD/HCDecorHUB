@@ -12,7 +12,7 @@ class LiveTransaction:
   if str(typed or "").strip()!=str(text).strip():raise RuntimeError("composer text mismatch before submit")
   pre=self.dom.snapshot(page)
   if pre.get("conversation_id")!=cid:raise RuntimeError("identity changed before submit")
-  inp.press_enter()
+  inp.submit()
   end=time.time()+timeout;after={}
   while time.time()<end:
    time.sleep(.4);after=self.dom.snapshot(page)

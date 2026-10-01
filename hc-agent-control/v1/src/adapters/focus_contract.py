@@ -5,8 +5,9 @@ class FocusContract:
   rpc=CDPRPC(page["websocket"])
   try:
    rpc.call("Page.bringToFront")
-   rpc.call("Runtime.evaluate",{"expression":"document.querySelector('#prompt-textarea')?.focus()"})
-   r=rpc.call("Runtime.evaluate",{"expression":"document.activeElement && document.activeElement.id === 'prompt-textarea'","returnByValue":True})
+   sel="#prompt-textarea, div[role='textbox'][contenteditable='true']"
+   rpc.call("Runtime.evaluate",{"expression":f"document.querySelector({sel!r})?.focus()"})
+   r=rpc.call("Runtime.evaluate",{"expression":f"document.activeElement === document.querySelector({sel!r})","returnByValue":True})
    if not bool(r.get("result",{}).get("value")):raise RuntimeError("composer focus verification failed")
    return True
   finally:rpc.close()
