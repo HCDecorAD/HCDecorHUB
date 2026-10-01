@@ -1,0 +1,3 @@
+$ErrorActionPreference='Stop'
+$urls=@('https://hcdecorhub.com/','https://hcdecorhub.com/dich-vu/','https://hcdecorhub.com/du-an/','https://hcdecorhub.com/gioi-thieu/','https://hcdecorhub.com/lien-he/')
+foreach($url in $urls){$r=Invoke-WebRequest -UseBasicParsing -Uri $url -TimeoutSec 20; Write-Output ($url+' '+[int]$r.StatusCode+' bytes='+$r.RawContentLength); if([int]$r.StatusCode -ne 200){exit 2}}
