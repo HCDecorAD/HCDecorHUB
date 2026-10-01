@@ -15,5 +15,5 @@ def inspect_edge():
    try:sel=bool(c.GetSelectionItemPattern().IsSelected)
    except Exception:sel=False
    tabs.append({"title":clean_title(c.Name),"raw_title":c.Name or "","selected":sel})
-  out.append({"window":name,"tabs":tabs,"selected_tab":next((t["title"] for t in tabs if t["selected"]),None)})
+  out.append({"window":name,"hwnd":w.NativeWindowHandle,"tabs":tabs,"selected_tab":next((t["title"] for t in tabs if t["selected"]),None)})
  return out

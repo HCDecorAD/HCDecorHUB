@@ -1,6 +1,7 @@
 import time,pyperclip,uiautomation as auto
 from src.adapters.live_identity import CID
 from src.adapters.uia_tab_inspector import clean_title
+from src.adapters.uia_submit_verify import verify_submit
 def _walk(c,d=0):
  if d>14:return
  for x in c.GetChildren():yield x;yield from _walk(x,d+1)
@@ -23,15 +24,17 @@ class UIAExactTransport:
    else:return {"ok":False,"stage":"CID_PRECHECK"}
    fields=[c for c in _walk(window) if c.ControlTypeName=="EditControl" and (c.ClassName or "")=="Textfield" and (c.AutomationId or "")!="view_1017"]
    if len(fields)!=1:return {"ok":False,"stage":"COMPOSER_COUNT"}
-   f=fields[0];f.SetFocus();auto.SendKeys("{Ctrl}a",waitTime=.03);auto.SendKeys("{Ctrl}c",waitTime=.03);time.sleep(.12)
+   f=fields[0];f.SetFocus();sentinel="__HC_EMPTY_PROBE__";pyperclip.copy(sentinel);auto.SendKeys("{Ctrl}a",waitTime=.03);auto.SendKeys("{Ctrl}c",waitTime=.03);time.sleep(.12)
    existing=pyperclip.paste()
-   if existing.strip():return {"ok":False,"stage":"PREEXISTING_DRAFT"}
+   if existing!=sentinel and existing.strip():return {"ok":False,"stage":"PREEXISTING_DRAFT"}
    pyperclip.copy(text);auto.SendKeys("{Ctrl}v",waitTime=.03);time.sleep(.2);auto.SendKeys("{Ctrl}a",waitTime=.03);auto.SendKeys("{Ctrl}c",waitTime=.03);time.sleep(.15)
    if pyperclip.paste()!=text:return {"ok":False,"stage":"READBACK"}
    m=CID.search(_url(window) or "")
    if not m or m.group(1).lower()!=cid.lower():return {"ok":False,"stage":"CID_RECHECK"}
    auto.SendKeys("{ENTER}",waitTime=.05)
-   return {"ok":True,"stage":"SUBMITTED_UNVERIFIED"}
+   verdict=verify_submit(auto,_walk,_url,window,f,cid,text)
+   if not verdict["verified"]:return {"ok":False,"stage":verdict["stage"],"side_effect_uncertain":True}
+   return {"ok":True,"stage":"VERIFIED_SUBMIT","verify":verdict["stage"]}
   finally:
    pyperclip.copy(old)
    if orig:orig.GetSelectionItemPattern().Select()
