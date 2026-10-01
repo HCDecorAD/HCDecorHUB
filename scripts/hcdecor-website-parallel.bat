@@ -18,7 +18,7 @@ for %%N in (font-audit git-health prod-smoke media-audit) do (
 )
 exit /b 0
 :START
-start "%~1" /b cmd /d /c ""%~2" > "%OUT%\%~1.log" 2>&1 & echo !errorlevel! > "%OUT%\%~1.exit""
+start "%~1" /b cmd /v:on /d /c ""%~2" ^> "%OUT%\%~1.log" 2^>^&1 ^& echo !errorlevel! ^> "%OUT%\%~1.exit""
 exit /b 0
 :WAIT
 for %%N in (%*) do call :WAIT_ONE %%N
