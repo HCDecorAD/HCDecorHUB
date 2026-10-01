@@ -24,6 +24,11 @@ HCDecor HUB is the Multi-Business AI Command Center. The HCDecor public website 
 ## Runtime safety state
 The public contract declares durable provider required, local spool non-authoritative, and mutation execution disabled. Approval decision and approval execution API surfaces fail closed until authenticated durable authority exists. An environment flag alone cannot enable durable execution.
 
+## Next executable work
+1. Resolve live Worker/source contract drift through the approved exact-SHA production deployment workflow after Quality Gate PASS.
+2. Re-run independent Production Verify and require contract PASS before declaring production promotion complete.
+3. Keep durable provider, identity provider, off-device DR and restore testing unbound/not-authorized until their prerequisites are actually available.
+
 ## Core modules
 Registry, Business Profile, Workspace, Website, Users/Roles/Permissions, CRM, Projects, Media, Content, Publishing, AI Agents, Integrations, Reports, Audit.
 
