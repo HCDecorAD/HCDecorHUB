@@ -2,7 +2,6 @@
 setlocal
 cd /d D:\HCDecorHUB\repos\HCDecorHUB
 call tools\hcdr-relay\ROOT-FIX-V12-CHECK.bat || exit /b 40
-for /f "tokens=2 delims=," %%P in ('tasklist /fo csv /nh /fi "imagename eq node.exe"') do rem existing node processes are left intact
 start "" /min cmd /c tools\hcdr-relay\HCDR-V12-Test.cmd
 timeout /t 12 /nobreak >nul
 powershell -NoProfile -Command "$p='D:\HCDecorHUB\HCDR Remote MCP\runtime\hcdr-v12-heartbeat.json';if(!(Test-Path $p)){exit 41};$j=Get-Content $p -Raw|ConvertFrom-Json;if(-not $j.ok){exit 42};Write-Host ('HCDR_V12_PASS pid='+$j.pid+' label='+$j.label)"
