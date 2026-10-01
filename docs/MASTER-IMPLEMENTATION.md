@@ -69,5 +69,11 @@ Customer -> Lead -> Project -> Media -> Design/AI/Content -> Review -> Approve -
 - The current-main Quality Gate must PASS again before any production deployment dispatch.
 - No production deploy is triggered automatically from this documentation update.
 
+## Current release candidate
+- Current main: `292d47f6c1d2721efb1ed5f374a6ef7b28a9e5c0`.
+- Quality Gate: **PASS**.
+- Production deployment is still pending manual exact-SHA dispatch.
+- After deployment, independent Production Verify must PASS before production promotion is considered complete.
+
 ## Release status
 Source is validated continuously by `quality-gate.yml`. Production state is independently validated by `production-verify.yml`; a failed production verification must remain visible when deployed production is behind source.
