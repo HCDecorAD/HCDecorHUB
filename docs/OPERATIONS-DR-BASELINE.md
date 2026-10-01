@@ -16,6 +16,13 @@
 - Production mutation authorization requires an authenticated principal, explicit production approval, and an authenticated executor.
 - No identity provider credentials or production identity authority have been introduced.
 
+## DR readiness status
+- Backup integrity verification: available for operator backups.
+- Off-device production backup: **NOT IMPLEMENTED**.
+- Restore test: **NOT IMPLEMENTED**.
+- Centralized durable monitoring/history: **NOT IMPLEMENTED**.
+- RPO/RTO: **NOT DEFINED**; production mutation must remain disabled until these are agreed and tested.
+
 ## Required production evolution
 1. Durable centralized audit/event store.
 2. Durable run/workflow/approval state.
