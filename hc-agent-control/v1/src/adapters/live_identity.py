@@ -1,5 +1,5 @@
 import re,uiautomation as auto
-CID=re.compile(r"https?://chatgpt\.com/c/([0-9a-f-]{20,})",re.I)
+CID=re.compile(r"https?://chatgpt\.com/(?:g/[^/]+/)?c/([0-9a-f-]{20,})",re.I)
 def _walk(c,d=0):
  if d>12:return
  for x in c.GetChildren():yield x;yield from _walk(x,d+1)

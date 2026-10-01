@@ -1,5 +1,5 @@
 import json,re,time,pathlib,uiautomation as a
-CID=re.compile(r"https?://chatgpt\.com/c/([0-9a-f-]{20,})",re.I)
+CID=re.compile(r"https?://chatgpt\.com/(?:g/[^/]+/)?c/([0-9a-f-]{20,})",re.I)
 ALLOW=("ChatGPT HCDecor V9","HC AutoDebug","HC Agent Control","HC AutoChat","HC Video Download","HC Video Downloader","HC Insight","HC Design AI Studio")
 def walk(x,d=0):
  if d>12:return
