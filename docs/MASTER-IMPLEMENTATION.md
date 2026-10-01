@@ -50,5 +50,10 @@ Customer -> Lead -> Project -> Media -> Design/AI/Content -> Review -> Approve -
 - Independent Production Verify: **FAIL** on deployed Worker contract drift.
 - Therefore the source is releasable by quality gates, but production promotion is not complete.
 
+## Immediate operator handoff
+- Current main: `5db3a3a21c5ad2a6b7eeb7cc4dfda862056fe072`.
+- Previous approved source `36f9c32` passed Quality Gate but remains undeployed in the live Worker.
+- After current Quality Gate PASS, dispatch `HCDecor HUB Production Deploy` with the exact current-main SHA, then require Production Verify PASS.
+
 ## Release status
 Source is validated continuously by `quality-gate.yml`. Production state is independently validated by `production-verify.yml`; a failed production verification must remain visible when deployed production is behind source.
