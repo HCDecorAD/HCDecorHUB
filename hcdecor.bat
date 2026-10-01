@@ -9,8 +9,12 @@ if /i "%~1"=="certify" goto CERTIFY
 if /i "%~1"=="release" goto RELEASE
 if /i "%~1"=="hub" goto HUB
 if /i "%~1"=="dr" goto DR
-echo Usage: %~nx0 foundation^|e2e^|ready^|certify^|release^|hub^|dr
+if /i "%~1"=="authority" goto AUTHORITY
+echo Usage: %~nx0 foundation^|e2e^|ready^|certify^|release^|hub^|dr^|authority
 exit /b 2
+:AUTHORITY
+call hcdecor-authority.bat
+exit /b %ERRORLEVEL%
 :DR
 call hcdecor-dr.bat
 exit /b %ERRORLEVEL%
