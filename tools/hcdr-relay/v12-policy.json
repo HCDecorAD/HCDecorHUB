@@ -1,0 +1,1 @@
+{"schema":"hcdr-v12-policy/v1","label":"hcdr-v12-test","job_schema":"hcdr-relay/v1.2","result_schema":"hcdr-result/v1.2","require_source":true,"allowed_tools":["health","list_directory","read_file","run_command","git_status","git_diff","build"],"production_lane":false,"workspace_guard":true,"poll_seconds":10}
