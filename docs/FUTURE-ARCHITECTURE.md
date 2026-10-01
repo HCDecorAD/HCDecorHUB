@@ -52,6 +52,13 @@ Preserve the authorities above. Future architecture work should add, in order: d
 
 Local `.runtime` state is diagnostic/development only. Production mutation stays fail-closed until durable state and authenticated approval/executor authority are bound and verified.
 
+## Implementation checkpoint — 2026-10-01
+- Durable provider boundary: implemented, unbound/fail-closed.
+- Identity/RBAC boundary: implemented, unbound/default-deny.
+- Health Center exposes both authority states.
+- Operations/DR acceptance criteria are explicit and enforced by CI.
+- Production deployment remains exact-SHA, manually dispatched, strict-smoke gated.
+
 ## Change-control rule
 
 Do not move HCDecor, GSC, or AMO frontend authority; do not change root DNS/nameserver; and do not use a hosting migration as a workaround for a failed release gate. Any future architecture migration requires an explicit architecture decision and rollback plan.
