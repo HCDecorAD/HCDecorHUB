@@ -5,10 +5,10 @@ set "ROOT=D:\HCDecorHUB\repos\HCDecorHUB"
 set "OUT=%ROOT%\.runtime\web-hcdecor"
 if not exist "%OUT%" mkdir "%OUT%"
 del /q "%OUT%\*.exit" "%OUT%\*.log" >nul 2>&1
-call :START font-audit "powershell -NoProfile -ExecutionPolicy Bypass -Command ""Get-ChildItem 'D:\Softs\Font\Font Tong hop' -Recurse -File | Where-Object {$_.Name -match '(?i)(EVO|UTM)'} | Select FullName,Name,Extension,Length | ConvertTo-Json -Depth 3"""
+call :START font-audit "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\web-font-audit.ps1"
 call :START git-health "cmd /d /c ""cd /d %ROOT% && git status --short && git log -1 --oneline"""
-call :START prod-smoke "powershell -NoProfile -ExecutionPolicy Bypass -Command ""$u=@('https://hcdecorhub.com/','https://hcdecorhub.com/dich-vu/','https://hcdecorhub.com/du-an/','https://hcdecorhub.com/gioi-thieu/','https://hcdecorhub.com/lien-he/'); foreach($x in $u){try{$r=Invoke-WebRequest -UseBasicParsing -Uri $x -TimeoutSec 20; Write-Output ($x+' '+[int]$r.StatusCode+' bytes='+$r.RawContentLength)}catch{Write-Error ($x+' '+$_.Exception.Message); exit 1}}"""
-call :START media-audit "powershell -NoProfile -ExecutionPolicy Bypass -Command ""$p='D:\HCDecorHUB'; Get-ChildItem $p -Recurse -File -ErrorAction SilentlyContinue | Where-Object {$_.Extension -match '(?i)^\.(jpg|jpeg|png|webp)$' -and $_.FullName -match '(?i)(HCDecor|bang.?hieu|noi.?that|DGemma|Wait|PLAY)'} | Select -First 250 FullName,Name,Length | ConvertTo-Json -Depth 3"""
+call :START prod-smoke "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\web-prod-smoke.ps1"
+call :START media-audit "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\web-media-audit.ps1"
 call :WAIT font-audit git-health prod-smoke media-audit
 echo ==== HCDECOR WEBSITE PARALLEL SUMMARY ====
 for %%N in (font-audit git-health prod-smoke media-audit) do (
