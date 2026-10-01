@@ -3,7 +3,7 @@ import {promisify} from "node:util";
 import fs from "node:fs/promises";
 import {pathToFileURL} from "node:url";
 const execFileAsync=promisify(execFile);
-const ROOT=process.env.HCDR_V11_ROOT||"D:/HCDecorHUB/HCDR Remote MCP";
+const HOST_ROOT=process.env.HCDR_HOST_ROOT||"D:/HCDecorHUB";\nconst ROOT=process.env.HCDR_V11_ROOT||"D:/HCDecorHUB/HCDR Remote MCP";
 const RELAY=process.env.HCDR_RELAY_REPO||"HCDecorAD/HCDecor-HCDR-Relay";
 const LABEL=process.env.HCDR_V12_LABEL||"hcdr-v12-test";
 const SOURCE=process.env.HCDR_V12_SOURCE||"hocuong-v12-production";
@@ -21,7 +21,7 @@ catch{
 }
 const cleanup=async()=>{try{await lock.close()}catch{}try{await fs.unlink(lockFile)}catch{}};
 process.on("SIGINT",async()=>{await cleanup();process.exit(0)});process.on("SIGTERM",async()=>{await cleanup();process.exit(0)});
-const hybrid=await import(pathToFileURL(ROOT+"/tools/hybrid-remote/src/server.js").href);
+process.env.HCDR_ROOT=ROOT;\nconst hybrid=await import(pathToFileURL(HOST_ROOT+"/tools/hybrid-remote/src/server.js").href);
 async function gh(args,input){return (await execFileAsync("gh",args,{input,windowsHide:true,maxBuffer:2*1024*1024})).stdout}
 async function api(path,method="GET",fields=[]){const a=["api",path,"--method",method];for(const [k,v] of fields)a.push("-f",k+"="+v);return JSON.parse(await gh(a))}
 async function load(){try{return JSON.parse(await fs.readFile(stateFile,"utf8"))}catch{return {jobs:{}}}}
