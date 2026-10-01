@@ -9,20 +9,25 @@ PROMPTS={
 }
 class WorkDispatcher:
  def __init__(self,cooldown=600,ledger=None):
-  self.cooldown=cooldown;self.ledger=pathlib.Path(ledger) if ledger else None;self.last={};self.locked=set();self._load()
+  self.cooldown=cooldown;self.ledger=pathlib.Path(ledger) if ledger else None;self.last={};self.locked=set();self.awaiting_ack=set();self.seen_busy=set();self._load()
  def _load(self):
   if not self.ledger or not self.ledger.exists():return
   try:
-   d=json.loads(self.ledger.read_text(encoding="utf-8"));self.last={k:float(v) for k,v in d.get("last",{}).items()};self.locked=set(d.get("locked",[]))
+   d=json.loads(self.ledger.read_text(encoding="utf-8"));self.last={k:float(v) for k,v in d.get("last",{}).items()};self.locked=set(d.get("locked",[]));self.awaiting_ack=set(d.get("awaiting_ack",[]));self.seen_busy=set(d.get("seen_busy",[]))
   except Exception:pass
  def _save(self):
   if not self.ledger:return
-  self.ledger.parent.mkdir(parents=True,exist_ok=True);tmp=self.ledger.with_suffix(".tmp");tmp.write_text(json.dumps({"last":self.last,"locked":sorted(self.locked)},indent=2),encoding="utf-8");tmp.replace(self.ledger)
+  self.ledger.parent.mkdir(parents=True,exist_ok=True);tmp=self.ledger.with_suffix(".tmp");tmp.write_text(json.dumps({"last":self.last,"locked":sorted(self.locked),"awaiting_ack":sorted(self.awaiting_ack),"seen_busy":sorted(self.seen_busy)},indent=2),encoding="utf-8");tmp.replace(self.ledger)
+ def observe(self,row):
+  cid=row.get("conversation_id");state=row.get("stable_state") or row.get("state")
+  if not cid or cid not in self.awaiting_ack:return
+  if state in ("WORKING","WAITING"):self.seen_busy.add(cid);self._save()
+  elif state=="READY_STABLE" and cid in self.seen_busy:self.awaiting_ack.discard(cid);self.seen_busy.discard(cid);self._save()
  def eligible(self,row,now=None):
-  now=now or time.time();cid=row.get("conversation_id")
-  return bool(cid and row.get("stable_state")=="READY_STABLE" and row.get("decision")=="CONTINUE_EXISTING" and cid not in self.locked and now-self.last.get(cid,0)>=self.cooldown and row.get("title") in PROMPTS)
+  self.observe(row);now=now or time.time();cid=row.get("conversation_id")
+  return bool(cid and row.get("stable_state")=="READY_STABLE" and row.get("decision")=="CONTINUE_EXISTING" and cid not in self.locked and cid not in self.awaiting_ack and now-self.last.get(cid,0)>=self.cooldown and row.get("title") in PROMPTS)
  def dispatch(self,window,row,now=None):
   now=now or time.time();cid=row["conversation_id"];r=UIAExactTransport().send_once(window,row["title"],cid,PROMPTS[row["title"]])
-  if r.get("ok"):self.last[cid]=now;self._save()
+  if r.get("ok"):self.last[cid]=now;self.awaiting_ack.add(cid);self._save()
   elif r.get("side_effect_uncertain"):self.locked.add(cid);self._save()
   return r
