@@ -8,3 +8,9 @@ class ChatGPTDOM:
    import json
    return json.loads(r["result"]["value"])
   finally:rpc.close()
+ def composer_text(self,page):
+  rpc=CDPRPC(page["websocket"])
+  try:
+   r=rpc.call("Runtime.evaluate",{"expression":"(()=>{const e=document.querySelector('#prompt-textarea');return e?((e.innerText||e.textContent||'').trim()):null})()","returnByValue":True})
+   return r.get("result",{}).get("value")
+  finally:rpc.close()
