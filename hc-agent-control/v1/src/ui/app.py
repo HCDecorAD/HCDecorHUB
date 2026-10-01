@@ -9,6 +9,7 @@ from src.core.single_instance import SingleInstance,AlreadyRunning
 from src.core.settings import Settings
 from src.core.dpi import enable_windows_dpi
 from src.ui.first_run import FirstRunWizard
+from src.core.live_status import LiveStatusTracker
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 class AutoChatApp(tk.Tk):
  def __init__(self):
@@ -16,7 +17,7 @@ class AutoChatApp(tk.Tk):
   try:self.instance.acquire()
   except AlreadyRunning:self.destroy();raise SystemExit("HC Agent Control is already running")
   self.protocol("WM_DELETE_WINDOW",self.close_app);self.settings=Settings(ROOT/"config"/"settings.json");self.title("HC Agent Control — AutoChat V1");self.geometry(self.settings.get("window_geometry","1220x760"));self.minsize(960,620)
-  self.registry=ChatRegistry(ROOT/"data"/"chats.json");self.queue=CommandQueue(ROOT/"data"/"queue.json");self.discovery=CDPDiscovery()
+  self.registry=ChatRegistry(ROOT/"data"/"chats.json");self.queue=CommandQueue(ROOT/"data"/"queue.json");self.discovery=CDPDiscovery();self.live=LiveStatusTracker()
   self.status=tk.StringVar(value="SAFE · SEND OFF");self.alias=tk.StringVar(value="MASTER");self.command=tk.StringVar(value="/auto");self.theme=tk.StringVar(value=self.settings.get("theme","system"));self.pages=[];self.queue_filter=tk.StringVar(value="ALL");self._build();self.apply_theme();self.refresh();self.after(300,self.maybe_first_run)
  def _build(self):
   top=ttk.Frame(self,padding=12);top.pack(fill="x");ttk.Label(top,text="HC Agent Control",font=("Segoe UI",18,"bold")).pack(side="left")
@@ -43,11 +44,11 @@ class AutoChatApp(tk.Tk):
   items=self.queue.items if self.queue_filter.get()=="ALL" else [x for x in self.queue.items if x.get("state")==self.queue_filter.get()]
   for x in items[-100:]:self.qtree.insert("","end",values=(x.get("alias",""),x.get("state",""),x.get("text","")))
   paused="STOPPED" if self.queue.global_paused else "SAFE"
-  try:self.pages=self.discovery.pages();self.status.set("ONLINE · "+paused+" · SEND OFF")
+  try:self.pages=self.discovery.pages();live=self.live.update(self.pages);self.status.set("ONLINE · "+paused+" · SEND OFF")
   except Exception as e:self.pages=[];self.status.set("OFFLINE · SEND OFF");self.write_log("CDP ERROR "+str(e))
   bound={x["conversation_id"]:x["alias"] for x in self.registry.all()}
   for p in self.pages:
-   cid=p.get("conversation_id","");alias=bound.get(cid,"");state=("PAUSED" if alias in self.queue.paused_aliases else "ONLINE") if cid else "ROOT";self.tree.insert("","end",values=(alias,state,cid,p.get("title","")),tags=(p.get("target_id",""),))
+   cid=p.get("conversation_id","");alias=bound.get(cid,"");state=("PAUSED" if alias in self.queue.paused_aliases else self.live.state(cid)) if cid else "ROOT";self.tree.insert("","end",values=(alias,state,cid,p.get("title","")),tags=(p.get("target_id",""),))
  def selected_page(self):
   s=self.tree.selection()
   if not s:return None
