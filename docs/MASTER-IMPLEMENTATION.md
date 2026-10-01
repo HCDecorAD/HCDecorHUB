@@ -55,5 +55,9 @@ Customer -> Lead -> Project -> Media -> Design/AI/Content -> Review -> Approve -
 - Previous approved source `36f9c32` passed Quality Gate but remains undeployed in the live Worker.
 - After current Quality Gate PASS, dispatch `HCDecor HUB Production Deploy` with the exact current-main SHA, then require Production Verify PASS.
 
+## CI queue note
+- Documentation-only commits can cancel a prior Quality Gate and start a new queued gate; no production action is authorized from a queued/cancelled gate.
+- The operator must wait for the current-main SHA Quality Gate to finish PASS before dispatching production deployment.
+
 ## Release status
 Source is validated continuously by `quality-gate.yml`. Production state is independently validated by `production-verify.yml`; a failed production verification must remain visible when deployed production is behind source.
