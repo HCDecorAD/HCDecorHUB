@@ -19,8 +19,8 @@
 8. Local `.runtime` state is diagnostic only and never production authority.
 
 ## Current release state
-- Current main SHA: `be1467725d7cc10c63d8c46bdece37c3f39e1403`.
-- Quality Gate for current SHA: **PASS**.
+- Current main: this document is maintained against the current `main` branch; use the latest successful Quality Gate run as the release gate authority.
+- Latest release candidate recorded in `docs/RELEASE-CANDIDATE-5897a78c.md`: `5897a78c` was superseded by subsequent documentation-only release-state commits; no production deploy is authorized from historical SHAs.
 - Latest independent Production Verify for current SHA: **FAIL**.
 - Failing production check: `/api/public/contract`.
 - Other production smoke endpoints in that run: **PASS**.
