@@ -10,8 +10,12 @@ if /i "%~1"=="release" goto RELEASE
 if /i "%~1"=="hub" goto HUB
 if /i "%~1"=="dr" goto DR
 if /i "%~1"=="authority" goto AUTHORITY
-echo Usage: %~nx0 foundation^|e2e^|ready^|certify^|release^|hub^|dr^|authority
+if /i "%~1"=="prepublic" goto PREPUBLIC
+echo Usage: %~nx0 foundation^|e2e^|ready^|certify^|release^|hub^|dr^|authority^|prepublic
 exit /b 2
+:PREPUBLIC
+call hcdecor-prepublic.bat
+exit /b %ERRORLEVEL%
 :AUTHORITY
 call hcdecor-authority.bat
 exit /b %ERRORLEVEL%
