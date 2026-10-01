@@ -1,6 +1,7 @@
 import fs from "node:fs";import path from "node:path";
 const root=process.cwd(),read=p=>fs.readFileSync(path.join(root,p),"utf8");let pass=0;
 const must=(ok,msg)=>{if(!ok)throw Error(msg);pass++};
+const identity=read("lib/identity-runtime.js");must(identity.includes("defaultDeny:true")&&identity.includes("productionAuthority:false")&&identity.includes("authenticated_executor"),"identity runtime must remain fail-closed");
 const runs=read("lib/run-store.js");must(runs.includes('mode:"local-spool"')&&runs.includes("productionAuthority:false"),"run store must remain non-authoritative");
 const approvals=read("lib/approval-store.js");must(approvals.includes('status:"approved-not-executed"'),"approval must not imply execution");
 const provider=read("lib/durable-provider.js");must(provider.includes("createUnboundDurableProvider")&&provider.includes("productionAuthority===true")&&provider.includes("durable_provider_not_bound"),"durable provider boundary must fail closed");
