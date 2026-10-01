@@ -5,10 +5,14 @@ from src.core.registry import ChatRegistry,RegistryConflict
 from src.core.queue import CommandQueue
 from src.core.resolver import AliasResolver,AliasResolutionError
 from src.core.theme import resolve_theme
+from src.core.single_instance import SingleInstance,AlreadyRunning
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 class AutoChatApp(tk.Tk):
  def __init__(self):
-  super().__init__();self.title("HC Agent Control — AutoChat V1");self.geometry("1220x760");self.minsize(960,620)
+  super().__init__();self.instance=SingleInstance(ROOT/"runtime"/"ui.lock")
+  try:self.instance.acquire()
+  except AlreadyRunning:self.destroy();raise SystemExit("HC Agent Control is already running")
+  self.protocol("WM_DELETE_WINDOW",self.close_app);self.title("HC Agent Control — AutoChat V1");self.geometry("1220x760");self.minsize(960,620)
   self.registry=ChatRegistry(ROOT/"data"/"chats.json");self.queue=CommandQueue(ROOT/"data"/"queue.json");self.discovery=CDPDiscovery()
   self.status=tk.StringVar(value="SAFE · SEND OFF");self.alias=tk.StringVar(value="MASTER");self.command=tk.StringVar(value="/auto");self.theme=tk.StringVar(value="system");self.pages=[];self._build();self.apply_theme();self.refresh()
  def _build(self):
@@ -23,6 +27,7 @@ class AutoChatApp(tk.Tk):
   quick=ttk.Frame(right);quick.pack(fill="x")
   for v in ("/auto","Tiếp tục","Kiểm tra tiến độ"):ttk.Button(quick,text=v,command=lambda x=v:self.command.set(x)).pack(side="left",padx=(0,6))
   ttk.Label(right,text="Live Log",font=("Segoe UI",12,"bold")).pack(anchor="w",pady=(18,6));self.log=tk.Text(right,height=22,state="disabled");self.log.pack(fill="both",expand=True)
+ def close_app(self):self.instance.release();self.destroy()
  def write_log(self,s):self.log.configure(state="normal");self.log.insert("end",s+"\n");self.log.see("end");self.log.configure(state="disabled")
  def apply_theme(self):
   name,p=resolve_theme(self.theme.get(),system_dark=True);self.configure(bg=p["bg"]);self.option_add("*TCombobox*Listbox.background",p["bg"]);self.option_add("*TCombobox*Listbox.foreground",p["fg"]);self.write_log("THEME "+name) if hasattr(self,"log") else None
