@@ -18,6 +18,10 @@ Two consecutive failed health snapshots establish confirmed degradation. Do not 
 ## Persistence
 Local .runtime files are non-authoritative spool/cache only. Production run, approval, workflow and audit history must use durable provider storage before mutation execution can be considered production-grade.
 
+## Current production blocker
+- Independent Production Verify continues to report the deployed Worker contract behind the source contract. This is a deployment/state-drift issue, not a reason to weaken source gates or alter frontend authority.
+- Promotion remains gated until the deployed Worker satisfies the production contract.
+
 ## Backup and restore
 Local backup is supplementary only. Production recovery requires off-device backup and a tested restore procedure. Never store credentials in backup artifacts or GitHub.
 
