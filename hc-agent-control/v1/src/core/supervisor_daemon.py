@@ -29,7 +29,11 @@ def dispatch_one(rows):
    if not DISPATCH.eligible(row):continue
    w=next((x for x in auto.GetRootControl().GetChildren() if x.NativeWindowHandle==group.get("hwnd")),None)
    if not w:return {"ok":False,"stage":"WINDOW_MISSING"}
-   result=DISPATCH.dispatch(w,row);row["dispatch"]=result;return {"title":row["title"],"cid":row["conversation_id"],**result}
+   result=DISPATCH.dispatch(w,row);row["dispatch"]=result
+   event={"title":row["title"],"cid":row["conversation_id"],**result}
+   if result.get("ok") or result.get("side_effect_uncertain"):return event
+   # Pre-side-effect rejection (draft/identity/composer) must not starve later eligible agents.
+   row["dispatch_skipped"]=True
  return None
 def main():
  OUT.parent.mkdir(parents=True,exist_ok=True)
