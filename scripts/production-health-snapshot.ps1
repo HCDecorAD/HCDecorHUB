@@ -4,6 +4,7 @@ $out=Join-Path $root 'runtime\monitoring'
 $history=Join-Path $out 'history'
 New-Item -ItemType Directory -Force $history|Out-Null
 $base='https://hcdecor-hub.huycuongonline.workers.dev'
+# Production Verify intentionally remains independent; this snapshot is diagnostic and never authorizes deployment.
 $targets=@(
  @{name='agent';url=$base+'/hub/agents'},
  @{name='runtime';url=$base+'/api/runtime'},
