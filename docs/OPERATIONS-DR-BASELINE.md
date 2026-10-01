@@ -23,6 +23,9 @@
 - Centralized durable monitoring/history: **NOT IMPLEMENTED**.
 - RPO/RTO: **NOT DEFINED**; production mutation must remain disabled until these are agreed and tested.
 
+## DR acceptance rule
+Production DR is not considered complete until off-device backup, restore testing, centralized monitoring/history, and defined RPO/RTO are all verified. Local operator backups remain supplementary.
+
 ## Required production evolution
 1. Durable centralized audit/event store.
 2. Durable run/workflow/approval state.
