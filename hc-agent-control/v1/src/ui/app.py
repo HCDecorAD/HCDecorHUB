@@ -1,4 +1,4 @@
-import pathlib,tkinter as tk,webbrowser,datetime
+import pathlib,tkinter as tk,webbrowser,datetime,threading
 from tkinter import ttk,messagebox
 from src.adapters.cdp import CDPDiscovery
 from src.core.registry import ChatRegistry,RegistryConflict
@@ -13,6 +13,7 @@ from src.core.live_status import LiveStatusTracker
 from src.core.transitions import TransitionTracker
 from src.core.win_notify import notify
 from src.core.alerts import AlertTracker
+from src.core.public_entry import PublicEntry
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 class AutoChatApp(tk.Tk):
  def __init__(self):
@@ -30,11 +31,40 @@ class AutoChatApp(tk.Tk):
   for c,t in (("alias","Alias"),("status","Status"),("id","Conversation"),("title","Title")):self.tree.heading(c,text=t)
   self.tree.pack(fill="both",expand=True,pady=8)
   bar=ttk.Frame(left);bar.pack(fill="x");ttk.Button(bar,text="Refresh",command=self.refresh).pack(side="left");ttk.Button(bar,text="Bind",command=self.bind_selected).pack(side="left",padx=4);ttk.Button(bar,text="Unbind",command=self.unbind).pack(side="left");ttk.Button(bar,text="Open Chat",command=self.open_chat).pack(side="left",padx=4);ttk.Button(bar,text="Pause/Resume",command=self.toggle_pause).pack(side="left",padx=4);ttk.Button(bar,text="Resume All",command=self.resume_all).pack(side="right",padx=4);ttk.Button(bar,text="STOP ALL",command=self.stop_all,style="Danger.TButton").pack(side="right")
-  ttk.Label(right,text="COMMAND CENTER",style="Section.TLabel").pack(anchor="w");row=ttk.Frame(right);row.pack(fill="x",pady=8);ttk.Combobox(row,textvariable=self.alias,values=("MASTER","GSC","VISUAL","VIDEO","WORKER-01"),width=16,state="readonly").pack(side="left");ttk.Entry(row,textvariable=self.command).pack(side="left",fill="x",expand=True,padx=8);ttk.Button(row,text="RUN SAFE",command=self.dry_run,style="Accent.TButton").pack(side="right")
+  ttk.Label(right,text="COMMAND CENTER",style="Section.TLabel").pack(anchor="w");row=ttk.Frame(right);row.pack(fill="x",pady=8);ttk.Combobox(row,textvariable=self.alias,values=("MASTER","GSC","VISUAL","VIDEO","WORKER-01"),width=16,state="readonly").pack(side="left");ttk.Entry(row,textvariable=self.command).pack(side="left",fill="x",expand=True,padx=8);ttk.Button(row,text="NEW + SEND",command=self.public_new,style="Accent.TButton").pack(side="right");ttk.Button(row,text="DRY RUN",command=self.dry_run).pack(side="right",padx=(0,6))
   quick=ttk.Frame(right);quick.pack(fill="x")
   for v in ("/auto","Tiếp tục","Kiểm tra tiến độ"):ttk.Button(quick,text=v,command=lambda x=v:self.command.set(x)).pack(side="left",padx=(0,6))
+  ttk.Button(quick,text="Copy CID",command=self.copy_cid).pack(side="right");ttk.Button(quick,text="Hướng dẫn",command=self.show_help).pack(side="right",padx=6);ttk.Button(quick,text="Health",command=self.health).pack(side="right")
   qh=ttk.Frame(right);qh.pack(fill="x",pady=(14,4));ttk.Label(qh,text="Queue",font=("Segoe UI",12,"bold")).pack(side="left");ttk.Combobox(qh,textvariable=self.queue_filter,values=("ALL","READY","RETRY","RUNNING","PASS","FAILED","CANCELLED"),width=11,state="readonly").pack(side="right");ttk.Button(qh,text="Filter",command=self.refresh).pack(side="right",padx=4);self.qtree=ttk.Treeview(right,columns=("alias","state","text"),show="headings",height=6);self.qtree.heading("alias",text="Alias");self.qtree.heading("state",text="State");self.qtree.heading("text",text="Command");self.qtree.pack(fill="x");qbar=ttk.Frame(right);qbar.pack(fill="x",pady=(4,0));ttk.Button(qbar,text="Retry",command=self.retry_queue).pack(side="left");ttk.Button(qbar,text="Cancel",command=self.cancel_queue).pack(side="left",padx=4);ttk.Button(qbar,text="Clear Completed",command=self.clear_completed).pack(side="left")
   ttk.Label(right,text="ACTIVITY",style="Section.TLabel").pack(anchor="w",pady=(12,6));self.log=tk.Text(right,height=14,state="disabled");self.log.pack(fill="both",expand=True)
+ def health(self):
+  try:
+   pages=self.discovery.pages();self.write_log("HEALTH OK");messagebox.showinfo("HC AutoChat Health","AutoChat READY\nCDP ONLINE\nPages: "+str(len(pages))+"\nSafety: FAIL-CLOSED")
+  except Exception as e:messagebox.showerror("HC AutoChat Health","CDP OFFLINE\n"+str(e))
+ def copy_cid(self):
+  p=self.selected_page()
+  if not p:messagebox.showwarning("Copy CID","Chọn một chat thật trước.");return
+  self.clipboard_clear();self.clipboard_append(p.get("conversation_id",""));self.write_log("COPIED CID "+p.get("conversation_id",""))
+ def show_help(self):
+  w=tk.Toplevel(self);w.title("HC AutoChat - Hướng dẫn");w.geometry("650x520")
+  f=ttk.Frame(w,padding=20);f.pack(fill="both",expand=True);ttk.Label(f,text="HC AUTOCHAT · HƯỚNG DẪN",style="Hero.TLabel").pack(anchor="w")
+  g="NEW + SEND: tạo chat mới và gửi thật, có exact verify.\n\nDRY RUN: thử route/queue, không gửi.\n\nRefresh: quét chat đang mở.  Bind: gắn Alias vào chat đã chọn.\nOpen Chat: mở đúng chat đã bind.  Copy CID: sao chép identity chuẩn.\n\nPause/Resume: dừng/mở một Agent.  Resume All: mở queue.\nSTOP ALL: khóa toàn bộ queue ngay.\n\nHealth: kiểm tra CDP/runtime.\n\nLưu ý: Conversation ID là identity; tên chat chỉ để nhìn."
+  t=tk.Text(f,wrap="word",relief="flat",padx=12,pady=12);t.insert("1.0",g);t.configure(state="disabled");t.pack(fill="both",expand=True,pady=12);ttk.Button(f,text="ĐÃ HIỂU",command=w.destroy,style="Accent.TButton").pack(anchor="e")
+ def public_new(self):
+  prompt=self.command.get().strip()
+  if not prompt:messagebox.showwarning("HC AutoChat","Nhập lệnh trước.");return
+  if not messagebox.askyesno("NEW + SEND","Tạo chat mới và GỬI THẬT?\n\n"+prompt):return
+  self.status.set("WORKING · VERIFYING");self.write_log("PUBLIC NEW started")
+  def worker():
+   try:
+    r=PublicEntry().new(self.alias.get(),prompt,30);self.after(0,lambda:self._public_done(r))
+   except Exception as e:
+    msg=str(e);self.after(0,lambda:self._public_fail(msg))
+  threading.Thread(target=worker,daemon=True).start()
+ def _public_done(self,r):
+  self.status.set("VERIFIED · PUBLIC READY");self.write_log("EXACT-SEND PASS "+r["conversation_id"]);self.refresh();messagebox.showinfo("HC AutoChat","EXACT-SEND PASS\n\nCID: "+r["conversation_id"]+"\n\n"+str(r.get("url","")))
+ def _public_fail(self,e):
+  self.status.set("BLOCKED · FAIL-CLOSED");self.write_log("PUBLIC NEW BLOCKED "+e);messagebox.showerror("HC AutoChat","FAIL-CLOSED\n\n"+e)
  def schedule_refresh(self):
   if self.refresh_job:self.after_cancel(self.refresh_job)
   self.refresh_job=self.after(int(self.settings.get("auto_refresh_ms",5000)),self.auto_refresh_once)
