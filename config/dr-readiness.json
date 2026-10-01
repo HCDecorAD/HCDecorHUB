@@ -1,0 +1,9 @@
+{
+  "schema_version":"1.0.0",
+  "mode":"production-safe",
+  "objectives":{"rpo_minutes":null,"rto_minutes":null,"state":"owner-definition-required"},
+  "backup":{"off_device":{"implemented":false,"provider":null,"encrypted":true,"retention_policy":null},"local_operator_backup":{"production_authority":false}},
+  "restore":{"automated_test_implemented":false,"last_verified_at":null},
+  "monitoring":{"centralized_durable_history":false,"provider":null},
+  "release_rule":"production-mutation-remains-locked-until-all-required-controls-pass"
+}
