@@ -11,6 +11,12 @@ def _url(w):
    try:return c.GetValuePattern().Value
    except Exception:return ""
  return ""
+def _selected_title(tabs):
+ for t in tabs:
+  try:
+   if t.GetSelectionItemPattern().IsSelected:return clean_title(t.Name)
+  except Exception:pass
+ return None
 def sweep_window(window_name,allowed):
  w=next((x for x in auto.GetRootControl().GetChildren() if (x.Name or "")==window_name),None)
  if not w:return []
@@ -19,11 +25,13 @@ def sweep_window(window_name,allowed):
   for t in tabs:
    title=clean_title(t.Name)
    if not allowed(title):continue
-   t.GetSelectionItemPattern().Select();m=None;url=""
-   for _ in range(12):
-    time.sleep(.25);url=_url(w);m=CID.search(url or "")
-    if m:break
-   facts=selected_activity(window_handle=w.NativeWindowHandle);rows.append({"title":title,"conversation_id":m.group(1).lower() if m else None,"url":url if m else None,"identity_exact":bool(m),"facts":facts})
+   t.GetSelectionItemPattern().Select();m=None;url="";stable=0;last=None
+   for _ in range(16):
+    time.sleep(.25);sel=_selected_title(tabs);url=_url(w);cur=CID.search(url or "")
+    key=(sel,url)
+    stable=stable+1 if key==last else 1;last=key
+    if sel==title and cur and stable>=2:m=cur;break
+   facts=selected_activity(window_handle=w.NativeWindowHandle);rows.append({"title":title,"conversation_id":m.group(1).lower() if m else None,"url":url if m else None,"identity_exact":bool(m),"identity_title_match":_selected_title(tabs)==title,"facts":facts})
  finally:
   if orig:orig.GetSelectionItemPattern().Select()
  return rows
