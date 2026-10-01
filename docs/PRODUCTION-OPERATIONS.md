@@ -25,6 +25,7 @@ Local .runtime files are non-authoritative spool/cache only. Production run, app
 - Required action: manual Production Deploy dispatch with the exact SHA above; no source or gate bypass.
 
 ## Current production blocker
+- This blocker requires a manual Production Deploy workflow dispatch; automated verification alone cannot remediate a stale Worker deployment. The deploy workflow requires exact current-main SHA and production Cloudflare credentials.
 - Independent Production Verify continues to report the deployed Worker contract behind the source contract. This is a deployment/state-drift issue, not a reason to weaken source gates or alter frontend authority.
 - Promotion remains gated until the deployed Worker satisfies the production contract.
 
