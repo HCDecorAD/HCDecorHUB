@@ -1,0 +1,1 @@
+Get-ChildItem 'D:\HCDecorHUB' -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -match '(?i)^\.(jpg|jpeg|png|webp)$' -and $_.FullName -match '(?i)(HCDecor|bang.?hieu|noi.?that|DGemma|Wait|PLAY)' } | Select-Object -First 250 FullName,Name,Length | ConvertTo-Json -Depth 3
