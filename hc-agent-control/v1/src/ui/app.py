@@ -6,15 +6,16 @@ from src.core.queue import CommandQueue
 from src.core.resolver import AliasResolver,AliasResolutionError
 from src.core.theme import resolve_theme
 from src.core.single_instance import SingleInstance,AlreadyRunning
+from src.core.settings import Settings
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 class AutoChatApp(tk.Tk):
  def __init__(self):
   super().__init__();self.instance=SingleInstance(ROOT/"runtime"/"ui.lock")
   try:self.instance.acquire()
   except AlreadyRunning:self.destroy();raise SystemExit("HC Agent Control is already running")
-  self.protocol("WM_DELETE_WINDOW",self.close_app);self.title("HC Agent Control — AutoChat V1");self.geometry("1220x760");self.minsize(960,620)
+  self.protocol("WM_DELETE_WINDOW",self.close_app);self.settings=Settings(ROOT/"config"/"settings.json");self.title("HC Agent Control — AutoChat V1");self.geometry(self.settings.get("window_geometry","1220x760"));self.minsize(960,620)
   self.registry=ChatRegistry(ROOT/"data"/"chats.json");self.queue=CommandQueue(ROOT/"data"/"queue.json");self.discovery=CDPDiscovery()
-  self.status=tk.StringVar(value="SAFE · SEND OFF");self.alias=tk.StringVar(value="MASTER");self.command=tk.StringVar(value="/auto");self.theme=tk.StringVar(value="system");self.pages=[];self._build();self.apply_theme();self.refresh()
+  self.status=tk.StringVar(value="SAFE · SEND OFF");self.alias=tk.StringVar(value="MASTER");self.command=tk.StringVar(value="/auto");self.theme=tk.StringVar(value=self.settings.get("theme","system"));self.pages=[];self._build();self.apply_theme();self.refresh()
  def _build(self):
   top=ttk.Frame(self,padding=12);top.pack(fill="x");ttk.Label(top,text="HC Agent Control",font=("Segoe UI",18,"bold")).pack(side="left")
   ttk.Combobox(top,textvariable=self.theme,values=("system","dark","light"),width=9,state="readonly").pack(side="right",padx=8);ttk.Button(top,text="Theme",command=self.apply_theme).pack(side="right");ttk.Label(top,textvariable=self.status).pack(side="right",padx=12)
@@ -26,12 +27,12 @@ class AutoChatApp(tk.Tk):
   ttk.Label(right,text="Command",font=("Segoe UI",12,"bold")).pack(anchor="w");row=ttk.Frame(right);row.pack(fill="x",pady=8);ttk.Combobox(row,textvariable=self.alias,values=("MASTER","GSC","VISUAL","VIDEO","WORKER-01"),width=16,state="readonly").pack(side="left");ttk.Entry(row,textvariable=self.command).pack(side="left",fill="x",expand=True,padx=8);ttk.Button(row,text="Dry Run",command=self.dry_run).pack(side="right")
   quick=ttk.Frame(right);quick.pack(fill="x")
   for v in ("/auto","Tiếp tục","Kiểm tra tiến độ"):ttk.Button(quick,text=v,command=lambda x=v:self.command.set(x)).pack(side="left",padx=(0,6))
-  ttk.Label(right,text="Queue",font=("Segoe UI",12,"bold")).pack(anchor="w",pady=(14,4));self.qtree=ttk.Treeview(right,columns=("alias","state","text"),show="headings",height=6);self.qtree.heading("alias",text="Alias");self.qtree.heading("state",text="State");self.qtree.heading("text",text="Command");self.qtree.pack(fill="x")
+  ttk.Label(right,text="Queue",font=("Segoe UI",12,"bold")).pack(anchor="w",pady=(14,4));self.qtree=ttk.Treeview(right,columns=("alias","state","text"),show="headings",height=6);self.qtree.heading("alias",text="Alias");self.qtree.heading("state",text="State");self.qtree.heading("text",text="Command");self.qtree.pack(fill="x");qbar=ttk.Frame(right);qbar.pack(fill="x",pady=(4,0));ttk.Button(qbar,text="Retry",command=self.retry_queue).pack(side="left");ttk.Button(qbar,text="Cancel",command=self.cancel_queue).pack(side="left",padx=4);ttk.Button(qbar,text="Clear Completed",command=self.clear_completed).pack(side="left")
   ttk.Label(right,text="Live Log",font=("Segoe UI",12,"bold")).pack(anchor="w",pady=(12,6));self.log=tk.Text(right,height=14,state="disabled");self.log.pack(fill="both",expand=True)
- def close_app(self):self.instance.release();self.destroy()
+ def close_app(self):self.settings.set("window_geometry",self.geometry());self.instance.release();self.destroy()
  def write_log(self,s):self.log.configure(state="normal");self.log.insert("end",datetime.datetime.now().strftime("%H:%M:%S")+"  "+s+"\n");self.log.see("end");self.log.configure(state="disabled")
  def apply_theme(self):
-  name,p=resolve_theme(self.theme.get(),system_dark=True);self.configure(bg=p["bg"]);self.option_add("*TCombobox*Listbox.background",p["bg"]);self.option_add("*TCombobox*Listbox.foreground",p["fg"]);self.write_log("THEME "+name) if hasattr(self,"log") else None
+  name,p=resolve_theme(self.theme.get(),system_dark=True);self.settings.set("theme",self.theme.get());self.configure(bg=p["bg"]);self.option_add("*TCombobox*Listbox.background",p["bg"]);self.option_add("*TCombobox*Listbox.foreground",p["fg"]);self.write_log("THEME "+name) if hasattr(self,"log") else None
  def refresh(self):
   self.tree.delete(*self.tree.get_children());self.qtree.delete(*self.qtree.get_children())
   for x in self.queue.items[-100:]:self.qtree.insert("","end",values=(x.get("alias",""),x.get("state",""),x.get("text","")))
@@ -60,6 +61,25 @@ class AutoChatApp(tk.Tk):
   a=self.alias.get()
   if a in self.queue.paused_aliases:self.queue.resume(a);self.write_log("RESUME "+a)
   else:self.queue.pause(a);self.write_log("PAUSE "+a)
+  self.refresh()
+ def selected_queue_item(self):
+  s=self.qtree.selection()
+  if not s:return None
+  idx=self.qtree.index(s[0]);items=self.queue.items[-100:]
+  return items[idx] if idx<len(items) else None
+ def retry_queue(self):
+  x=self.selected_queue_item()
+  if not x:self.write_log("RETRY BLOCKED no queue selection");return
+  try:self.queue.retry(x["id"]);self.write_log("RETRY "+x["id"]);self.refresh()
+  except Exception as e:self.write_log("RETRY BLOCKED "+str(e))
+ def cancel_queue(self):
+  x=self.selected_queue_item()
+  if not x:self.write_log("CANCEL BLOCKED no queue selection");return
+  try:self.queue.cancel(x["id"]);self.write_log("CANCEL "+x["id"]);self.refresh()
+  except Exception as e:self.write_log("CANCEL BLOCKED "+str(e))
+ def clear_completed(self):
+  keep={"READY","RUNNING","RETRY"}
+  self.queue.items=[x for x in self.queue.items if x.get("state") in keep];self.queue.keys={x.get("idempotency_key") for x in self.queue.items if x.get("idempotency_key")};self.queue._save();self.write_log("QUEUE cleared completed");self.refresh()
  def stop_all(self):self.queue.stop_all();self.status.set("STOPPED · SEND OFF");self.write_log("STOP ALL")
  def dry_run(self):
   a=self.alias.get()
