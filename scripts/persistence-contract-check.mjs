@@ -3,6 +3,7 @@ const root=process.cwd(),read=p=>fs.readFileSync(path.join(root,p),"utf8");let p
 const must=(ok,msg)=>{if(!ok)throw Error(msg);pass++};
 const runs=read("lib/run-store.js");must(runs.includes('mode:"local-spool"')&&runs.includes("productionAuthority:false"),"run store must remain non-authoritative");
 const approvals=read("lib/approval-store.js");must(approvals.includes('status:"approved-not-executed"'),"approval must not imply execution");
+const provider=read("lib/durable-provider.js");must(provider.includes("createUnboundDurableProvider")&&provider.includes("productionAuthority===true")&&provider.includes("durable_provider_not_bound"),"durable provider boundary must fail closed");
 const durable=read("lib/durable-runtime.js");must(durable.includes("available:false")&&durable.includes('reason:"durable-provider-not-bound"')&&durable.includes("productionAuthority:false"),"durable runtime authority must fail closed");
 const runtime=read("app/api/runtime/route.js");must(runtime.includes("durableRuntimeStatus")&&runtime.includes("localSpoolAuthority:false"),"runtime must use durable authority helper");
 const readiness=read("app/api/master/readiness/route.js");must(readiness.includes("durableRuntimeStatus")&&readiness.includes('mutation_execution_enabled:false'),"readiness must use durable authority helper");
