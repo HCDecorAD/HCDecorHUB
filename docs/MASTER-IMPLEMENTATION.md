@@ -30,5 +30,10 @@ Registry, Business Profile, Workspace, Website, Users/Roles/Permissions, CRM, Pr
 ## Workflow
 Customer -> Lead -> Project -> Media -> Design/AI/Content -> Review -> Approve -> Publish -> Social -> Report.
 
+## Upgrade checkpoints
+- Durable Provider boundary: source-ready, unbound, fail-closed.
+- Identity/RBAC boundary: source-ready, unbound, default-deny.
+- Operations/DR: documented; off-device backup, restore test, centralized monitoring, and RPO/RTO remain outstanding.
+
 ## Release status
 Source is validated continuously by `quality-gate.yml`. Production state is independently validated by `production-verify.yml`; a failed production verification must remain visible when deployed production is behind source.
