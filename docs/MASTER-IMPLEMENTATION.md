@@ -35,5 +35,10 @@ Customer -> Lead -> Project -> Media -> Design/AI/Content -> Review -> Approve -
 - Identity/RBAC boundary: source-ready, unbound, default-deny.
 - Operations/DR: documented; off-device backup, restore test, centralized monitoring, and RPO/RTO remain outstanding.
 
+## Current operational posture
+- Source-side safety boundaries are implemented and regression-gated.
+- Durable and identity providers remain intentionally unbound; no production credentials are present.
+- Production Worker promotion remains blocked by independent live contract verification until the deployed Worker matches the approved source contract.
+
 ## Release status
 Source is validated continuously by `quality-gate.yml`. Production state is independently validated by `production-verify.yml`; a failed production verification must remain visible when deployed production is behind source.
