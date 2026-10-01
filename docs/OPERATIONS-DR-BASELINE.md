@@ -11,6 +11,11 @@
 - Durable provider contract is enforced by the Persistence Contract gate.
 - No production provider credentials or mutation authority have been introduced.
 
+## Current identity checkpoint
+- Identity/RBAC runtime boundary: implemented in source, unbound by default, default-deny.
+- Production mutation authorization requires an authenticated principal, explicit production approval, and an authenticated executor.
+- No identity provider credentials or production identity authority have been introduced.
+
 ## Required production evolution
 1. Durable centralized audit/event store.
 2. Durable run/workflow/approval state.
