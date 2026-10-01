@@ -23,7 +23,7 @@ class AutoChatApp(tk.Tk):
   ttk.Label(left,text="Chat Windows",font=("Segoe UI",12,"bold")).pack(anchor="w");self.tree=ttk.Treeview(left,columns=("alias","status","id","title"),show="headings",height=15)
   for c,t in (("alias","Alias"),("status","Status"),("id","Conversation"),("title","Title")):self.tree.heading(c,text=t)
   self.tree.pack(fill="both",expand=True,pady=8)
-  bar=ttk.Frame(left);bar.pack(fill="x");ttk.Button(bar,text="Refresh",command=self.refresh).pack(side="left");ttk.Button(bar,text="Bind",command=self.bind_selected).pack(side="left",padx=4);ttk.Button(bar,text="Unbind",command=self.unbind).pack(side="left");ttk.Button(bar,text="Open Chat",command=self.open_chat).pack(side="left",padx=4);ttk.Button(bar,text="Pause/Resume",command=self.toggle_pause).pack(side="left",padx=4);ttk.Button(bar,text="STOP ALL",command=self.stop_all).pack(side="right")
+  bar=ttk.Frame(left);bar.pack(fill="x");ttk.Button(bar,text="Refresh",command=self.refresh).pack(side="left");ttk.Button(bar,text="Bind",command=self.bind_selected).pack(side="left",padx=4);ttk.Button(bar,text="Unbind",command=self.unbind).pack(side="left");ttk.Button(bar,text="Open Chat",command=self.open_chat).pack(side="left",padx=4);ttk.Button(bar,text="Pause/Resume",command=self.toggle_pause).pack(side="left",padx=4);ttk.Button(bar,text="Resume All",command=self.resume_all).pack(side="right",padx=4);ttk.Button(bar,text="STOP ALL",command=self.stop_all).pack(side="right")
   ttk.Label(right,text="Command",font=("Segoe UI",12,"bold")).pack(anchor="w");row=ttk.Frame(right);row.pack(fill="x",pady=8);ttk.Combobox(row,textvariable=self.alias,values=("MASTER","GSC","VISUAL","VIDEO","WORKER-01"),width=16,state="readonly").pack(side="left");ttk.Entry(row,textvariable=self.command).pack(side="left",fill="x",expand=True,padx=8);ttk.Button(row,text="Dry Run",command=self.dry_run).pack(side="right")
   quick=ttk.Frame(right);quick.pack(fill="x")
   for v in ("/auto","Tiếp tục","Kiểm tra tiến độ"):ttk.Button(quick,text=v,command=lambda x=v:self.command.set(x)).pack(side="left",padx=(0,6))
@@ -41,7 +41,7 @@ class AutoChatApp(tk.Tk):
   except Exception as e:self.pages=[];self.status.set("OFFLINE · SEND OFF");self.write_log("CDP ERROR "+str(e))
   bound={x["conversation_id"]:x["alias"] for x in self.registry.all()}
   for p in self.pages:
-   cid=p.get("conversation_id","");alias=bound.get(cid,"");state="ONLINE" if cid else "ROOT";self.tree.insert("","end",values=(alias,state,cid,p.get("title","")),tags=(p.get("target_id",""),))
+   cid=p.get("conversation_id","");alias=bound.get(cid,"");state=("PAUSED" if alias in self.queue.paused_aliases else "ONLINE") if cid else "ROOT";self.tree.insert("","end",values=(alias,state,cid,p.get("title","")),tags=(p.get("target_id",""),))
  def selected_page(self):
   s=self.tree.selection()
   if not s:return None
@@ -80,6 +80,7 @@ class AutoChatApp(tk.Tk):
  def clear_completed(self):
   keep={"READY","RUNNING","RETRY"}
   self.queue.items=[x for x in self.queue.items if x.get("state") in keep];self.queue.keys={x.get("idempotency_key") for x in self.queue.items if x.get("idempotency_key")};self.queue._save();self.write_log("QUEUE cleared completed");self.refresh()
+ def resume_all(self):self.queue.resume();self.write_log("RESUME ALL");self.refresh()
  def stop_all(self):self.queue.stop_all();self.status.set("STOPPED · SEND OFF");self.write_log("STOP ALL")
  def dry_run(self):
   a=self.alias.get()
