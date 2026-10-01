@@ -21,7 +21,7 @@ class AutoChatApp(tk.Tk):
   except AlreadyRunning:self.destroy();raise SystemExit("HC Agent Control is already running")
   self.protocol("WM_DELETE_WINDOW",self.close_app);self.settings=Settings(ROOT/"config"/"settings.json");self.title("HC Agent Control — AutoChat V1");self.geometry(self.settings.get("window_geometry","1220x760"));self.minsize(960,620)
   self.registry=ChatRegistry(ROOT/"data"/"chats.json");self.queue=CommandQueue(ROOT/"data"/"queue.json");self.discovery=CDPDiscovery();self.live=LiveStatusTracker();self.transitions=TransitionTracker();self.alerts=AlertTracker()
-  self.status=tk.StringVar(value="SAFE · SEND OFF");self.alias=tk.StringVar(value="MASTER");self.command=tk.StringVar(value="/auto");self.theme=tk.StringVar(value=self.settings.get("theme","system"));self.pages=[];self.auto_refresh=True;self.queue_filter=tk.StringVar(value="ALL");self._build();self.apply_theme();self.refresh();self.after(300,self.maybe_first_run);self.schedule_refresh()
+  self.status=tk.StringVar(value="SAFE · SEND OFF");self.alias=tk.StringVar(value="MASTER");self.command=tk.StringVar(value="/auto");self.theme=tk.StringVar(value=self.settings.get("theme","system"));self.pages=[];self.refresh_job=None;self.queue_filter=tk.StringVar(value="ALL");self._build();self.apply_theme();self.refresh();self.after(300,self.maybe_first_run);self.schedule_refresh()
  def _build(self):
   top=ttk.Frame(self,padding=12);top.pack(fill="x");ttk.Label(top,text="HC Agent Control",font=("Segoe UI",18,"bold")).pack(side="left")
   ttk.Combobox(top,textvariable=self.theme,values=("system","dark","light"),width=9,state="readonly").pack(side="right",padx=8);ttk.Button(top,text="Theme",command=self.apply_theme).pack(side="right");ttk.Label(top,textvariable=self.status).pack(side="right",padx=12)
@@ -37,8 +37,8 @@ class AutoChatApp(tk.Tk):
   ttk.Label(right,text="Live Log",font=("Segoe UI",12,"bold")).pack(anchor="w",pady=(12,6));self.log=tk.Text(right,height=14,state="disabled");self.log.pack(fill="both",expand=True)
  def schedule_refresh(self):
   if self.refresh_job:self.after_cancel(self.refresh_job)
-  self.refresh_job=self.after(int(self.settings.get("auto_refresh_ms",5000)),self.auto_refresh)
- def auto_refresh(self):
+  self.refresh_job=self.after(int(self.settings.get("auto_refresh_ms",5000)),self.auto_refresh_once)
+ def auto_refresh_once(self):
   try:self.refresh()
   finally:self.schedule_refresh()
  def maybe_first_run(self):
@@ -53,7 +53,7 @@ class AutoChatApp(tk.Tk):
  def refresh(self):
   self.tree.delete(*self.tree.get_children());self.qtree.delete(*self.qtree.get_children())
   items=self.queue.items if self.queue_filter.get()=="ALL" else [x for x in self.queue.items if x.get("state")==self.queue_filter.get()]
-  for x in items[-100:]:self.qtree.insert("","end",values=(x.get("alias",""),x.get("state",""),x.get("text","")))
+  for x in items[-100:]:self.qtree.insert("","end",iid=x.get("id"),values=(x.get("alias",""),x.get("state",""),x.get("text","")))
   paused="STOPPED" if self.queue.global_paused else "SAFE"
   try:self.pages=self.discovery.pages();live=self.live.update(self.pages);self.status.set("ONLINE · "+paused+" · SEND OFF")
   except Exception as e:self.pages=[];self.status.set("OFFLINE · SEND OFF");self.write_log("CDP ERROR "+str(e))
@@ -71,11 +71,6 @@ class AutoChatApp(tk.Tk):
   for item in self.registry.all():
    if item["alias"] not in states:states[item["alias"]]="OFFLINE"
   for a in self.alerts.transitions(states):self.write_log("ALERT "+a["alias"]+" "+str(a["from"])+" -> "+a["to"])
- def refresh_tick(self):
-  if self.auto_refresh:
-   try:self.refresh()
-   except Exception as e:self.write_log("AUTO REFRESH ERROR "+str(e))
-  self.after(5000,self.refresh_tick)
  def selected_page(self):
   s=self.tree.selection()
   if not s:return None
@@ -99,8 +94,8 @@ class AutoChatApp(tk.Tk):
  def selected_queue_item(self):
   s=self.qtree.selection()
   if not s:return None
-  idx=self.qtree.index(s[0]);items=self.queue.items[-100:]
-  return items[idx] if idx<len(items) else None
+  qid=s[0]
+  return next((x for x in self.queue.items if x.get("id")==qid),None)
  def retry_queue(self):
   x=self.selected_queue_item()
   if not x:self.write_log("RETRY BLOCKED no queue selection");return
