@@ -64,5 +64,10 @@ Customer -> Lead -> Project -> Media -> Design/AI/Content -> Review -> Approve -
 - Architecture, commerce, persistence, production build, local Master Agent E2E, and Cloudflare build all passed.
 - Next action remains manual exact-SHA Production Deploy, followed by independent Production Verify.
 
+## Release gate note
+- Documentation checkpoint commit `462c07f9` supersedes the previously verified source SHA.
+- The current-main Quality Gate must PASS again before any production deployment dispatch.
+- No production deploy is triggered automatically from this documentation update.
+
 ## Release status
 Source is validated continuously by `quality-gate.yml`. Production state is independently validated by `production-verify.yml`; a failed production verification must remain visible when deployed production is behind source.
