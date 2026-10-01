@@ -29,6 +29,9 @@ Local backup is supplementary only. Production recovery requires off-device back
 Default deny, exact workspace/site/module grants, explicit approval for production mutation, no test-mode production writes, no secrets in source, audit every production-impacting action.
 
 
+## Deployment control
+Production deploy is manual and exact-SHA only. Never dispatch production deployment while the Quality Gate for that SHA is pending or failed. A failed independent Production Verify must remain visible and blocks promotion until the deployed Worker satisfies the contract.
+
 ## Durable execution gate
 
 Production mutation execution remains disabled until a concrete durable state provider and authenticated identity/approval authority are bound and verified. Local `.runtime` run and approval spools are diagnostic/development state only and are never production authority. Setting an environment flag alone must not make readiness or runtime report durable execution as available. Approval POST is fail-closed until authenticated durable approval is implemented.
