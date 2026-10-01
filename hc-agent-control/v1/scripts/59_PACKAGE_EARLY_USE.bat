@@ -24,7 +24,7 @@ copy /Y release-gates.json "%OUT%\" >nul
 > "%OUT%\CONTROL_MENU.bat" echo @echo off
 >>"%OUT%\CONTROL_MENU.bat" echo cd /d "%%~dp0"
 >>"%OUT%\CONTROL_MENU.bat" echo call scripts\HCAC_MENU.bat
-> "%OUT%\EARLY-USE.txt" echo EARLY USE SAFE BUILD - real ChatGPT send remains disabled until G2 live acceptance.
+if exist "logs\a5-live-verify.json" ( > "%OUT%\EARLY-USE.txt" echo EARLY USE BUILD - live send acceptance evidence present; runtime still fail-closed by one-shot arming. ) else ( > "%OUT%\EARLY-USE.txt" echo EARLY USE SAFE BUILD - live send acceptance evidence not present. )
 python scripts\package_hashes.py "%OUT%" || exit /b 66
 echo EARLY_USE_PACKAGE_PASS %OUT%
 exit /b 0
