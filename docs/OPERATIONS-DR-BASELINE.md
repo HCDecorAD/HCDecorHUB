@@ -6,6 +6,11 @@
 - SHA-256 manifests provide integrity checking for those local backups.
 - Production mutation remains fail-closed until durable state and authenticated authority are implemented.
 
+## Current upgrade checkpoint
+- Durable provider boundary: implemented in source, unbound by default, fail-closed.
+- Durable provider contract is enforced by the Persistence Contract gate.
+- No production provider credentials or mutation authority have been introduced.
+
 ## Required production evolution
 1. Durable centralized audit/event store.
 2. Durable run/workflow/approval state.
