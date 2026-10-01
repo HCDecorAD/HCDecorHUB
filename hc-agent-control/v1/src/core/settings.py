@@ -1,5 +1,5 @@
 import json,pathlib
-DEFAULT={"theme":"system","first_run_done":False,"window_geometry":"1220x760"}
+DEFAULT={"theme":"system","first_run_done":False,"window_geometry":"1220x760","notifications":True,"auto_refresh_ms":5000}
 class Settings:
  def __init__(self,path):self.path=pathlib.Path(path);self.data=dict(DEFAULT);self.load()
  def load(self):
