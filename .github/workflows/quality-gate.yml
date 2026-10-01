@@ -28,6 +28,9 @@ jobs:
         run: npm run test:architecture
       - name: Foundation authority and identity contract
         run: node scripts/foundation-contract-check.mjs
+      - name: DR readiness contract
+        run: node scripts/dr-readiness-check.mjs
+
       - name: Commerce contract
         run: node scripts/commerce-contract-check.mjs
       - name: Persistence contract
