@@ -1,4 +1,4 @@
-import pathlib,tkinter as tk
+import pathlib,tkinter as tk,webbrowser,datetime
 from tkinter import ttk,messagebox
 from src.adapters.cdp import CDPDiscovery
 from src.core.registry import ChatRegistry,RegistryConflict
@@ -22,18 +22,21 @@ class AutoChatApp(tk.Tk):
   ttk.Label(left,text="Chat Windows",font=("Segoe UI",12,"bold")).pack(anchor="w");self.tree=ttk.Treeview(left,columns=("alias","status","id","title"),show="headings",height=15)
   for c,t in (("alias","Alias"),("status","Status"),("id","Conversation"),("title","Title")):self.tree.heading(c,text=t)
   self.tree.pack(fill="both",expand=True,pady=8)
-  bar=ttk.Frame(left);bar.pack(fill="x");ttk.Button(bar,text="Refresh",command=self.refresh).pack(side="left");ttk.Button(bar,text="Bind",command=self.bind_selected).pack(side="left",padx=4);ttk.Button(bar,text="Unbind",command=self.unbind).pack(side="left");ttk.Button(bar,text="Pause/Resume",command=self.toggle_pause).pack(side="left",padx=4);ttk.Button(bar,text="STOP ALL",command=self.stop_all).pack(side="right")
+  bar=ttk.Frame(left);bar.pack(fill="x");ttk.Button(bar,text="Refresh",command=self.refresh).pack(side="left");ttk.Button(bar,text="Bind",command=self.bind_selected).pack(side="left",padx=4);ttk.Button(bar,text="Unbind",command=self.unbind).pack(side="left");ttk.Button(bar,text="Open Chat",command=self.open_chat).pack(side="left",padx=4);ttk.Button(bar,text="Pause/Resume",command=self.toggle_pause).pack(side="left",padx=4);ttk.Button(bar,text="STOP ALL",command=self.stop_all).pack(side="right")
   ttk.Label(right,text="Command",font=("Segoe UI",12,"bold")).pack(anchor="w");row=ttk.Frame(right);row.pack(fill="x",pady=8);ttk.Combobox(row,textvariable=self.alias,values=("MASTER","GSC","VISUAL","VIDEO","WORKER-01"),width=16,state="readonly").pack(side="left");ttk.Entry(row,textvariable=self.command).pack(side="left",fill="x",expand=True,padx=8);ttk.Button(row,text="Dry Run",command=self.dry_run).pack(side="right")
   quick=ttk.Frame(right);quick.pack(fill="x")
   for v in ("/auto","Tiếp tục","Kiểm tra tiến độ"):ttk.Button(quick,text=v,command=lambda x=v:self.command.set(x)).pack(side="left",padx=(0,6))
-  ttk.Label(right,text="Live Log",font=("Segoe UI",12,"bold")).pack(anchor="w",pady=(18,6));self.log=tk.Text(right,height=22,state="disabled");self.log.pack(fill="both",expand=True)
+  ttk.Label(right,text="Queue",font=("Segoe UI",12,"bold")).pack(anchor="w",pady=(14,4));self.qtree=ttk.Treeview(right,columns=("alias","state","text"),show="headings",height=6);self.qtree.heading("alias",text="Alias");self.qtree.heading("state",text="State");self.qtree.heading("text",text="Command");self.qtree.pack(fill="x")
+  ttk.Label(right,text="Live Log",font=("Segoe UI",12,"bold")).pack(anchor="w",pady=(12,6));self.log=tk.Text(right,height=14,state="disabled");self.log.pack(fill="both",expand=True)
  def close_app(self):self.instance.release();self.destroy()
- def write_log(self,s):self.log.configure(state="normal");self.log.insert("end",s+"\n");self.log.see("end");self.log.configure(state="disabled")
+ def write_log(self,s):self.log.configure(state="normal");self.log.insert("end",datetime.datetime.now().strftime("%H:%M:%S")+"  "+s+"\n");self.log.see("end");self.log.configure(state="disabled")
  def apply_theme(self):
   name,p=resolve_theme(self.theme.get(),system_dark=True);self.configure(bg=p["bg"]);self.option_add("*TCombobox*Listbox.background",p["bg"]);self.option_add("*TCombobox*Listbox.foreground",p["fg"]);self.write_log("THEME "+name) if hasattr(self,"log") else None
  def refresh(self):
-  self.tree.delete(*self.tree.get_children())
-  try:self.pages=self.discovery.pages();self.status.set("ONLINE · SAFE · SEND OFF")
+  self.tree.delete(*self.tree.get_children());self.qtree.delete(*self.qtree.get_children())
+  for x in self.queue.items[-100:]:self.qtree.insert("","end",values=(x.get("alias",""),x.get("state",""),x.get("text","")))
+  paused="STOPPED" if self.queue.global_paused else "SAFE"
+  try:self.pages=self.discovery.pages();self.status.set("ONLINE · "+paused+" · SEND OFF")
   except Exception as e:self.pages=[];self.status.set("OFFLINE · SEND OFF");self.write_log("CDP ERROR "+str(e))
   bound={x["conversation_id"]:x["alias"] for x in self.registry.all()}
   for p in self.pages:
@@ -48,6 +51,10 @@ class AutoChatApp(tk.Tk):
   if not p:messagebox.showwarning("HC Agent Control","Select a real /c/ conversation first.");return
   try:self.registry.bind(self.alias.get(),p);self.write_log("BOUND "+self.alias.get()+" -> "+p["conversation_id"]);self.refresh()
   except RegistryConflict as e:messagebox.showerror("Bind blocked",str(e))
+ def open_chat(self):
+  saved=self.registry.get(self.alias.get())
+  if saved and saved.get("url"):webbrowser.open(saved["url"]);self.write_log("OPEN "+self.alias.get())
+  else:self.write_log("OPEN BLOCKED alias not bound "+self.alias.get())
  def unbind(self):self.registry.unbind(self.alias.get());self.write_log("UNBOUND "+self.alias.get());self.refresh()
  def toggle_pause(self):
   a=self.alias.get()
@@ -61,5 +68,5 @@ class AutoChatApp(tk.Tk):
   if not saved:self.write_log("BLOCKED alias not bound "+a);return
   try:AliasResolver.resolve(saved,self.pages)
   except AliasResolutionError as e:self.write_log("BLOCKED identity "+str(e));return
-  item=self.queue.enqueue(a,self.command.get());self.write_log(f"DRY RUN {item['alias']} {item['text']} [{item['id']}]")
+  item=self.queue.enqueue(a,self.command.get());self.write_log(f"DRY RUN {item['alias']} {item['text']} [{item['id']}]");self.refresh()
 if __name__=="__main__":AutoChatApp().mainloop()
