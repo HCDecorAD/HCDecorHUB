@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0.0",
+  "capabilities": [
+    {
+      "capability_id": "durable-queue",
+      "provider_tool": "group-governor",
+      "inputs": [
+        "mission"
+      ],
+      "outputs": [
+        "state",
+        "evidence"
+      ],
+      "risk_class": "control-plane",
+      "gate": "Governor durable queue v0",
+      "cost_class": "low",
+      "production_write": false,
+      "fail_closed": true
+    },
+    {
+      "capability_id": "durable-mission-supervision",
+      "provider_tool": "hc-done",
+      "inputs": [
+        "mission"
+      ],
+      "outputs": [
+        "state",
+        "evidence"
+      ],
+      "risk_class": "control-plane",
+      "gate": "Durable DONE supervisor v0",
+      "cost_class": "low",
+      "production_write": false,
+      "fail_closed": true
+    },
+    {
+      "capability_id": "durable-recovery-acceptance",
+      "provider_tool": "transwarp",
+      "inputs": [
+        "mission"
+      ],
+      "outputs": [
+        "state",
+        "evidence"
+      ],
+      "risk_class": "transport",
+      "gate": "TransWarp durable recovery acceptance",
+      "cost_class": "medium",
+      "production_write": false,
+      "fail_closed": true
+    },
+    {
+      "capability_id": "mission-correlation",
+      "provider_tool": "evidence-envelope",
+      "inputs": [
+        "mission_id",
+        "event_type",
+        "component",
+        "outcome",
+        "checkpoint?",
+        "attributes?"
+      ],
+      "outputs": [
+        "evidence_event"
+      ],
+      "risk_class": "observability",
+      "gate": "Unified evidence envelope gate",
+      "cost_class": "low",
+      "production_write": false,
+      "fail_closed": true
+    },
+    {
+      "capability_id": "deployment-planning",
+      "provider_tool": "deployment-adapter",
+      "inputs": [
+        "workspace_id",
+        "environment",
+        "provider?"
+      ],
+      "outputs": [
+        "deployment_plan"
+      ],
+      "risk_class": "production-write-planning",
+      "gate": "Deployment adapter gate",
+      "cost_class": "low",
+      "production_write": true,
+      "fail_closed": true
+    },
+    {
+      "capability_id": "authorization",
+      "provider_tool": "policy-engine",
+      "inputs": [
+        "role",
+        "action",
+        "workspace_id",
+        "grants",
+        "approved",
+        "production"
+      ],
+      "outputs": [
+        "policy_decision"
+      ],
+      "risk_class": "policy",
+      "gate": "Policy engine gate",
+      "cost_class": "low",
+      "production_write": false,
+      "fail_closed": true
+    }
+  ]
+}
