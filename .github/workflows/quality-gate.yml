@@ -66,6 +66,8 @@ jobs:
         run: npm run test:evidence-store
       - name: Corporate catalog gate
         run: npm run test:corporate-catalog
+      - name: Active asset coverage gate
+        run: npm run test:active-asset-coverage
       - name: Capability registry gate
         run: npm run test:capability-registry
       - name: Verified fix memory gate
