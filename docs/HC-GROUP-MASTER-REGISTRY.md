@@ -109,7 +109,7 @@ Priority considers business value, dependency criticality, readiness, risk, time
 - Normal progress never requires owner commands.
 
 ## Verified capabilities
-- P0 Corporate Catalog / Registry baseline: machine-readable projects/tools/resources in `config/corporate-catalog.json`; Quality Gate PASS. Coverage of all future/local-only entities remains an ongoing catalog-expansion duty.
+- P0 Corporate Catalog / Registry 1.1.0: machine-readable projects/systems/tools/resources in `config/corporate-catalog.json`. Eleven active HC Group systems are first-class catalog entities, including HC DONE, TransWarp, HCDR, AutoDebug, Agent Control, AutoChat, MOONSHOT, Design AI Studio, Visual Builder, MediaFlow and Video Downloader. Quality Gate + Production Verify PASS at `616f99ef7db0e71ba853b6f775332dcaffafee91`. Future/new local-only assets remain an ongoing catalog-expansion duty.
 - P0 Durable Group Governor baseline: persistent mission queue, lease/heartbeat/fencing, dependency-aware READY selection, restart recovery and work-conserving scheduling; durable queue/DONE/portfolio/MOON gates PASS.
 - P0 Unified Evidence / Observability baseline: evidence envelope + `mission_id`/`correlation_id` persistence through durable queue retry/restart/DONE; Quality Gate PASS. Full fleet-wide logs/metrics/traces backend is not yet claimed.
 - P1 Capability Registry baseline: machine-readable capability I/O, risk class, gate, cost class and fail-closed declaration in `config/capability-registry.json`; Quality Gate PASS.
@@ -118,7 +118,7 @@ Priority considers business value, dependency criticality, readiness, risk, time
 - P2 Operator Dashboard authority-aware telemetry baseline: `/hub/operator` is a read-only portfolio/catalog/capability + Goal/Mission + runtime telemetry surface. It shows durable-runtime diagnostics, recent run history, blockers, worker HEALTHY/SUSPECT state, mission/correlation links and checkpoints. Each source carries explicit authority metadata; worker heartbeat and local run history remain non-production-authoritative. No deploy/publish/retry/approval write path. Quality Gate + Production Verify PASS at `17fd082a267e7d9ba2931aaf2f0f24e907a98e0d`.
 
 ## Remaining capability expansion
-- Expand Corporate Catalog coverage toward the MOON >=95% target, including local-only projects/tools/resources and richer Goal/Mission/Worker/Evidence relations.
+- Continue Corporate Catalog coverage toward the MOON >=95% target for future/new local-only assets and richer Goal/Mission/Worker/Evidence relations; the current 1.1.0 baseline already includes 3 production projects, 11 active systems, 15 tools and 5 resources.
 - Propagate evidence correlation across HCDR/AutoDebug/project-specific gates and add evidence-backed runtime health sources where real telemetry exists.
 - Extend the durable budget ledger from single-Governor file-backed admission to a fenced/atomic multi-writer backend only when fleet-wide concurrent writers are actually required.
 - Extend worker heartbeat and operator telemetry from single-node local-spool diagnostics to a durable shared/fenced backend only when multi-writer runtime authority is actually required; keep the current read-only dashboard authority labels fail-honest.
