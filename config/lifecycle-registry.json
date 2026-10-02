@@ -97,7 +97,7 @@
     {
       "mission_id": "mission-catalog-coverage",
       "goal_id": "hc-group-autonomous-done",
-      "state": "RUNNING",
+      "state": "DONE",
       "required_capabilities": [
         "durable-queue"
       ],
@@ -105,14 +105,17 @@
         "group-governor"
       ],
       "worker_class": "catalog",
-      "evidence_gate": "Corporate catalog gate",
-      "checkpoint": "15 known tools registered; local-only/project relation coverage continues",
+      "evidence_gate": "Corporate catalog gate + Active asset coverage gate + HC Group MOON gate",
+      "checkpoint": "declared active inventory coverage verified at 34/34 = 100.00%; enterprise completeness outside declared inventory not claimed",
       "project_id": "HCDECOR",
       "system_refs": [
         "hc-moonshot"
       ],
       "evidence_refs": [
-        "gate:Corporate catalog gate"
+        "gate:Corporate catalog gate",
+        "gate:Active asset coverage gate",
+        "gate:HC Group MOON gate",
+        "commit:003d6798d7d55c20605b949b4eaaee9f81de9b55"
       ],
       "tool_refs": [
         "group-governor"
