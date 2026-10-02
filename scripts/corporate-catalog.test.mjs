@@ -16,5 +16,7 @@ assert.ok(c.resources.find(x=>x.resource_id==='github-actions'));
 assert.ok(c.resources.find(x=>x.resource_id==='hcdr'));
 assert.ok(c.resources.find(x=>x.resource_id==='wordpress'));
 assert.ok(c.resources.find(x=>x.resource_id==='github-pages'));
-assert.equal(c.tools.find(x=>x.tool_id==='hc-agent-control').verification_state,'not-proven-done');
+assert.equal(c.tools.find(x=>x.tool_id==='hc-agent-control').verification_state,'source-contract-only');
+assert.equal(c.systems.find(x=>x.system_id==='hc-agent-control').state,'source-contract-only');
+assert.equal(c.tools.find(x=>x.tool_id==='hc-agent-control').gate,'HC Agent Control source contract');
 console.log('CORPORATE_CATALOG_PASS projects=3 systems='+c.systems.length+' tools='+c.tools.length+' retired_vercel=0 expanded_known_assets=1');
