@@ -24,7 +24,8 @@
     "test:durable-adapter": "node scripts/durable-file-adapter.test.mjs",
     "test:social-media": "node scripts/social-media-gate.test.mjs",
     "test:evidence-envelope": "node scripts/evidence-envelope.test.mjs",
-    "test:corporate-catalog": "node scripts/corporate-catalog.test.mjs"
+    "test:corporate-catalog": "node scripts/corporate-catalog.test.mjs",
+    "test:capability-registry": "node scripts/capability-registry.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
