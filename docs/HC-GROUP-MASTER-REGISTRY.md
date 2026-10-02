@@ -87,7 +87,9 @@ ACTIVE:
 - HCDecor HUB core roadmap.
 - GSC public refinement.
 - AMO backend/data refinement after Public V4 QA recovery.
-- Unified Evidence / Observability baseline.
+- DONE Unified Evidence / Observability baseline.
+- DONE Corporate Catalog / Capability Registry / Resource Governor / Verified Fix Memory baselines.
+- Operator Dashboard read-only baseline GREEN; runtime mission/worker telemetry enrichment remains.
 
 WAITING/BLOCKED:
 - TransWarp acceptance waits for proven durable local supervisor/execution path.
@@ -106,27 +108,20 @@ Priority considers business value, dependency criticality, readiness, risk, time
 - Same failure fingerprint gets bounded retries then strategy change.
 - Normal progress never requires owner commands.
 
-## Missing capabilities
-P0 Corporate Catalog / Registry:
-machine-readable Project/Tool/Resource/Goal/Mission/Worker/Evidence manifests; owns/dependsOn/provides/consumes/blockedBy; lifecycle, health, checkpoint.
+## Verified capabilities
+- P0 Corporate Catalog / Registry baseline: machine-readable projects/tools/resources in `config/corporate-catalog.json`; Quality Gate PASS. Coverage of all future/local-only entities remains an ongoing catalog-expansion duty.
+- P0 Durable Group Governor baseline: persistent mission queue, lease/heartbeat/fencing, dependency-aware READY selection, restart recovery and work-conserving scheduling; durable queue/DONE/portfolio/MOON gates PASS.
+- P0 Unified Evidence / Observability baseline: evidence envelope + `mission_id`/`correlation_id` persistence through durable queue retry/restart/DONE; Quality Gate PASS. Full fleet-wide logs/metrics/traces backend is not yet claimed.
+- P1 Capability Registry baseline: machine-readable capability I/O, risk class, gate, cost class and fail-closed declaration in `config/capability-registry.json`; Quality Gate PASS.
+- P1 Resource/Budget Governor baseline: registered resource capacities fail closed to `WAITING_RESOURCE`; blocked resources do not stall unrelated READY work; scheduler gate PASS.
+- P1 Knowledge/Fix Memory baseline: only terminal-verified fingerprints/fixes are promoted in `config/fix-memory.json`; Quality Gate PASS.
+- P2 Operator Dashboard baseline: `/hub/operator` read-only portfolio/catalog/capability surface is in HUB navigation; no deploy/publish/retry/approval write path; Quality Gate + Production Verify PASS at commit `ad837699b3b184b6d25b29c78a9a66bfaa30b130`.
 
-P0 Durable Group Governor:
-persistent mission queue; lease/heartbeat/fencing; dependency-aware READY selection; restart recovery; work-conserving scheduling.
-
-P0 Unified Evidence / Observability:
-Mission ID/correlation ID across HCDR, DONE, AutoDebug, GitHub and project gates; logs/metrics/traces/events; evidence-based health.
-
-P1 Capability Registry:
-every tool declares capability, I/O contract, risk class, gate and cost; TransWarp routes known capability.
-
-P1 Resource/Budget Governor:
-API credits, local worker capacity, rate limits, HCDR capacity and registered deployment-provider limits are resources; one blocked resource must not idle company.
-
-P1 Knowledge/Fix Memory:
-only verified fixes/research promoted; fingerprints linked to evidence/components.
-
-P2 Operator Dashboard:
-portfolio, goals, missions, workers, blockers, ETA ranges and evidence; owner sees exceptions/decisions rather than internal chatter.
+## Remaining capability expansion
+- Expand Corporate Catalog coverage toward the MOON >=95% target, including local-only projects/tools/resources and richer Goal/Mission/Worker/Evidence relations.
+- Propagate evidence correlation across HCDR/AutoDebug/project-specific gates and add evidence-backed runtime health sources where real telemetry exists.
+- Extend Resource Governor from static registered capacities to durable shared rate/quota accounting where downstream APIs require fleet-wide limits.
+- Enrich Operator Dashboard with real mission/worker/blocker/evidence runtime data only when those sources are verifiable; keep it read-only until a separately gated control surface is designed.
 
 ## External patterns to adopt selectively
 - Backstage: central catalog model of Components/APIs/Resources grouped into Systems/Domains. Adopt the model, not necessarily the full product.
