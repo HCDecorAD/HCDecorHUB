@@ -5,6 +5,9 @@ const route=fs.readFileSync('app/api/master/operator-telemetry/route.js','utf8')
 assert.ok(helper.includes('masterRunStoreInfo'));
 assert.ok(helper.includes('durableRuntimeStatus'));
 assert.ok(helper.includes('DurableWorkerHeartbeatStore'));
+assert.ok(helper.includes('DurableEvidenceStore'));
+assert.ok(helper.includes('evidence-events.jsonl'));
+assert.ok(helper.includes('recent_evidence'));
 assert.ok(helper.includes('worker-heartbeats.json'));
 assert.ok(helper.includes('suspect_workers'));
 assert.ok(helper.includes('production_write:false'));
