@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "capabilities": [
     {
       "capability_id": "durable-queue",
@@ -105,6 +105,71 @@
       "cost_class": "low",
       "production_write": false,
       "fail_closed": true
+    },
+    {
+      "capability_id": "local-execution-transport",
+      "provider_tool": "hcdr",
+      "inputs": [
+        "mission_id",
+        "correlation_id",
+        "source_id",
+        "command",
+        "mutation?"
+      ],
+      "outputs": [
+        "state",
+        "result",
+        "evidence_ref"
+      ],
+      "risk_class": "transport",
+      "gate": "HCDR correlation contract",
+      "cost_class": "medium",
+      "production_write": false,
+      "fail_closed": true,
+      "contract_state": "source-contract-only"
+    },
+    {
+      "capability_id": "failure-diagnosis",
+      "provider_tool": "hc-autodebug",
+      "inputs": [
+        "mission_id",
+        "correlation_id",
+        "fingerprint",
+        "component",
+        "symptom"
+      ],
+      "outputs": [
+        "diagnosis",
+        "repair_plan",
+        "evidence_ref"
+      ],
+      "risk_class": "reliability",
+      "gate": "verified-fix-memory gate",
+      "cost_class": "low",
+      "production_write": false,
+      "fail_closed": true,
+      "contract_state": "source-contract-only"
+    },
+    {
+      "capability_id": "repair-verification",
+      "provider_tool": "hc-autodebug",
+      "inputs": [
+        "mission_id",
+        "correlation_id",
+        "fingerprint",
+        "candidate_fix",
+        "verification_gate"
+      ],
+      "outputs": [
+        "verification_state",
+        "evidence_ref"
+      ],
+      "risk_class": "reliability",
+      "gate": "verified-fix-memory gate",
+      "cost_class": "medium",
+      "production_write": false,
+      "fail_closed": true,
+      "contract_state": "source-contract-only"
     }
   ]
 }
