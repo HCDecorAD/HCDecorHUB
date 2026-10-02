@@ -48,6 +48,8 @@ jobs:
         run: npm run test:portfolio-pilot
       - name: HC Group MOON gate
         run: npm run test:moon-gate
+      - name: Deployment adapter gate
+        run: npm run test:deployment-adapter
       - name: Production build
         run: npm run build
       - name: Master Agent local E2E
