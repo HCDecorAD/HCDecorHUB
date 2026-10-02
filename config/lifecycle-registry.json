@@ -132,15 +132,18 @@
         "evidence-envelope"
       ],
       "worker_class": "operator-ui",
-      "evidence_gate": "Operator dashboard gate",
-      "checkpoint": "read-only dashboard baseline verified; live runtime telemetry enrichment remains",
+      "evidence_gate": "Operator dashboard gate + Operator telemetry authority gate + Durable worker heartbeat gate + Durable evidence store gate",
+      "checkpoint": "read-only operator telemetry verified with authority-aware runtime diagnostics, worker heartbeat health, and local durable mission evidence; local-spool sources remain non-production-authoritative",
       "project_id": "HCDECOR",
       "system_refs": [
         "hc-moonshot"
       ],
       "evidence_refs": [
         "gate:Operator dashboard gate",
-        "gate:Operator telemetry authority gate"
+        "gate:Operator telemetry authority gate",
+        "gate:Durable worker heartbeat gate",
+        "gate:Durable evidence store gate",
+        "commit:44686825103bcc6786b5d6ac213e1b41cefa27be"
       ],
       "tool_refs": [
         "evidence-envelope"
