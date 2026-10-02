@@ -62,6 +62,8 @@ jobs:
         run: npm run test:corporate-catalog
       - name: Capability registry gate
         run: npm run test:capability-registry
+      - name: Verified fix memory gate
+        run: npm run test:fix-memory
       - name: Production build
         run: npm run build
       - name: Master Agent local E2E
