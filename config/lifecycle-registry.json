@@ -25,7 +25,7 @@
       "project_id": "HCDECOR",
       "state": "active",
       "acceptance_gate": "HC Group MOON gate",
-      "checkpoint": "verified corporate baselines + ongoing capability expansion",
+      "checkpoint": "MOON baseline accepted; all listed baseline missions DONE; continuous capability/roadmap expansion remains active by design",
       "depends_on": [],
       "missions": [
         "mission-durable-governor",
@@ -37,6 +37,13 @@
         "hc-done",
         "transwarp",
         "hc-moonshot"
+      ],
+      "mode": "continuous",
+      "evidence_refs": [
+        "gate:HC Group MOON gate",
+        "gate:Active asset coverage gate",
+        "commit:003d6798d7d55c20605b949b4eaaee9f81de9b55",
+        "commit:37f679f9600dd0e33cd3641d3fc90439afe630c0"
       ]
     }
   ],
