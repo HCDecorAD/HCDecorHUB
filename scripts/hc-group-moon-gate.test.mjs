@@ -32,6 +32,44 @@ ok('retired Vercel is absent from active deployment registry',()=>{
   assert.equal(ws.includes('vercel'),false);
 });
 
+ok('active goals are machine-complete and evidence-gated',()=>{
+  const life=readJson('config/lifecycle-registry.json');
+  const active=life.goals.filter(g=>String(g.state).toLowerCase()==='active');
+  assert.ok(active.length>0);
+  for(const g of active){
+    assert.ok(g.goal_id);
+    assert.ok(g.project_id);
+    assert.ok(Array.isArray(g.depends_on));
+    assert.ok(g.acceptance_gate);
+    assert.ok(g.checkpoint);
+    assert.ok(Array.isArray(g.missions)&&g.missions.length>0);
+  }
+});
+
+ok('HCDR remains canonical registered local execution route',()=>{
+  const cat=readJson('config/corporate-catalog.json');
+  const r=cat.resources.find(x=>x.resource_id==='hcdr');
+  const t=cat.tools.find(x=>x.tool_id==='hcdr');
+  assert.ok(r);
+  assert.equal(r.kind,'local-execution');
+  assert.ok(t?.provides?.includes('local-execution-transport'));
+  assert.equal(cat.resources.some(x=>/vercel/i.test(String(x.resource_id))),false);
+});
+
+ok('catalog system relations are internally complete',()=>{
+  const cat=readJson('config/corporate-catalog.json');
+  const tools=new Set(cat.tools.map(x=>x.tool_id));
+  assert.ok(cat.projects.length>=3);
+  assert.ok(cat.systems.length>=11);
+  for(const s of cat.systems){
+    assert.ok(s.system_id);
+    assert.ok(s.role);
+    assert.ok(s.state);
+    assert.ok(Array.isArray(s.tool_refs)&&s.tool_refs.length>0);
+    for(const ref of s.tool_refs) assert.ok(tools.has(ref),ref);
+  }
+});
+
 ok('quality gate contains durable recovery portfolio and release evidence',()=>{
   const q=fs.readFileSync('.github/workflows/quality-gate.yml','utf8');
   for(const marker of [
@@ -86,4 +124,4 @@ ok('blocked lane does not stall independent ready work',()=>{
   assert.ok(out.untouched.includes('blocked'));
 });
 
-console.log(`HC_GROUP_MOON_GATE_PASS ${pass}/6`);
+console.log(`HC_GROUP_MOON_GATE_PASS ${pass}/9 machine_coverage_percent=not_claimed_without_independent_inventory`);
