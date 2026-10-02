@@ -4,4 +4,12 @@ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'hc-evidence-'));const file=path.
 const a=createEvidenceEvent({mission_id:'m1',correlation_id:'c1',event_type:'gate',component:'quality',outcome:'success'});
 const b=createEvidenceEvent({mission_id:'m2',event_type:'heartbeat',component:'worker',outcome:'info'});
 s.append(a);s.append(b);const s2=new DurableEvidenceStore(file);assert.equal(s2.list().length,2);assert.equal(s2.list({mission_id:'m1'})[0].correlation_id,'c1');assert.equal(s2.list({correlation_id:'m2'})[0].mission_id,'m2');
-assert.throws(()=>s.append({}),/INVALID_EVIDENCE_EVENT/);console.log('DURABLE_EVIDENCE_STORE_PASS durable=1 mission_filter=1 correlation_filter=1 fail_closed=1');
+assert.throws(()=>s.append({}),/INVALID_EVIDENCE_EVENT/);
+fs.appendFileSync(file,'{malformed-json\n');
+const safe=s2.list();
+assert.equal(safe.length,2);
+const health=s2.health();
+assert.equal(health.state,'DEGRADED');
+assert.equal(health.malformed_lines,1);
+assert.equal(health.valid_events,2);
+console.log('DURABLE_EVIDENCE_STORE_PASS durable=1 mission_filter=1 correlation_filter=1 fail_closed=1 malformed_tolerant=1 degraded_diagnostic=1');
