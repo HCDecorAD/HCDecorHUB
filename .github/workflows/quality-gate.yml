@@ -68,6 +68,8 @@ jobs:
         run: npm run test:fix-memory
       - name: Operator dashboard gate
         run: npm run test:operator-dashboard
+      - name: Operator telemetry authority gate
+        run: npm run test:operator-telemetry
       - name: Goal mission lifecycle registry gate
         run: npm run test:lifecycle-registry
       - name: Production build
