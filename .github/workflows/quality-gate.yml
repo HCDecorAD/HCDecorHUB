@@ -30,24 +30,30 @@ jobs:
         run: node scripts/foundation-contract-check.mjs
       - name: DR readiness contract
         run: node scripts/dr-readiness-check.mjs
-
       - name: Commerce contract
         run: node scripts/commerce-contract-check.mjs
       - name: Persistence contract
         run: node scripts/persistence-contract-check.mjs
+      - name: Dynamic port contract
+        run: npm run test:dynamic-port
+      - name: Governor resource scheduler v0
+        run: npm run test:governor
       - name: Production build
         run: npm run build
       - name: Master Agent local E2E
         shell: bash
         run: |
-          HC_ALLOW_LOCAL_E2E=true npm run start -- -p 3219 > /tmp/hcdecor-next.log 2>&1 &
+          PORT="$(node scripts/allocate-test-port.mjs 3219 3299)"
+          export HCDECOR_E2E_BASE="http://127.0.0.1:$PORT"
+          echo "HC dynamic port: $PORT"
+          HC_ALLOW_LOCAL_E2E=true npm run start -- -p "$PORT" > /tmp/hcdecor-next.log 2>&1 &
           pid=$!
           trap 'kill $pid || true' EXIT
           for i in {1..45}; do
-            if curl -fsS http://127.0.0.1:3219/api/master/readiness >/dev/null; then break; fi
+            if curl -fsS "$HCDECOR_E2E_BASE/api/master/readiness" >/dev/null; then break; fi
             sleep 1
           done
-          curl -fsS http://127.0.0.1:3219/api/master/readiness >/dev/null
+          curl -fsS "$HCDECOR_E2E_BASE/api/master/readiness" >/dev/null
           HC_ALLOW_LOCAL_E2E=true npm run test:master
       - name: Cloudflare build
         run: npm run cf:build
