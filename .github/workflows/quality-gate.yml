@@ -42,6 +42,8 @@ jobs:
         run: npm run test:durable-budget
       - name: Governor durable queue v0
         run: npm run test:governor-durable
+      - name: Durable worker heartbeat gate
+        run: npm run test:worker-heartbeats
       - name: Durable DONE supervisor v0
         run: npm run test:done-durable
       - name: TransWarp durable recovery acceptance
