@@ -52,3 +52,34 @@ await t('bounded retry becomes hard blocked',async()=>{
 });
 console.log(`DURABLE_DONE_SUPERVISOR_PASS ${pass}/5`);
 fs.rmSync(dir,{recursive:true,force:true});
+
+
+{
+  const fsMod=await import('node:fs');
+  const osMod=await import('node:os');
+  const pathMod=await import('node:path');
+  const dir=fsMod.mkdtempSync(pathMod.join(osMod.tmpdir(),'hc-correlation-'));
+  const file=pathMod.join(dir,'queue.json');
+  const q=new (await import('../lib/governor/durable-queue.mjs')).DurableMissionQueue(file);
+  q.upsert({mission_id:'corr-mission',state:'READY',required_capabilities:['code'],checkpoint:{stage:'start'}});
+  let calls=0;
+  const s=new DurableDoneSupervisor(q,{workerId:'corr-worker',capabilities:['code'],maxAttempts:3});
+  const ex=async m=>{
+    calls++;
+    assert.equal(m.correlation_id,'corr-mission');
+    if(calls===1){const e=new Error('retry');e.recoverable=true;e.checkpoint={stage:'retry'};throw e;}
+    return {checkpoint:{stage:'done'},evidence:{ok:true}};
+  };
+  const a=await s.tick(ex);
+  assert.equal(a.state,'RETRY_READY');
+  assert.equal(q.get('corr-mission').evidence.correlation_id,'corr-mission');
+  const q2=new (await import('../lib/governor/durable-queue.mjs')).DurableMissionQueue(file);
+  const s2=new DurableDoneSupervisor(q2,{workerId:'corr-worker-2',capabilities:['code'],maxAttempts:3});
+  const b=await s2.tick(ex);
+  assert.equal(b.state,'DONE');
+  const done=q2.get('corr-mission');
+  assert.equal(done.correlation_id,'corr-mission');
+  assert.equal(done.evidence.correlation_id,'corr-mission');
+  fsMod.rmSync(dir,{recursive:true,force:true});
+  console.log('CORRELATION_RESTART_PASS mission_id=corr-mission correlation_id=corr-mission');
+}
