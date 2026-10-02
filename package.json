@@ -33,7 +33,8 @@
     "test:operator-telemetry": "node scripts/operator-telemetry.test.mjs",
     "test:worker-heartbeats": "node scripts/durable-worker-heartbeats.test.mjs",
     "test:evidence-store": "node scripts/durable-evidence-store.test.mjs",
-    "test:active-asset-coverage": "node scripts/active-asset-coverage.test.mjs"
+    "test:active-asset-coverage": "node scripts/active-asset-coverage.test.mjs",
+    "test:agent-control-contract": "node scripts/hc-agent-control-acceptance.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
