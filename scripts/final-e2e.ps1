@@ -13,7 +13,7 @@ R 'build' 'npm run build'
 $portRaw=& node scripts\allocate-test-port.mjs 3219 3299
 if($LASTEXITCODE -ne 0){throw 'dynamic port allocation failed'}
 $port=[int]($portRaw|Out-String).Trim()
-$base="http://127.0.0.1:$port"
+$base="http://localhost:$port"
 $env:HCDECOR_E2E_BASE=$base
 $serverOut=Join-Path $run 'local-server.log'
 $serverErr=Join-Path $run 'local-server.err.log'
