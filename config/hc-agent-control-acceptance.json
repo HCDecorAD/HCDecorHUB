@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "system_id": "hc-agent-control",
+  "verification_state": "source-contract-only",
+  "runtime_done": false,
+  "principles": {
+    "mission_ownership_until_terminal": true,
+    "no_user_nudge_for_ordinary_progress": true,
+    "blocked_lane_does_not_stall_unrelated_work": true,
+    "heartbeat_required": true,
+    "checkpoint_required": true,
+    "evidence_required_for_done": true,
+    "uncertain_external_side_effects_fail_closed": true
+  },
+  "terminal_states": [
+    "DONE",
+    "OWNER_REQUIRED",
+    "SAFETY_STOP",
+    "HARD_BLOCKED"
+  ],
+  "required_worker_report_fields": [
+    "mission_id",
+    "state",
+    "checkpoint",
+    "last_verified_evidence",
+    "blocker",
+    "next_action"
+  ],
+  "acceptance_limits": "This contract proves source-level control semantics only. It does not prove a live Agent Control runtime, worker transport, or HOCUONG execution."
+}
