@@ -123,9 +123,11 @@ Priority considers business value, dependency criticality, readiness, risk, time
 
 - Declared active asset inventory coverage: `config/active-asset-inventory.json` defines an independent machine denominator of 34 currently declared active assets (3 projects, 11 systems, 15 tools, 5 resources). Corporate Catalog covers 34/34 = 100.00% of this declared inventory; Quality Gate + Production Verify PASS at `003d6798d7d55c20605b949b4eaaee9f81de9b55`. This is not a claim that every possible HC Group asset outside the declared inventory has been discovered.
 
+- HCDR mission/correlation source contract: relay job/result envelope now carries `source_id`, `mission_id`, and `correlation_id`; HCDR repo source-contract CI check `correlation` PASS at `6696e4e41940582ae344925c65949c25e7b4ed0f` (Actions run `37056914452`). This proves source-level contract/echo semantics only; HOCUONG runtime end-to-end propagation remains NOT_PROVEN.
+
 ## Remaining capability expansion
 - Maintain Corporate Catalog coverage at >=95% of the independent declared-active inventory; current measured coverage is 34/34 = 100.00%. Expand the inventory first when genuinely new active assets are discovered, then require catalog catch-up. Goal/Mission → Project/System/Tool/Evidence reference relations are now covered by Lifecycle Registry 1.1.0; local Worker↔Mission↔Evidence runtime relations are now covered by the durable evidence spool baseline; shared/fenced multi-writer telemetry remains an expansion area only when required.
-- Propagate evidence correlation across HCDR/AutoDebug/project-specific gates and add evidence-backed runtime health sources where real telemetry exists.
+- HCDR/AutoDebug source correlation contracts are now registered and source-gated. Next expansion is real HCDR runtime end-to-end mission/correlation propagation and project-specific gate correlation where real runtime evidence exists; do not promote source contract to runtime authority.
 - Extend the durable budget ledger from single-Governor file-backed admission to a fenced/atomic multi-writer backend only when fleet-wide concurrent writers are actually required.
 - Extend worker heartbeat and operator telemetry from single-node local-spool diagnostics to a durable shared/fenced backend only when multi-writer runtime authority is actually required; keep the current read-only dashboard authority labels fail-honest.
 
