@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "source_of_truth": {
     "mission_runtime": "lib/governor/durable-queue.mjs",
     "evidence_contract": "lib/evidence-envelope.mjs",
@@ -32,6 +32,11 @@
         "mission-unified-evidence",
         "mission-catalog-coverage",
         "mission-operator-visibility"
+      ],
+      "system_refs": [
+        "hc-done",
+        "transwarp",
+        "hc-moonshot"
       ]
     }
   ],
@@ -50,7 +55,20 @@
       ],
       "worker_class": "control-plane",
       "evidence_gate": "Governor durable queue v0 + Durable DONE supervisor v0",
-      "checkpoint": "durable queue/restart/lease/fencing baseline verified"
+      "checkpoint": "durable queue/restart/lease/fencing baseline verified",
+      "project_id": "HCDECOR",
+      "system_refs": [
+        "hc-done",
+        "transwarp"
+      ],
+      "evidence_refs": [
+        "gate:Governor durable queue v0",
+        "gate:Durable DONE supervisor v0"
+      ],
+      "tool_refs": [
+        "group-governor",
+        "hc-done"
+      ]
     },
     {
       "mission_id": "mission-unified-evidence",
@@ -64,7 +82,17 @@
       ],
       "worker_class": "observability",
       "evidence_gate": "Unified evidence envelope gate",
-      "checkpoint": "mission/correlation persistence across retry/restart verified"
+      "checkpoint": "mission/correlation persistence across retry/restart verified",
+      "project_id": "HCDECOR",
+      "system_refs": [
+        "hc-autodebug"
+      ],
+      "evidence_refs": [
+        "gate:Unified evidence envelope gate"
+      ],
+      "tool_refs": [
+        "evidence-envelope"
+      ]
     },
     {
       "mission_id": "mission-catalog-coverage",
@@ -78,7 +106,17 @@
       ],
       "worker_class": "catalog",
       "evidence_gate": "Corporate catalog gate",
-      "checkpoint": "15 known tools registered; local-only/project relation coverage continues"
+      "checkpoint": "15 known tools registered; local-only/project relation coverage continues",
+      "project_id": "HCDECOR",
+      "system_refs": [
+        "hc-moonshot"
+      ],
+      "evidence_refs": [
+        "gate:Corporate catalog gate"
+      ],
+      "tool_refs": [
+        "group-governor"
+      ]
     },
     {
       "mission_id": "mission-operator-visibility",
@@ -92,7 +130,18 @@
       ],
       "worker_class": "operator-ui",
       "evidence_gate": "Operator dashboard gate",
-      "checkpoint": "read-only dashboard baseline verified; live runtime telemetry enrichment remains"
+      "checkpoint": "read-only dashboard baseline verified; live runtime telemetry enrichment remains",
+      "project_id": "HCDECOR",
+      "system_refs": [
+        "hc-moonshot"
+      ],
+      "evidence_refs": [
+        "gate:Operator dashboard gate",
+        "gate:Operator telemetry authority gate"
+      ],
+      "tool_refs": [
+        "evidence-envelope"
+      ]
     }
   ],
   "worker_contract": {
@@ -117,5 +166,14 @@
     ],
     "checkpoint_on_meaningful_transition": true,
     "release_requires_gate_evidence": true
+  },
+  "relationship_contract": {
+    "goal_to_project": "goals[].project_id -> corporate-catalog.projects[].project_id",
+    "goal_to_system": "goals[].system_refs[] -> corporate-catalog.systems[].system_id",
+    "mission_to_goal": "missions[].goal_id -> goals[].goal_id",
+    "mission_to_project": "missions[].project_id -> corporate-catalog.projects[].project_id",
+    "mission_to_system": "missions[].system_refs[] -> corporate-catalog.systems[].system_id",
+    "mission_to_tool": "missions[].tool_refs[] -> corporate-catalog.tools[].tool_id",
+    "mission_to_evidence": "missions[].evidence_refs[] -> verified gate/evidence identifiers"
   }
 }
