@@ -70,7 +70,7 @@ Gap: many active local projects/tools are not first-class catalog entities. The 
 | HC MOONSHOT | Readiness exercise | FIRST LAUNCH GREEN | Re-run only after meaningful architecture/release change |
 | HC Design AI Studio | AI design platform | ACTIVE | Continue latest checkpoint/local-first roadmap |
 | HC Visual Builder | Shared visual editor | GREEN source/CI contract | AMO + GSC visual editor gates PASS; production publish authority remains loopback/local-only |
-| GSC | Senior Living Digital Twin | GREEN source E2E/public | Source E2E + Visual Editor gates PASS; continue product refinement |
+| GSC | Senior Living Digital Twin | GREEN source E2E/public + production smoke runtime | Source E2E + Visual Editor gates PASS; scheduled production smoke run `37048049301` SUCCESS on production HEAD `6c5bc3a8044d1b332b7232546134be49dffeb088`; continue product refinement |
 | AMO Nguyen | Commerce | GREEN Public V4 QA | Public V4 QA + artifact upload PASS; continue backend/data/product refinement |
 | HC MediaFlow | Multi-platform media | ACTIVE | Consolidate media capabilities/adapters |
 | HC Video Downloader | Media utility | ACTIVE | Continue latest tested checkpoint; avoid duplication |
@@ -85,7 +85,7 @@ ACTIVE:
 - DONE HC DONE: durable mission ownership, automatic recovery, resume without owner nudge.
 - DONE TransWarp: acceptance mission for durable execution.
 - HCDecor HUB core roadmap.
-- GSC public refinement.
+- GSC public refinement; scheduled production smoke runtime is GREEN at run `37048049301`.
 - AMO backend/data refinement after Public V4 QA recovery.
 - DONE Unified Evidence / Observability baseline.
 - DONE Corporate Catalog / Capability Registry / Resource Governor / Verified Fix Memory baselines.
