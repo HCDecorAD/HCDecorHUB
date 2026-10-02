@@ -1,0 +1,121 @@
+{
+  "schema_version": "1.0.0",
+  "source_of_truth": {
+    "mission_runtime": "lib/governor/durable-queue.mjs",
+    "evidence_contract": "lib/evidence-envelope.mjs",
+    "architecture_contract": "config/runtime-contract.json",
+    "corporate_catalog": "config/corporate-catalog.json",
+    "capability_registry": "config/capability-registry.json"
+  },
+  "hierarchy": [
+    "domain",
+    "system",
+    "project",
+    "goal",
+    "mission",
+    "task",
+    "worker_or_tool",
+    "evidence",
+    "checkpoint",
+    "release"
+  ],
+  "goals": [
+    {
+      "goal_id": "hc-group-autonomous-done",
+      "project_id": "HCDECOR",
+      "state": "active",
+      "acceptance_gate": "HC Group MOON gate",
+      "checkpoint": "verified corporate baselines + ongoing capability expansion",
+      "depends_on": [],
+      "missions": [
+        "mission-durable-governor",
+        "mission-unified-evidence",
+        "mission-catalog-coverage",
+        "mission-operator-visibility"
+      ]
+    }
+  ],
+  "missions": [
+    {
+      "mission_id": "mission-durable-governor",
+      "goal_id": "hc-group-autonomous-done",
+      "state": "DONE",
+      "required_capabilities": [
+        "durable-queue",
+        "durable-mission-supervision"
+      ],
+      "provider_tools": [
+        "group-governor",
+        "hc-done"
+      ],
+      "worker_class": "control-plane",
+      "evidence_gate": "Governor durable queue v0 + Durable DONE supervisor v0",
+      "checkpoint": "durable queue/restart/lease/fencing baseline verified"
+    },
+    {
+      "mission_id": "mission-unified-evidence",
+      "goal_id": "hc-group-autonomous-done",
+      "state": "DONE",
+      "required_capabilities": [
+        "mission-correlation"
+      ],
+      "provider_tools": [
+        "evidence-envelope"
+      ],
+      "worker_class": "observability",
+      "evidence_gate": "Unified evidence envelope gate",
+      "checkpoint": "mission/correlation persistence across retry/restart verified"
+    },
+    {
+      "mission_id": "mission-catalog-coverage",
+      "goal_id": "hc-group-autonomous-done",
+      "state": "RUNNING",
+      "required_capabilities": [
+        "durable-queue"
+      ],
+      "provider_tools": [
+        "group-governor"
+      ],
+      "worker_class": "catalog",
+      "evidence_gate": "Corporate catalog gate",
+      "checkpoint": "15 known tools registered; local-only/project relation coverage continues"
+    },
+    {
+      "mission_id": "mission-operator-visibility",
+      "goal_id": "hc-group-autonomous-done",
+      "state": "DONE",
+      "required_capabilities": [
+        "mission-correlation"
+      ],
+      "provider_tools": [
+        "evidence-envelope"
+      ],
+      "worker_class": "operator-ui",
+      "evidence_gate": "Operator dashboard gate",
+      "checkpoint": "read-only dashboard baseline verified; live runtime telemetry enrichment remains"
+    }
+  ],
+  "worker_contract": {
+    "ownership_until_terminal": true,
+    "terminal_states": [
+      "DONE",
+      "OWNER_REQUIRED",
+      "SAFETY_STOP",
+      "HARD_BLOCKED"
+    ],
+    "heartbeat_required": true,
+    "preserve_mission_id_on_reassignment": true,
+    "preserve_correlation_id_on_reassignment": true,
+    "no_green_without_evidence": true
+  },
+  "evidence_contract": {
+    "required_links": [
+      "mission_id",
+      "correlation_id",
+      "component",
+      "outcome"
+    ],
+    "checkpoint_on_meaningful_transition": true,
+    "release_requires_gate_evidence": true
+  }
+}
