@@ -28,7 +28,8 @@
     "test:capability-registry": "node scripts/capability-registry.test.mjs",
     "test:fix-memory": "node scripts/fix-memory.test.mjs",
     "test:operator-dashboard": "node scripts/operator-dashboard.test.mjs",
-    "test:lifecycle-registry": "node scripts/lifecycle-registry.test.mjs"
+    "test:lifecycle-registry": "node scripts/lifecycle-registry.test.mjs",
+    "test:durable-budget": "node scripts/durable-budget-ledger.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
