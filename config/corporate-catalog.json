@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "generated_from": [
     "config/site-registry.json",
     "config/workspaces.json",
@@ -177,7 +177,7 @@
       "blocking_scope": "affected-workflow-only"
     },
     {
-      "resource_id": "hcdR",
+      "resource_id": "hcdr",
       "kind": "local-execution",
       "blocking_scope": "affected-local-mission-only"
     },
@@ -200,6 +200,108 @@
         "GSC",
         "AMO"
       ]
+    }
+  ],
+  "systems": [
+    {
+      "system_id": "hc-done",
+      "role": "goal-lifecycle",
+      "state": "green-baseline",
+      "tool_refs": [
+        "hc-done"
+      ],
+      "production_authority": false
+    },
+    {
+      "system_id": "transwarp",
+      "role": "capability-mission-routing",
+      "state": "green-acceptance-baseline",
+      "tool_refs": [
+        "transwarp"
+      ],
+      "production_authority": false
+    },
+    {
+      "system_id": "hcdr",
+      "role": "local-execution-transport",
+      "state": "green-baseline",
+      "repository": "HCDecorAD/HCDecor-HCDR-Relay",
+      "tool_refs": [
+        "hcdr"
+      ],
+      "production_authority": false
+    },
+    {
+      "system_id": "hc-autodebug",
+      "role": "reliability-repair",
+      "state": "green-baseline-evolving",
+      "tool_refs": [
+        "hc-autodebug"
+      ],
+      "production_authority": false
+    },
+    {
+      "system_id": "hc-agent-control",
+      "role": "agent-control",
+      "state": "not-proven-done",
+      "tool_refs": [
+        "hc-agent-control"
+      ],
+      "production_authority": false
+    },
+    {
+      "system_id": "hc-autochat",
+      "role": "operator-conversation-ui",
+      "state": "active",
+      "tool_refs": [
+        "hc-autochat"
+      ],
+      "production_authority": false
+    },
+    {
+      "system_id": "hc-moonshot",
+      "role": "readiness-gate",
+      "state": "green-baseline",
+      "tool_refs": [
+        "hc-moonshot"
+      ],
+      "production_authority": false
+    },
+    {
+      "system_id": "hc-design-ai-studio",
+      "role": "ai-design-platform",
+      "state": "active",
+      "tool_refs": [
+        "hc-design-ai-studio"
+      ],
+      "production_authority": false
+    },
+    {
+      "system_id": "hc-visual-builder",
+      "role": "shared-visual-editor",
+      "state": "green-source-ci",
+      "tool_refs": [
+        "hc-visual-builder"
+      ],
+      "production_authority": false
+    },
+    {
+      "system_id": "hc-mediaflow",
+      "role": "media-routing",
+      "state": "active",
+      "tool_refs": [
+        "hc-mediaflow"
+      ],
+      "production_authority": false
+    },
+    {
+      "system_id": "hc-video-downloader",
+      "role": "media-utility",
+      "state": "active",
+      "tool_refs": [
+        "hc-video-downloader"
+      ],
+      "production_authority": false
     }
   ]
 }
