@@ -69,15 +69,15 @@ Gap: many active local projects/tools are not first-class catalog entities. The 
 | HC AutoChat | Control automation | ACTIVE | Never become mission loop |
 | HC MOONSHOT | Readiness exercise | FIRST LAUNCH GREEN | Re-run only after meaningful architecture/release change |
 | HC Design AI Studio | AI design platform | ACTIVE | Continue latest checkpoint/local-first roadmap |
-| HC Visual Builder | Shared visual editor | ACTIVE | Stabilize/reuse across sites |
-| GSC | Senior Living Digital Twin | ACTIVE/public | UX/mobile/media/VN-EN/performance |
-| AMO Nguyen | Commerce | BLOCKED QA | Diagnose failing QA before release |
+| HC Visual Builder | Shared visual editor | GREEN source/CI contract | AMO + GSC visual editor gates PASS; production publish authority remains loopback/local-only |
+| GSC | Senior Living Digital Twin | GREEN source E2E/public | Source E2E + Visual Editor gates PASS; continue product refinement |
+| AMO Nguyen | Commerce | GREEN Public V4 QA | Public V4 QA + artifact upload PASS; continue backend/data/product refinement |
 | HC MediaFlow | Multi-platform media | ACTIVE | Consolidate media capabilities/adapters |
 | HC Video Downloader | Media utility | ACTIVE | Continue latest tested checkpoint; avoid duplication |
 | HCDecor public web | Business presence | PRODUCTION known | Maintain and register ownership/dependencies |
 
 ## HUB roadmap
-S5.1 Task DAG; S5.2 Capability Router; S5.3 Workspace Schema (NOW); S5.4 Deployment Adapter; S5.5 Policy Engine; S6 Durable Runtime Adapters; S7 GSC E2E; S8 AMO backend/data; S9 Social/Media; S10 Visual Editor.
+S5.1 Task DAG; S5.2 Capability Router; S5.3 Workspace Schema; S5.4 Deployment Adapter; S5.5 Policy Engine; S6 Durable Runtime Adapters; S7 GSC E2E; S8 AMO backend/data; S9 Social/Media; S10 Visual Editor. Source/CI roadmap gates S5.3-S10 are GREEN at the 2026-10-02 checkpoint.
 Infrastructure supports this roadmap; it must not permanently replace product delivery.
 
 ## Goal/Mission board
@@ -86,11 +86,11 @@ ACTIVE:
 - DONE TransWarp: acceptance mission for durable execution.
 - HCDecor HUB core roadmap.
 - GSC public refinement.
-- AMO QA recovery.
+- AMO backend/data refinement after Public V4 QA recovery.
+- Unified Evidence / Observability baseline.
 
 WAITING/BLOCKED:
 - TransWarp acceptance waits for proven durable local supervisor/execution path.
-- AMO release blocked by QA failures.
 
 VERIFIED BASELINES:
 - HC MOONSHOT First Launch: AutoDebug 139/139; DONE targeted 5/5; lint PASS at recorded checkpoint.
