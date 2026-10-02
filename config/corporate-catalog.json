@@ -83,6 +83,91 @@
       ],
       "risk_class": "policy",
       "gate": "Policy engine gate"
+    },
+    {
+      "tool_id": "hcdr",
+      "provides": [
+        "local-execution-transport",
+        "relay-queue"
+      ],
+      "risk_class": "transport",
+      "gate": "HCDR recorded exactly-once acceptance",
+      "verification_state": "green-baseline"
+    },
+    {
+      "tool_id": "hc-autodebug",
+      "provides": [
+        "failure-diagnosis",
+        "repair-verification",
+        "fix-memory-promotion"
+      ],
+      "risk_class": "reliability",
+      "gate": "verified-fix-memory gate",
+      "verification_state": "green-baseline-evolving"
+    },
+    {
+      "tool_id": "hc-agent-control",
+      "provides": [
+        "worker-coordination",
+        "agent-control"
+      ],
+      "risk_class": "control-plane",
+      "gate": "agent-control acceptance pending",
+      "verification_state": "not-proven-done"
+    },
+    {
+      "tool_id": "hc-autochat",
+      "provides": [
+        "operator-conversation-ui"
+      ],
+      "risk_class": "operator-ui",
+      "gate": "must-not-own-mission-loop",
+      "verification_state": "active"
+    },
+    {
+      "tool_id": "hc-moonshot",
+      "provides": [
+        "mission-readiness-gate"
+      ],
+      "risk_class": "qa",
+      "gate": "HC Group MOON gate",
+      "verification_state": "green-baseline"
+    },
+    {
+      "tool_id": "hc-visual-builder",
+      "provides": [
+        "visual-editor"
+      ],
+      "risk_class": "content-editing",
+      "gate": "AMO/GSC visual editor gates",
+      "verification_state": "green-source-ci"
+    },
+    {
+      "tool_id": "hc-mediaflow",
+      "provides": [
+        "media-routing"
+      ],
+      "risk_class": "media",
+      "gate": "media capability consolidation pending",
+      "verification_state": "active"
+    },
+    {
+      "tool_id": "hc-video-downloader",
+      "provides": [
+        "media-download"
+      ],
+      "risk_class": "media",
+      "gate": "latest tested project checkpoint",
+      "verification_state": "active"
+    },
+    {
+      "tool_id": "hc-design-ai-studio",
+      "provides": [
+        "ai-design"
+      ],
+      "risk_class": "creative",
+      "gate": "latest local-first project checkpoint",
+      "verification_state": "active"
     }
   ],
   "resources": [
