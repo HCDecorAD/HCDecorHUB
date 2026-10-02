@@ -1,0 +1,120 @@
+{
+  "schema_version": "1.0.0",
+  "generated_from": [
+    "config/site-registry.json",
+    "config/workspaces.json",
+    "config/integrations.json",
+    "docs/HC-GROUP-MASTER-REGISTRY.md"
+  ],
+  "projects": [
+    {
+      "project_id": "HCDECOR",
+      "workspace_id": "hcdecor",
+      "repository": "HCDecorAD/HCDecorHUB",
+      "production_authority": "WordPress",
+      "state": "production"
+    },
+    {
+      "project_id": "GSC",
+      "workspace_id": "gsc-senior",
+      "repository": "HCDecorAD/GSC",
+      "production_authority": "GitHub Pages",
+      "state": "production"
+    },
+    {
+      "project_id": "AMO",
+      "workspace_id": "amo-nguyen",
+      "repository": "HCDecorAD/AMONguyen",
+      "production_authority": "GitHub Pages",
+      "state": "production"
+    }
+  ],
+  "tools": [
+    {
+      "tool_id": "group-governor",
+      "provides": [
+        "durable-queue",
+        "dependency-scheduling",
+        "lease-fencing"
+      ],
+      "risk_class": "control-plane",
+      "gate": "Governor durable queue v0"
+    },
+    {
+      "tool_id": "hc-done",
+      "provides": [
+        "durable-mission-supervision",
+        "retry-resume"
+      ],
+      "risk_class": "control-plane",
+      "gate": "Durable DONE supervisor v0"
+    },
+    {
+      "tool_id": "transwarp",
+      "provides": [
+        "durable-recovery-acceptance"
+      ],
+      "risk_class": "transport",
+      "gate": "TransWarp durable recovery acceptance"
+    },
+    {
+      "tool_id": "evidence-envelope",
+      "provides": [
+        "mission-correlation",
+        "evidence-envelope"
+      ],
+      "risk_class": "observability",
+      "gate": "Unified evidence envelope gate"
+    },
+    {
+      "tool_id": "deployment-adapter",
+      "provides": [
+        "deployment-planning"
+      ],
+      "risk_class": "production-write-planning",
+      "gate": "Deployment adapter gate"
+    },
+    {
+      "tool_id": "policy-engine",
+      "provides": [
+        "authorization",
+        "approval-gate",
+        "durable-production-gate"
+      ],
+      "risk_class": "policy",
+      "gate": "Policy engine gate"
+    }
+  ],
+  "resources": [
+    {
+      "resource_id": "github-actions",
+      "kind": "ci",
+      "blocking_scope": "affected-workflow-only"
+    },
+    {
+      "resource_id": "hcdR",
+      "kind": "local-execution",
+      "blocking_scope": "affected-local-mission-only"
+    },
+    {
+      "resource_id": "cloudflare",
+      "kind": "control-plane",
+      "blocking_scope": "affected-control-plane-mission-only"
+    },
+    {
+      "resource_id": "wordpress",
+      "kind": "deployment-authority",
+      "projects": [
+        "HCDECOR"
+      ]
+    },
+    {
+      "resource_id": "github-pages",
+      "kind": "deployment-authority",
+      "projects": [
+        "GSC",
+        "AMO"
+      ]
+    }
+  ]
+}
