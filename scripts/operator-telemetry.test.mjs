@@ -21,4 +21,8 @@ assert.equal(/POST|PUT|PATCH|DELETE/.test(route),false);
 assert.ok(page.includes('EVIDENCE STORE'));
 assert.ok(page.includes('telemetry.evidence_store_health.state'));
 assert.ok(page.includes('malformed'));
+assert.ok(page.includes('UNPROVEN TOOLS'));
+assert.ok(page.includes('TOOL VERIFICATION'));
+assert.ok(page.includes('verification_state'));
+assert.ok(page.includes('not-proven-done'));
 console.log('OPERATOR_TELEMETRY_PASS read_only=1 authority_labels=1 durable_status=1 run_history=1 worker_heartbeats=1');
