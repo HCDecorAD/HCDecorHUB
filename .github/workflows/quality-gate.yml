@@ -44,7 +44,7 @@ jobs:
         shell: bash
         run: |
           PORT="$(node scripts/allocate-test-port.mjs 3219 3299)"
-          export HCDECOR_E2E_BASE="http://127.0.0.1:$PORT"
+          export HCDECOR_E2E_BASE="http://localhost:$PORT"
           echo "HC dynamic port: $PORT"
           HC_ALLOW_LOCAL_E2E=true npm run start -- -p "$PORT" > /tmp/hcdecor-next.log 2>&1 &
           pid=$!
