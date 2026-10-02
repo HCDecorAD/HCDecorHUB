@@ -14,7 +14,8 @@
     "cf:deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "test:dynamic-port": "node scripts/dynamic-port.test.mjs",
     "test:governor": "node scripts/governor-resource-scheduler.test.mjs",
-    "test:governor-durable": "node scripts/governor-durable-queue.test.mjs"
+    "test:governor-durable": "node scripts/governor-durable-queue.test.mjs",
+    "test:done-durable": "node scripts/durable-done-supervisor.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
