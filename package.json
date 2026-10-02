@@ -26,7 +26,8 @@
     "test:evidence-envelope": "node scripts/evidence-envelope.test.mjs",
     "test:corporate-catalog": "node scripts/corporate-catalog.test.mjs",
     "test:capability-registry": "node scripts/capability-registry.test.mjs",
-    "test:fix-memory": "node scripts/fix-memory.test.mjs"
+    "test:fix-memory": "node scripts/fix-memory.test.mjs",
+    "test:operator-dashboard": "node scripts/operator-dashboard.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
