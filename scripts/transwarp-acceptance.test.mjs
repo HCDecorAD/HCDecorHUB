@@ -28,7 +28,7 @@ const executor=async mission=>{
     e.checkpoint={stage:'route-ready',completed:['preflight'],failure_injected:true};
     throw e;
   }
-  assert.equal(mission.evidence?.checkpoint?.failure_injected,true);
+  assert.equal(mission.checkpoint?.failure_injected,true);
   return {
     ok:true,
     checkpoint:{stage:'final-gate',completed:['preflight','failure-recovery','resume','final-gate']},
