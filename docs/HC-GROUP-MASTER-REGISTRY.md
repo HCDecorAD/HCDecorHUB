@@ -113,15 +113,15 @@ Priority considers business value, dependency criticality, readiness, risk, time
 - P0 Durable Group Governor baseline: persistent mission queue, lease/heartbeat/fencing, dependency-aware READY selection, restart recovery and work-conserving scheduling; durable queue/DONE/portfolio/MOON gates PASS.
 - P0 Unified Evidence / Observability baseline: evidence envelope + `mission_id`/`correlation_id` persistence through durable queue retry/restart/DONE; Quality Gate PASS. Full fleet-wide logs/metrics/traces backend is not yet claimed.
 - P1 Capability Registry baseline: machine-readable capability I/O, risk class, gate, cost class and fail-closed declaration in `config/capability-registry.json`; Quality Gate PASS.
-- P1 Resource/Budget Governor baseline: registered resource capacities fail closed to `WAITING_RESOURCE`; blocked resources do not stall unrelated READY work; scheduler gate PASS.
+- P1 Resource/Budget Governor integrated baseline: registered resource capacities plus durable file-backed budget/quota admission fail closed to `WAITING_RESOURCE`; persisted spend survives restart, decision IDs prevent double-charge on retry, lazy refill is supported, and an exhausted/unknown budget does not stall unrelated READY work; Quality Gate + Production Verify PASS at `76c43c8b01f56d36f6bee21e7c49aeeec78f08ed`.
 - P1 Knowledge/Fix Memory baseline: only terminal-verified fingerprints/fixes are promoted in `config/fix-memory.json`; Quality Gate PASS.
-- P2 Operator Dashboard baseline: `/hub/operator` read-only portfolio/catalog/capability surface is in HUB navigation; no deploy/publish/retry/approval write path; Quality Gate + Production Verify PASS at commit `ad837699b3b184b6d25b29c78a9a66bfaa30b130`.
+- P2 Operator Dashboard lifecycle telemetry baseline: `/hub/operator` is a read-only portfolio/catalog/capability + Goal/Mission telemetry surface showing worker class/provider, state, checkpoint and evidence gate; no deploy/publish/retry/approval write path; Quality Gate + Production Verify PASS at `38d7cff76b75eca08351b20d33447b389b43505b`.
 
 ## Remaining capability expansion
 - Expand Corporate Catalog coverage toward the MOON >=95% target, including local-only projects/tools/resources and richer Goal/Mission/Worker/Evidence relations.
 - Propagate evidence correlation across HCDR/AutoDebug/project-specific gates and add evidence-backed runtime health sources where real telemetry exists.
-- Extend Resource Governor from static registered capacities to durable shared rate/quota accounting where downstream APIs require fleet-wide limits.
-- Enrich Operator Dashboard with real mission/worker/blocker/evidence runtime data only when those sources are verifiable; keep it read-only until a separately gated control surface is designed.
+- Extend the durable budget ledger from single-Governor file-backed admission to a fenced/atomic multi-writer backend only when fleet-wide concurrent writers are actually required.
+- Enrich Operator Dashboard from registry-backed lifecycle telemetry to live durable-queue/worker heartbeat/blocker streams only when those runtime sources are verifiable; keep it read-only until a separately gated control surface is designed.
 
 ## External patterns to adopt selectively
 - Backstage: central catalog model of Components/APIs/Resources grouped into Systems/Domains. Adopt the model, not necessarily the full product.
