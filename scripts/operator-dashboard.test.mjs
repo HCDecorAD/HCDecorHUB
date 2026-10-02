@@ -10,4 +10,7 @@ assert.ok(page.includes('lifecycle-registry.json'));
 assert.ok(page.includes('lifecycle.goals'));
 assert.ok(page.includes('lifecycle.missions'));
 assert.ok(page.includes('Evidence:'));
+assert.ok(page.includes('operatorTelemetrySnapshot'));
+assert.ok(page.includes('production authority:'));
+assert.ok(page.includes('telemetry.blockers'));
 console.log('OPERATOR_DASHBOARD_PASS read_only=1 catalog=1 capabilities=1 production_write=0');
