@@ -38,6 +38,8 @@ jobs:
         run: npm run test:dynamic-port
       - name: Governor resource scheduler v0
         run: npm run test:governor
+      - name: Governor durable queue v0
+        run: npm run test:governor-durable
       - name: Production build
         run: npm run build
       - name: Master Agent local E2E
