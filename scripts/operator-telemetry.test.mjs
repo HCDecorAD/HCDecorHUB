@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const helper=fs.readFileSync('lib/operator-telemetry.js','utf8');
+const route=fs.readFileSync('app/api/master/operator-telemetry/route.js','utf8');
+assert.ok(helper.includes('masterRunStoreInfo'));
+assert.ok(helper.includes('durableRuntimeStatus'));
+assert.ok(helper.includes('production_write:false'));
+assert.ok(helper.includes('production_authority'));
+assert.ok(helper.includes('local-spool')===false,'helper must derive local spool authority, not hard-code it');
+assert.ok(route.includes('operatorTelemetrySnapshot'));
+assert.equal(/POST|PUT|PATCH|DELETE/.test(route),false);
+console.log('OPERATOR_TELEMETRY_PASS read_only=1 authority_labels=1 durable_status=1 run_history=1');
