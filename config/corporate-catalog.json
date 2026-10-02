@@ -112,8 +112,8 @@
         "agent-control"
       ],
       "risk_class": "control-plane",
-      "gate": "agent-control acceptance pending",
-      "verification_state": "not-proven-done"
+      "gate": "HC Agent Control source contract",
+      "verification_state": "source-contract-only"
     },
     {
       "tool_id": "hc-autochat",
@@ -243,7 +243,7 @@
     {
       "system_id": "hc-agent-control",
       "role": "agent-control",
-      "state": "not-proven-done",
+      "state": "source-contract-only",
       "tool_refs": [
         "hc-agent-control"
       ],
