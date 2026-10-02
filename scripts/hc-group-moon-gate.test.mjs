@@ -56,6 +56,26 @@ ok('HCDR remains canonical registered local execution route',()=>{
   assert.equal(cat.resources.some(x=>/vercel/i.test(String(x.resource_id))),false);
 });
 
+ok('declared active inventory catalog coverage is at least 95 percent',()=>{
+  const inv=readJson('config/active-asset-inventory.json');
+  const cat=readJson('config/corporate-catalog.json');
+  const sets={
+    projects:new Set(cat.projects.map(x=>x.project_id)),
+    systems:new Set(cat.systems.map(x=>x.system_id)),
+    tools:new Set(cat.tools.map(x=>x.tool_id)),
+    resources:new Set(cat.resources.map(x=>x.resource_id))
+  };
+  let total=0,covered=0;
+  for(const k of ['projects','systems','tools','resources']){
+    for(const id of inv[k]){
+      total++;
+      if(sets[k].has(id)) covered++;
+    }
+  }
+  assert.equal(total,34);
+  assert.ok(covered/total>=0.95);
+});
+
 ok('catalog system relations are internally complete',()=>{
   const cat=readJson('config/corporate-catalog.json');
   const tools=new Set(cat.tools.map(x=>x.tool_id));
@@ -124,4 +144,4 @@ ok('blocked lane does not stall independent ready work',()=>{
   assert.ok(out.untouched.includes('blocked'));
 });
 
-console.log(`HC_GROUP_MOON_GATE_PASS ${pass}/9 machine_coverage_percent=not_claimed_without_independent_inventory`);
+console.log(`HC_GROUP_MOON_GATE_PASS ${pass}/10 declared_inventory_coverage_gte_95=1 enterprise_completeness_not_claimed=1`);
