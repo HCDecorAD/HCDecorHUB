@@ -1,5 +1,9 @@
 import assert from 'node:assert/strict';
 import {scheduleResourceAware,GOVERNOR_STATES,isTerminalState} from '../lib/governor/resource-scheduler.mjs';
+import {DurableBudgetLedger} from '../lib/governor/durable-budget-ledger.mjs';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 let pass=0; const t=(name,fn)=>{fn(); pass++; console.log('PASS',name)};
 const now=Date.parse('2026-10-02T15:00:00Z');
 
@@ -11,4 +15,32 @@ t('age breaks equal priority ties',()=>{const r=scheduleResourceAware({now,resou
 t('governor state contract includes safe terminals',()=>{for(const s of ['WAITING_RESOURCE','DONE','OWNER_REQUIRED','SAFETY_STOP','HARD_BLOCKED']) assert.ok(GOVERNOR_STATES.includes(s)); assert.ok(isTerminalState('DONE'));assert.equal(isTerminalState('RUNNING'),false);});
 
 t('unregistered resource fails closed without stalling unrelated work',()=>{const r=scheduleResourceAware({resources:{cpu:2},workers:[{worker_id:'w',capabilities:['code','api'],concurrency_limit:2}],tasks:[{task_id:'api',state:'READY',required_capabilities:['api'],resources:{api_credit:1}},{task_id:'code2',state:'READY',required_capabilities:['code'],resources:{cpu:1}}]});assert.deepEqual(r.waiting_resource,['api']);assert.equal(r.dispatches[0].task_id,'code2');});
-console.log(`GOVERNOR_RESOURCE_SCHEDULER_PASS ${pass}/7`);
+t('durable budget denial waits affected task while unrelated work dispatches',()=>{
+  const file=path.join(fs.mkdtempSync(path.join(os.tmpdir(),'hc-scheduler-budget-')),'budget.json');
+  const ledger=new DurableBudgetLedger(file,{clock:()=>now});
+  ledger.configure('api',{capacity:1});
+  assert.equal(ledger.take('api',1,{decision_id:'pre-spend'}).allowed,true);
+  const r=scheduleResourceAware({
+    now,
+    resources:{cpu:2},
+    budget_ledger:ledger,
+    workers:[{worker_id:'w',capabilities:['api','code'],concurrency_limit:2}],
+    tasks:[
+      {task_id:'api-task',state:'READY',required_capabilities:['api'],resources:{cpu:1},budgets:{api:1},decision_id:'api-task-1'},
+      {task_id:'code-task',state:'READY',required_capabilities:['code'],resources:{cpu:1}}
+    ]
+  });
+  assert.ok(r.waiting_resource.includes('api-task'));
+  assert.equal(r.dispatches[0].task_id,'code-task');
+  assert.equal(r.budget_decisions['api-task'].allowed,false);
+});
+t('missing budget ledger fails closed for budgeted work',()=>{
+  const r=scheduleResourceAware({
+    resources:{cpu:1},
+    workers:[{worker_id:'w',capabilities:['api'],concurrency_limit:1}],
+    tasks:[{task_id:'budgeted',state:'READY',required_capabilities:['api'],resources:{cpu:1},budgets:{api:1}}]
+  });
+  assert.deepEqual(r.waiting_resource,['budgeted']);
+  assert.equal(r.budget_decisions.budgeted.reason,'BUDGET_LEDGER_REQUIRED');
+});
+console.log(`GOVERNOR_RESOURCE_SCHEDULER_PASS ${pass}/9`);
