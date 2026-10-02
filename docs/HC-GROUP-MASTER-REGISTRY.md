@@ -119,6 +119,8 @@ Priority considers business value, dependency criticality, readiness, risk, time
 - Durable Evidence Store baseline: append-only validated JSONL evidence events persist locally across restart, support mission/correlation filtering, and are linked into Operator Telemetry so worker records expose recent mission evidence. Source authority remains `local-spool`, `production_authority:false`. Quality Gate + Production Verify PASS at `44686825103bcc6786b5d6ac213e1b41cefa27be`.
 - Goal/Mission Lifecycle Registry 1.1.0: Goal and Mission records now carry validated references into Corporate Catalog Project/System/Tool entities plus explicit evidence references. Quality Gate + Production Verify PASS at `d66acce0623d957631dca45de905bbb2a811bf4f`.
 
+- MOON machine readiness 9-check baseline: restart/recovery, blocked-lane portfolio concurrency, security/release/no-Vercel, active Goal completeness, HCDR canonical local route, and catalog System→Tool relation integrity are machine-gated. Quality Gate + Production Verify PASS at `6b71ee639f05b78c07db3370a1244c1fb27fc2a5`. Catalog coverage `>=95%` is still not claimed because no independent inventory denominator exists yet.
+
 ## Remaining capability expansion
 - Continue Corporate Catalog coverage toward the MOON >=95% target for future/new local-only assets. Goal/Mission → Project/System/Tool/Evidence reference relations are now covered by Lifecycle Registry 1.1.0; local Worker↔Mission↔Evidence runtime relations are now covered by the durable evidence spool baseline; shared/fenced multi-writer telemetry remains an expansion area only when required.
 - Propagate evidence correlation across HCDR/AutoDebug/project-specific gates and add evidence-backed runtime health sources where real telemetry exists.
