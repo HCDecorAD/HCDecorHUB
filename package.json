@@ -20,7 +20,8 @@
     "test:portfolio-pilot": "node scripts/portfolio-pilot.test.mjs",
     "test:moon-gate": "node scripts/hc-group-moon-gate.test.mjs",
     "test:deployment-adapter": "node scripts/deployment-adapter.test.mjs",
-    "test:policy-engine": "node scripts/policy-engine.test.mjs"
+    "test:policy-engine": "node scripts/policy-engine.test.mjs",
+    "test:durable-adapter": "node scripts/durable-file-adapter.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
