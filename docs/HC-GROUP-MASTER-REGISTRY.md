@@ -115,13 +115,13 @@ Priority considers business value, dependency criticality, readiness, risk, time
 - P1 Capability Registry baseline: machine-readable capability I/O, risk class, gate, cost class and fail-closed declaration in `config/capability-registry.json`; Quality Gate PASS.
 - P1 Resource/Budget Governor integrated baseline: registered resource capacities plus durable file-backed budget/quota admission fail closed to `WAITING_RESOURCE`; persisted spend survives restart, decision IDs prevent double-charge on retry, lazy refill is supported, and an exhausted/unknown budget does not stall unrelated READY work; Quality Gate + Production Verify PASS at `76c43c8b01f56d36f6bee21e7c49aeeec78f08ed`.
 - P1 Knowledge/Fix Memory baseline: only terminal-verified fingerprints/fixes are promoted in `config/fix-memory.json`; Quality Gate PASS.
-- P2 Operator Dashboard lifecycle telemetry baseline: `/hub/operator` is a read-only portfolio/catalog/capability + Goal/Mission telemetry surface showing worker class/provider, state, checkpoint and evidence gate; no deploy/publish/retry/approval write path; Quality Gate + Production Verify PASS at `38d7cff76b75eca08351b20d33447b389b43505b`.
+- P2 Operator Dashboard authority-aware telemetry baseline: `/hub/operator` is a read-only portfolio/catalog/capability + Goal/Mission + runtime telemetry surface. It shows durable-runtime diagnostics, recent run history, blockers, worker HEALTHY/SUSPECT state, mission/correlation links and checkpoints. Each source carries explicit authority metadata; worker heartbeat and local run history remain non-production-authoritative. No deploy/publish/retry/approval write path. Quality Gate + Production Verify PASS at `17fd082a267e7d9ba2931aaf2f0f24e907a98e0d`.
 
 ## Remaining capability expansion
 - Expand Corporate Catalog coverage toward the MOON >=95% target, including local-only projects/tools/resources and richer Goal/Mission/Worker/Evidence relations.
 - Propagate evidence correlation across HCDR/AutoDebug/project-specific gates and add evidence-backed runtime health sources where real telemetry exists.
 - Extend the durable budget ledger from single-Governor file-backed admission to a fenced/atomic multi-writer backend only when fleet-wide concurrent writers are actually required.
-- Enrich Operator Dashboard from registry-backed lifecycle telemetry to live durable-queue/worker heartbeat/blocker streams only when those runtime sources are verifiable; keep it read-only until a separately gated control surface is designed.
+- Extend worker heartbeat and operator telemetry from single-node local-spool diagnostics to a durable shared/fenced backend only when multi-writer runtime authority is actually required; keep the current read-only dashboard authority labels fail-honest.
 
 ## External patterns to adopt selectively
 - Backstage: central catalog model of Components/APIs/Resources grouped into Systems/Domains. Adopt the model, not necessarily the full product.
