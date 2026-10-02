@@ -1,0 +1,7 @@
+import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
+import {createEvidenceEvent} from '../lib/evidence-envelope.mjs';import {DurableEvidenceStore} from '../lib/governor/durable-evidence-store.mjs';
+const dir=fs.mkdtempSync(path.join(os.tmpdir(),'hc-evidence-'));const file=path.join(dir,'events.jsonl');const s=new DurableEvidenceStore(file);
+const a=createEvidenceEvent({mission_id:'m1',correlation_id:'c1',event_type:'gate',component:'quality',outcome:'success'});
+const b=createEvidenceEvent({mission_id:'m2',event_type:'heartbeat',component:'worker',outcome:'info'});
+s.append(a);s.append(b);const s2=new DurableEvidenceStore(file);assert.equal(s2.list().length,2);assert.equal(s2.list({mission_id:'m1'})[0].correlation_id,'c1');assert.equal(s2.list({correlation_id:'m2'})[0].mission_id,'m2');
+assert.throws(()=>s.append({}),/INVALID_EVIDENCE_EVENT/);console.log('DURABLE_EVIDENCE_STORE_PASS durable=1 mission_filter=1 correlation_filter=1 fail_closed=1');
