@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0.0",
+  "fixes": [
+    {
+      "fingerprint": "node-esm-extensionless-import-direct-test",
+      "component": "deployment-adapter/policy-engine-tests",
+      "symptom": "ERR_MODULE_NOT_FOUND when direct Node tests import Next-runtime modules with extensionless imports",
+      "fix": "extract framework-free pure core and test core directly; keep runtime wrapper thin",
+      "verified_commits": [
+        "32e803b"
+      ],
+      "evidence": "subsequent HUB Quality Gate success"
+    },
+    {
+      "fingerprint": "architecture-contract-drift-after-pure-core-refactor",
+      "component": "architecture/persistence gates",
+      "symptom": "string-based gate reports missing policy semantics after logic moved to pure core",
+      "fix": "validate wrapper delegation plus pure-core invariants; do not weaken approval/durable-production checks",
+      "verified_commits": [
+        "f531cf0",
+        "1cad6428"
+      ],
+      "evidence": "HUB Quality Gate + Production Verify success"
+    },
+    {
+      "fingerprint": "amo-public-qa-scope-includes-nonshipped-demo",
+      "component": "AMO Public V4 QA",
+      "symptom": "demo content blocker from admin/vendor/reference paths excluded by public build",
+      "fix": "scope public QA to shipped-package paths matching release manifest",
+      "verified_commits": [
+        "c1a339a5"
+      ],
+      "evidence": "later AMO Public V4 QA progressed past demo-content gate"
+    },
+    {
+      "fingerprint": "amo-release-evidence-powershell-parser",
+      "component": "amo-package-release-v4.ps1",
+      "symptom": "PowerShell parser error around malformed commit regex/evidence block",
+      "fix": "repair regex block, then write SHA256/BYTES/FILE/COMMIT evidence deterministically",
+      "verified_commits": [
+        "a6015279"
+      ],
+      "evidence": "AMO Public V4 QA + artifact upload success"
+    }
+  ],
+  "promotion_rule": "Only fixes with terminal verification evidence may be added."
+}
