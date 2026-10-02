@@ -38,6 +38,8 @@ jobs:
         run: npm run test:dynamic-port
       - name: Governor resource scheduler v0
         run: npm run test:governor
+      - name: Durable budget ledger gate
+        run: npm run test:durable-budget
       - name: Governor durable queue v0
         run: npm run test:governor-durable
       - name: Durable DONE supervisor v0
