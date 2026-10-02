@@ -154,5 +154,53 @@ CP4 TransWarp acceptance: injected failure -> recovery -> resume -> final gate.
 CP5 Portfolio pilot: HC DONE/TransWarp + HUB + AMO/GSC; blocked lane must not stall others.
 CP6 MOON gate: restart/recovery/observability/security/release evidence.
 
+## Worker Operating Law — 2026-10-02
+This law governs all HC Group companies, projects, missions and workers. It is intentionally analogous to the existing rule that coding workers own their assigned code work through verification rather than waiting for the Owner to prompt every step.
+
+### Mission ownership
+- A Worker owns an assigned Mission until a valid terminal state: DONE, OWNER_REQUIRED, SAFETY_STOP, or exhausted HARD_BLOCKED.
+- NOT_DONE + SAFE_TO_CONTINUE -> CONTINUE.
+- A Worker must not return ownership to the Owner for ordinary technical progress.
+- Stage N PASS -> persist evidence/checkpoint -> automatically advance to the next dependency-ready stage.
+- A stage may contain parallel Tasks when dependencies and resources permit.
+
+### Reporting and supervision
+- Workers publish heartbeat/progress state to the Group Governor at a regular runtime-defined interval and on every meaningful state transition.
+- Reports contain: Mission ID, current stage/task, state, last verified evidence, checkpoint, blocker if any, resource usage/need, next action, and ETA range when estimable.
+- Missing/stale heartbeat does not mean project failure; Governor marks Worker SUSPECT, preserves checkpoint, investigates/reassigns safely, and keeps unrelated work running.
+- Evidence, not conversational status, determines PASS/DONE.
+
+### Portfolio concurrency
+- WORK_EXISTS + SAFE_CAPACITY_EXISTS -> SOMETHING_MUST_BE_RUNNING.
+- WAITING_ONE_MISSION != WAITING_THE_COMPANY.
+- BLOCKED_PROJECT -> CHECKPOINT -> SCHEDULE_NEXT_READY_WORK.
+- A blocked dependency pauses only dependent descendants, never an entire company or portfolio.
+- Independent READY missions are dispatched concurrently subject to safety and Resource Governor limits.
+- A Worker that becomes free is assigned the highest-priority dependency-ready Mission it is capable of executing.
+- No global phase barrier: CP/G milestones are maturity gates, not a reason to idle independent workstreams.
+
+### Worker handoff and recovery
+- Worker loss/stall -> recover from latest verified checkpoint; never blindly redo PASS stages.
+- Recoverable failure -> AutoDebug -> bounded retry -> strategy change -> verify -> resume.
+- Reassignment must preserve Mission ID, evidence chain and idempotency rules.
+- Uncertain external side effects fail closed and require post-verification before retry.
+
+### Resource and bandwidth law
+- CPU, RAM, disk, local worker slots, network concurrency/link capacity, API rate limits/credits, HCDR queue capacity and deployment quotas are schedulable resources.
+- Resource contention throttles only affected work; it must not idle unrelated READY missions.
+- High-bandwidth/download/build jobs are capacity-aware and may be queued or limited so interactive/critical lanes remain usable.
+
+### Governance defects
+- USER_NUDGE_REQUIRED = DEFECT
+- BOSS_IS_THE_DAEMON = DEFECT
+- CHAT_TURN_IS_THE_LOOP = DEFECT
+- ONE_BLOCKED_WORKER_STALLS_GROUP = DEFECT
+- GLOBAL_PHASE_BARRIER_WITH_READY_INDEPENDENT_WORK = DEFECT
+- WORKER_DONE_WITHOUT_EVIDENCE = DEFECT
+- FREE_SAFE_CAPACITY_WHILE_READY_WORK_EXISTS = DEFECT
+
+### Example
+TransWarp may remain WAITING/RUNNING with an exact checkpoint while its Worker advances Stage 1 -> Stage 2 -> ... -> Final Gate -> DONE. During that time, other qualified Workers continue HUB, HC DONE, AutoDebug, HCDR, GSC, AMO, Catalog or other READY missions. Only real dependency edges cause waiting.
+
 ## Source-of-truth rule
 This document is the human-readable corporate map. The machine-readable registry must become runtime source of truth. Chat summaries are inputs, not authoritative runtime state. Every status change requires timestamped evidence.
