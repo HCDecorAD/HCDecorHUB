@@ -62,6 +62,8 @@ jobs:
         run: npm run test:social-media
       - name: Unified evidence envelope gate
         run: npm run test:evidence-envelope
+      - name: Durable evidence store gate
+        run: npm run test:evidence-store
       - name: Corporate catalog gate
         run: npm run test:corporate-catalog
       - name: Capability registry gate
