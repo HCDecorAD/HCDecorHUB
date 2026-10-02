@@ -35,7 +35,7 @@ Domain -> System -> Project -> Goal -> Mission -> Task -> Worker/Tool -> Evidenc
 3. Infrastructure / Transport
    - HCDR: canonical local execution transport.
    - GitHub: source/issues/CI/evidence.
-   - Vercel/hosting adapters: deploy resources; quota never stops unrelated work.
+   - Deployment authorities are only those registered in `config/site-registry.json` / `config/workspaces.json` (WordPress, GitHub Pages, Cloudflare control plane where applicable).
    - Drive/Library: assets/media/backups.
 4. Reliability / QA
    - HC AutoDebug / Immune Core: diagnose -> minimal repair -> verify -> regression -> fix memory.
@@ -91,7 +91,6 @@ ACTIVE:
 WAITING/BLOCKED:
 - TransWarp acceptance waits for proven durable local supervisor/execution path.
 - AMO release blocked by QA failures.
-- Vercel quota constraints checkpoint deploy work and release capacity to non-deploy missions.
 
 VERIFIED BASELINES:
 - HC MOONSHOT First Launch: AutoDebug 139/139; DONE targeted 5/5; lint PASS at recorded checkpoint.
@@ -121,7 +120,7 @@ P1 Capability Registry:
 every tool declares capability, I/O contract, risk class, gate and cost; TransWarp routes known capability.
 
 P1 Resource/Budget Governor:
-Vercel quota, API credits, local worker capacity and rate limits are resources; one blocked resource must not idle company.
+API credits, local worker capacity, rate limits, HCDR capacity and registered deployment-provider limits are resources; one blocked resource must not idle company.
 
 P1 Knowledge/Fix Memory:
 only verified fixes/research promoted; fingerprints linked to evidence/components.
@@ -201,6 +200,11 @@ This law governs all HC Group companies, projects, missions and workers. It is i
 
 ### Example
 TransWarp may remain WAITING/RUNNING with an exact checkpoint while its Worker advances Stage 1 -> Stage 2 -> ... -> Final Gate -> DONE. During that time, other qualified Workers continue HUB, HC DONE, AutoDebug, HCDR, GSC, AMO, Catalog or other READY missions. Only real dependency edges cause waiting.
+
+## Retired infrastructure
+- Vercel is RETIRED/REMOVED from HC Group runtime and deployment architecture.
+- Vercel checks/statuses must not gate, block, schedule, deploy, or influence HC Group mission state.
+- Any legacy GitHub/Vercel status context is external stale integration noise unless explicitly re-authorized by Owner.
 
 ## Source-of-truth rule
 This document is the human-readable corporate map. The machine-readable registry must become runtime source of truth. Chat summaries are inputs, not authoritative runtime state. Every status change requires timestamped evidence.
