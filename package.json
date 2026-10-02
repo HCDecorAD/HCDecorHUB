@@ -11,7 +11,9 @@
     "test:architecture": "node scripts/architecture-check.mjs",
     "cf:build": "opennextjs-cloudflare build",
     "cf:preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "cf:deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
+    "cf:deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "test:dynamic-port": "node scripts/dynamic-port.test.mjs",
+    "test:governor": "node scripts/governor-resource-scheduler.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
