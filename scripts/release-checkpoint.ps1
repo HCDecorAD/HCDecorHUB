@@ -10,6 +10,6 @@ foreach($x in @('config','docs','scripts','lib','app','wordpress')){$src=Join-Pa
 Set-Content (Join-Path $dest 'SOURCE_SHA.txt') $sha
 $m=Get-ChildItem $dest -Recurse -File|Get-FileHash -Algorithm SHA256|Select-Object Path,Hash
 $m|ConvertTo-Json -Depth 4|Set-Content (Join-Path $dest 'SHA256.json') -Encoding utf8
-& (Join-Path $repo 'scripts\verify-latest-backup.ps1')
+& (Join-Path $repo 'scripts\verify-latest-backup.ps1') -BackupRoot $backupRoot
 if($LASTEXITCODE){throw 'backup_verify_failed'}
 @{ok=$true;sha=$sha;backup=$dest;files=$m.Count;created_at=(Get-Date).ToUniversalTime().ToString('o')}|ConvertTo-Json
