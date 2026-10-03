@@ -53,7 +53,7 @@
     "test:hcdr-always-on": "node scripts/hcdr-always-on.test.mjs",
     "test:hcdr-mobile-remote-done": "node scripts/hcdr-mobile-remote-done.test.mjs",
     "test:mobile-hc-done-cloud": "node scripts/mobile-hc-done-cloud.test.mjs",
-    "test:factory-v2": "node \"HC Creative Factory/v2/tests/core.test.mjs\" && node \"HC Creative Factory/v2/tests/capture.test.mjs\" && node \"HC Creative Factory/v2/tests/lanes.test.mjs\" && node \"HC Creative Factory/v2/tests/pipeline.test.mjs\" && node \"HC Creative Factory/v2/tests/runtime-adapter.test.mjs\" && node \"HC Creative Factory/v2/tests/stage-evidence.test.mjs\""
+    "test:factory-v2": "node \"HC Creative Factory/v2/tests/core.test.mjs\" && node \"HC Creative Factory/v2/tests/capture.test.mjs\" && node \"HC Creative Factory/v2/tests/lanes.test.mjs\" && node \"HC Creative Factory/v2/tests/pipeline.test.mjs\" && node \"HC Creative Factory/v2/tests/runtime-adapter.test.mjs\" && node \"HC Creative Factory/v2/tests/stage-evidence.test.mjs\" && node \"HC Creative Factory/v2/tests/parallel-plan.test.mjs\""
   },
   "dependencies": {
     "next": "16.3.6",
