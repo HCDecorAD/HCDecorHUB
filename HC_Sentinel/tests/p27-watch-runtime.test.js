@@ -1,0 +1,3 @@
+import test from "node:test";import assert from "node:assert/strict";import {WatchRuntime} from "../core/watch-runtime.js";import {NotificationCenter} from "../core/notification-center.js";
+test("watch only runs due targets and emits finding alert",async()=>{const n=new NotificationCenter();const w=new WatchRuntime({notifications:n,runTarget:async()=>({findings:[{id:1}]})});w.register({id:"gsc"},{intervalMs:100});assert.equal((await w.tick(0)).length,0);assert.equal((await w.tick(100)).length,1);assert.equal(n.unread()[0].type,"WATCH_FINDING");});
+test("manual scheduling state is independent from watch runtime",()=>{const w=new WatchRuntime({runTarget:async()=>({})});w.register({id:"gsc"},{intervalMs:1000});assert.equal(w.targets.get("gsc").enabled,true);});

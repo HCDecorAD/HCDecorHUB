@@ -1,0 +1,2 @@
+import test from "node:test";import assert from "node:assert/strict";import {NotificationCenter} from "../core/notification-center.js";
+test("notification center tracks unread and sinks",()=>{const sent=[];const n=new NotificationCenter({sinks:[{send:x=>sent.push(x)}]});const x=n.publish({type:"FINDING",level:"warning"});assert.equal(n.unread().length,1);assert.equal(sent.length,1);n.markRead(x.id);assert.equal(n.unread().length,0);});
