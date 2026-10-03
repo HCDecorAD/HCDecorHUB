@@ -1,4 +1,4 @@
-# TransWarp v0.4.1 — Cross-Chat Local Capability
+# TransWarp v0.5 — Cross-Chat Adaptive Transport
 
 ## Purpose
 Any new chat must identify TransWarp, resolve local capability, and choose the safest available execution route before touching project source.
@@ -26,10 +26,7 @@ Never infer local capability from the chat title. iMaster is only a chat group.
    - do not silently downgrade to HCDR.
 6. HCDR may be used only when explicitly selected for fallback/recovery.
 
-## Route order
-AUTHORIZED_LOCAL_BRIDGE -> DIRECT_LOCAL_INGRESS -> LOCAL_INBOX / LOCAL_RUNNER_ONESHOT -> HCDR_FALLBACK
-
-## State markers
+## Transport Policy FINAL v1\nAUTO_ROUTE\n- HCDR primary while healthy.\n- Local Bridge fallback on HCDR queue/timeout/not-claimed/rate-limit/unhealthy.\n- Never run the same job_id/correlation_id on two routes at once.\n- A running job stays on its selected route.\n- GitHub is SYNC_ONLY.\n- If both routes fail, return BLOCKED.\n\n## Route order\nHCDR_PRIMARY -> LOCAL_BRIDGE_FALLBACK\n\n## State markers
 - `TRANSWARP_LOCAL_CAPABILITY_OK`
 - `TRANSWARP_LOCAL_INGRESS_OK`
 - `TRANSWARP_LOCAL_RUNNER_OK`
@@ -37,7 +34,7 @@ AUTHORIZED_LOCAL_BRIDGE -> DIRECT_LOCAL_INGRESS -> LOCAL_INBOX / LOCAL_RUNNER_ON
 - `TRANSWARP_HCDR_FALLBACK_ACTIVE`
 
 ## Canonical prompt for a new chat
-`Use TransWarp v0.4.1 Local-First. Resolve config/transwarp-local-capability.json first. Detect an authorized local bridge before running anything. Prefer P11/direct local inbox and read local evidence. Do not use HCDR unless fallback is explicitly required. If no bridge is available, report TRANSWARP_LOCAL_CONNECTOR_REQUIRED.`
+`Use TransWarp v0.5 AUTO_ROUTE. Resolve config/transwarp-local-capability.json first. Detect an authorized local bridge before running anything. Prefer P11/direct local inbox and read local evidence. Do not use HCDR unless fallback is explicitly required. If no bridge is available, report TRANSWARP_LOCAL_CONNECTOR_REQUIRED.`
 
 ## Non-negotiable rule
-Local-first means both compute and transport should be local whenever an authorized bridge is available. HCDR and GitHub must not sit on the critical execution path.
+AUTO_ROUTE is frozen as Transport Policy FINAL v1. HCDR is primary when healthy; Local Bridge is the fallback when HCDR is unhealthy or congested. GitHub remains sync-only.
