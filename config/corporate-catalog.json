@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "generated_from": [
     "config/site-registry.json",
     "config/workspaces.json",
@@ -92,7 +92,12 @@
       ],
       "risk_class": "transport",
       "gate": "HCDR recorded exactly-once acceptance",
-      "verification_state": "green-baseline"
+      "verification_state": "live-v3",
+      "version": "v3",
+      "worker_pool": 4,
+      "request_schema": "hcdr-relay/v1.2",
+      "result_schema": "hcdr-result/v2",
+      "live_transport": true
     },
     {
       "tool_id": "hc-autodebug",
@@ -113,9 +118,11 @@
       ],
       "risk_class": "control-plane",
       "gate": "HC Agent Control source contract",
-      "verification_state": "runtime-source-ci",
+      "verification_state": "runtime-source-ci-plus-live-transport",
       "runtime_done": false,
-      "runtime_scope": "local-safe/source-runtime implementation + CI; live HOCUONG transport not claimed"
+      "runtime_scope": "Agent Control runtime completion tracked separately; canonical local transport is live HCDR v3.",
+      "default_local_transport": "HCDR v3",
+      "transport_live_verified": true
     },
     {
       "tool_id": "hc-autochat",
@@ -234,12 +241,13 @@
     {
       "system_id": "hcdr",
       "role": "local-execution-transport",
-      "state": "green-baseline",
+      "state": "live-v3",
       "repository": "HCDecorAD/HCDecor-HCDR-Relay",
       "tool_refs": [
         "hcdr"
       ],
-      "production_authority": false
+      "production_authority": false,
+      "version": "v3"
     },
     {
       "system_id": "hc-autodebug",
@@ -253,11 +261,12 @@
     {
       "system_id": "hc-agent-control",
       "role": "agent-control",
-      "state": "runtime-source-ci",
+      "state": "runtime-source-ci-plus-live-transport",
       "tool_refs": [
         "hc-agent-control"
       ],
-      "production_authority": false
+      "production_authority": false,
+      "default_local_transport": "HCDR v3"
     },
     {
       "system_id": "hc-autochat",
@@ -313,5 +322,6 @@
       ],
       "production_authority": false
     }
-  ]
+  ],
+  "corporate_update_feed": "config/corporate-update-feed.json"
 }
