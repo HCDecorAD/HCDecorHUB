@@ -26,20 +26,43 @@ $lanes = @(
 function Invoke-Lane([hashtable]$lane,[int]$attempt){
   $name=$lane.Name
   $log=Join-Path $logs ("{0}.attempt{1}.log" -f $name,$attempt)
-  $cmd=($lane.Commands -join ' && ')
-  $p=Start-Process -FilePath 'cmd.exe' -ArgumentList @('/d','/s','/c', $cmd) -WorkingDirectory $root -RedirectStandardOutput $log -RedirectStandardError ($log+'.err') -NoNewWindow -PassThru
-  return @{ Name=$name; Process=$p; Log=$log; Attempt=$attempt; Commands=$lane.Commands }
+  $runner=Join-Path $runtime ("lane-{0}.attempt{1}.cmd" -f $name,$attempt)
+  $codeFile=Join-Path $runtime ("lane-{0}.attempt{1}.exitcode" -f $name,$attempt)
+  if(Test-Path $codeFile){ Remove-Item -Force $codeFile }
+
+  $lines=@('@echo off','setlocal EnableExtensions',('cd /d "'+$root+'"'))
+  foreach($command in $lane.Commands){
+    $lines += ('call '+$command)
+    $lines += 'if errorlevel 1 goto :failed'
+  }
+  $lines += ('> "'+$codeFile+'" echo 0')
+  $lines += 'exit /b 0'
+  $lines += ':failed'
+  $lines += 'set RC=%ERRORLEVEL%'
+  $lines += ('> "'+$codeFile+'" echo %RC%')
+  $lines += 'exit /b %RC%'
+  $lines | Set-Content -Encoding ASCII $runner
+
+  $p=Start-Process -FilePath 'cmd.exe' -ArgumentList @('/d','/c', ('"'+$runner+'"')) -WorkingDirectory $root -RedirectStandardOutput $log -RedirectStandardError ($log+'.err') -NoNewWindow -PassThru
+  return @{ Name=$name; Process=$p; Log=$log; Attempt=$attempt; Commands=$lane.Commands; CodeFile=$codeFile; Runner=$runner }
 }
 
 function Wait-Lanes($running){
   $results=@()
   foreach($r in $running){
     $r.Process.WaitForExit()
-    $r.Process.Refresh()
-    $code=$r.Process.ExitCode
-    if($null -eq $code){
-      Write-Host "HC_DONE_EXITCODE_UNAVAILABLE lane=$($r.Name) attempt=$($r.Attempt)"
+    if(-not (Test-Path $r.CodeFile)){
+      Write-Host "HC_DONE_EXITCODE_SIDECAR_MISSING lane=$($r.Name) attempt=$($r.Attempt)"
       $code=901
+    } else {
+      $raw=(Get-Content $r.CodeFile -Raw).Trim()
+      $parsed=0
+      if(-not [int]::TryParse($raw,[ref]$parsed)){
+        Write-Host "HC_DONE_EXITCODE_SIDECAR_INVALID lane=$($r.Name) attempt=$($r.Attempt) value=$raw"
+        $code=902
+      } else {
+        $code=$parsed
+      }
     }
     $results += [pscustomobject]@{lane=$r.Name;attempt=$r.Attempt;exit_code=[int]$code;log=$r.Log;commands=$r.Commands}
   }
@@ -75,7 +98,7 @@ $summary=[ordered]@{
   data_root='D:\HC_DATA'
   github_sync='ASYNC_NON_BLOCKING'
   lanes=$all
-  failed_lanes=@($failed.lane)
+  failed_lanes=@($failed | ForEach-Object {$_.lane})
   research_required=([bool]$failed)
   production_verify_skipped=[bool]$SkipProductionVerify
   final_state='VERIFYING'
@@ -94,24 +117,79 @@ if($failed){
   exit 20
 }
 
+function Invoke-MasterE2E {
+  $serverLog=Join-Path $logs 'master-server.log'
+  $serverErr=Join-Path $logs 'master-server.err.log'
+  $env:HC_ALLOW_LOCAL_E2E='true'
+  $server=Start-Process -FilePath 'cmd.exe' -ArgumentList @('/d','/c','npm run start -- -p 3219') -WorkingDirectory $root -RedirectStandardOutput $serverLog -RedirectStandardError $serverErr -NoNewWindow -PassThru
+  try{
+    $ready=$false
+    for($i=0;$i -lt 30;$i++){
+      Start-Sleep -Seconds 1
+      try{
+        $r=Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:3219/api/health' -TimeoutSec 2
+        if($r.StatusCode -ge 200 -and $r.StatusCode -lt 500){ $ready=$true; break }
+      } catch {}
+      if($server.HasExited){ break }
+    }
+    if(-not $ready){
+      Write-Host 'HC_DONE_MASTER_SERVER_NOT_READY port=3219'
+      return 903
+    }
+    $env:HCDECOR_E2E_BASE='http://localhost:3219'
+    cmd /d /s /c "npm run test:master 2>&1" | ForEach-Object { Write-Host $_ }
+    $masterExit=$LASTEXITCODE
+    return [int]$masterExit
+  }
+  finally{
+    Remove-Item Env:HCDECOR_E2E_BASE -ErrorAction SilentlyContinue
+    Remove-Item Env:HC_ALLOW_LOCAL_E2E -ErrorAction SilentlyContinue
+    if($server -and -not $server.HasExited){
+      cmd /d /c "taskkill /PID $($server.Id) /T /F" | Out-Null
+    }
+  }
+}
+
 Write-Host 'HC_DONE_FINAL_GATE starting mode=LOCAL_FIRST'
-$final=@(
-  'powershell -NoProfile -ExecutionPolicy Bypass -File scripts\hc-local-first.ps1 -Mode build',
-  'npm run test:master'
-)
-if(-not $SkipProductionVerify){ $final += 'powershell -NoProfile -ExecutionPolicy Bypass -File scripts\production-smoke.ps1' }
-foreach($cmd in $final){
-  cmd /d /s /c $cmd
+$final=@()
+
+$buildCmd='powershell -NoProfile -ExecutionPolicy Bypass -File scripts\hc-local-first.ps1 -Mode build'
+$final += $buildCmd
+cmd /d /s /c $buildCmd
+if($LASTEXITCODE -ne 0){
+  $summary.final_state='HARD_BLOCKED'
+  $summary.final_gate_failure=$buildCmd
+  $summary | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 (Join-Path $runtime 'summary.json')
+  exit $LASTEXITCODE
+}
+
+$masterCmd='npm run test:master'
+$final += $masterCmd
+$masterCode=Invoke-MasterE2E
+if($masterCode -ne 0){
+  $summary.final_state='HARD_BLOCKED'
+  $summary.final_gate_failure=$masterCmd
+  $summary.master_server_port=3219
+  $summary | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 (Join-Path $runtime 'summary.json')
+  exit $masterCode
+}
+
+if(-not $SkipProductionVerify){
+  $prodCmd='powershell -NoProfile -ExecutionPolicy Bypass -File scripts\production-smoke.ps1'
+  $final += $prodCmd
+  cmd /d /s /c $prodCmd
   if($LASTEXITCODE -ne 0){
     $summary.final_state='HARD_BLOCKED'
-    $summary.final_gate_failure=$cmd
+    $summary.final_gate_failure=$prodCmd
     $summary | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 (Join-Path $runtime 'summary.json')
     exit $LASTEXITCODE
   }
 }
+
 $summary.final_state='DONE'
 $summary.final_gate=@($final)
 $summary.local_build_state='PASS_DONE'
+$summary.master_runtime='LOCAL_LOCALHOST_3219'
 $summary.github_sync_required_for_done=$false
 $summary | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 (Join-Path $runtime 'summary.json')
 Write-Host 'HC_GROUP_DONE_PASS state=DONE mode=LOCAL_FIRST parallel_lanes=6 github_sync=NON_BLOCKING evidence=.runtime\hc-group-done\summary.json'
