@@ -1,0 +1,10 @@
+{
+  "name": "HC Sentinel",
+  "channel": "local",
+  "entry": "runtime/start-sentinel.js",
+  "launcher": "runtime/start-sentinel.bat",
+  "defaultPort": 43110,
+  "requires": ["node>=22"],
+  "runtimePolicy": "local-first",
+  "productionDeploy": false
+}
