@@ -16,6 +16,10 @@ RunGate 'persistence' 'node scripts\persistence-contract-check.mjs'
 RunGate 'commerce' 'node scripts\commerce-contract-check.mjs'
 RunGate 'dynamic-port' 'npm run test:dynamic-port'
 RunGate 'governor-resource-scheduler' 'npm run test:governor'
+$prevStandalone=$env:NEXT_PRIVATE_STANDALONE
+$prevTraceRoot=$env:NEXT_PRIVATE_OUTPUT_TRACE_ROOT
+$env:NEXT_PRIVATE_STANDALONE='true'
+$env:NEXT_PRIVATE_OUTPUT_TRACE_ROOT=$Root
 RunGate 'build' 'npm run build'
 
 $portRaw=& node scripts\allocate-test-port.mjs 3219 3299
@@ -46,6 +50,8 @@ try{
 # Ask OpenNext to package that verified build instead of starting a second
 # concurrent `next build` on Windows.
 RunGate 'cf-build' 'npm run cf:build -- --skipNextBuild'
+if($null -eq $prevStandalone){Remove-Item Env:NEXT_PRIVATE_STANDALONE -ErrorAction SilentlyContinue}else{$env:NEXT_PRIVATE_STANDALONE=$prevStandalone}
+if($null -eq $prevTraceRoot){Remove-Item Env:NEXT_PRIVATE_OUTPUT_TRACE_ROOT -ErrorAction SilentlyContinue}else{$env:NEXT_PRIVATE_OUTPUT_TRACE_ROOT=$prevTraceRoot}
 RunGate 'production-smoke' 'powershell -NoProfile -ExecutionPolicy Bypass -File scripts\production-smoke.ps1'
 RunGate 'production-health' 'powershell -NoProfile -ExecutionPolicy Bypass -File scripts\production-health-snapshot.ps1'
 @{ok=$true;run=$run;production_mutation='locked';dynamic_port=$port;checked_at=(Get-Date).ToUniversalTime().ToString('o')}|ConvertTo-Json|Set-Content (Join-Path $run 'FINAL-PASS.json')
