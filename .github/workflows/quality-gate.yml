@@ -76,6 +76,8 @@ jobs:
         run: npm run test:hcdr-relay-contract
       - name: HCDR always-on receiver gate
         run: npm run test:hcdr-always-on
+      - name: HCDR mobile remote one-shot gate
+        run: npm run test:hcdr-mobile-remote-done
       - name: HC Agent Control source contract
         run: npm run test:agent-control-contract
       - name: Agent Control runtime gate
