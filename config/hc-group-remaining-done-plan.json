@@ -22,10 +22,9 @@
       "parallel_wave": 1,
       "launcher": "hc-done-02-hcdr-live.bat",
       "terminal_gate": "live read-only health roundtrip with source/mission/correlation IDs on HOCUONG",
-      "state": "ACTIVE_RECOVERY",
-      "blocker": "HCDR consumer is alive (issue #906 processed with bad_schema). Corrected v1.2 health probe #913 is queue head and awaiting hcdr-result/v2.",
+      "state": "DONE",
       "fix_package_state": "DONE_SOURCE_CI",
-      "activation_state": "HCDR_ALIVE_V12_PROBE_ACTIVE",
+      "activation_state": "LIVE_HCDR_PASS",
       "one_shot_launcher": "hcdr-mobile-remote-done.bat",
       "one_shot_head": "04af58e1a7dc80b0ea9b2afafd5ffd6c9b9011a9",
       "one_shot_evidence": [
@@ -36,6 +35,13 @@
         "Issue #906 closed completed with hcdr-result/v2 ok=false error=bad_schema (proves HOCUONG relay consumer active)",
         "Issue #913 created with hcdr-relay/v1.2 and correlation_id hc-group-d02-20261003-v12",
         "Issues #907-#912 closed not_planned to prioritize D02 dependency"
+      ],
+      "runtime_scope": "live-hocuong-roundtrip",
+      "live_evidence": [
+        "HCDecorAD/HCDecor-HCDR-Relay#913 closed completed",
+        "hcdr-result/v2 ok=true provider=local source=hocuong-v12-production",
+        "HCDR root D:\\HCDecorHUB\\HCDR Remote MCP",
+        "Node v24.21.0"
       ]
     },
     {
@@ -90,8 +96,8 @@
       "parallel_wave": 3,
       "launcher": "hc-done-06-final-freeze.bat",
       "terminal_gate": "HC GROUP DONE package + production verify + final release evidence PASS",
-      "state": "BLOCKED_BY_DEPENDENCY",
-      "blocker": "Depends on D02 live HCDR proof."
+      "state": "ACTIVE",
+      "blocker": null
     }
   ],
   "waves": [
@@ -131,14 +137,13 @@
   "checkpoint": {
     "completed_packages": [
       "D01",
+      "D02",
       "D03",
       "D04",
       "D05"
     ],
     "waiting_packages": [],
-    "blocked_packages": [
-      "D06"
-    ],
+    "blocked_packages": [],
     "evidence": {
       "D01": [
         "Quality Gate 37083920827",
@@ -151,13 +156,14 @@
         "HEAD dfd674e15ef35e9d83d2c0f29e5620fbd62a5261"
       ],
       "D02": [
-        "Issue #906 closed completed with hcdr-result/v2 ok=false error=bad_schema (proves HOCUONG relay consumer active)",
-        "Issue #913 created with hcdr-relay/v1.2 and correlation_id hc-group-d02-20261003-v12",
-        "Issues #907-#912 closed not_planned to prioritize D02 dependency"
+        "HCDecorAD/HCDecor-HCDR-Relay#913 closed completed",
+        "hcdr-result/v2 ok=true provider=local source=hocuong-v12-production",
+        "HCDR root D:\\HCDecorHUB\\HCDR Remote MCP",
+        "Node v24.21.0"
       ]
     },
     "active_packages": [
-      "D02"
+      "D06"
     ]
   }
 }
