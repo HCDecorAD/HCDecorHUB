@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0.0",
+  "system_id": "hc-autochat",
+  "verification_state": "source-contract-only",
+  "runtime_done": false,
+  "principles": {
+    "operator_ui_only": true,
+    "must_not_own_mission_loop": true,
+    "goal_outlives_chat": true,
+    "chat_loss_must_not_cancel_mission": true,
+    "no_direct_production_authority": true,
+    "mutations_require_control_plane_authority": true,
+    "evidence_not_conversation_determines_done": true
+  },
+  "forbidden_authority": [
+    "durable-mission-owner",
+    "production-deployer",
+    "approval-authority"
+  ],
+  "acceptance_limits": "This contract proves source-level AutoChat separation-of-concerns only. It does not prove a live AutoChat runtime or chat-to-governor transport."
+}
