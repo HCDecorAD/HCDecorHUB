@@ -1,0 +1,1 @@
+import assert from"node:assert/strict";import{REQUIRED_RUNTIME,runtimeEvidenceGate}from"../src/runtime-evidence.mjs";let x=runtimeEvidenceGate([]);assert.equal(x.publish_allowed,false);x=runtimeEvidenceGate(REQUIRED_RUNTIME.map(type=>({type,status:"PASS"})));assert.equal(x.status,"PASS");assert.equal(x.publish_allowed,true);console.log("FACTORY_V2_RUNTIME_EVIDENCE_GATE_PASS");
