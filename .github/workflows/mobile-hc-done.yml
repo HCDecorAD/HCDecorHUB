@@ -1,0 +1,56 @@
+name: HC Mobile DONE Orchestrator
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_local_refresh:
+        description: Require a fresh HOCUONG live proof
+        required: false
+        default: false
+        type: boolean
+      hcdr_available:
+        description: Optional HOCUONG resource signal
+        required: false
+        default: unknown
+        type: choice
+        options:
+          - unknown
+          - online
+          - offline
+  push:
+    branches: [main]
+    paths:
+      - 'config/HC-DONE-ALL.manifest.json'
+      - 'scripts/mobile-hc-done-cloud.mjs'
+      - 'scripts/mobile-hc-done-cloud.test.mjs'
+      - '.github/workflows/mobile-hc-done.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hc-mobile-done-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cloud-orchestrator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      HCDR_AVAILABLE: ${{ inputs.hcdr_available || 'unknown' }}
+      HC_FORCE_LOCAL_REFRESH: ${{ inputs.force_local_refresh && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Simulate no-HOCUONG and resume paths
+        run: node scripts/mobile-hc-done-cloud.test.mjs
+      - name: Resolve current mobile DONE state
+        run: node scripts/mobile-hc-done-cloud.mjs
+      - name: Publish mobile DONE evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: hc-mobile-done-state
+          path: .runtime/mobile-hc-done/cloud-summary.json
+          if-no-files-found: error
