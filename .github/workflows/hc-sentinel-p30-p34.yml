@@ -1,0 +1,40 @@
+name: HC Sentinel P30-P34
+
+on:
+  push:
+    branches: [hc-sentinel-p30-p34]
+    paths:
+      - "HC_Sentinel/**"
+      - ".github/workflows/hc-sentinel-p30-p34.yml"
+  workflow_dispatch:
+
+jobs:
+  p30-p34:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: P30 Bootstrap
+        run: npm run test:p30
+
+      - name: P31 Live App Binding
+        run: npm run test:p31
+
+      - name: P32 Evidence Index
+        run: npm run test:p32
+
+      - name: P33 Settings Store
+        run: npm run test:p33
+
+      - name: P34 Golden Acceptance
+        run: npm run test:p34
+
+      - name: Full Regression
+        run: npm test

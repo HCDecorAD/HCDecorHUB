@@ -1,6 +1,6 @@
 # HC Sentinel — Build Phases
 
-## Completed
+## Completed milestones
 
 🔵 P1-P10 — Foundation  
 🟢 PASS  
@@ -14,85 +14,69 @@
 🟢 PASS  
 ✅✨ DONE
 
-🔵 P20 — Finding Lifecycle  
-🟢 PASS — 2/2  
+🔵 P20-P24 — Operations Hardening  
+🟢 PASS  
 ✅✨ DONE
 
-🔵 P21 — Mission Ledger  
-🟢 PASS — 1/1  
+🔵 P25-P29 — Daily Operations Runtime  
+🟢 PASS  
 ✅✨ DONE
-
-🔵 P22 — Policy Engine  
-🟢 PASS — 4/4  
-✅✨ DONE
-
-🔵 P23 — Health Supervisor  
-🟢 PASS — 2/2  
-✅✨ DONE
-
-🔵 P24 — Release Gate  
-🟢 PASS — 3/3  
-✅✨ DONE
-
-Gate: `OPERATIONS_HARDENED`
-
-🔵 P25 — Notification Center  
-Build:
-- alert event storage
-- unread/read lifecycle
-- pluggable notification sinks
-
-🟢 PASS — 1/1  
-✅✨ DONE
-
-🔵 P26 — Baseline Promotion Governance  
-Build:
-- CANDIDATE
-- REVIEW
-- APPROVED / REJECTED
-- no direct candidate-to-approved promotion
-
-🟢 PASS — 2/2  
-✅✨ DONE
-
-🔵 P27 — Watch Runtime  
-Build:
-- per-target interval
-- due-target execution
-- finding notification
-- independent from manual trigger priority
-
-🟢 PASS — 2/2  
-✅✨ DONE
-
-🔵 P28 — Live Command Binding  
-Build:
-- local HTTP API
-- `GET /api/status`
-- `POST /api/command`
-- operator command -> project/viewport -> execution binding
-
-🟢 PASS — 1/1  
-✅✨ DONE
-
-🔵 P29 — Local Release Package  
-Build:
-- local release manifest
-- Node entrypoint
-- Windows BAT launcher
-- ASCII-safe launcher
-- local-first / no production deploy
-
-🟢 PASS — 2/2  
-✅✨ DONE
-
-Smoke:
-`baseline=APPROVED -> watchRuns=1 -> alerts=1`
-
-Full regression:
-`59/59 PASS — 0 FAIL`
 
 Gate: `LOCAL_OPERATOR_READY`
+
+🔵 P30 — Local Bootstrap  
+- validate Node runtime
+- create runtime-state
+- create evidence/live
+- create data/live
+- create logs
+
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P31 — Live App Binding  
+- local server serves UI
+- UI calls status API
+- UI calls command API
+- safe static-path handling
+
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P32 — Evidence Index  
+- persist evidence metadata
+- filter by project
+- filter by type
+
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P33 — Settings Store  
+- safe defaults
+- allowlisted settings only
+- persisted theme/policy values
+
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P34 — Golden App Acceptance  
+Validates:
+- UI served
+- status = SENTINEL_READY
+- command = RUNNING
+- evidence API returns indexed data
+- settings theme switches to light
+
+🟢 PASS — Acceptance Flow  
+✅✨ DONE
+
+Acceptance:
+`ui=true -> status=SENTINEL_READY -> command=RUNNING -> evidence=1 -> theme=light`
+
+Full regression:
+`63/63 PASS — 0 FAIL`
+
+Gate: `APP_READY`
 
 ## Build rule
 

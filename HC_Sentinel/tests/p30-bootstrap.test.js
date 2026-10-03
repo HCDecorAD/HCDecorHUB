@@ -1,0 +1,2 @@
+import test from "node:test";import assert from "node:assert/strict";import {mkdtemp,rm} from "node:fs/promises";import {tmpdir} from "node:os";import {join} from "node:path";import {bootstrap} from "../runtime/bootstrap.js";
+test("bootstrap creates required local runtime dirs",async()=>{const d=await mkdtemp(join(tmpdir(),"sentinel-boot-"));try{const r=await bootstrap({root:d});assert.equal(r.ok,true);assert.deepEqual(r.dirs,["runtime-state","evidence/live","data/live","logs"]);}finally{await rm(d,{recursive:true,force:true});}});
