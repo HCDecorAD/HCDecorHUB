@@ -100,6 +100,8 @@ jobs:
         run: npm run test:hcdr-always-on
       - name: HCDR mobile remote one-shot gate
         run: npm run test:hcdr-mobile-remote-done
+      - name: Mobile HC DONE cloud/offline orchestration gate
+        run: npm run test:mobile-hc-done-cloud
       - name: HC Agent Control source contract
         run: npm run test:agent-control-contract
       - name: Agent Control runtime gate
