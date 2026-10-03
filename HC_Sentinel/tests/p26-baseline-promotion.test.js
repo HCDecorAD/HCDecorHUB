@@ -1,0 +1,3 @@
+import test from "node:test";import assert from "node:assert/strict";import {BaselinePromotion,BaselineState} from "../core/baseline-promotion.js";
+test("baseline cannot jump directly from candidate to approved",()=>{const b=new BaselinePromotion();b.propose({id:"b1",revision:"r1"});assert.equal(b.approve("b1"),false);assert.equal(b.items.get("b1").state,BaselineState.CANDIDATE);});
+test("reviewed baseline can be approved explicitly",()=>{const b=new BaselinePromotion();b.propose({id:"b1",revision:"r1"});b.review("b1");assert.equal(b.approve("b1",{reviewer:"operator"}),true);assert.equal(b.items.get("b1").state,BaselineState.APPROVED);});
