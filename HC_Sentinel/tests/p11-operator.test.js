@@ -1,0 +1,3 @@
+import test from "node:test";import assert from "node:assert/strict";import {ProjectRegistry} from "../core/project-registry.js";import {parseOperatorCommand} from "../operator/command-parser.js";
+test("operator resolves project and mobile viewport",()=>{const r=new ProjectRegistry();r.register({id:"gsc",name:"GSC"});const c=parseOperatorCommand("Sentinel kiểm tra GSC mobile",r);assert.equal(c.projectId,"gsc");assert.equal(c.viewport,"mobile");assert.equal(c.action,"CHECK");});
+test("operator leaves unknown project unresolved",()=>{const r=new ProjectRegistry();const c=parseOperatorCommand("kiểm tra xyz",r);assert.equal(c.projectId,null);});
