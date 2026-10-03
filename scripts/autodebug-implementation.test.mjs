@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {loadFixMemory,diagnoseFailure} from '../lib/autodebug.mjs';
+const m=loadFixMemory();
+const f=m.fixes[0];
+const r=diagnoseFailure({fingerprint:f.fingerprint,component:f.component,symptom:f.symptom},m);
+assert.equal(r.matched,true);
+assert.equal(r.repair_plan,f.fix);
+assert.ok(r.verified_commits.length);
+assert.ok(r.evidence_ref);
+assert.equal(diagnoseFailure({fingerprint:'unknown'},m).matched,false);
+assert.equal(diagnoseFailure({fingerprint:f.fingerprint,component:'wrong'},m).reason,'component_mismatch');
+console.log('AUTODEBUG_SOURCE_IMPLEMENTATION_PASS diagnosis_lookup=1 verified_only=1 repair_verification_runtime_not_claimed=1');
