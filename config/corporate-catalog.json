@@ -148,8 +148,8 @@
         "media-routing"
       ],
       "risk_class": "media",
-      "gate": "media capability consolidation pending",
-      "verification_state": "active"
+      "gate": "HC MediaFlow source contract",
+      "verification_state": "source-contract-only"
     },
     {
       "tool_id": "hc-video-downloader",
@@ -157,8 +157,8 @@
         "media-download"
       ],
       "risk_class": "media",
-      "gate": "latest tested project checkpoint",
-      "verification_state": "active"
+      "gate": "HC Video Downloader source contract",
+      "verification_state": "source-contract-only"
     },
     {
       "tool_id": "hc-design-ai-studio",
@@ -166,8 +166,8 @@
         "ai-design"
       ],
       "risk_class": "creative",
-      "gate": "latest local-first project checkpoint",
-      "verification_state": "active"
+      "gate": "HC Design AI Studio source contract",
+      "verification_state": "source-contract-only"
     }
   ],
   "resources": [
@@ -270,7 +270,7 @@
     {
       "system_id": "hc-design-ai-studio",
       "role": "ai-design-platform",
-      "state": "active",
+      "state": "source-contract-only",
       "tool_refs": [
         "hc-design-ai-studio"
       ],
@@ -288,7 +288,7 @@
     {
       "system_id": "hc-mediaflow",
       "role": "media-routing",
-      "state": "active",
+      "state": "source-contract-only",
       "tool_refs": [
         "hc-mediaflow"
       ],
@@ -297,7 +297,7 @@
     {
       "system_id": "hc-video-downloader",
       "role": "media-utility",
-      "state": "active",
+      "state": "source-contract-only",
       "tool_refs": [
         "hc-video-downloader"
       ],
