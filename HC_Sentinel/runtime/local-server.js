@@ -1,6 +1,6 @@
 import http from "node:http";
 import {readFile} from "node:fs/promises";
-import {extname,join,normalize} from "node:path";
+import {extname,resolve,sep} from "node:path";
 import {fileURLToPath} from "node:url";
 
 const MIME={".html":"text/html; charset=utf-8",".js":"text/javascript; charset=utf-8",".css":"text/css; charset=utf-8",".json":"application/json; charset=utf-8"};
@@ -8,7 +8,7 @@ const MIME={".html":"text/html; charset=utf-8",".js":"text/javascript; charset=u
 async function readBody(req){let body="";for await(const chunk of req) body+=chunk;return body?JSON.parse(body):{};}
 
 export function createLocalServer({controller,status=()=>({status:"READY"}),evidence=null,settings=null,uiDir=null}){
-  const uiRoot=uiDir?fileURLToPath(uiDir):null;
+  const uiRoot=uiDir?resolve(fileURLToPath(uiDir)):null;
   return http.createServer(async(req,res)=>{
     const url=new URL(req.url,"http://127.0.0.1");
 
@@ -37,10 +37,10 @@ export function createLocalServer({controller,status=()=>({status:"READY"}),evid
     }
 
     if(req.method==="GET"&&uiRoot){
-      const rel=url.pathname==="/"?"/index.html":url.pathname;
-      const safe=normalize(rel).replace(/^(..(/|\|$))+/, "");
-      const file=join(uiRoot,safe);
-      if(!file.startsWith(uiRoot)){res.statusCode=403;res.end("Forbidden");return;}
+      const rel=decodeURIComponent(url.pathname==="/"?"/index.html":url.pathname).replace(/^\/+/, "");
+      if(rel.split(/[\\/]/).includes("..")){res.statusCode=403;res.end("Forbidden");return;}
+      const file=resolve(uiRoot,rel);
+      if(file!==uiRoot&&!file.startsWith(uiRoot+sep)){res.statusCode=403;res.end("Forbidden");return;}
       try{
         const data=await readFile(file);
         res.setHeader("content-type",MIME[extname(file)]||"application/octet-stream");
