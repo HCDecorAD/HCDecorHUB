@@ -74,6 +74,8 @@ jobs:
         run: npm run test:corporate-catalog
       - name: HCDR relay implementation contract
         run: npm run test:hcdr-relay-contract
+      - name: HCDR always-on receiver gate
+        run: npm run test:hcdr-always-on
       - name: HC Agent Control source contract
         run: npm run test:agent-control-contract
       - name: Agent Control runtime gate
