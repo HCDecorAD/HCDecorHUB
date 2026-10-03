@@ -1,0 +1,28 @@
+{
+  "schema": "hc-mat-than/v1",
+  "system_id": "hc-mat-than",
+  "state": "pilot",
+  "root": "D:/HCDecorHUB/runtime/hc-mat-than",
+  "interval_seconds": 15,
+  "screenshot": {
+    "enabled": true,
+    "latest_file": "latest.png",
+    "history_limit": 40
+  },
+  "telemetry": {
+    "active_window": true,
+    "process_summary": true,
+    "hcdr_heartbeat": true,
+    "mission_state": true
+  },
+  "classification": {
+    "stuck_after_seconds": 120,
+    "idle_after_seconds": 90
+  },
+  "policy": {
+    "observer_is_independent": true,
+    "no_production_write": true,
+    "evidence_before_action": true,
+    "worker_failure_does_not_stop_observer": true
+  }
+}
