@@ -23,6 +23,24 @@ if($healthy){
   exit 0
 }
 
+# A stale heartbeat means the relay loop is wedged. Restart only the relay
+# process itself; any previously claimed job is quarantined by relay-agent on
+# restart and is never blindly retried.
+if(Test-Path $heartbeat){
+  try{
+    $old=Get-Content $heartbeat -Raw|ConvertFrom-Json
+    $age=((Get-Date).ToUniversalTime() - ([datetime]$old.at).ToUniversalTime()).TotalSeconds
+    if($age -gt $StaleSeconds -and $old.pid){
+      $proc=Get-CimInstance Win32_Process -Filter ("ProcessId="+[int]$old.pid) -ErrorAction SilentlyContinue
+      if($proc -and $proc.Name -eq 'node.exe' -and $proc.CommandLine -match 'relay-agent\.mjs'){
+        Stop-Process -Id ([int]$old.pid) -Force -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 2
+        Write-Output ('HCDR_WATCHDOG_STALE_RELAY_STOPPED pid='+$old.pid+' current_job='+$old.current_job)
+      }
+    }
+  }catch{}
+}
+
 # Remove stale lock only when recorded PID is absent.
 $lock=Join-Path $runtime 'hcdr-relay.lock'
 if(Test-Path $lock){
