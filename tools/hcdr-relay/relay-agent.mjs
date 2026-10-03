@@ -78,6 +78,7 @@ async function runJob(body){
 
 const active=new Map();
 const activeLanes=new Set();
+const quarantinedLanes=new Set();
 let pollBusy=false;
 let sourceRefresh={updated:false,disabled:!SELF_UPDATE};
 
@@ -94,7 +95,13 @@ async function heartbeat(){
     pid:process.pid,
     at:new Date().toISOString(),
     relay:RELAY,
-    worker_pool:{max:MAX_WORKERS,active:workers.length,available:Math.max(0,MAX_WORKERS-workers.length)},
+    worker_pool:{
+      max:MAX_WORKERS,
+      active:workers.length,
+      available:Math.max(0,MAX_WORKERS-workers.length),
+      active_lanes:[...activeLanes],
+      quarantined_lanes:[...quarantinedLanes]
+    },
     workers,
     source_refresh:sourceRefresh
   },null,2));
@@ -123,37 +130,51 @@ async function dispatch(issue,body,lane){
   active.set(key,worker);
   if(lane) activeLanes.add(lane);
 
+  const execution=Promise.resolve()
+    .then(()=>runJob(body))
+    .then(result=>({result}))
+    .catch(error=>({result:{ok:false,error:String(error?.message||error)}}));
+
   let timer;
   const timeout=new Promise(resolve=>{
     timer=setTimeout(()=>resolve({__timeout:true}),JOB_TIMEOUT_MS);
     timer.unref?.();
   });
 
-  Promise.race([
-    Promise.resolve().then(()=>runJob(body)).then(result=>({result})).catch(error=>({result:{ok:false,error:String(error?.message||error)}})),
-    timeout
-  ]).then(async outcome=>{
+  Promise.race([execution,timeout]).then(async outcome=>{
     if(outcome?.__timeout){
       const result={
         ok:false,
         error:"job_lease_timeout",
         state:"QUARANTINED",
         retry_safe:false,
-        timeout_ms:JOB_TIMEOUT_MS
+        timeout_ms:JOB_TIMEOUT_MS,
+        lane
       };
+      if(lane) quarantinedLanes.add(lane);
       await finalize(issue,body,result,"quarantined");
-    }else{
-      clearTimeout(timer);
-      await finalize(issue,body,outcome.result,"completed");
-    }
-  }).catch(e=>console.error("worker_finalize_error",issue.number,e.message))
-    .finally(()=>{
       active.delete(key);
-      if(lane) activeLanes.delete(lane);
-      heartbeat().catch(()=>{});
-    });
-}
+      await heartbeat().catch(()=>{});
 
+      // The underlying execution may still be finishing. Never open the same
+      // mutating lane until that execution actually settles.
+      execution.finally(()=>{
+        if(lane){
+          quarantinedLanes.delete(lane);
+          activeLanes.delete(lane);
+        }
+        heartbeat().catch(()=>{});
+      });
+      return;
+    }
+
+    clearTimeout(timer);
+    await finalize(issue,body,outcome.result,"completed");
+    active.delete(key);
+    if(lane) activeLanes.delete(lane);
+    await heartbeat().catch(()=>{});
+  }).catch(e=>console.error("worker_finalize_error",issue.number,e.message));
+}
 async function quarantineInterrupted(issue,body,prior){
   const result={
     ok:false,
@@ -190,7 +211,7 @@ async function tick(){
       }
 
       const lane=laneFor(body);
-      if(lane && activeLanes.has(lane)) continue;
+      if(lane && (activeLanes.has(lane) || quarantinedLanes.has(lane))) continue;
       await dispatch(issue,body,lane);
     }
   }finally{
