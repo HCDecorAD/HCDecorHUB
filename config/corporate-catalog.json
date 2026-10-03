@@ -253,7 +253,7 @@
     {
       "system_id": "hc-agent-control",
       "role": "agent-control",
-      "state": "source-contract-only",
+      "state": "runtime-source-ci",
       "tool_refs": [
         "hc-agent-control"
       ],
@@ -262,7 +262,7 @@
     {
       "system_id": "hc-autochat",
       "role": "operator-conversation-ui",
-      "state": "source-contract-only",
+      "state": "runtime-source-ci",
       "tool_refs": [
         "hc-autochat"
       ],
@@ -280,7 +280,7 @@
     {
       "system_id": "hc-design-ai-studio",
       "role": "ai-design-platform",
-      "state": "source-contract-only",
+      "state": "runtime-source-ci",
       "tool_refs": [
         "hc-design-ai-studio"
       ],
@@ -298,7 +298,7 @@
     {
       "system_id": "hc-mediaflow",
       "role": "media-routing",
-      "state": "source-contract-only",
+      "state": "runtime-source-ci",
       "tool_refs": [
         "hc-mediaflow"
       ],
@@ -307,7 +307,7 @@
     {
       "system_id": "hc-video-downloader",
       "role": "media-utility",
-      "state": "source-contract-only",
+      "state": "runtime-source-ci",
       "tool_refs": [
         "hc-video-downloader"
       ],
