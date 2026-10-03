@@ -1,7 +1,15 @@
 param([string]$Root=(Split-Path -Parent $PSScriptRoot))
 $ErrorActionPreference='Stop';Set-Location $Root
 $run=Join-Path $Root ('.runtime\final-'+(Get-Date -Format 'yyyyMMdd-HHmmss'));New-Item -ItemType Directory -Force $run|Out-Null
-function RunGate($n,$cmd){$log=Join-Path $run ($n+'.log');cmd /d /c $cmd *> $log;if($LASTEXITCODE -ne 0){Get-Content $log;throw "$n failed"}}
+function RunGate($n,$cmd){
+  $log=Join-Path $run ($n+'.log')
+  # Let cmd.exe own stderr redirection so PowerShell 5 does not promote harmless
+  # native stderr (for example OpenNext Windows warnings) into NativeCommandError.
+  $wrapped=$cmd + ' > "' + $log + '" 2>&1'
+  cmd /d /c $wrapped
+  $rc=$LASTEXITCODE
+  if($rc -ne 0){Get-Content $log;throw "$n failed exit=$rc"}
+}
 RunGate 'foundation-contract' 'node scripts\foundation-contract-check.mjs'
 RunGate 'architecture' 'npm run test:architecture'
 RunGate 'persistence' 'node scripts\persistence-contract-check.mjs'
