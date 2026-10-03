@@ -126,6 +126,9 @@ Priority considers business value, dependency criticality, readiness, risk, time
 
 - Budget deny diagnostics: atomic multi-budget admission preserves zero partial spend while exposing per-budget `sufficient:true/false` plus transaction-level `denied_by`; scheduler preserves these diagnostics without stalling unrelated READY work. Quality Gate + Production Verify PASS at `0270010c8cd7f31161ced8b2ccdacd26872a9218` and scheduler regression guard PASS at `910d9c825fa0ee61987e14e5cf8de885907a4850`.
 
+- HC AutoChat source contract: operator-UI-only separation is machine-gated; chat must not own the durable mission loop, Goal/Mission must outlive chat/session loss, direct production authority is forbidden, and evidence—not conversation—determines DONE. Quality Gate + Production Verify PASS at `7136f7aca92c988cf485198a9715abb33873f400`. Runtime remains source-contract-only.
+- HC MediaFlow / Video Downloader / Design AI Studio source contracts: machine-readable fail-closed contracts are now gated for media routing, bounded/restart-safe download semantics, provenance/local-first design semantics, mission correlation, and no direct production publish authority. Regression guard + Quality Gate + Production Verify PASS at `b76bbbd8307e2923856fa3798fd6b61b3a9bc97a`. These are source/CI contracts only; live runtime/provider/HOCUONG execution is not claimed.
+
 - HC Agent Control source contract: machine-readable acceptance at `config/hc-agent-control-acceptance.json`; catalog/tool/system state is `source-contract-only`. Quality Gate + Production Verify PASS at `5a624a0a24ff473dea49c0c42eba042e87e2ff7a`. This proves control semantics in source/CI only; live runtime ownership, worker transport, and HOCUONG execution remain NOT_PROVEN.
 
 - HCDR mission/correlation source contract: relay job/result envelope now carries `source_id`, `mission_id`, and `correlation_id`; HCDR repo source-contract CI check `correlation` PASS at `6696e4e41940582ae344925c65949c25e7b4ed0f` (Actions run `37056914452`). This proves source-level contract/echo semantics only; HOCUONG runtime end-to-end propagation remains NOT_PROVEN.
@@ -216,3 +219,5 @@ TransWarp may remain WAITING/RUNNING with an exact checkpoint while its Worker a
 
 ## Source-of-truth rule
 This document is the human-readable corporate map. The machine-readable registry must become runtime source of truth. Chat summaries are inputs, not authoritative runtime state. Every status change requires timestamped evidence.
+
+- Declared catalog/lifecycle source-contract closure: after `b76bbbd8307e2923856fa3798fd6b61b3a9bc97a`, no Corporate Catalog tool/system remains in `active` or `not-proven-done` state and no lifecycle mission remains non-DONE within the declared scope. This does not imply enterprise completeness or live-runtime completeness; runtime-only claims still require separate evidence.
