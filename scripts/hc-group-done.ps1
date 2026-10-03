@@ -32,7 +32,7 @@ function Invoke-Lane([hashtable]$lane,[int]$attempt){
 
   $lines=@('@echo off','setlocal EnableExtensions',('cd /d "'+$root+'"'))
   foreach($command in $lane.Commands){
-    $lines += $command
+    $lines += ('call '+$command)
     $lines += 'if errorlevel 1 goto :failed'
   }
   $lines += ('> "'+$codeFile+'" echo 0')
