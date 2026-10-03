@@ -98,7 +98,7 @@ $summary=[ordered]@{
   data_root='D:\HC_DATA'
   github_sync='ASYNC_NON_BLOCKING'
   lanes=$all
-  failed_lanes=@($failed.lane)
+  failed_lanes=@($failed | ForEach-Object {$_.lane})
   research_required=([bool]$failed)
   production_verify_skipped=[bool]$SkipProductionVerify
   final_state='VERIFYING'
@@ -136,8 +136,9 @@ function Invoke-MasterE2E {
       return 903
     }
     $env:HCDECOR_E2E_BASE='http://127.0.0.1:3219'
-    cmd /d /s /c "npm run test:master"
-    return $LASTEXITCODE
+    cmd /d /s /c "npm run test:master 2>&1" | ForEach-Object { Write-Host $_ }
+    $masterExit=$LASTEXITCODE
+    return [int]$masterExit
   }
   finally{
     Remove-Item Env:HCDECOR_E2E_BASE -ErrorAction SilentlyContinue
