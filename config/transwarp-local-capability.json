@@ -1,0 +1,40 @@
+{
+  "schema": "transwarp/capability-manifest-v1",
+  "project": "HC TransWarp Infrastructure",
+  "version": "0.4",
+  "local_first": true,
+  "canonical_root": "D:\\HCDecorHUB\\HC TransWarp Infrastructure",
+  "data_root": "D:\\HC_DATA\\queue\\transwarp",
+  "ingress": {
+    "mode": "DIRECT_LOCAL",
+    "protocol": "http",
+    "host": "127.0.0.1",
+    "port": 8787,
+    "health": "/health",
+    "submit": "/jobs",
+    "token_file": "D:\\HC_DATA\\queue\\transwarp\\ingress.secret"
+  },
+  "runner": {
+    "manifest_schema": "transwarp-local/job-v1",
+    "inbox": "D:\\HC_DATA\\queue\\transwarp\\inbox",
+    "evidence": "D:\\HC_DATA\\queue\\transwarp\\evidence",
+    "actions": [
+      "process",
+      "powershell_file"
+    ]
+  },
+  "routing_policy": [
+    "DIRECT_LOCAL_INGRESS",
+    "LOCAL_RUNNER_ONESHOT",
+    "HCDR_FALLBACK"
+  ],
+  "remote_policy": {
+    "github": "SYNC_ONLY",
+    "hcdr": "FALLBACK_ONLY"
+  },
+  "chat_bootstrap": {
+    "rule": "Any chat must first resolve this manifest, then probe an authorized local connector/desktop route. Do not assume localhost is reachable from chat.",
+    "success_marker": "TRANSWARP_LOCAL_CAPABILITY_OK",
+    "blocked_marker": "TRANSWARP_LOCAL_CONNECTOR_REQUIRED"
+  }
+}
