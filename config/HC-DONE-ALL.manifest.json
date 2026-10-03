@@ -1,0 +1,61 @@
+{
+  "schema": "hc-done-all/v2",
+  "program_id": "hc-group-runtime-finish",
+  "state": "DONE",
+  "source_head": "9f3d6ab27cc6854bc869d73df87bc19411b9b635",
+  "packages": [
+    {
+      "id": "D01",
+      "state": "DONE"
+    },
+    {
+      "id": "D02",
+      "state": "DONE"
+    },
+    {
+      "id": "D03",
+      "state": "DONE"
+    },
+    {
+      "id": "D04",
+      "state": "DONE"
+    },
+    {
+      "id": "D05",
+      "state": "DONE"
+    },
+    {
+      "id": "D06",
+      "state": "DONE"
+    }
+  ],
+  "verification": {
+    "quality_gate": {
+      "run_id": 37096357234,
+      "state": "SUCCESS"
+    },
+    "production_verify": {
+      "run_id": 37096357170,
+      "state": "SUCCESS"
+    },
+    "master_e2e": "SUCCESS",
+    "cloudflare_build": "SUCCESS"
+  },
+  "policy": {
+    "reuse_verified_pass": true,
+    "wait_is_yield": true,
+    "final_freeze": "manifest-integrity",
+    "regression_replay": false,
+    "non_runtime_changes": "FAST_PASS",
+    "critical_changes": "targeted-or-full-by-risk"
+  },
+  "external_non_blocking": [
+    {
+      "provider": "Vercel",
+      "state": "RATE_LIMITED",
+      "handling": "YIELD_NON_BLOCKING",
+      "reason": "Deployment rate limited; retry after provider window. HC Production Verify is independently SUCCESS."
+    }
+  ],
+  "terminal_token": "HC_DONE_ALL_PASS_V2"
+}
