@@ -1,0 +1,50 @@
+{
+  "schema": "hc-group-corporate-update-feed/v1",
+  "policy": {
+    "broadcast_after_canonical_update": true,
+    "refresh_before_status_claim": true,
+    "stale_contract_must_not_override_fresh_live_evidence": true,
+    "consumers": [
+      "HC DONE",
+      "HC Agent Control",
+      "HC AutoChat",
+      "HC AutoDebug",
+      "TransWarp",
+      "HCDR",
+      "HC MediaFlow",
+      "HC Video Downloader",
+      "HC Design AI Studio",
+      "HC Visual Builder",
+      "GSC",
+      "AMO",
+      "HCDecor HUB"
+    ]
+  },
+  "latest": {
+    "update_id": "HC-GROUP-2026-10-03-HCDR-V3-AGENT-CONTROL",
+    "published_at": "2026-10-03T10:32:00Z",
+    "scope": "corporate",
+    "canonical_repo": "HCDecorAD/HCDecorHUB",
+    "summary": "HCDR v3 is the canonical live local transport. HC Agent Control V2 must use HCDR v3 and must not report HCDR unavailable without a fresh failed health proof.",
+    "components": {
+      "hcdr": {
+        "version": "v3",
+        "state": "ACTIVE",
+        "worker_pool": 4,
+        "request_schema": "hcdr-relay/v1.2",
+        "result_schema": "hcdr-result/v2",
+        "live_proof_issue": 1016
+      },
+      "hc_agent_control": {
+        "contract_version": "1.1.0",
+        "transport": "HCDR v3",
+        "runtime_done": false
+      }
+    },
+    "action_required": "Refresh canonical corporate update feed and component contract before status/availability claims.",
+    "supersedes": [
+      "HC Agent Control source-contract-only transport assumption",
+      "HCDR single-worker/FIFO assumption"
+    ]
+  }
+}
