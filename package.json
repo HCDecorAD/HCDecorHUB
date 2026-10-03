@@ -35,7 +35,10 @@
     "test:evidence-store": "node scripts/durable-evidence-store.test.mjs",
     "test:active-asset-coverage": "node scripts/active-asset-coverage.test.mjs",
     "test:agent-control-contract": "node scripts/hc-agent-control-acceptance.test.mjs",
-    "test:autochat-contract": "node scripts/hc-autochat-acceptance.test.mjs"
+    "test:autochat-contract": "node scripts/hc-autochat-acceptance.test.mjs",
+    "test:mediaflow-contract": "node scripts/hc-mediaflow-acceptance.test.mjs",
+    "test:video-downloader-contract": "node scripts/hc-video-downloader-acceptance.test.mjs",
+    "test:design-ai-contract": "node scripts/hc-design-ai-studio-acceptance.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
