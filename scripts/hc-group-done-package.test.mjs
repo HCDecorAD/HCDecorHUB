@@ -25,7 +25,7 @@ assert.ok(ps.includes("github_sync_required_for_done=$false"));
 assert.ok(ps.includes('npm run test:master'));
 assert.ok(ps.includes("npm run start -- -p 3219"));
 assert.ok(ps.includes('HC_DONE_MASTER_SERVER_NOT_READY'));
-assert.ok(ps.includes("master_runtime='LOCAL_127.0.0.1_3219'"));
+assert.ok(ps.includes("master_runtime='LOCAL_LOCALHOST_3219'"));
 assert.ok(ps.includes('production-smoke.ps1'));
 assert.ok(ps.includes('HC_GROUP_DONE_PASS'));
 assert.ok(canonical.includes('HC-LOCAL-FIRST.bat'));
