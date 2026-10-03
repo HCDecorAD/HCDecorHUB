@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "system_id": "hc-design-ai-studio",
+  "verification_state": "source-contract-only",
+  "runtime_done": false,
+  "provides": [
+    "ai-design"
+  ],
+  "principles": {
+    "local_first_by_default": true,
+    "preserves_mission_correlation": true,
+    "source_assets_require_provenance": true,
+    "no_direct_production_publish_authority": true,
+    "evidence_required_for_done": true,
+    "uncertain_external_side_effects_fail_closed": true
+  },
+  "acceptance_limits": "This source contract does not prove a live Design AI Studio runtime, model quality, or local HOCUONG execution."
+}
