@@ -1,0 +1,49 @@
+name: HC Sentinel P11-P14
+
+on:
+  push:
+    branches: [hc-sentinel-p11-p14]
+    paths:
+      - "HC_Sentinel/**"
+      - ".github/workflows/hc-sentinel-p11-p14.yml"
+  workflow_dispatch:
+
+jobs:
+  p11-p14:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: P11 Operator
+        run: npm run test:p11
+
+      - name: P12 Project Profiles
+        run: npm run test:p12
+
+      - name: P13 Baseline Manager
+        run: npm run test:p13
+
+      - name: P14 Repair Bridge
+        run: npm run test:p14
+
+      - name: Operator smoke
+        run: node scripts/p11-p14-smoke.js
+
+      - name: Full regression
+        run: npm test
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hc-sentinel-p11-p14-evidence
+          path: HC_Sentinel/evidence/p11-p14/**
+          if-no-files-found: warn
