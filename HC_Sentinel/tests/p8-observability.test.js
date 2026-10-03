@@ -1,0 +1,2 @@
+import test from "node:test";import assert from "node:assert/strict";import {TelemetryBus} from "../core/telemetry.js";import {OpenTelemetryExporter} from "../adapters/telemetry/otel-exporter.js";
+test("telemetry adapter receives structured event",()=>{const sink=[];const b=new TelemetryBus({exporters:[new OpenTelemetryExporter({sink:e=>sink.push(e)})]});b.emit("VERIFY",{missionId:"1"});assert.equal(sink[0].type,"VERIFY");});
