@@ -1,0 +1,60 @@
+name: HC Sentinel P1-P3
+
+on:
+  push:
+    branches: [hc-sentinel-p1-p3]
+    paths:
+      - "HC_Sentinel/**"
+      - ".github/workflows/hc-sentinel-p1-p3.yml"
+  workflow_dispatch:
+
+jobs:
+  p1-p3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: HC_Sentinel/package.json
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: P1 Kernel
+        run: npm run test:p1
+
+      - name: P2 Observer contract
+        run: npm run test:p2
+
+      - name: P2 Real browser capture
+        run: node scripts/capture-smoke.js
+
+      - name: P3 Visual diff
+        run: npm run test:p3
+
+      - name: P3 Diff smoke
+        run: node scripts/diff-smoke.js
+
+      - name: Full regression
+        run: npm test
+
+      - name: Upload Sentinel evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hc-sentinel-p1-p3-evidence
+          path: |
+            HC_Sentinel/evidence/p2/**
+            HC_Sentinel/evidence/p3/**
+          if-no-files-found: warn
