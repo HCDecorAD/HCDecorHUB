@@ -1,0 +1,38 @@
+# Secrets / credentials
+.env
+.env.*
+*.key
+*.pem
+*token*
+*secret*
+*credential*
+
+# Live runtime state
+runtime/
+live/
+queue/
+queues/
+locks/
+*.lock
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+
+# Browser / session data
+browser-profile/
+profiles/
+cookies*
+session*
+
+# Heavy/raw evidence
+evidence/raw/
+screenshots/raw/
+videos/raw/
+
+# Local temp/cache
+tmp/
+temp/
+cache/
+__pycache__/
+node_modules/
