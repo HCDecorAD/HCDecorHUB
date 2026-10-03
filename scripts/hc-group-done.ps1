@@ -126,7 +126,7 @@ function Invoke-MasterE2E {
     for($i=0;$i -lt 30;$i++){
       Start-Sleep -Seconds 1
       try{
-        $r=Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:3219/api/health' -TimeoutSec 2
+        $r=Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:3219/api/health' -TimeoutSec 2
         if($r.StatusCode -ge 200 -and $r.StatusCode -lt 500){ $ready=$true; break }
       } catch {}
       if($server.HasExited){ break }
@@ -135,7 +135,7 @@ function Invoke-MasterE2E {
       Write-Host 'HC_DONE_MASTER_SERVER_NOT_READY port=3219'
       return 903
     }
-    $env:HCDECOR_E2E_BASE='http://127.0.0.1:3219'
+    $env:HCDECOR_E2E_BASE='http://localhost:3219'
     cmd /d /s /c "npm run test:master 2>&1" | ForEach-Object { Write-Host $_ }
     $masterExit=$LASTEXITCODE
     return [int]$masterExit
@@ -187,7 +187,7 @@ if(-not $SkipProductionVerify){
 $summary.final_state='DONE'
 $summary.final_gate=@($final)
 $summary.local_build_state='PASS_DONE'
-$summary.master_runtime='LOCAL_127.0.0.1_3219'
+$summary.master_runtime='LOCAL_LOCALHOST_3219'
 $summary.github_sync_required_for_done=$false
 $summary | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 (Join-Path $runtime 'summary.json')
 Write-Host 'HC_GROUP_DONE_PASS state=DONE mode=LOCAL_FIRST parallel_lanes=6 github_sync=NON_BLOCKING evidence=.runtime\hc-group-done\summary.json'
