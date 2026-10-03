@@ -21,11 +21,11 @@
     ]
   },
   "latest": {
-    "update_id": "HC-GROUP-2026-10-03-HCDR-V3-AGENT-CONTROL",
-    "published_at": "2026-10-03T10:32:00Z",
+    "update_id": "HC-GROUP-2026-10-03-HCDR-V3-GITHUB-RELAY",
+    "published_at": "2026-10-03T10:36:00Z",
     "scope": "corporate",
     "canonical_repo": "HCDecorAD/HCDecorHUB",
-    "summary": "HCDR v3 is the canonical live local transport. HC Agent Control V2 must use HCDR v3 and must not report HCDR unavailable without a fresh failed health proof.",
+    "summary": "HCDR v3 does not require a dedicated ChatGPT action named HCDR. Canonical access is through the GitHub connector to HCDecorAD/HCDecor-HCDR-Relay using label hcdr-job.",
     "components": {
       "hcdr": {
         "version": "v3",
@@ -36,15 +36,19 @@
         "live_proof_issue": 1016
       },
       "hc_agent_control": {
-        "contract_version": "1.1.0",
+        "contract_version": "1.2.0",
         "transport": "HCDR v3",
-        "runtime_done": false
+        "runtime_done": false,
+        "access_mode": "github-relay",
+        "required_chat_connector": "GitHub",
+        "dedicated_hcdr_action_required": false
       }
     },
-    "action_required": "Refresh canonical corporate update feed and component contract before status/availability claims.",
+    "action_required": "Refresh the corporate update feed. If GitHub connector is available, use it to create/read HCDR relay issues; do not wait for a dedicated HCDR action.",
     "supersedes": [
       "HC Agent Control source-contract-only transport assumption",
-      "HCDR single-worker/FIFO assumption"
+      "HCDR single-worker/FIFO assumption",
+      "Dedicated-HCDR-action/connector assumption"
     ]
   }
 }
