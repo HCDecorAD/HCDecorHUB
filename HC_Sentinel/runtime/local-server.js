@@ -4,29 +4,31 @@ import {extname,resolve,sep} from "node:path";
 import {fileURLToPath} from "node:url";
 
 const MIME={".html":"text/html; charset=utf-8",".js":"text/javascript; charset=utf-8",".css":"text/css; charset=utf-8",".json":"application/json; charset=utf-8"};
-
 async function readBody(req){let body="";for await(const chunk of req) body+=chunk;return body?JSON.parse(body):{};}
 
-export function createLocalServer({controller,status=()=>({status:"READY"}),evidence=null,settings=null,uiDir=null}){
+export function createLocalServer({controller,status=()=>({status:"READY"}),evidence=null,settings=null,findings=null,uiDir=null}){
   const uiRoot=uiDir?resolve(fileURLToPath(uiDir)):null;
   return http.createServer(async(req,res)=>{
     const url=new URL(req.url,"http://127.0.0.1");
 
-    if(req.method==="GET"&&url.pathname==="/api/status"){
-      res.setHeader("content-type",MIME[".json"]);res.end(JSON.stringify(status()));return;
-    }
+    if(req.method==="GET"&&url.pathname==="/api/status"){res.setHeader("content-type",MIME[".json"]);res.end(JSON.stringify(status()));return;}
 
     if(req.method==="POST"&&url.pathname==="/api/command"){
       res.setHeader("content-type",MIME[".json"]);
-      try{const data=await readBody(req);const result=await controller.run(data.command);res.statusCode=200;res.end(JSON.stringify(result));}
+      try{const data=await readBody(req);const result=await controller.run(data.command);res.end(JSON.stringify(result));}
       catch(e){res.statusCode=400;res.end(JSON.stringify({status:"BLOCKED",error:String(e.message||e)}));}
       return;
     }
 
     if(req.method==="GET"&&url.pathname==="/api/evidence"){
       res.setHeader("content-type",MIME[".json"]);
-      if(!evidence){res.end(JSON.stringify({items:[]}));return;}
-      const items=await evidence.list({projectId:url.searchParams.get("projectId")||undefined,type:url.searchParams.get("type")||undefined});
+      const items=evidence?await evidence.list({projectId:url.searchParams.get("projectId")||undefined,type:url.searchParams.get("type")||undefined}):[];
+      res.end(JSON.stringify({items}));return;
+    }
+
+    if(req.method==="GET"&&url.pathname==="/api/findings"){
+      res.setHeader("content-type",MIME[".json"]);
+      const items=findings?await findings.list({state:url.searchParams.get("state")||undefined,projectId:url.searchParams.get("projectId")||undefined}):[];
       res.end(JSON.stringify({items}));return;
     }
 
