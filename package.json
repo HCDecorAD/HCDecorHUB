@@ -41,7 +41,8 @@
     "test:design-ai-contract": "node scripts/hc-design-ai-studio-acceptance.test.mjs",
     "test:hcdr-relay-contract": "node scripts/hcdr-relay-implementation.test.mjs",
     "test:autodebug-implementation": "node scripts/autodebug-implementation.test.mjs",
-    "test:autodebug-repair": "node scripts/autodebug-repair-verification.test.mjs"
+    "test:autodebug-repair": "node scripts/autodebug-repair-verification.test.mjs",
+    "test:hc-group-done-package": "node scripts/hc-group-done-package.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
