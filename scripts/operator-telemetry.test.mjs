@@ -20,6 +20,10 @@ assert.ok(helper.includes('production_authority:false'));
 assert.ok(page.includes('telemetry.capabilities'));
 assert.ok(page.includes('contract_state'));
 assert.ok(page.includes('production authority'));
+assert.ok(page.includes('RECENT EVIDENCE'));
+assert.ok(page.includes('telemetry.recent_evidence'));
+assert.ok(page.includes('telemetry.sources.evidence_events.authority'));
+
 
 assert.ok(helper.includes('run_history:{authority:runStore.mode'),'run history authority must derive from store metadata');
 assert.ok(helper.includes('worker_heartbeats:{authority:"local-spool",production_authority:false}'),'worker heartbeat local spool authority must be explicit and non-authoritative');
