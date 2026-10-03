@@ -1,5 +1,9 @@
 @echo off
 setlocal EnableExtensions
+if /I not "%~1"=="--hidden" (
+  powershell.exe -NoLogo -NoProfile -WindowStyle Hidden -Command "Start-Process -FilePath 'cmd.exe' -ArgumentList '/d','/s','/c','""%~f0" --hidden"' -WindowStyle Hidden"
+  exit /b 0
+)
 title HCDecor HUB - Background Sync
 cd /d "%~dp0"
 set "INTERVAL=60"
@@ -18,7 +22,6 @@ if exist "%LOCK%" (echo HCDecor HUB Watch is already running. & exit /b 0)
 echo %date% %time%>"%LOCK%"
 echo HCDecor HUB Background Sync started.
 echo Interval: %INTERVAL%s
-echo Close this window to stop.
 :loop
 del /q "%CD%\HCDecor-HUB-SERVICES.cmd.new" >nul 2>&1
 curl.exe -fsSL "%BASE%/HCDecor-HUB-SERVICES.cmd?v=%RANDOM%%RANDOM%" -o "%CD%\HCDecor-HUB-SERVICES.cmd.new" >nul 2>&1
