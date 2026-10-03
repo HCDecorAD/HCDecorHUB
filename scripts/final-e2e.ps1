@@ -29,7 +29,7 @@ try{
     if(Test-Path $serverErr){Get-Content $serverErr}
     throw "local server readiness failed on port $port"
   }
-  R 'master-e2e' 'set HC_ALLOW_LOCAL_E2E=true&& npm run test:master'
+  RunGate 'master-e2e' 'set HC_ALLOW_LOCAL_E2E=true&& npm run test:master'
 } finally {
   if($server -and -not $server.HasExited){cmd /d /c "taskkill /PID $($server.Id) /T /F" *> $null}
 }
