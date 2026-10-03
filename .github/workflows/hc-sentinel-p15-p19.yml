@@ -1,0 +1,63 @@
+name: HC Sentinel P15-P19
+
+on:
+  push:
+    branches: [hc-sentinel-p15-p19]
+    paths:
+      - "HC_Sentinel/**"
+      - ".github/workflows/hc-sentinel-p15-p19.yml"
+  workflow_dispatch:
+
+jobs:
+  p15-p19:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: P15 Real Target Profiles
+        run: npm run test:p15
+
+      - name: P16 Command Center UI
+        run: npm run test:p16
+
+      - name: P16 UI Light Dark Smoke
+        run: node scripts/p16-ui-smoke.js
+
+      - name: P17 Persistent Store
+        run: npm run test:p17
+
+      - name: P18 Live Repair Bridge Contract
+        run: npm run test:p18
+
+      - name: P19 E2E Config
+        run: npm run test:p19
+
+      - name: P19 Public Target E2E
+        run: node scripts/p19-e2e-public.js
+
+      - name: Full Regression
+        run: npm test
+
+      - name: Upload P15-P19 Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hc-sentinel-p15-p19-evidence
+          path: |
+            HC_Sentinel/evidence/p19/**
+          if-no-files-found: warn
