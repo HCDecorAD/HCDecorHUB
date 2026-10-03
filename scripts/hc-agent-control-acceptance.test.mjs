@@ -18,6 +18,8 @@ assert.equal(c.transport.worker_pool,4);
 assert.equal(c.transport.access_mode,'github-relay');
 assert.equal(c.transport.required_chat_connector,'GitHub');
 assert.equal(c.transport.dedicated_hcdr_action_required,false);
+assert.equal(c.bootstrap.contract,'config/hc-chat-bootstrap.json');
+assert.equal(c.bootstrap.required_before_status_claim,true);
 assert.match(c.transport.unavailable_rule,/Absence of a dedicated tool\/action named HCDR is not evidence/i);
 assert.match(c.acceptance_limits,/No dedicated HCDR action is required/i);
 console.log('HC_AGENT_CONTROL_SOURCE_CONTRACT_PASS ownership=1 no_user_nudge=1 blocked_lane_isolation=1 heartbeat=1 checkpoint=1 evidence_done=1 fail_closed=1 runtime_done=0');
