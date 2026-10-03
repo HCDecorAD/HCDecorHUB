@@ -1,0 +1,1 @@
+export function runtimeAdapter({capture,rebuild,diff,interact}){for(const [k,v] of Object.entries({capture,rebuild,diff,interact}))if(typeof v!=="function")throw new Error("MISSING_RUNTIME_ADAPTER_"+k.toUpperCase());return{capture,rebuild,diff,interact,mode:"isolated_candidate",productionMutation:false}}
