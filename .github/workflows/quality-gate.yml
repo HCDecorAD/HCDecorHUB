@@ -66,6 +66,8 @@ jobs:
         run: npm run test:evidence-store
       - name: Corporate catalog gate
         run: npm run test:corporate-catalog
+      - name: HCDR relay implementation contract
+        run: npm run test:hcdr-relay-contract
       - name: HC Agent Control source contract
         run: npm run test:agent-control-contract
       - name: HC AutoChat source contract
