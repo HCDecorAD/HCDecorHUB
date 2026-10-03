@@ -22,12 +22,24 @@ const heartbeatFile=runtime+"/hcdr-relay-heartbeat.json";
 await fs.mkdir(runtime,{recursive:true});
 
 let lock;
+async function pidAlive(pid){try{process.kill(Number(pid),0);return true}catch{return false}}
 try{
   lock=await fs.open(lockFile,"wx");
   await lock.writeFile(String(process.pid));
 }catch{
-  console.error("HCDR_REMOTE_FREE_ALREADY_RUNNING");
-  process.exit(2);
+  let stale=true;
+  try{
+    const pid=(await fs.readFile(lockFile,"utf8")).trim();
+    stale=!(await pidAlive(pid));
+  }catch{}
+  if(!stale){
+    console.error("HCDR_REMOTE_FREE_ALREADY_RUNNING");
+    process.exit(2);
+  }
+  try{await fs.unlink(lockFile)}catch{}
+  lock=await fs.open(lockFile,"wx");
+  await lock.writeFile(String(process.pid));
+  console.log("HCDR_STALE_LOCK_RECOVERED");
 }
 const cleanup=async()=>{try{await lock.close()}catch{}try{await fs.unlink(lockFile)}catch{}};
 process.on("SIGINT",async()=>{await cleanup();process.exit(0)});
