@@ -117,24 +117,76 @@ if($failed){
   exit 20
 }
 
+function Invoke-MasterE2E {
+  $serverLog=Join-Path $logs 'master-server.log'
+  $serverErr=Join-Path $logs 'master-server.err.log'
+  $server=Start-Process -FilePath 'cmd.exe' -ArgumentList @('/d','/c','npm run start -- -p 3219') -WorkingDirectory $root -RedirectStandardOutput $serverLog -RedirectStandardError $serverErr -NoNewWindow -PassThru
+  try{
+    $ready=$false
+    for($i=0;$i -lt 30;$i++){
+      Start-Sleep -Seconds 1
+      try{
+        $r=Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:3219/api/health' -TimeoutSec 2
+        if($r.StatusCode -ge 200 -and $r.StatusCode -lt 500){ $ready=$true; break }
+      } catch {}
+      if($server.HasExited){ break }
+    }
+    if(-not $ready){
+      Write-Host 'HC_DONE_MASTER_SERVER_NOT_READY port=3219'
+      return 903
+    }
+    $env:HCDECOR_E2E_BASE='http://127.0.0.1:3219'
+    cmd /d /s /c "npm run test:master"
+    return $LASTEXITCODE
+  }
+  finally{
+    Remove-Item Env:HCDECOR_E2E_BASE -ErrorAction SilentlyContinue
+    if($server -and -not $server.HasExited){
+      cmd /d /c "taskkill /PID $($server.Id) /T /F" | Out-Null
+    }
+  }
+}
+
 Write-Host 'HC_DONE_FINAL_GATE starting mode=LOCAL_FIRST'
-$final=@(
-  'powershell -NoProfile -ExecutionPolicy Bypass -File scripts\hc-local-first.ps1 -Mode build',
-  'npm run test:master'
-)
-if(-not $SkipProductionVerify){ $final += 'powershell -NoProfile -ExecutionPolicy Bypass -File scripts\production-smoke.ps1' }
-foreach($cmd in $final){
-  cmd /d /s /c $cmd
+$final=@()
+
+$buildCmd='powershell -NoProfile -ExecutionPolicy Bypass -File scripts\hc-local-first.ps1 -Mode build'
+$final += $buildCmd
+cmd /d /s /c $buildCmd
+if($LASTEXITCODE -ne 0){
+  $summary.final_state='HARD_BLOCKED'
+  $summary.final_gate_failure=$buildCmd
+  $summary | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 (Join-Path $runtime 'summary.json')
+  exit $LASTEXITCODE
+}
+
+$masterCmd='npm run test:master'
+$final += $masterCmd
+$masterCode=Invoke-MasterE2E
+if($masterCode -ne 0){
+  $summary.final_state='HARD_BLOCKED'
+  $summary.final_gate_failure=$masterCmd
+  $summary.master_server_port=3219
+  $summary | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 (Join-Path $runtime 'summary.json')
+  exit $masterCode
+}
+
+if(-not $SkipProductionVerify){
+  $prodCmd='powershell -NoProfile -ExecutionPolicy Bypass -File scripts\production-smoke.ps1'
+  $final += $prodCmd
+  cmd /d /s /c $prodCmd
   if($LASTEXITCODE -ne 0){
     $summary.final_state='HARD_BLOCKED'
-    $summary.final_gate_failure=$cmd
+    $summary.final_gate_failure=$prodCmd
     $summary | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 (Join-Path $runtime 'summary.json')
     exit $LASTEXITCODE
   }
 }
+
 $summary.final_state='DONE'
 $summary.final_gate=@($final)
 $summary.local_build_state='PASS_DONE'
+$summary.master_runtime='LOCAL_127.0.0.1_3219'
 $summary.github_sync_required_for_done=$false
 $summary | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 (Join-Path $runtime 'summary.json')
 Write-Host 'HC_GROUP_DONE_PASS state=DONE mode=LOCAL_FIRST parallel_lanes=6 github_sync=NON_BLOCKING evidence=.runtime\hc-group-done\summary.json'
