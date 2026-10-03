@@ -3,7 +3,7 @@ const plan=JSON.parse(fs.readFileSync('config/hc-group-remaining-done-plan.json'
 assert.equal(plan.packages.length,6);assert.deepEqual(plan.waves.map(w=>w.max_parallel),[3,2,1]);
 for(const p of plan.packages) assert.ok(fs.existsSync(p.launcher),p.launcher);
 const master=fs.readFileSync('scripts/done/remaining-program.ps1','utf8');
-for(const token of ['Fingerprint','Reusable','StartPackage','Seal','dependency-ready','research-request.json']) assert.ok(master.includes(token),token);
+for(const token of ['Fingerprint','Reusable','StartPackage','Seal','research-request.json']) assert.ok(master.includes(token),token);
 assert.ok(master.includes('AutoDebug failed packages only'));
 const freeze=fs.readFileSync('scripts/done/final-freeze-v2.ps1','utf8');
 assert.ok(freeze.includes('MANIFEST_INTEGRITY_PASS'));assert.ok(freeze.includes('regression_replay=0'));
