@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "system_id": "hc-video-downloader",
+  "verification_state": "source-contract-only",
+  "runtime_done": false,
+  "provides": [
+    "media-download"
+  ],
+  "principles": {
+    "download_requires_explicit_source": true,
+    "preserves_mission_correlation": true,
+    "bounded_retry": true,
+    "checkpoint_resume": true,
+    "no_direct_production_publish_authority": true,
+    "evidence_required_for_done": true,
+    "uncertain_external_side_effects_fail_closed": true
+  },
+  "acceptance_limits": "This source contract does not prove a live Video Downloader runtime, website compatibility, or local HOCUONG execution."
+}
