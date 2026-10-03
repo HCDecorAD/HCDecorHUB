@@ -1,0 +1,16 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+const bat=fs.readFileSync('hc-group-done.bat','utf8');
+const ps=fs.readFileSync('scripts/hc-group-done.ps1','utf8');
+assert.ok(bat.includes('HC GROUP DONE'));
+assert.ok(bat.includes('scripts\\hc-group-done.ps1'));
+for(const lane of ['core','governor','evidence','registry','tools','portfolio']) assert.ok(ps.includes("Name='"+lane+"'"),lane);
+assert.ok(ps.includes('Start-Process'));
+assert.ok(ps.includes('test:autodebug-implementation'));
+assert.ok(ps.includes('research-request.json'));
+assert.ok(ps.includes('approved plugins/web research'));
+assert.ok(ps.includes("final_state='DONE'"));
+assert.ok(ps.includes('npm run build'));
+assert.ok(ps.includes('npm run test:master'));
+assert.ok(ps.includes('production-smoke.ps1'));
+assert.ok(ps.includes('HC_GROUP_DONE_PASS'));
+console.log('HC_GROUP_DONE_PACKAGE_PASS launcher=1 parallel_lanes=6 autodebug=1 research_handoff=1 final_gate=1');
