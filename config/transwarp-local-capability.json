@@ -1,7 +1,7 @@
 {
   "schema": "transwarp/capability-manifest-v1",
   "project": "HC TransWarp Infrastructure",
-  "version": "0.4",
+  "version": "0.4.1",
   "local_first": true,
   "canonical_root": "D:\\HCDecorHUB\\HC TransWarp Infrastructure",
   "data_root": "D:\\HC_DATA\\queue\\transwarp",
@@ -33,8 +33,17 @@
     "hcdr": "FALLBACK_ONLY"
   },
   "chat_bootstrap": {
-    "rule": "Any chat must first resolve this manifest, then probe an authorized local connector/desktop route. Do not assume localhost is reachable from chat.",
+    "rule": "Any chat must resolve this manifest, detect an authorized local bridge, then prefer DIRECT_LOCAL_INGRESS or direct local inbox. Never assume localhost is reachable.",
     "success_marker": "TRANSWARP_LOCAL_CAPABILITY_OK",
     "blocked_marker": "TRANSWARP_LOCAL_CONNECTOR_REQUIRED"
+  },
+  "bridge": {
+    "required_capability": "authorized_local_filesystem_and_terminal",
+    "preferred_provider": "Remote Desktop Commander",
+    "behavior": {
+      "when_available": "Use bridge to health-check P11 ingress or write manifest directly to local inbox, then read local evidence.",
+      "when_missing": "Return TRANSWARP_LOCAL_CONNECTOR_REQUIRED. Do not silently use HCDR.",
+      "hcdr_use": "Explicit fallback/recovery only."
+    }
   }
 }
