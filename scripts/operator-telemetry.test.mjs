@@ -14,6 +14,13 @@ assert.ok(helper.includes('worker-heartbeats.json'));
 assert.ok(helper.includes('suspect_workers'));
 assert.ok(helper.includes('production_write:false'));
 assert.ok(helper.includes('production_authority'));
+assert.ok(helper.includes('capabilityRegistry'));
+assert.ok(helper.includes('contract_state:c.contract_state||"baseline-gated"'));
+assert.ok(helper.includes('production_authority:false'));
+assert.ok(page.includes('telemetry.capabilities'));
+assert.ok(page.includes('contract_state'));
+assert.ok(page.includes('production authority'));
+
 assert.ok(helper.includes('run_history:{authority:runStore.mode'),'run history authority must derive from store metadata');
 assert.ok(helper.includes('worker_heartbeats:{authority:"local-spool",production_authority:false}'),'worker heartbeat local spool authority must be explicit and non-authoritative');
 assert.ok(route.includes('operatorTelemetrySnapshot'));
