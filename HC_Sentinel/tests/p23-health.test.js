@@ -1,0 +1,3 @@
+import test from "node:test";import assert from "node:assert/strict";import {HealthSupervisor} from "../core/health-supervisor.js";
+test("healthy fleet stays healthy",()=>{const h=new HealthSupervisor().evaluate({workers:[{state:"HEALTHY"}],targets:[{ok:true}],staleMissions:[]});assert.equal(h.status,"HEALTHY");assert.equal(h.recoveryRequired,false);});
+test("bad target requests recovery without blocking unrelated workers",()=>{const h=new HealthSupervisor().evaluate({workers:[{id:"a",state:"HEALTHY"}],targets:[{id:"gsc",ok:false},{id:"amo",ok:true}],staleMissions:[]});assert.equal(h.status,"DEGRADED");assert.equal(h.badTargets.length,1);});
