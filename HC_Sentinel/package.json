@@ -1,6 +1,6 @@
 {
   "name": "hc-sentinel",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -23,7 +23,12 @@
     "test:p16": "node --test tests/p16-ui.test.js",
     "test:p17": "node --test tests/p17-store.test.js",
     "test:p18": "node --test tests/p18-live-bridge.test.js",
-    "test:p19": "node --test tests/p19-e2e.test.js"
+    "test:p19": "node --test tests/p19-e2e.test.js",
+    "test:p20": "node --test tests/p20-findings.test.js",
+    "test:p21": "node --test tests/p21-ledger.test.js",
+    "test:p22": "node --test tests/p22-policy.test.js",
+    "test:p23": "node --test tests/p23-health.test.js",
+    "test:p24": "node --test tests/p24-release-gate.test.js"
   },
   "optionalDependencies": {
     "axe-core": "^4.10.3",

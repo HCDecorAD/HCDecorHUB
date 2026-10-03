@@ -1,0 +1,3 @@
+import test from "node:test";import assert from "node:assert/strict";import {FindingLifecycle,FindingState} from "../core/finding-lifecycle.js";
+test("finding lifecycle keeps unresolved item visible",()=>{const f=new FindingLifecycle();f.create({id:"gsc-1",severity:"medium"});f.transition("gsc-1",FindingState.ROUTED,{issue:1265});assert.equal(f.unresolved().length,1);assert.equal(f.unresolved()[0].state,"ROUTED");});
+test("resolved finding leaves unresolved list",()=>{const f=new FindingLifecycle();f.create({id:"x"});f.transition("x",FindingState.RESOLVED);assert.equal(f.unresolved().length,0);});

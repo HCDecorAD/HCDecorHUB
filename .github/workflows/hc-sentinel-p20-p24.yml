@@ -1,0 +1,44 @@
+name: HC Sentinel P20-P24
+
+on:
+  push:
+    branches: [hc-sentinel-p20-p24]
+    paths:
+      - "HC_Sentinel/**"
+      - ".github/workflows/hc-sentinel-p20-p24.yml"
+  workflow_dispatch:
+
+jobs:
+  p20-p24:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: P20 Finding Lifecycle
+        run: npm run test:p20
+
+      - name: P21 Mission Ledger
+        run: npm run test:p21
+
+      - name: P22 Policy Engine
+        run: npm run test:p22
+
+      - name: P23 Health Supervisor
+        run: npm run test:p23
+
+      - name: P24 Release Gate
+        run: npm run test:p24
+
+      - name: P20-P24 Smoke
+        run: node scripts/p20-p24-smoke.js
+
+      - name: Full Regression
+        run: npm test
