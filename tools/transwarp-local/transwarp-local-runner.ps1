@@ -1,4 +1,4 @@
-param([string]$DataRoot="D:\HC_DATA\queue\transwarp")
+param([string]$DataRoot="D:\HC_DATA\queue\transwarp",[switch]$Once)
 $ErrorActionPreference="Stop"
 $mutex=New-Object System.Threading.Mutex($false,"Global\HC_TransWarp_Local_Runner")
 if(-not $mutex.WaitOne(0,$false)){Write-Output "TRANSWARP_LOCAL_ALREADY_RUNNING";exit 0}
@@ -7,6 +7,7 @@ $Inbox=Join-Path $DataRoot "inbox"; $Running=Join-Path $DataRoot "running"; $Don
 $allowedRoots=@("D:\HCDecorHUB","D:\HC_DATA")
 $allowedExe=@("node","node.exe","npm","npm.cmd","npx","npx.cmd","git","git.exe","python","python.exe","py","py.exe","powershell","powershell.exe","pwsh","pwsh.exe")
 function Test-AllowedPath([string]$p){if([string]::IsNullOrWhiteSpace($p)){return $false};$full=[IO.Path]::GetFullPath($p);foreach($r in $allowedRoots){if($full.StartsWith($r,[StringComparison]::OrdinalIgnoreCase)){return $true}};return $false}
+function Quote-Arg([string]$s){if($null -eq $s){return '""'};return '"'+$s.Replace('"','\"')+'"'}
 function Write-Evidence($job,$state,$code,$log,$err){$o=[ordered]@{schema="transwarp-local/evidence-v1";job_id=$job.job_id;state=$state;exit_code=$code;correlation_id=$job.correlation_id;cwd=$job.cwd;action=$job.action;finished_at=(Get-Date).ToString("o");log=$log;error=$err};$o|ConvertTo-Json -Depth 8|Set-Content (Join-Path $Evidence ($job.job_id+".json")) -Encoding UTF8}
 Write-Output ("TRANSWARP_LOCAL_RUNNER_READY root="+$DataRoot)
 try{
@@ -27,7 +28,7 @@ while($true){
         $p=Start-Process -FilePath $job.executable -ArgumentList $args -WorkingDirectory $job.cwd -NoNewWindow -Wait -PassThru -RedirectStandardOutput $log -RedirectStandardError $err;$code=$p.ExitCode
       }elseif($job.action -eq "powershell_file"){
         if(-not (Test-AllowedPath $job.script)){throw "SCRIPT_NOT_ALLOWED"}
-        $args=@("-NoProfile","-ExecutionPolicy","Bypass","-File",[string]$job.script);if($job.arguments){$args+=@($job.arguments|ForEach-Object{[string]$_})}
+        $args=@("-NoProfile","-ExecutionPolicy","Bypass","-File",(Quote-Arg ([string]$job.script)));if($job.arguments){$args+=@($job.arguments|ForEach-Object{Quote-Arg ([string]$_)})}
         $p=Start-Process -FilePath "powershell.exe" -ArgumentList $args -WorkingDirectory $job.cwd -NoNewWindow -Wait -PassThru -RedirectStandardOutput $log -RedirectStandardError $err;$code=$p.ExitCode
       }else{throw "ACTION_NOT_ALLOWED"}
       if($code -eq 0){Write-Evidence $job "DONE" $code $log $null;Move-Item $runFile (Join-Path $Done $f.Name) -Force}else{Write-Evidence $job "FAILED" $code $log (Get-Content $err -Raw -ErrorAction SilentlyContinue);Move-Item $runFile (Join-Path $Failed $f.Name) -Force}
