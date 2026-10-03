@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "system_id": "hc-agent-control",
   "verification_state": "source-contract-plus-live-transport",
   "runtime_done": false,
@@ -26,7 +26,7 @@
     "blocker",
     "next_action"
   ],
-  "acceptance_limits": "Agent Control application/runtime completion is still tracked separately. This contract DOES prove that HCDR v3 is the active default local transport to HOCUONG; chats must not report HCDR as unavailable without a fresh failed health proof.",
+  "acceptance_limits": "Agent Control application/runtime completion is tracked separately. HCDR v3 is the active default local transport to HOCUONG through the GitHub relay. No dedicated HCDR action is required in chat; the GitHub connector is the control-plane path.",
   "transport": {
     "default_local_transport": "HCDR v3",
     "control_plane_repo": "HCDecorAD/HCDecor-HCDR-Relay",
@@ -40,6 +40,11 @@
     "live_provider": "local",
     "live_node": "v24.21.0",
     "blocked_lane_does_not_stall_unrelated_work": true,
-    "worker_pool": 4
+    "worker_pool": 4,
+    "access_mode": "github-relay",
+    "required_chat_connector": "GitHub",
+    "dedicated_hcdr_action_required": false,
+    "route": "ChatGPT GitHub connector -> HCDecorAD/HCDecor-HCDR-Relay issue(hcdr-job) -> HOCUONG HCDR v3 -> hcdr-result/v2 comment",
+    "unavailable_rule": "Only declare HCDR unavailable if the GitHub relay path itself is inaccessible or a fresh health job fails. Absence of a dedicated tool/action named HCDR is not evidence of HCDR unavailability."
   }
 }
