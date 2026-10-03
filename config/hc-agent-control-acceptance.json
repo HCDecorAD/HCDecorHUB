@@ -46,5 +46,16 @@
     "dedicated_hcdr_action_required": false,
     "route": "ChatGPT GitHub connector -> HCDecorAD/HCDecor-HCDR-Relay issue(hcdr-job) -> HOCUONG HCDR v3 -> hcdr-result/v2 comment",
     "unavailable_rule": "Only declare HCDR unavailable if the GitHub relay path itself is inaccessible or a fresh health job fails. Absence of a dedicated tool/action named HCDR is not evidence of HCDR unavailability."
+  },
+  "bootstrap": {
+    "contract": "config/hc-chat-bootstrap.json",
+    "required_before_status_claim": true,
+    "order": [
+      "corporate-update-feed",
+      "corporate-catalog",
+      "component-contract",
+      "transport-route",
+      "availability-claim"
+    ]
   }
 }
