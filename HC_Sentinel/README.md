@@ -2,19 +2,17 @@
 
 Local mirror: `D:\HCDecorHUB\HC_Sentinel`
 
-Status: **DESKTOP_OPERATIONS_READY**
-Latest completed scope: **P1 -> P39**
-Full regression: **70/70 PASS, 0 FAIL**
+Status: **DAILY_USE_READY**
+Latest completed scope: **P1 -> P44**
+Full regression: **75/75 PASS, 0 FAIL**
 
 ## Purpose
 
-HC Sentinel is the visual operations, verification, watch, alerting, evidence, policy, repair-routing, and desktop operations layer for the HC ecosystem.
+HC Sentinel is the local-first visual operations, verification, watch, evidence, policy, repair-routing, and daily desktop operations layer for the HC ecosystem.
 
 Core flow:
 
 `Command -> Observe -> Detect -> Compare -> Diagnose -> Route -> Repair -> Verify -> Evidence -> Alert -> DONE`
-
-It is independent, local-first, command-driven, multi-project capable, and includes a live local app surface.
 
 ## Runtime modes
 
@@ -25,41 +23,49 @@ It is independent, local-first, command-driven, multi-project capable, and inclu
 - SCHEDULED
 - AUTO
 
-Manual/user command always has priority and must never be blocked by a schedule/watch loop.
+Manual/operator command always outranks schedule/watch.
 
-## Verified capability groups
+## Capability milestones
 
-### P1-P10 — Sentinel foundation
-Kernel, visual observer, visual diff, quality sensors, routing, verify-to-DONE, autonomy, observability, multi-project registry, golden run.
+- P1-P10: Sentinel foundation
+- P11-P19: Operator runtime
+- P20-P24: Operations hardening
+- P25-P29: Daily operations runtime
+- P30-P34: App-ready integration
+- P35-P39: Desktop operations
+- P40-P44: Daily-use integration
 
-### P11-P19 — Operator runtime
-Operator commands, project profiles, baseline manager, repair bridge, real targets, Command Center UI, dark/light theme, persistence, live HCDR transport, GSC/AMO public E2E.
+## P40-P44 daily-use features
 
-### P20-P24 — Operations hardening
-Finding lifecycle, mission ledger, policy engine, health supervisor, release gate.
+### Windows startup
+`runtime/register-startup.ps1`
 
-### P25-P29 — Daily operations runtime
-Notification center, governed baseline promotion, watch runtime, local command API, Windows launcher/local release package.
+Registers HC Sentinel in the current user's Windows Startup folder and launches through `start-hidden.vbs`.
 
-### P30-P34 — App-ready integration
-Local bootstrap, live UI/API binding, Evidence Index, Settings Store, Golden App Acceptance.
+### Desktop shortcut
+`runtime/create-desktop-shortcut.ps1`
 
-### P35-P39 — Desktop operations
-- Windows local install/bootstrap script
-- hidden launcher using VBS with window style 0
-- Evidence Viewer in Command Center
-- Finding Inbox in Command Center
-- persisted Finding Store
-- `GET /api/findings`
-- HCDR issue-state mapping:
-  - open + no comment -> ROUTED
-  - open + comment -> ACKNOWLEDGED
-  - closed -> RESOLVED
-- tracked GSC issue #1265 remains visible and unresolved
+Creates an HC Sentinel desktop shortcut opening:
 
-Verified smoke:
+`http://127.0.0.1:43110`
 
-`tracked=1 -> state=ROUTED -> issue=1265`
+### Backup / restore
+`core/state-backup.js`
+
+Supports named local state snapshots and restore with traversal-safe backup names.
+
+### Log Viewer
+- persisted log store
+- bounded history
+- level filtering
+- `GET /api/logs`
+- Command Center Log Viewer
+- command/startup logging
+
+### Daily acceptance
+Verified:
+
+`ui=true -> SENTINEL_READY -> findings=1 -> evidence=1 -> logs=1`
 
 ## Local app
 
@@ -70,16 +76,17 @@ Launchers:
 - `runtime/start-sentinel.bat`
 - `runtime/start-hidden.vbs`
 
-Installer/bootstrap:
-`runtime/install-local.ps1`
-
-The hidden launcher starts Sentinel without showing a command window.
+Install/bootstrap:
+- `runtime/install-local.ps1`
+- `runtime/register-startup.ps1`
+- `runtime/create-desktop-shortcut.ps1`
 
 Local API:
 - `GET /api/status`
 - `POST /api/command`
 - `GET /api/evidence`
 - `GET /api/findings`
+- `GET /api/logs`
 - `GET /api/settings`
 - `POST /api/settings`
 
@@ -88,12 +95,12 @@ Local API:
 Theme:
 - Dark: deep navy
 - Light: gray-white
-- preference persists locally
 
 Live panels:
 - Command Center
 - Evidence Viewer
 - Finding Inbox
+- Log Viewer
 - Workers
 - tracked repair state
 
@@ -104,12 +111,6 @@ Display rule:
 - 🔴 FAIL / BLOCKED
 - 🟡 WAITING / REVIEW_REQUIRED
 
-## Data policy
-
-GitHub stores source, sanitized manifests/data, schemas, checkpoints, evidence indexes, and docs.
-
-Local runtime stores live state, queues, locks, browser/session profiles, raw private evidence, cache, logs, and secrets.
-
 ## Verified milestones
 
 - P1-P10: **SENTINEL_READY**
@@ -119,8 +120,9 @@ Local runtime stores live state, queues, locks, browser/session profiles, raw pr
 - P25-P29: **LOCAL_OPERATOR_READY**
 - P30-P34: **APP_READY**
 - P35-P39: **DESKTOP_OPERATIONS_READY**
-- Full regression: **70/70 PASS, 0 FAIL**
-- P35-P39 workflow: `37152351196`
+- P40-P44: **DAILY_USE_READY**
+- Full regression: **75/75 PASS, 0 FAIL**
+- P40-P44 workflow: `37163324817`
 
 ## Current tracked live finding
 
