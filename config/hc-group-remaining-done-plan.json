@@ -41,7 +41,9 @@
         "HCDecorAD/HCDecor-HCDR-Relay#913 closed completed",
         "hcdr-result/v2 ok=true provider=local source=hocuong-v12-production",
         "HCDR root D:\\HCDecorHUB\\HCDR Remote MCP",
-        "Node v24.21.0"
+        "Node v24.21.0",
+        "HCDecorAD/HCDecor-HCDR-Relay#970 closed completed",
+        "hcdr-result/v2 ok=true provider=local source=hocuong-v12-production (fresh recovery proof)"
       ]
     },
     {
@@ -100,10 +102,12 @@
       "blocker": null,
       "runtime_scope": "source-ci-final-freeze",
       "final_evidence": [
-        "Quality Gate 37093044957 SUCCESS",
-        "Production Verify 37093980079 SUCCESS",
-        "HEAD 5a413c79fc2d7a553c6f9a51551e8136527bbe1d",
-        "Quality Gate includes HC Group DONE package, Remaining DONE program, runtime bundles, AutoDebug gates, HCDR contracts, production build, Master Agent local E2E, Cloudflare build"
+        "Quality Gate 37112378073 SUCCESS",
+        "Production Verify 37112378050 SUCCESS",
+        "verified source HEAD aee4d4c36ff8bcfddf2095d184cc23319dab25e9",
+        "final freeze policy = manifest-integrity; regression replay = false",
+        "D02 fresh live HCDR proof #970 ok=true from HOCUONG",
+        "Quality Gate validates HC Group DONE package, remaining plan, runtime contracts, build and Cloudflare packaging"
       ]
     }
   ],
@@ -165,19 +169,20 @@
       ],
       "D02": [
         "HCDecorAD/HCDecor-HCDR-Relay#913 closed completed",
+        "HCDecorAD/HCDecor-HCDR-Relay#970 closed completed",
         "hcdr-result/v2 ok=true provider=local source=hocuong-v12-production",
         "HCDR root D:\\HCDecorHUB\\HCDR Remote MCP",
         "Node v24.21.0"
       ],
       "D06": [
-        "Quality Gate 37093044957 SUCCESS",
-        "Production Verify 37093980079 SUCCESS",
-        "HEAD 5a413c79fc2d7a553c6f9a51551e8136527bbe1d",
-        "Quality Gate includes HC Group DONE package, Remaining DONE program, runtime bundles, AutoDebug gates, HCDR contracts, production build, Master Agent local E2E, Cloudflare build"
+        "Quality Gate 37112378073 SUCCESS",
+        "Production Verify 37112378050 SUCCESS",
+        "verified source HEAD aee4d4c36ff8bcfddf2095d184cc23319dab25e9",
+        "final freeze = manifest-integrity; regression replay = false"
       ]
     },
     "active_packages": [],
     "final_state": "DONE",
-    "final_head": "5a413c79fc2d7a553c6f9a51551e8136527bbe1d"
+    "final_head": "aee4d4c36ff8bcfddf2095d184cc23319dab25e9"
   }
 }
