@@ -1,0 +1,1 @@
+export function recovery49(error){return {schema:"imaster/7x7-v1",trigger:String(error?.message||error||"UNKNOWN"),queue_jobs:0,cells:Array.from({length:49},(_,i)=>({cell:i+1,role:["diagnose","evidence","rollback","alternate","verify","risk","next"][i%7]}))}}
