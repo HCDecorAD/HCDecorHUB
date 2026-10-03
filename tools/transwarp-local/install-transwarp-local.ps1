@@ -10,7 +10,8 @@ Copy-Item $src $runner -Force
 $startup=Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\Startup\HC-TransWarp-Local.cmd"
 $cmd="@echo off`r`nstart `"`" powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$runner`" -DataRoot `"$DataRoot`"`r`n"
 Set-Content $startup -Value $cmd -Encoding ASCII
-Start-Process powershell.exe -ArgumentList "-NoProfile","-WindowStyle","Hidden","-ExecutionPolicy","Bypass","-File",$runner,"-DataRoot",$DataRoot -WindowStyle Hidden
+$launch="-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$runner`" -DataRoot `"$DataRoot`""
+Start-Process powershell.exe -ArgumentList $launch -WindowStyle Hidden
 $health=[ordered]@{schema="transwarp-local/health-v1";installed_at=(Get-Date).ToString("o");install_root=$install;data_root=$DataRoot;startup=$startup;mode="LOCAL_DIRECT_RUNNER";github="SYNC_ONLY";hcdr="FALLBACK_ONLY"}
 $health|ConvertTo-Json -Depth 5|Set-Content (Join-Path $install "health.json") -Encoding UTF8
 Write-Output "TRANSWARP_LOCAL_INSTALL_PASS"
