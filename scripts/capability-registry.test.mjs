@@ -13,7 +13,7 @@ for(const id of ['local-execution-transport','failure-diagnosis','repair-verific
   assert.ok(c,id);
   assert.ok(c.inputs.includes('mission_id'),id);
   assert.ok(c.inputs.includes('correlation_id'),id);
-  if(id==='local-execution-transport'||id==='failure-diagnosis') assert.equal(c.contract_state,'source-implementation-gated');
+  if(['local-execution-transport','failure-diagnosis','repair-verification'].includes(id)) assert.equal(c.contract_state,'source-implementation-gated');
   else assert.equal(c.contract_state,'source-contract-only');
 }
-console.log('CAPABILITY_REGISTRY_PASS capabilities='+r.capabilities.length+' fail_closed=1 correlation_contracts=3 hcdr_source_implementation=1 autodebug_diagnosis_implementation=1');
+console.log('CAPABILITY_REGISTRY_PASS capabilities='+r.capabilities.length+' fail_closed=1 correlation_contracts=3 hcdr_source_implementation=1 autodebug_diagnosis_implementation=1 autodebug_repair_implementation=1');
