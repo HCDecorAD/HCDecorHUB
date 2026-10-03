@@ -1,6 +1,6 @@
 {
   "name": "hc-sentinel",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -33,7 +33,12 @@
     "test:p26": "node --test tests/p26-baseline-promotion.test.js",
     "test:p27": "node --test tests/p27-watch-runtime.test.js",
     "test:p28": "node --test tests/p28-command-live.test.js",
-    "test:p29": "node --test tests/p29-release-package.test.js"
+    "test:p29": "node --test tests/p29-release-package.test.js",
+    "test:p30": "node --test tests/p30-bootstrap.test.js",
+    "test:p31": "node --test tests/p31-live-app.test.js",
+    "test:p32": "node --test tests/p32-evidence-index.test.js",
+    "test:p33": "node --test tests/p33-settings.test.js",
+    "test:p34": "node scripts/p34-acceptance.js"
   },
   "optionalDependencies": {
     "axe-core": "^4.10.3",
