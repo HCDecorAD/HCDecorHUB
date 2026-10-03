@@ -28,6 +28,8 @@ for(const token of [
   'finalize(issue,body,result,"quarantined")',
   'worker_pool',
   'setInterval(()=>heartbeat()',
+  'approved:body.approved===true',
+  'approval_scope:body.approval_scope||null',
   'quarantined_lanes:[...quarantinedLanes]',
   'execution.finally',
   'if(lane && (activeLanes.has(lane) || quarantinedLanes.has(lane))) continue'
