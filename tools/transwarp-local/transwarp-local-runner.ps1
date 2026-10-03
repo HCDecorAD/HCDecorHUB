@@ -35,6 +35,7 @@ while($true){
       try{if(Test-Path $runFile){$job=Get-Content $runFile -Raw|ConvertFrom-Json -ErrorAction SilentlyContinue;if($job){Write-Evidence $job "FAILED" 1 $null $_.Exception.Message};Move-Item $runFile (Join-Path $Failed $f.Name) -Force}}catch{}
     }
   }
+  if($Once){break}
   Start-Sleep -Milliseconds 750
 }
 }finally{$mutex.ReleaseMutex()|Out-Null;$mutex.Dispose()}
