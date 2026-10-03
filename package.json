@@ -49,7 +49,8 @@
     "test:autochat-runtime": "node scripts/hc-autochat-runtime.test.mjs",
     "test:mediaflow-runtime": "node scripts/hc-mediaflow-runtime.test.mjs",
     "test:video-downloader-runtime": "node scripts/hc-video-downloader-runtime.test.mjs",
-    "test:design-ai-runtime": "node scripts/hc-design-ai-runtime.test.mjs"
+    "test:design-ai-runtime": "node scripts/hc-design-ai-runtime.test.mjs",
+    "test:hcdr-always-on": "node scripts/hcdr-always-on.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
