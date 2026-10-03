@@ -21,13 +21,16 @@ for(const token of [
   'HCDR_JOB_TIMEOUT_MS',
   'const active=new Map()',
   'const activeLanes=new Set()',
+  'const quarantinedLanes=new Set()',
   'Promise.race',
   'job_lease_timeout',
   'uncertain_previous_execution',
   'finalize(issue,body,result,"quarantined")',
   'worker_pool',
   'setInterval(()=>heartbeat()',
-  'if(lane && activeLanes.has(lane)) continue'
+  'quarantined_lanes:[...quarantinedLanes]',
+  'execution.finally',
+  'if(lane && (activeLanes.has(lane) || quarantinedLanes.has(lane))) continue'
 ]) assert.ok(relaySource.includes(token),token);
 assert.ok(!relaySource.includes('let busy=false'),'global busy must be removed');
 for(const token of ['HCDR_WATCHDOG_STALE_RELAY_STOPPED','relay-agent\\.mjs','Stop-Process']) assert.ok(watchdogSource.includes(token),token);
