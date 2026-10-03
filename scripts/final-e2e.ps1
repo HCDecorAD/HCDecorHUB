@@ -30,7 +30,7 @@ $env:HCDECOR_E2E_BASE=$base
 $env:HC_ALLOW_LOCAL_E2E='true'
 $serverOut=Join-Path $run 'local-server.log'
 $serverErr=Join-Path $run 'local-server.err.log'
-$server=Start-Process -FilePath 'cmd.exe' -ArgumentList @('/d','/c',"npm run start -- -p $port") -WorkingDirectory $Root -RedirectStandardOutput $serverOut -RedirectStandardError $serverErr -PassThru
+$server=Start-Process -FilePath 'cmd.exe' -ArgumentList @('/d','/c',"npm run start -- -p $port") -WorkingDirectory $Root -RedirectStandardOutput $serverOut -RedirectStandardError $serverErr -WindowStyle Hidden -PassThru
 @{requested_range='3219-3299';selected_port=$port;base=$base;server_pid=$server.Id;ownership='spawned-by-final-e2e'}|ConvertTo-Json|Set-Content (Join-Path $run 'DYNAMIC-PORT.json')
 try{
   $ready=$false
