@@ -44,7 +44,12 @@
     "test:autodebug-repair": "node scripts/autodebug-repair-verification.test.mjs",
     "test:hc-group-done-package": "node scripts/hc-group-done-package.test.mjs",
     "test:evidence-archive-index": "node scripts/durable-evidence-store.test.mjs",
-    "test:remaining-done-plan": "node scripts/hc-group-remaining-done-plan.test.mjs"
+    "test:remaining-done-plan": "node scripts/hc-group-remaining-done-plan.test.mjs",
+    "test:agent-control-runtime": "node scripts/hc-agent-control-runtime.test.mjs",
+    "test:autochat-runtime": "node scripts/hc-autochat-runtime.test.mjs",
+    "test:mediaflow-runtime": "node scripts/hc-mediaflow-runtime.test.mjs",
+    "test:video-downloader-runtime": "node scripts/hc-video-downloader-runtime.test.mjs",
+    "test:design-ai-runtime": "node scripts/hc-design-ai-runtime.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
