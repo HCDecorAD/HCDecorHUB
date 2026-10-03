@@ -15,6 +15,7 @@ if($LASTEXITCODE -ne 0){throw 'dynamic port allocation failed'}
 $port=[int]($portRaw|Out-String).Trim()
 $base="http://localhost:$port"
 $env:HCDECOR_E2E_BASE=$base
+$env:HC_ALLOW_LOCAL_E2E='true'
 $serverOut=Join-Path $run 'local-server.log'
 $serverErr=Join-Path $run 'local-server.err.log'
 $server=Start-Process -FilePath 'cmd.exe' -ArgumentList @('/d','/c',"npm run start -- -p $port") -WorkingDirectory $Root -RedirectStandardOutput $serverOut -RedirectStandardError $serverErr -PassThru
