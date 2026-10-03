@@ -84,6 +84,8 @@ jobs:
         run: npm run test:capability-registry
       - name: Verified fix memory gate
         run: npm run test:fix-memory
+      - name: AutoDebug source implementation
+        run: npm run test:autodebug-implementation
       - name: Operator dashboard gate
         run: npm run test:operator-dashboard
       - name: Operator telemetry authority gate
