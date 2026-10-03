@@ -33,7 +33,9 @@ async function refreshSource(){
  }catch(e){return {updated:false,error:String(e?.message||e)}}
 }
 async function runJob(issue){
- const body=JSON.parse(issue.body||"{}"); if(body.schema!=="hcdr-relay/v1") throw Error("bad_schema");
+ const body=JSON.parse(issue.body||"{}");
+ const schemas=new Set(["hcdr-relay/v1","hcdr-relay/v1.1","hcdr-relay/v1.2"]);
+ if(!schemas.has(body.schema)) throw Error("bad_schema");
  const allowed=new Set(["health","list_directory","read_file","write_file","edit_file","run_command","start_process","process_output","git_status","git_diff","git_commit","build"]);
  if(!allowed.has(body.tool)) throw Error("tool_not_allowed");
  if(body.tool==="read_file" && /(^|[\\/])(\.env|.*secret.*|.*credential.*|.*token.*|.*\.key|.*\.pem)([\\/]|$)/i.test(String(body.args?.path||""))) throw Error("secret_path_denied");
@@ -45,16 +47,26 @@ async function tick(){
  try{
   const s=await load();
   const refresh=await refreshSource();
-  await fs.writeFile(heartbeatFile,JSON.stringify({ok:true,pid:process.pid,at:new Date().toISOString(),relay:RELAY,source_refresh:refresh},null,2));
+  await fs.writeFile(heartbeatFile,JSON.stringify({ok:true,pid:process.pid,at:new Date().toISOString(),relay:RELAY,current_job:null,source_refresh:refresh},null,2));
   const issues=await api(`repos/${RELAY}/issues?state=open&labels=hcdr-job&per_page=100&sort=created&direction=asc`);
   for(const i of issues){
-   if(s.jobs[String(i.number)]?.status==="completed")continue;
+   const prior=s.jobs[String(i.number)];
+   if(prior?.status==="completed" || prior?.status==="quarantined")continue;
+   if(prior?.status==="claimed"){
+    const body=JSON.parse(i.body||"{}");
+    const result={ok:false,error:"uncertain_previous_execution",state:"QUARANTINED",retry_safe:false};
+    await comment(i.number,resultEnvelope({job:i.number,body,result}));
+    s.jobs[String(i.number)]={status:"quarantined",ok:false,error:"uncertain_previous_execution",at:new Date().toISOString()};
+    await save(s);await close(i.number);continue;
+   }
    s.jobs[String(i.number)]={status:"claimed",at:new Date().toISOString()};await save(s);
+   await fs.writeFile(heartbeatFile,JSON.stringify({ok:true,pid:process.pid,at:new Date().toISOString(),relay:RELAY,current_job:i.number,source_refresh:refresh},null,2));
    let result;try{result=await runJob(i)}catch(e){result={ok:false,error:String(e?.message||e)}}
    try{
     const body=JSON.parse(i.body||"{}");
     await comment(i.number,resultEnvelope({job:i.number,body,result}));
     s.jobs[String(i.number)]={status:"completed",ok:result.ok!==false,at:new Date().toISOString()};await save(s);await close(i.number);
+    await fs.writeFile(heartbeatFile,JSON.stringify({ok:true,pid:process.pid,at:new Date().toISOString(),relay:RELAY,current_job:null,source_refresh:refresh},null,2));
    }catch(e){
     s.jobs[String(i.number)]={status:"result_pending",error:String(e?.message||e),at:new Date().toISOString()};await save(s);
    }
