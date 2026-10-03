@@ -2,7 +2,7 @@
   "schema": "hc-done-all/v2",
   "program_id": "hc-group-runtime-finish",
   "state": "DONE",
-  "source_head": "9f3d6ab27cc6854bc869d73df87bc19411b9b635",
+  "source_head": "aee4d4c36ff8bcfddf2095d184cc23319dab25e9",
   "packages": [
     {
       "id": "D01",
@@ -31,15 +31,23 @@
   ],
   "verification": {
     "quality_gate": {
-      "run_id": 37096357234,
+      "run_id": 37112378073,
       "state": "SUCCESS"
     },
     "production_verify": {
-      "run_id": 37096357170,
+      "run_id": 37112378050,
       "state": "SUCCESS"
     },
     "master_e2e": "SUCCESS",
-    "cloudflare_build": "SUCCESS"
+    "cloudflare_build": "SUCCESS",
+    "live_hcdr": {
+      "issue": 970,
+      "state": "SUCCESS",
+      "result": "hcdr-result/v2 ok=true provider=local source=hocuong-v12-production",
+      "node": "v24.21.0"
+    },
+    "final_freeze": "MANIFEST_INTEGRITY_DONE",
+    "regression_replay": false
   },
   "policy": {
     "reuse_verified_pass": true,
