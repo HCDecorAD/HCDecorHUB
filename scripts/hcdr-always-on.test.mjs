@@ -1,0 +1,14 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+const install=fs.readFileSync('tools/hcdr-relay/install-always-on.ps1','utf8');
+const watchdog=fs.readFileSync('tools/hcdr-relay/watchdog.ps1','utf8');
+const bat=fs.readFileSync('hcdr-install-always-on.bat','utf8');
+assert.ok(install.includes('New-ScheduledTaskTrigger -AtStartup'));
+assert.ok(install.includes('New-ScheduledTaskTrigger -AtLogOn'));
+assert.ok(install.includes('-RestartCount 999'));
+assert.ok(install.includes('HCDR_ALWAYS_ON_INSTALLED'));
+assert.ok(watchdog.includes('hcdr-relay-heartbeat.json'));
+assert.ok(watchdog.includes('StaleSeconds'));
+assert.ok(watchdog.includes('HCDR_WATCHDOG_RESTARTED'));
+assert.ok(watchdog.includes('hcdr-relay.lock'));
+assert.ok(bat.includes('install-always-on.ps1'));
+console.log('HCDR_ALWAYS_ON_CONTRACT_PASS boot=1 logon=1 watchdog=1 heartbeat=1 restart=1');
