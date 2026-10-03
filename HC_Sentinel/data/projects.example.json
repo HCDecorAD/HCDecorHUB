@@ -1,0 +1,20 @@
+{
+  "projects": [
+    {
+      "id": "gsc",
+      "name": "GSC",
+      "enabled": true,
+      "capabilities": ["visual", "ui-repair"],
+      "profiles": {
+        "desktop": {"viewport":{"width":1440,"height":900}},
+        "mobile": {"viewport":{"width":390,"height":844}}
+      }
+    },
+    {
+      "id": "amo",
+      "name": "AMO",
+      "enabled": true,
+      "capabilities": ["visual", "catalog"]
+    }
+  ]
+}
