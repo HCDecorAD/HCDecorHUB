@@ -1,0 +1,1 @@
+export async function rebuildCandidate({mission,dna,builder}){const result=await builder.build({mission,dna,scope:"isolated_candidate"});if(!result?.runtime_url)return {stage:"V2.4",status:"FAIL",reason:"NO_RUNTIME_URL"};return {stage:"V2.4",status:"PASS",runtime_url:result.runtime_url,rollback:result.rollback||null,artifacts:result.artifacts||[]}}
