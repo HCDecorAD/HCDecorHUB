@@ -34,4 +34,7 @@ for(const token of [
 ]) assert.ok(relaySource.includes(token),token);
 assert.ok(!relaySource.includes('let busy=false'),'global busy must be removed');
 for(const token of ['HCDR_WATCHDOG_STALE_RELAY_STOPPED','relay-agent\\.mjs','Stop-Process']) assert.ok(watchdogSource.includes(token),token);
+for(const token of ['pidAlive','HCDR_STALE_LOCK_RECOVERED']) assert.ok(relaySource.includes(token),token);
+const launcherSource=fs.readFileSync('tools/hcdr-relay/HCDR-Remote-Free.cmd','utf8');
+for(const token of ['HCDR_MAX_WORKERS=4','HCDR_JOB_TIMEOUT_MS=900000','node --check','HCDR_RELAY_SELF_UPDATE=0']) assert.ok(launcherSource.includes(token),token);
 console.log('HCDR_RELAY_WORKER_POOL_PASS workers=4 independent_heartbeat=1 per_job_timeout=1 lane_isolation=1 quarantine=1 blind_retry=0');
