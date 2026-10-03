@@ -9,6 +9,11 @@ $runtime = Join-Path $root '.runtime\hc-group-done'
 $logs = Join-Path $runtime 'logs'
 New-Item -ItemType Directory -Force -Path $logs | Out-Null
 
+$localFirstScript = Join-Path $root 'scripts\hc-local-first.ps1'
+if(-not (Test-Path $localFirstScript)){ throw "HC Local-First runtime missing: $localFirstScript" }
+powershell -NoProfile -ExecutionPolicy Bypass -File $localFirstScript -Mode setup
+if($LASTEXITCODE -ne 0){ exit $LASTEXITCODE }
+
 $lanes = @(
   @{ Name='core'; Commands=@('npm run test:architecture','npm run test:dynamic-port','npm run test:deployment-adapter','npm run test:policy-engine') },
   @{ Name='governor'; Commands=@('npm run test:governor','npm run test:durable-budget','npm run test:governor-durable','npm run test:done-durable','npm run test:worker-heartbeats') },
@@ -59,6 +64,10 @@ $failed=$results | Where-Object {$_.exit_code -ne 0}
 $summary=[ordered]@{
   schema='hc-group-done/v1'
   checked_at=(Get-Date).ToUniversalTime().ToString('o')
+  execution_mode='LOCAL_FIRST'
+  compute_provider='HOCUONG_LAPTOP'
+  data_root='D:\HC_DATA'
+  github_sync='ASYNC_NON_BLOCKING'
   lanes=$all
   failed_lanes=@($failed.lane)
   research_required=([bool]$failed)
@@ -79,8 +88,11 @@ if($failed){
   exit 20
 }
 
-Write-Host 'HC_DONE_FINAL_GATE starting'
-$final=@('npm run build','npm run test:master')
+Write-Host 'HC_DONE_FINAL_GATE starting mode=LOCAL_FIRST'
+$final=@(
+  'powershell -NoProfile -ExecutionPolicy Bypass -File scripts\hc-local-first.ps1 -Mode build',
+  'npm run test:master'
+)
 if(-not $SkipProductionVerify){ $final += 'powershell -NoProfile -ExecutionPolicy Bypass -File scripts\production-smoke.ps1' }
 foreach($cmd in $final){
   cmd /d /s /c $cmd
@@ -93,6 +105,8 @@ foreach($cmd in $final){
 }
 $summary.final_state='DONE'
 $summary.final_gate=@($final)
+$summary.local_build_state='PASS_DONE'
+$summary.github_sync_required_for_done=$false
 $summary | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 (Join-Path $runtime 'summary.json')
-Write-Host 'HC_GROUP_DONE_PASS state=DONE parallel_lanes=6 evidence=.runtime\hc-group-done\summary.json'
+Write-Host 'HC_GROUP_DONE_PASS state=DONE mode=LOCAL_FIRST parallel_lanes=6 github_sync=NON_BLOCKING evidence=.runtime\hc-group-done\summary.json'
 exit 0
