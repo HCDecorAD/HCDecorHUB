@@ -1,6 +1,6 @@
 # HC Sentinel — Build Phases
 
-## Completed foundation
+## Foundation
 
 🔵 P1 — Sentinel Kernel  
 🟢 PASS  
@@ -44,72 +44,97 @@
 
 Gate: `SENTINEL_READY`
 
-## Operator layer
+## Operator core
 
 🔵 P11 — Operator Layer  
-Build:
-- command parser
-- direct user command flow
-- project + viewport resolution
-- READY / REVIEW_REQUIRED planning
-
 🟢 PASS — 2/2  
 ✅✨ DONE
 
 🔵 P12 — Project Profiles  
-Build:
-- project registry
-- profiles
-- viewport policy
-- capability declaration
-
 🟢 PASS — 1/1  
 ✅✨ DONE
 
 🔵 P13 — Baseline Manager  
-Build:
-- project/viewport baseline mapping
-- revision requirement
-- explicit approval requirement
-- fallback to default baseline
-
 🟢 PASS — 2/2  
 ✅✨ DONE
 
 🔵 P14 — Repair Bridge  
-Build:
-- route finding to capable worker
-- healthy-worker selection
-- WAITING_CAPABILITY fail-closed behavior
-- repair dispatch mission
-
 🟢 PASS — 3/3  
 ✅✨ DONE
 
-Verified smoke:
-`Sentinel kiểm tra GSC mobile -> READY -> GSC -> Mobile -> Approved Baseline -> DISPATCHED -> autodebug-ui`
-
-Full regression:
-`32/32 PASS — 0 FAIL`
-
 Gate: `OPERATOR_READY_CORE`
 
-## Next practical phases
+## Practical operator runtime
 
 🔵 P15 — Real Target Profiles  
-Goal: bind actual HC project targets, URLs, routes, viewports and visual rules.
+Build:
+- GSC public target
+- AMO public target
+- desktop/mobile viewports
+- target registry
+
+🟢 PASS — 2/2  
+✅✨ DONE
 
 🔵 P16 — Command Center UI  
-Goal: provide a direct operator interface for Run Now / Compare / Verify / Route Repair.
+Build:
+- real static app UI
+- command input
+- Run Now / Compare / Verify / Route Repair
+- project cards
+- mission runtime
+- workers/evidence/activity
+- dark theme
+- light gray-white theme
+- persisted theme toggle
+
+🟢 PASS — 2/2 + browser smoke  
+✅✨ DONE
+
+Browser smoke:
+`dark -> light -> command -> RUNNING`
 
 🔵 P17 — Persistent Baseline & Evidence Store  
-Goal: persist approved baselines, revisions, evidence metadata and project history safely.
+Build:
+- atomic JSON store
+- read/write/update
+- temp-file replace to reduce partial-write risk
+
+🟢 PASS — 1/1  
+✅✨ DONE
 
 🔵 P18 — Live Repair Bridge  
-Goal: connect repair routing to real AutoDebug / Agent Control / project workers with execution evidence.
+Build:
+- HCDR repair envelope
+- execution-evidence contract
+- fail-closed wording
+- real GitHub/HCDR dispatch transport
+
+🟢 PASS — 1/1 + live dispatch  
+✅✨ DONE
+
+Live dispatch:
+`HCDecorAD/HCDecor-HCDR-Relay#1265`
 
 🔵 P19 — End-to-End Project Runs  
-Goal: run real project scenarios through Observe -> Detect -> Repair -> Verify -> DONE.
+Build:
+- Playwright capture against real GSC + AMO public targets
+- screenshot evidence
+- network/console capture
+- quality finding extraction
+- evidence artifact
+
+🟢 PASS — 1/1 + real public target E2E  
+✅✨ DONE
+
+Results:
+- GSC: reachable, failed requests 0; 3 medium `BROKEN_MEDIA_HINT` findings routed to P18.
+- AMO: reachable, failed requests 0; quality findings 0.
+
+Full regression:
+`39/39 PASS — 0 FAIL`
+
+Gate: `OPERATOR_READY`
 
 ## Build rule
 
@@ -119,3 +144,4 @@ Goal: run real project scenarios through Observe -> Detect -> Repair -> Verify -
 - UNCERTAIN_EFFECT must fail closed.
 - One failed lane must not block unrelated project lanes.
 - Runtime stays local-first; GitHub stores sanitized versionable DATA.
+- A target defect does not equal a Sentinel phase failure when Sentinel detects, records, and routes it correctly.
