@@ -70,6 +70,12 @@ jobs:
         run: npm run test:agent-control-contract
       - name: HC AutoChat source contract
         run: npm run test:autochat-contract
+      - name: HC MediaFlow source contract
+        run: npm run test:mediaflow-contract
+      - name: HC Video Downloader source contract
+        run: npm run test:video-downloader-contract
+      - name: HC Design AI Studio source contract
+        run: npm run test:design-ai-contract
       - name: Active asset coverage gate
         run: npm run test:active-asset-coverage
       - name: Capability registry gate
