@@ -2,6 +2,7 @@ import {execFile} from "node:child_process";
 import {promisify} from "node:util";
 import fs from "node:fs/promises";
 import {pathToFileURL} from "node:url";
+import {resultEnvelope} from "./correlation.mjs";
 const execFileAsync=promisify(execFile);
 const ROOT=process.env.HCDR_ROOT||"D:/HCDecorHUB";
 const RELAY=process.env.HCDR_RELAY_REPO;
@@ -51,7 +52,8 @@ async function tick(){
    s.jobs[String(i.number)]={status:"claimed",at:new Date().toISOString()};await save(s);
    let result;try{result=await runJob(i)}catch(e){result={ok:false,error:String(e?.message||e)}}
    try{
-    await comment(i.number,{schema:"hcdr-result/v2",job:i.number,...result});
+    const body=JSON.parse(i.body||"{}");
+    await comment(i.number,resultEnvelope({job:i.number,body,result}));
     s.jobs[String(i.number)]={status:"completed",ok:result.ok!==false,at:new Date().toISOString()};await save(s);await close(i.number);
    }catch(e){
     s.jobs[String(i.number)]={status:"result_pending",error:String(e?.message||e),at:new Date().toISOString()};await save(s);
