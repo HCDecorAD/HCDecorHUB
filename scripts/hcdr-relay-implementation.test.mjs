@@ -24,7 +24,7 @@ for(const token of [
   'Promise.race',
   'job_lease_timeout',
   'uncertain_previous_execution',
-  'status:"quarantined"',
+  'finalize(issue,body,result,"quarantined")',
   'worker_pool',
   'setInterval(()=>heartbeat()',
   'if(lane && activeLanes.has(lane)) continue'
