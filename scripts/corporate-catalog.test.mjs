@@ -27,5 +27,6 @@ const feed=JSON.parse(fs.readFileSync(c.corporate_update_feed,'utf8'));
 assert.equal(feed.policy.broadcast_after_canonical_update,true);
 assert.equal(feed.policy.refresh_before_status_claim,true);
 assert.equal(feed.latest.components.hcdr.state,'ACTIVE');
+assert.equal(feed.latest.update_id,'HC-GROUP-2026-10-03-HCDR-V3-AGENT-CONTROL');
 for(const [id,gate] of [['hc-autochat','HC AutoChat source contract'],['hc-mediaflow','HC MediaFlow source contract'],['hc-video-downloader','HC Video Downloader source contract'],['hc-design-ai-studio','HC Design AI Studio source contract']]){assert.equal(c.tools.find(x=>x.tool_id===id).verification_state,'runtime-source-ci',id);assert.equal(c.systems.find(x=>x.system_id===id).state,'runtime-source-ci',id);assert.equal(c.tools.find(x=>x.tool_id===id).gate,gate,id);}
 console.log('CORPORATE_CATALOG_PASS projects=3 systems='+c.systems.length+' tools='+c.tools.length+' retired_vercel=0 expanded_known_assets=1');
