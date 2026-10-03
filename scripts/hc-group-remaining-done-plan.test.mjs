@@ -3,8 +3,10 @@ const plan=JSON.parse(fs.readFileSync('config/hc-group-remaining-done-plan.json'
 assert.equal(plan.packages.length,6);assert.deepEqual(plan.waves.map(w=>w.max_parallel),[3,2,1]);
 for(const p of plan.packages) assert.ok(fs.existsSync(p.launcher),p.launcher);
 const master=fs.readFileSync('scripts/done/remaining-program.ps1','utf8');
-assert.ok(master.includes("RunWave 1"));assert.ok(master.includes("RunWave 2"));assert.ok(master.includes("RunWave 3"));
-assert.ok(master.includes('approved plugin/web research'));assert.ok(master.includes('research-request.json'));
+for(const token of ['Fingerprint','Reusable','StartPackage','Seal','dependency-ready','research-request.json']) assert.ok(master.includes(token),token);
+assert.ok(master.includes('AutoDebug failed packages only'));
+const freeze=fs.readFileSync('scripts/done/final-freeze-v2.ps1','utf8');
+assert.ok(freeze.includes('MANIFEST_INTEGRITY_PASS'));assert.ok(freeze.includes('regression_replay=0'));
 const hcdr=fs.readFileSync('scripts/done/hcdr-live-proof.ps1','utf8');
 assert.ok(hcdr.includes("tool='health'"));assert.ok(hcdr.includes("hcdr-result/v2"));assert.ok(hcdr.includes('correlation_id'));
-console.log('HC_GROUP_REMAINING_DONE_PLAN_PASS packages=6 waves=3 parallel=3_2_1 live_hcdr_read_only=1');
+console.log('HC_GROUP_REMAINING_DONE_PLAN_PASS_V2 packages=6 dependency_ready=1 reusable_manifest=1 final_freeze_manifest_only=1 live_hcdr_read_only=1');
