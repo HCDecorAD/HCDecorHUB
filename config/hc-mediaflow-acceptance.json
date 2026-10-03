@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "system_id": "hc-mediaflow",
+  "verification_state": "source-contract-only",
+  "runtime_done": false,
+  "provides": [
+    "media-routing"
+  ],
+  "principles": {
+    "route_requires_declared_capability": true,
+    "preserves_mission_correlation": true,
+    "blocked_media_lane_isolated": true,
+    "no_direct_production_publish_authority": true,
+    "evidence_required_for_route_done": true,
+    "uncertain_external_side_effects_fail_closed": true
+  },
+  "acceptance_limits": "This source contract does not prove a live MediaFlow runtime, provider transport, or production media publishing."
+}
