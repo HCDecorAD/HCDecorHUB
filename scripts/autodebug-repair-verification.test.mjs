@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {loadFixMemory,verifyRepairCandidate} from '../lib/autodebug.mjs';
+const m=loadFixMemory();
+const f=m.fixes[0];
+const ok=verifyRepairCandidate({fingerprint:f.fingerprint,candidate_fix:f.fix,verification_gate:f.evidence},m);
+assert.equal(ok.verification_state,'VERIFIED_KNOWN_FIX');
+assert.ok(ok.verified_commits.length);
+assert.equal(ok.evidence_ref,f.evidence);
+assert.equal(verifyRepairCandidate({fingerprint:f.fingerprint,candidate_fix:'wrong',verification_gate:f.evidence},m).reason,'candidate_mismatch');
+assert.equal(verifyRepairCandidate({fingerprint:f.fingerprint,candidate_fix:f.fix,verification_gate:'wrong'},m).reason,'verification_evidence_mismatch');
+assert.equal(verifyRepairCandidate({fingerprint:'unknown',candidate_fix:'x',verification_gate:'x'},m).reason,'no_verified_fix');
+console.log('AUTODEBUG_REPAIR_VERIFICATION_SOURCE_PASS exact_known_fix=1 evidence_match=1 fail_closed=1 runtime_mutation_not_claimed=1');
