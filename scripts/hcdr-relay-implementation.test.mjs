@@ -15,6 +15,20 @@ console.log('HCDR_RELAY_IMPLEMENTATION_CONTRACT_PASS correlation_echo=1 result_e
 import fs from 'node:fs';
 const relaySource=fs.readFileSync('tools/hcdr-relay/relay-agent.mjs','utf8');
 const watchdogSource=fs.readFileSync('tools/hcdr-relay/watchdog.ps1','utf8');
-for(const token of ['hcdr-relay/v1.2','uncertain_previous_execution','status:"quarantined"','current_job:i.number']) assert.ok(relaySource.includes(token),token);
-for(const token of ['HCDR_WATCHDOG_STALE_RELAY_STOPPED','relay-agent\\.mjs','Stop-Process','current_job']) assert.ok(watchdogSource.includes(token),token);
-console.log('HCDR_RELAY_SELF_HEALING_PASS stale_restart=1 quarantine=1 blind_retry=0');
+for(const token of [
+  'HCDR_REMOTE_FREE_V3_READY',
+  'HCDR_MAX_WORKERS',
+  'HCDR_JOB_TIMEOUT_MS',
+  'const active=new Map()',
+  'const activeLanes=new Set()',
+  'Promise.race',
+  'job_lease_timeout',
+  'uncertain_previous_execution',
+  'status:"quarantined"',
+  'worker_pool',
+  'setInterval(()=>heartbeat()',
+  'if(lane && activeLanes.has(lane)) continue'
+]) assert.ok(relaySource.includes(token),token);
+assert.ok(!relaySource.includes('let busy=false'),'global busy must be removed');
+for(const token of ['HCDR_WATCHDOG_STALE_RELAY_STOPPED','relay-agent\\.mjs','Stop-Process']) assert.ok(watchdogSource.includes(token),token);
+console.log('HCDR_RELAY_WORKER_POOL_PASS workers=4 independent_heartbeat=1 per_job_timeout=1 lane_isolation=1 quarantine=1 blind_retry=0');
