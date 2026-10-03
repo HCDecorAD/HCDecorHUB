@@ -113,7 +113,9 @@
       ],
       "risk_class": "control-plane",
       "gate": "HC Agent Control source contract",
-      "verification_state": "source-contract-only"
+      "verification_state": "runtime-source-ci",
+      "runtime_done": false,
+      "runtime_scope": "local-safe/source-runtime implementation + CI; live HOCUONG transport not claimed"
     },
     {
       "tool_id": "hc-autochat",
@@ -122,7 +124,9 @@
       ],
       "risk_class": "operator-ui",
       "gate": "HC AutoChat source contract",
-      "verification_state": "source-contract-only"
+      "verification_state": "runtime-source-ci",
+      "runtime_done": false,
+      "runtime_scope": "local-safe/source-runtime implementation + CI; live HOCUONG transport not claimed"
     },
     {
       "tool_id": "hc-moonshot",
@@ -149,7 +153,9 @@
       ],
       "risk_class": "media",
       "gate": "HC MediaFlow source contract",
-      "verification_state": "source-contract-only"
+      "verification_state": "runtime-source-ci",
+      "runtime_done": false,
+      "runtime_scope": "local-safe/source-runtime implementation + CI; live HOCUONG transport not claimed"
     },
     {
       "tool_id": "hc-video-downloader",
@@ -158,7 +164,9 @@
       ],
       "risk_class": "media",
       "gate": "HC Video Downloader source contract",
-      "verification_state": "source-contract-only"
+      "verification_state": "runtime-source-ci",
+      "runtime_done": false,
+      "runtime_scope": "local-safe/source-runtime implementation + CI; live HOCUONG transport not claimed"
     },
     {
       "tool_id": "hc-design-ai-studio",
@@ -167,7 +175,9 @@
       ],
       "risk_class": "creative",
       "gate": "HC Design AI Studio source contract",
-      "verification_state": "source-contract-only"
+      "verification_state": "runtime-source-ci",
+      "runtime_done": false,
+      "runtime_scope": "local-safe/source-runtime implementation + CI; live HOCUONG transport not claimed"
     }
   ],
   "resources": [
