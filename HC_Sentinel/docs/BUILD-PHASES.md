@@ -1,163 +1,121 @@
 # HC Sentinel — Build Phases
 
-## Phase 0 — Freeze & Source Intake
-Goal: establish a clean base without touching live AutoWatch.
+## Completed foundation
 
-Deliverables:
-- read-only AutoWatch snapshot
-- manifest + SHA256
-- source map
-- excluded runtime/secrets list
-- HC Sentinel local/GitHub DATA structure
+🔵 P1 — Sentinel Kernel  
+🟢 PASS  
+✅✨ DONE
 
-Gate:
-SOURCE_INTAKE_PASS
+🔵 P2 — Visual Observer  
+🟢 PASS  
+✅✨ DONE
 
-## Phase 1 — Sentinel Kernel
-Goal: build the independent control plane.
+🔵 P3 — Visual Diff Engine  
+🟢 PASS  
+✅✨ DONE
 
+🔵 P4 — Quality Sensors  
+🟢 PASS  
+✅✨ DONE
+
+🔵 P5 — Decision & Repair Routing  
+🟢 PASS  
+✅✨ DONE
+
+🔵 P6 — Verify-to-DONE Loop  
+🟢 PASS  
+✅✨ DONE
+
+🔵 P7 — Watch / Event / Schedule Autonomy  
+🟢 PASS  
+✅✨ DONE
+
+🔵 P8 — Replay & Observability Foundation  
+🟢 PASS  
+✅✨ DONE
+
+🔵 P9 — Multi-Project Sentinel  
+🟢 PASS  
+✅✨ DONE
+
+🔵 P10 — Golden Run  
+🟢 PASS  
+✅✨ DONE
+
+Gate: `SENTINEL_READY`
+
+## Operator layer
+
+🔵 P11 — Operator Layer  
 Build:
-- mission model
-- MANUAL_NOW / COMMAND
-- priority arbitration
-- pause/resume/cancel
-- checkpoint
-- idempotency key
-- effect lock
-- structured event timeline
+- command parser
+- direct user command flow
+- project + viewport resolution
+- READY / REVIEW_REQUIRED planning
 
-Gate:
-KERNEL_PASS
+🟢 PASS — 2/2  
+✅✨ DONE
 
-## Phase 2 — Visual Observer
-Goal: Sentinel can inspect a real web/app target.
-
-Build:
-- Playwright adapter
-- screenshot capture
-- viewport/device presets
-- DOM snapshot
-- console/network capture
-- target recipe format
-
-Gate:
-OBSERVER_PASS
-
-## Phase 3 — Visual Diff Engine
-Goal: detect meaningful changes without drowning in false positives.
-
-Build:
-- baseline store
-- pixel diff adapter
-- region masks
-- threshold profiles
-- perceptual similarity hook
-- ignore dynamic zones
-- diff image + metrics
-
-Gate:
-VISUAL_DIFF_PASS
-
-## Phase 4 — Quality Sensors
-Goal: expand from pixels to product quality.
-
-Build:
-- axe-core adapter
-- responsive overflow/layout checks
-- broken image/video detection
-- interaction smoke tests
-- optional performance hooks
-
-Gate:
-QUALITY_PASS
-
-## Phase 5 — Decision & Repair Routing
-Goal: convert findings into actionable missions.
-
-Build:
-- finding classifier
-- severity/confidence
-- deduplication
-- route to AutoDebug / Agent Control / project worker
-- repair lane separated from production lane
-- REVIEW_REQUIRED logic
-
-Gate:
-ROUTER_PASS
-
-## Phase 6 — Verify-to-DONE Loop
-Goal: close the loop safely.
-
-Build:
-- rerun verification recipe
-- before/after/diff evidence
-- exact source/target revision
-- GREEN only from execution evidence
-- UNCERTAIN_EFFECT handling
-- no blind retry
-
-Gate:
-VERIFY_LOOP_PASS
-
-## Phase 7 — Watch / Event / Schedule
-Goal: add automation without taking control away from the user.
-
-Build:
-- WATCH mode
-- EVENT mode
-- SCHEDULED mode
-- AUTO mode
-- heartbeat
-- lease TTL
-- stale mission recovery
-- manual trigger preemption/priority
-
-Gate:
-AUTONOMY_PASS
-
-## Phase 8 — Replay & Observability
-Goal: make failures easy to reproduce and trace.
-
-Build:
-- optional rrweb adapter
-- structured traces
-- OpenTelemetry adapter
-- event correlation IDs
-- compact evidence timeline
-
-Gate:
-OBSERVABILITY_PASS
-
-## Phase 9 — Multi-Project Sentinel
-Goal: one Sentinel supervises multiple HC projects safely.
-
+🔵 P12 — Project Profiles  
 Build:
 - project registry
-- capability workers
-- target profiles
-- per-project policy
-- independent queues/lanes
-- quota and rate-limit awareness
+- profiles
+- viewport policy
+- capability declaration
 
-Gate:
-MULTI_PROJECT_PASS
+🟢 PASS — 1/1  
+✅✨ DONE
 
-## Phase 10 — Golden Run / Public Internal
-Goal: prove stable long-running operation.
+🔵 P13 — Baseline Manager  
+Build:
+- project/viewport baseline mapping
+- revision requirement
+- explicit approval requirement
+- fallback to default baseline
 
-Required scenarios:
-- manual command during scheduled idle
-- watch detects regression
-- unrelated project continues when one lane fails
-- restart resumes from checkpoint
-- duplicate mission does not duplicate side effects
-- bad baseline cannot auto-promote
-- evidence survives restart
-- full regression
+🟢 PASS — 2/2  
+✅✨ DONE
 
-Gate:
-SENTINEL_READY
+🔵 P14 — Repair Bridge  
+Build:
+- route finding to capable worker
+- healthy-worker selection
+- WAITING_CAPABILITY fail-closed behavior
+- repair dispatch mission
 
-## Build order rule
-Do not implement Phase N+1 as a hard dependency before Phase N has an execution-evidence PASS.
-Independent adapters may be researched in parallel.
+🟢 PASS — 3/3  
+✅✨ DONE
+
+Verified smoke:
+`Sentinel kiểm tra GSC mobile -> READY -> GSC -> Mobile -> Approved Baseline -> DISPATCHED -> autodebug-ui`
+
+Full regression:
+`32/32 PASS — 0 FAIL`
+
+Gate: `OPERATOR_READY_CORE`
+
+## Next practical phases
+
+🔵 P15 — Real Target Profiles  
+Goal: bind actual HC project targets, URLs, routes, viewports and visual rules.
+
+🔵 P16 — Command Center UI  
+Goal: provide a direct operator interface for Run Now / Compare / Verify / Route Repair.
+
+🔵 P17 — Persistent Baseline & Evidence Store  
+Goal: persist approved baselines, revisions, evidence metadata and project history safely.
+
+🔵 P18 — Live Repair Bridge  
+Goal: connect repair routing to real AutoDebug / Agent Control / project workers with execution evidence.
+
+🔵 P19 — End-to-End Project Runs  
+Goal: run real project scenarios through Observe -> Detect -> Repair -> Verify -> DONE.
+
+## Build rule
+
+- Do not redo a phase that already has execution-evidence PASS.
+- Manual/operator command keeps priority over schedule.
+- GREEN/DONE requires execution evidence.
+- UNCERTAIN_EFFECT must fail closed.
+- One failed lane must not block unrelated project lanes.
+- Runtime stays local-first; GitHub stores sanitized versionable DATA.
