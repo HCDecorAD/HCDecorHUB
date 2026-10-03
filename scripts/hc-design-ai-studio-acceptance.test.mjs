@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const c=JSON.parse(fs.readFileSync('config/hc-design-ai-studio-acceptance.json','utf8'));
+assert.equal(c.schema_version,'1.0.0');
+assert.equal(c.system_id,'hc-design-ai-studio');
+assert.equal(c.verification_state,'source-contract-only');
+assert.equal(c.runtime_done,false);
+for(const k of ["local_first_by_default","preserves_mission_correlation","source_assets_require_provenance","no_direct_production_publish_authority","evidence_required_for_done","uncertain_external_side_effects_fail_closed"]) assert.equal(c.principles[k],true,k);
+assert.match(c.acceptance_limits,/does not prove a live/i);
+console.log('HC_DESIGN_AI_STUDIO_SOURCE_CONTRACT_PASS runtime_done=0');
