@@ -22,61 +22,61 @@
 🟢 PASS  
 ✅✨ DONE
 
-Gate: `LOCAL_OPERATOR_READY`
-
-🔵 P30 — Local Bootstrap  
-- validate Node runtime
-- create runtime-state
-- create evidence/live
-- create data/live
-- create logs
-
-🟢 PASS — 1/1  
+🔵 P30-P34 — App-Ready Integration  
+🟢 PASS  
 ✅✨ DONE
-
-🔵 P31 — Live App Binding  
-- local server serves UI
-- UI calls status API
-- UI calls command API
-- safe static-path handling
-
-🟢 PASS — 1/1  
-✅✨ DONE
-
-🔵 P32 — Evidence Index  
-- persist evidence metadata
-- filter by project
-- filter by type
-
-🟢 PASS — 1/1  
-✅✨ DONE
-
-🔵 P33 — Settings Store  
-- safe defaults
-- allowlisted settings only
-- persisted theme/policy values
-
-🟢 PASS — 1/1  
-✅✨ DONE
-
-🔵 P34 — Golden App Acceptance  
-Validates:
-- UI served
-- status = SENTINEL_READY
-- command = RUNNING
-- evidence API returns indexed data
-- settings theme switches to light
-
-🟢 PASS — Acceptance Flow  
-✅✨ DONE
-
-Acceptance:
-`ui=true -> status=SENTINEL_READY -> command=RUNNING -> evidence=1 -> theme=light`
-
-Full regression:
-`63/63 PASS — 0 FAIL`
 
 Gate: `APP_READY`
+
+🔵 P35 — Windows Local Install  
+- Node 22 validation
+- runtime folder bootstrap
+- ASCII-safe PowerShell installer
+
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P36 — Hidden Background Launch  
+- VBS launcher
+- hidden window style
+- starts local BAT launcher without visible console
+
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P37 — Evidence Viewer  
+- live Evidence panel
+- refresh from local API
+- compatibility with prior Command Center controls
+
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P38 — Finding Inbox  
+- persisted finding store
+- project/state filtering
+- `GET /api/findings`
+- visible tracked findings in Command Center
+
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P39 — HCDR Status Sync  
+Mapping:
+- open + 0 comment -> ROUTED
+- open + comments -> ACKNOWLEDGED
+- closed -> RESOLVED
+
+🟢 PASS — 3/3  
+✅✨ DONE
+
+Smoke:
+`tracked=1 -> state=ROUTED -> issue=1265`
+
+Full regression:
+`70/70 PASS — 0 FAIL`
+
+Gate: `DESKTOP_OPERATIONS_READY`
 
 ## Build rule
 
