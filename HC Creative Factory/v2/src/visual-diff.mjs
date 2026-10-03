@@ -1,0 +1,2 @@
+export function visualDiff(ref,actual){if(!ref||!actual||ref.length!==actual.length)throw new Error("DIFF_INPUT_MISMATCH");let changed=0,total=ref.length;for(let i=0;i<total;i++)if(ref[i]!==actual[i])changed++;return {schema:"hc-factory/visual-diff-v1",changed,total,similarity:total?1-changed/total:1,evidence_derived:true}}
+export function gateDiff(result,threshold=0.995){return {stage:"V2.5",status:result.similarity>=threshold?"PASS":"FAIL",metrics:result}}
