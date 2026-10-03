@@ -1,0 +1,18 @@
+name: HC Creative Factory V2 Gate
+on:
+  pull_request:
+    paths:
+      - 'HC Creative Factory/v2/**'
+      - 'package.json'
+  workflow_dispatch:
+jobs:
+  factory-v2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Factory V2 contract suite
+        run: npm run test:factory-v2
