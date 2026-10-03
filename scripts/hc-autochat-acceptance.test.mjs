@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const c=JSON.parse(fs.readFileSync('config/hc-autochat-acceptance.json','utf8'));
+assert.equal(c.schema_version,'1.0.0');
+assert.equal(c.system_id,'hc-autochat');
+assert.equal(c.verification_state,'source-contract-only');
+assert.equal(c.runtime_done,false);
+for(const k of ['operator_ui_only','must_not_own_mission_loop','goal_outlives_chat','chat_loss_must_not_cancel_mission','no_direct_production_authority','mutations_require_control_plane_authority','evidence_not_conversation_determines_done']) assert.equal(c.principles[k],true,k);
+for(const x of ['durable-mission-owner','production-deployer','approval-authority']) assert.ok(c.forbidden_authority.includes(x),x);
+assert.match(c.acceptance_limits,/does not prove a live AutoChat runtime/i);
+console.log('HC_AUTOCHAT_SOURCE_CONTRACT_PASS ui_only=1 no_mission_loop=1 goal_outlives_chat=1 no_prod_authority=1 evidence_done=1 runtime_done=0');
