@@ -1,7 +1,7 @@
 {
   "schema": "transwarp/capability-manifest-v1",
   "project": "HC TransWarp Infrastructure",
-  "version": "0.4.1",
+  "version": "0.5",
   "local_first": true,
   "canonical_root": "D:\\HCDecorHUB\\HC TransWarp Infrastructure",
   "data_root": "D:\\HC_DATA\\queue\\transwarp",
@@ -24,13 +24,12 @@
     ]
   },
   "routing_policy": [
-    "DIRECT_LOCAL_INGRESS",
-    "LOCAL_RUNNER_ONESHOT",
-    "HCDR_FALLBACK"
+    "HCDR_PRIMARY",
+    "LOCAL_BRIDGE_FALLBACK"
   ],
   "remote_policy": {
     "github": "SYNC_ONLY",
-    "hcdr": "FALLBACK_ONLY"
+    "hcdr": "PRIMARY_WHEN_HEALTHY"
   },
   "chat_bootstrap": {
     "rule": "Any chat must resolve this manifest, detect an authorized local bridge, then prefer DIRECT_LOCAL_INGRESS or direct local inbox. Never assume localhost is reachable.",
@@ -41,9 +40,29 @@
     "required_capability": "authorized_local_filesystem_and_terminal",
     "preferred_provider": "Remote Desktop Commander",
     "behavior": {
-      "when_available": "Use bridge to health-check P11 ingress or write manifest directly to local inbox, then read local evidence.",
+      "when_available": "Use Local Bridge only when AUTO_ROUTE selects LOCAL_FALLBACK, or for explicit local recovery/debug.",
       "when_missing": "Return TRANSWARP_LOCAL_CONNECTOR_REQUIRED. Do not silently use HCDR.",
-      "hcdr_use": "Explicit fallback/recovery only."
+      "hcdr_use": "Primary transport when healthy."
     }
+  },
+  "transport_policy": {
+    "name": "AUTO_ROUTE_FINAL_V1",
+    "frozen": true,
+    "normal_route": "HCDR",
+    "fallback_route": "LOCAL_BRIDGE",
+    "local_trigger_conditions": [
+      "HCDR_QUEUED_TOO_LONG",
+      "HCDR_TIMEOUT",
+      "HCDR_NOT_CLAIMED",
+      "HCDR_RATE_LIMITED",
+      "HCDR_UNHEALTHY"
+    ],
+    "rules": [
+      "Never run the same job_id/correlation_id on two routes at once.",
+      "A running job stays on its selected route until completion or explicit recovery.",
+      "When HCDR recovers, only new jobs return to HCDR.",
+      "GitHub remains SYNC_ONLY and does not determine DONE.",
+      "If both routes fail, return BLOCKED instead of looping."
+    ]
   }
 }
