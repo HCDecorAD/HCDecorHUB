@@ -26,57 +26,62 @@
 🟢 PASS  
 ✅✨ DONE
 
-Gate: `APP_READY`
-
-🔵 P35 — Windows Local Install  
-- Node 22 validation
-- runtime folder bootstrap
-- ASCII-safe PowerShell installer
-
-🟢 PASS — 1/1  
+🔵 P35-P39 — Desktop Operations  
+🟢 PASS  
 ✅✨ DONE
-
-🔵 P36 — Hidden Background Launch  
-- VBS launcher
-- hidden window style
-- starts local BAT launcher without visible console
-
-🟢 PASS — 1/1  
-✅✨ DONE
-
-🔵 P37 — Evidence Viewer  
-- live Evidence panel
-- refresh from local API
-- compatibility with prior Command Center controls
-
-🟢 PASS — 1/1  
-✅✨ DONE
-
-🔵 P38 — Finding Inbox  
-- persisted finding store
-- project/state filtering
-- `GET /api/findings`
-- visible tracked findings in Command Center
-
-🟢 PASS — 1/1  
-✅✨ DONE
-
-🔵 P39 — HCDR Status Sync  
-Mapping:
-- open + 0 comment -> ROUTED
-- open + comments -> ACKNOWLEDGED
-- closed -> RESOLVED
-
-🟢 PASS — 3/3  
-✅✨ DONE
-
-Smoke:
-`tracked=1 -> state=ROUTED -> issue=1265`
-
-Full regression:
-`70/70 PASS — 0 FAIL`
 
 Gate: `DESKTOP_OPERATIONS_READY`
+
+🔵 P40 — Windows Startup Registration  
+- Startup folder shortcut
+- hidden VBS launcher
+- ASCII-safe PowerShell
+
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P41 — Desktop Shortcut  
+- creates HC Sentinel shortcut
+- opens local Command Center
+
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P42 — State Backup / Restore  
+- named snapshots
+- atomic restore staging
+- path traversal rejected
+
+🟢 PASS — 2/2  
+✅✨ DONE
+
+🔵 P43 — Log Viewer  
+- persisted bounded logs
+- level filter
+- `GET /api/logs`
+- Command Center Log Viewer
+
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P44 — Golden Daily Acceptance  
+Validates:
+- UI online
+- status SENTINEL_READY
+- tracked finding present
+- evidence present
+- runtime log present
+
+🟢 PASS — Acceptance Flow  
+✅✨ DONE
+
+Acceptance:
+`ui=true -> status=SENTINEL_READY -> findings=1 -> evidence=1 -> logs=1`
+
+Full regression:
+`75/75 PASS — 0 FAIL`
+
+Gate: `DAILY_USE_READY`
 
 ## Build rule
 
