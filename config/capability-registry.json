@@ -144,11 +144,11 @@
         "evidence_ref"
       ],
       "risk_class": "reliability",
-      "gate": "verified-fix-memory gate",
+      "gate": "AutoDebug source implementation",
       "cost_class": "low",
       "production_write": false,
       "fail_closed": true,
-      "contract_state": "source-contract-only"
+      "contract_state": "source-implementation-gated"
     },
     {
       "capability_id": "repair-verification",
