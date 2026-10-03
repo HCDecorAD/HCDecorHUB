@@ -1,0 +1,2 @@
+import test from "node:test";import assert from "node:assert/strict";import {readFile} from "node:fs/promises";
+test("startup registration uses Startup folder and hidden VBS launcher",async()=>{const s=await readFile(new URL("../runtime/register-startup.ps1",import.meta.url),"utf8");assert.match(s,/GetFolderPath\("Startup"\)/);assert.match(s,/start-hidden\.vbs/);assert.match(s,/wscript\.exe/);assert.ok([...Buffer.from(s)].every(b=>b<128));});

@@ -6,7 +6,7 @@ import {fileURLToPath} from "node:url";
 const MIME={".html":"text/html; charset=utf-8",".js":"text/javascript; charset=utf-8",".css":"text/css; charset=utf-8",".json":"application/json; charset=utf-8"};
 async function readBody(req){let body="";for await(const chunk of req) body+=chunk;return body?JSON.parse(body):{};}
 
-export function createLocalServer({controller,status=()=>({status:"READY"}),evidence=null,settings=null,findings=null,uiDir=null}){
+export function createLocalServer({controller,status=()=>({status:"READY"}),evidence=null,settings=null,findings=null,logs=null,uiDir=null}){
   const uiRoot=uiDir?resolve(fileURLToPath(uiDir)):null;
   return http.createServer(async(req,res)=>{
     const url=new URL(req.url,"http://127.0.0.1");
@@ -15,8 +15,15 @@ export function createLocalServer({controller,status=()=>({status:"READY"}),evid
 
     if(req.method==="POST"&&url.pathname==="/api/command"){
       res.setHeader("content-type",MIME[".json"]);
-      try{const data=await readBody(req);const result=await controller.run(data.command);res.end(JSON.stringify(result));}
-      catch(e){res.statusCode=400;res.end(JSON.stringify({status:"BLOCKED",error:String(e.message||e)}));}
+      try{
+        const data=await readBody(req);
+        await logs?.append?.({level:"info",type:"COMMAND",message:String(data.command??"")});
+        const result=await controller.run(data.command);
+        res.end(JSON.stringify(result));
+      }catch(e){
+        await logs?.append?.({level:"error",type:"COMMAND_ERROR",message:String(e.message||e)});
+        res.statusCode=400;res.end(JSON.stringify({status:"BLOCKED",error:String(e.message||e)}));
+      }
       return;
     }
 
@@ -29,6 +36,12 @@ export function createLocalServer({controller,status=()=>({status:"READY"}),evid
     if(req.method==="GET"&&url.pathname==="/api/findings"){
       res.setHeader("content-type",MIME[".json"]);
       const items=findings?await findings.list({state:url.searchParams.get("state")||undefined,projectId:url.searchParams.get("projectId")||undefined}):[];
+      res.end(JSON.stringify({items}));return;
+    }
+
+    if(req.method==="GET"&&url.pathname==="/api/logs"){
+      res.setHeader("content-type",MIME[".json"]);
+      const items=logs?await logs.list({level:url.searchParams.get("level")||undefined,limit:url.searchParams.get("limit")||100}):[];
       res.end(JSON.stringify({items}));return;
     }
 

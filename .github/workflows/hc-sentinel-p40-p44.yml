@@ -1,0 +1,34 @@
+name: HC Sentinel P40-P44
+
+on:
+  push:
+    branches: [hc-sentinel-p40-p44]
+    paths:
+      - "HC_Sentinel/**"
+      - ".github/workflows/hc-sentinel-p40-p44.yml"
+  workflow_dispatch:
+
+jobs:
+  p40-p44:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: P40 Windows Startup
+        run: npm run test:p40
+      - name: P41 Desktop Shortcut
+        run: npm run test:p41
+      - name: P42 State Backup Restore
+        run: npm run test:p42
+      - name: P43 Log Viewer
+        run: npm run test:p43
+      - name: P44 Daily Acceptance
+        run: npm run test:p44
+      - name: Full Regression
+        run: npm test

@@ -1,23 +1,27 @@
 import {resolve} from "node:path";
+import {fileURLToPath} from "node:url";
 import {createLocalServer} from "./local-server.js";
 import {JsonStore} from "../core/json-store.js";
 import {EvidenceIndex} from "../core/evidence-index.js";
 import {SettingsStore} from "../core/settings-store.js";
 import {FindingStore} from "../core/finding-store.js";
+import {LogStore} from "../core/log-store.js";
 import {bootstrap} from "./bootstrap.js";
 
-const root=resolve(new URL("..",import.meta.url).pathname);
+const root=resolve(fileURLToPath(new URL("..",import.meta.url)));
 await bootstrap({root});
 const evidence=new EvidenceIndex(new JsonStore(resolve(root,"data/live/evidence.json")));
 const settings=new SettingsStore(new JsonStore(resolve(root,"data/live/settings.json")));
 const findings=new FindingStore(new JsonStore(resolve(root,"data/live/findings.json")));
+const logs=new LogStore(new JsonStore(resolve(root,"logs/runtime.json")));
 await findings.upsert({id:"gsc-1265",projectId:"gsc",state:"ROUTED",severity:"medium",externalIssue:1265});
+await logs.append({level:"info",type:"STARTUP",message:"HC Sentinel runtime started"});
 
 const controller={run:async command=>({status:"RUNNING",command})};
 const server=createLocalServer({
   controller,
-  status:()=>({status:"SENTINEL_READY",version:"0.8.0"}),
-  evidence,settings,findings,
+  status:()=>({status:"SENTINEL_READY",version:"0.9.0"}),
+  evidence,settings,findings,logs,
   uiDir:new URL("../ui/",import.meta.url)
 });
 const port=Number(process.env.HC_SENTINEL_PORT||43110);
