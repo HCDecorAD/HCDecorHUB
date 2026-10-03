@@ -1,28 +1,55 @@
 $ErrorActionPreference='Stop'
-$root=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-Set-Location $root
-$runtime=Join-Path $root '.runtime\remaining-done'
-New-Item -ItemType Directory -Force -Path $runtime | Out-Null
-function RunWave([int]$wave,[string[]]$launchers){
-  Write-Host "HC_DONE_WAVE_START wave=$wave packages=$($launchers -join ',')"
-  $jobs=@()
-  foreach($launcher in $launchers){
-    $log=Join-Path $runtime ($launcher+'.log')
-    $p=Start-Process -FilePath 'cmd.exe' -ArgumentList @('/d','/s','/c',"call $launcher") -WorkingDirectory $root -RedirectStandardOutput $log -RedirectStandardError ($log+'.err') -NoNewWindow -PassThru
-    $jobs += [pscustomobject]@{launcher=$launcher;process=$p;log=$log}
+$root=Split-Path -Parent (Split-Path -Parent $PSScriptRoot); Set-Location $root
+$runtime=Join-Path $root '.runtime\remaining-done'; $pkgDir=Join-Path $runtime 'packages'
+New-Item -ItemType Directory -Force -Path $pkgDir | Out-Null
+$plan=Get-Content 'config\hc-group-remaining-done-plan.json' -Raw | ConvertFrom-Json
+
+function Fingerprint($p){
+  $head=(git rev-parse HEAD).Trim()
+  return "$($p.id):$head:$($p.launcher)"
+}
+function ManifestPath($id){ Join-Path $pkgDir ($id+'.manifest.json') }
+function Reusable($p){
+  $m=ManifestPath $p.id
+  if(-not(Test-Path $m)){return $false}
+  try{$x=Get-Content $m -Raw|ConvertFrom-Json; return ($x.state -eq 'DONE' -and $x.fingerprint -eq (Fingerprint $p) -and $x.evidence_verified -eq $true)}catch{return $false}
+}
+function StartPackage($p){
+  if(Reusable $p){Write-Host "HC_DONE_REUSE_PASS package=$($p.id)";return $null}
+  $log=Join-Path $runtime ($p.id+'.log')
+  $proc=Start-Process -FilePath 'cmd.exe' -ArgumentList @('/d','/s','/c',"call $($p.launcher)") -WorkingDirectory $root -RedirectStandardOutput $log -RedirectStandardError ($log+'.err') -NoNewWindow -PassThru
+  return [pscustomobject]@{package=$p;process=$proc;log=$log}
+}
+function Seal($job){
+  $job.process.WaitForExit()
+  $p=$job.package; $ok=$job.process.ExitCode -eq 0
+  $m=[ordered]@{schema='hc-done-package/v2';package_id=$p.id;state=if($ok){'DONE'}else{'FAILED'};fingerprint=(Fingerprint $p);source_sha=(git rev-parse HEAD).Trim();evidence_verified=$ok;exit_code=$job.process.ExitCode;log=$job.log;sealed_at=(Get-Date).ToUniversalTime().ToString('o')}
+  $m|ConvertTo-Json -Depth 6|Set-Content -Encoding UTF8 (ManifestPath $p.id)
+  return $m
+}
+
+$pending=@($plan.packages)
+$failed=@()
+while($pending.Count){
+  $ready=@($pending|Where-Object{
+    $p=$_
+    @($p.depends_on|Where-Object{
+      $dep=$_
+      -not(Reusable ($plan.packages|Where-Object id -eq $dep|Select-Object -First 1))
+    }).Count -eq 0
+  })
+  if(-not $ready.Count){
+    $waiting=@($pending|ForEach-Object{$_.id})
+    @{schema='hc-group-runtime-finish/v2';state='WAITING_EXTERNAL';waiting=$waiting;checkpointed=$true}|ConvertTo-Json|Set-Content -Encoding UTF8 (Join-Path $runtime 'summary.json')
+    Write-Host "HC_DONE_YIELD waiting=$($waiting -join ',')"; exit 10
   }
-  $failed=@()
-  foreach($j in $jobs){$j.process.WaitForExit();if($j.process.ExitCode -ne 0){$failed+=$j}}
+  $jobs=@(); foreach($p in $ready){$j=StartPackage $p;if($j){$jobs+=$j}}
+  foreach($j in $jobs){$m=Seal $j;if($m.state -ne 'DONE'){$failed+=$m}}
+  $pending=@($pending|Where-Object{$ready.id -notcontains $_.id})
   if($failed.Count){
-    $state=[ordered]@{wave=$wave;state='NOT_DONE';failed=@($failed|ForEach-Object{$_.launcher});logs=@($failed|ForEach-Object{$_.log});next_action='AutoDebug exact failure; if repository evidence insufficient, use approved plugin/web research; fix then rerun this wave.'}
-    $state|ConvertTo-Json -Depth 6|Set-Content -Encoding UTF8 (Join-Path $runtime 'research-request.json')
-    Write-Host "HC_DONE_WAVE_BLOCKED wave=$wave research=.runtime\remaining-done\research-request.json"
+    @{schema='hc-group-runtime-finish/v2';state='RECOVERY_REQUIRED';failed=$failed;checkpointed=$true;next_action='AutoDebug failed packages only; preserve reusable PASS manifests.'}|ConvertTo-Json -Depth 8|Set-Content -Encoding UTF8 (Join-Path $runtime 'research-request.json')
     exit 20
   }
-  Write-Host "HC_DONE_WAVE_PASS wave=$wave"
 }
-RunWave 1 @('hc-done-01-evidence.bat','hc-done-02-hcdr-live.bat','hc-done-03-autodebug-live.bat')
-RunWave 2 @('hc-done-04-control-runtime.bat','hc-done-05-media-runtime.bat')
-RunWave 3 @('hc-done-06-final-freeze.bat')
-@{schema='hc-group-runtime-finish/v1';state='DONE';completed_at=(Get-Date).ToUniversalTime().ToString('o')}|ConvertTo-Json|Set-Content -Encoding UTF8 (Join-Path $runtime 'summary.json')
-Write-Host 'HC_GROUP_REMAINING_DONE_PASS packages=6 waves=3'
+@{schema='hc-group-runtime-finish/v2';state='DONE';manifest_dir=$pkgDir;completed_at=(Get-Date).ToUniversalTime().ToString('o')}|ConvertTo-Json|Set-Content -Encoding UTF8 (Join-Path $runtime 'summary.json')
+Write-Host 'HC_GROUP_REMAINING_DONE_PASS_V2 manifests=sealed reuse=enabled scheduler=dependency_ready'
