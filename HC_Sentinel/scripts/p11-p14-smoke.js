@@ -1,0 +1,25 @@
+import {ProjectRegistry} from "../core/project-registry.js";
+import {BaselineManager} from "../core/baseline-manager.js";
+import {WorkerRegistry} from "../core/worker-registry.js";
+import {FindingRouter} from "../core/router.js";
+import {RepairBridge} from "../core/repair-bridge.js";
+import {OperatorService} from "../operator/operator-service.js";
+import {mkdir,writeFile} from "node:fs/promises";
+
+const projects=new ProjectRegistry();
+projects.register({id:"gsc",name:"GSC",capabilities:["visual","ui-repair"],profiles:{mobile:{viewport:{width:390,height:844}}}});
+const baselines=new BaselineManager();
+baselines.set("gsc","mobile",{revision:"baseline-001",approved:true});
+const workers=new WorkerRegistry();
+workers.upsert({id:"autodebug-ui",capabilities:["ui-repair"]});
+const router=new FindingRouter();
+const bridge=new RepairBridge({workers});
+const operator=new OperatorService({projects,baselines,router,bridge});
+const plan=operator.plan("Sentinel kiểm tra GSC mobile");
+const route=router.route({kind:"VISUAL_DIFF",confidence:.95});
+const repair=bridge.dispatch(route,{projectId:"gsc",viewport:"mobile"});
+const result={planStatus:plan.status,projectId:plan.command.projectId,viewport:plan.command.viewport,baselineApproved:plan.baseline?.approved===true,repairStatus:repair.status,workerId:repair.mission?.workerId};
+await mkdir(new URL("../evidence/p11-p14/",import.meta.url),{recursive:true});
+await writeFile(new URL("../evidence/p11-p14/operator-smoke.json",import.meta.url),JSON.stringify(result,null,2));
+console.log(JSON.stringify(result));
+if(result.planStatus!=="READY"||!result.baselineApproved||result.repairStatus!=="DISPATCHED") process.exit(2);
