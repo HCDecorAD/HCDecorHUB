@@ -96,8 +96,15 @@
       "parallel_wave": 3,
       "launcher": "hc-done-06-final-freeze.bat",
       "terminal_gate": "HC GROUP DONE package + production verify + final release evidence PASS",
-      "state": "ACTIVE",
-      "blocker": null
+      "state": "DONE",
+      "blocker": null,
+      "runtime_scope": "source-ci-final-freeze",
+      "final_evidence": [
+        "Quality Gate 37093044957 SUCCESS",
+        "Production Verify 37093980079 SUCCESS",
+        "HEAD 5a413c79fc2d7a553c6f9a51551e8136527bbe1d",
+        "Quality Gate includes HC Group DONE package, Remaining DONE program, runtime bundles, AutoDebug gates, HCDR contracts, production build, Master Agent local E2E, Cloudflare build"
+      ]
     }
   ],
   "waves": [
@@ -140,7 +147,8 @@
       "D02",
       "D03",
       "D04",
-      "D05"
+      "D05",
+      "D06"
     ],
     "waiting_packages": [],
     "blocked_packages": [],
@@ -160,10 +168,16 @@
         "hcdr-result/v2 ok=true provider=local source=hocuong-v12-production",
         "HCDR root D:\\HCDecorHUB\\HCDR Remote MCP",
         "Node v24.21.0"
+      ],
+      "D06": [
+        "Quality Gate 37093044957 SUCCESS",
+        "Production Verify 37093980079 SUCCESS",
+        "HEAD 5a413c79fc2d7a553c6f9a51551e8136527bbe1d",
+        "Quality Gate includes HC Group DONE package, Remaining DONE program, runtime bundles, AutoDebug gates, HCDR contracts, production build, Master Agent local E2E, Cloudflare build"
       ]
     },
-    "active_packages": [
-      "D06"
-    ]
+    "active_packages": [],
+    "final_state": "DONE",
+    "final_head": "5a413c79fc2d7a553c6f9a51551e8136527bbe1d"
   }
 }
