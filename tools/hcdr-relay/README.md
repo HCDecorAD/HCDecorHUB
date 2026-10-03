@@ -25,3 +25,16 @@ The relay repository uses GitHub issues labelled `hcdr-job`. Issue body:
 The agent posts a `hcdr-result/v2` JSON comment after execution and echoes `source_id`, `mission_id`, and `correlation_id` when present in the job body.
 
 Do not place tokens, secrets, .env contents, credentials, or production keys in jobs/results.
+
+
+## Always-on remote receiver
+
+For unattended Mobile -> GitHub Relay -> HOCUONG operation, install the persistent receiver once from an elevated terminal:
+
+```bat
+hcdr-install-always-on.bat
+```
+
+This installs a Scheduled Task for startup/logon plus a one-minute watchdog. The watchdog validates the relay heartbeat and Node PID, removes only stale locks, and restarts the read/build relay when needed. Production mutation remains blocked by the existing HCDR guard.
+
+Evidence of a live laptop roundtrip still requires an actual relay result; this installation contract does not fake HOCUONG runtime GREEN.
