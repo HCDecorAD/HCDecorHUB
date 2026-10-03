@@ -1,0 +1,28 @@
+{
+  "schema": "hc-factory/v2",
+  "canonical_url": "https://factory.hcdecorhub.com",
+  "viewports": [
+    1440,
+    768,
+    390
+  ],
+  "stages": [
+    "V2.1_HC_AI_IMASTER",
+    "V2.2_CAPTURE",
+    "V2.3_DESIGN_DNA",
+    "V2.4_AI_REBUILD",
+    "V2.5_MAT_THAN_VISUAL_QA",
+    "V2.6_AUTO_FIX",
+    "V2.7_INTERACTION_QA",
+    "V2.8_COMPONENT_VAULT",
+    "V2.9_QUALITY_GATE",
+    "V2.10_PUBLISH_WATCH"
+  ],
+  "rules": {
+    "evidence_before_green": true,
+    "demo_similarity_forbidden": true,
+    "production_mutation_default": "deny",
+    "error_policy": "7x7",
+    "fixed_visual_baseline_environment": true
+  }
+}
