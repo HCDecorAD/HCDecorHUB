@@ -27,7 +27,7 @@ jobs:
         run: |
           files="$(git diff --name-only HEAD^ HEAD 2>/dev/null || true)"
           echo "$files"
-          if [ -n "$files" ] && ! echo "$files" | grep -Ev '^(docs/|.*\.md$|.*\.txt$|\.github/ISSUE_TEMPLATE/)' >/dev/null; then
+          if [ -n "$files" ] && ! echo "$files" | grep -Ev '^(docs/|.*\.md$|.*\.txt$|\.github/ISSUE_TEMPLATE/|config/HC-DONE-ALL\.manifest\.json$)' >/dev/null; then
             echo "full=false" >> "$GITHUB_OUTPUT"
             echo "HC_DONE_RISK_FAST documentation_or_metadata_only=1"
           else
