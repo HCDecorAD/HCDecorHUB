@@ -1,0 +1,3 @@
+import test from "node:test";import assert from "node:assert/strict";import {ProjectRegistry} from "../core/project-registry.js";import {WorkerRegistry,WorkerState} from "../core/worker-registry.js";
+test("project registry filters capability",()=>{const r=new ProjectRegistry();r.register({id:"gsc",capabilities:["visual"]});r.register({id:"amo",capabilities:["catalog"]});assert.deepEqual(r.eligible("visual").map(x=>x.id),["gsc"]);});
+test("unhealthy worker does not block healthy replacement",()=>{const w=new WorkerRegistry();w.upsert({id:"A",capabilities:["visual"]});w.upsert({id:"B",capabilities:["visual"]});w.setState("A",WorkerState.UNHEALTHY);assert.equal(w.route("visual").id,"B");});

@@ -1,0 +1,72 @@
+name: HC Sentinel P4-P10
+
+on:
+  push:
+    branches: [hc-sentinel-p4-p10]
+    paths:
+      - "HC_Sentinel/**"
+      - ".github/workflows/hc-sentinel-p4-p10.yml"
+  workflow_dispatch:
+
+jobs:
+  p4-p10:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: HC_Sentinel/package.json
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: P4 Quality unit
+        run: npm run test:p4
+
+      - name: P4 Quality real browser + axe
+        run: node scripts/p4-quality-smoke.js
+
+      - name: P5 Routing
+        run: npm run test:p5
+
+      - name: P6 Verify-to-DONE
+        run: npm run test:p6
+
+      - name: P7 Autonomy
+        run: npm run test:p7
+
+      - name: P8 Observability
+        run: npm run test:p8
+
+      - name: P9 Multi-project
+        run: npm run test:p9
+
+      - name: P10 Golden tests
+        run: npm run test:p10
+
+      - name: P10 Golden smoke
+        run: node scripts/p10-golden-smoke.js
+
+      - name: Full regression
+        run: npm test
+
+      - name: Upload P4-P10 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hc-sentinel-p4-p10-evidence
+          path: |
+            HC_Sentinel/evidence/p4/**
+            HC_Sentinel/evidence/p10/**
+          if-no-files-found: warn
