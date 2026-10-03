@@ -1,0 +1,44 @@
+name: HC Sentinel P25-P29
+
+on:
+  push:
+    branches: [hc-sentinel-p25-p29]
+    paths:
+      - "HC_Sentinel/**"
+      - ".github/workflows/hc-sentinel-p25-p29.yml"
+  workflow_dispatch:
+
+jobs:
+  p25-p29:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: P25 Notification Center
+        run: npm run test:p25
+
+      - name: P26 Baseline Promotion
+        run: npm run test:p26
+
+      - name: P27 Watch Runtime
+        run: npm run test:p27
+
+      - name: P28 Live Command Binding
+        run: npm run test:p28
+
+      - name: P29 Local Release Package
+        run: npm run test:p29
+
+      - name: P25-P29 Smoke
+        run: node scripts/p25-p29-smoke.js
+
+      - name: Full Regression
+        run: npm test
