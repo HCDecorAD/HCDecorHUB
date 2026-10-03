@@ -1,0 +1,31 @@
+{
+  "schema": "hc-chat-bootstrap/v1",
+  "applies_to": "all-hc-group-chats",
+  "startup_order": [
+    "refresh config/corporate-update-feed.json",
+    "refresh config/corporate-catalog.json",
+    "refresh component acceptance contract",
+    "resolve transport route",
+    "only then claim capability unavailable/blocked/retired"
+  ],
+  "rules": {
+    "corporate_update_feed_required_before_status_claim": true,
+    "corporate_catalog_required_before_tool_discovery": true,
+    "dedicated_action_name_not_required_for_relay_transports": true,
+    "stale_chat_snapshot_cannot_override_fresh_canonical_state": true,
+    "fresh_failed_probe_required_for_unavailable_claim": true
+  },
+  "hcdr": {
+    "transport": "HCDR v3",
+    "access_mode": "github-relay",
+    "required_connector": "GitHub",
+    "relay_repo": "HCDecorAD/HCDecor-HCDR-Relay",
+    "relay_label": "hcdr-job",
+    "health_before_substantial_local_work": true
+  },
+  "defect_codes": {
+    "lookup_wrong_transport": "DISCOVERY_ROUTE_DEFECT",
+    "stale_snapshot_claim": "STALE_CONTEXT_DEFECT",
+    "dedicated_action_assumption": "DEDICATED_ACTION_ASSUMPTION_DEFECT"
+  }
+}
