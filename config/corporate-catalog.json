@@ -121,8 +121,8 @@
         "operator-conversation-ui"
       ],
       "risk_class": "operator-ui",
-      "gate": "must-not-own-mission-loop",
-      "verification_state": "active"
+      "gate": "HC AutoChat source contract",
+      "verification_state": "source-contract-only"
     },
     {
       "tool_id": "hc-moonshot",
@@ -252,7 +252,7 @@
     {
       "system_id": "hc-autochat",
       "role": "operator-conversation-ui",
-      "state": "active",
+      "state": "source-contract-only",
       "tool_refs": [
         "hc-autochat"
       ],
