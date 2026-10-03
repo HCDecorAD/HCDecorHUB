@@ -48,6 +48,8 @@ jobs:
         run: npm run test:done-durable
       - name: HC Group DONE package gate
         run: npm run test:hc-group-done-package
+      - name: Remaining DONE program gate
+        run: npm run test:remaining-done-plan
       - name: TransWarp durable recovery acceptance
         run: npm run test:transwarp-acceptance
       - name: HC Group portfolio pilot
