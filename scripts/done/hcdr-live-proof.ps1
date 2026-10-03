@@ -7,7 +7,7 @@ node scripts/hcdr-relay-implementation.test.mjs
 if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
 try{gh auth status 2>$null|Out-Null}catch{Write-Host 'HC_DONE_D02_OWNER_REQUIRED gh_auth_missing=1';exit 30}
 $mission='hc-group-hcdr-live-proof';$corr=[guid]::NewGuid().ToString();$source='hc-group-done-program'
-$body=@{schema='hcdr-relay/v1';tool='health';args=@{};source_id=$source;mission_id=$mission;correlation_id=$corr}|ConvertTo-Json -Compress
+$body=@{schema='hcdr-relay/v1.2';source='hocuong-v12-production';approved=$true;approval_scope='HC Group DONE harmless read-only HCDR live health proof';tool='health';args=@{};source_id=$source;mission_id=$mission;correlation_id=$corr}|ConvertTo-Json -Compress
 $url=gh issue create --repo $Repo --title "HCDR live proof $corr" --label hcdr-job --body $body
 if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
 $num=($url -split '/')[-1]
