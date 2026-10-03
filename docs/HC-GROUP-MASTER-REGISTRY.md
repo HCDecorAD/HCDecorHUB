@@ -221,3 +221,5 @@ TransWarp may remain WAITING/RUNNING with an exact checkpoint while its Worker a
 This document is the human-readable corporate map. The machine-readable registry must become runtime source of truth. Chat summaries are inputs, not authoritative runtime state. Every status change requires timestamped evidence.
 
 - Declared catalog/lifecycle source-contract closure: after `b76bbbd8307e2923856fa3798fd6b61b3a9bc97a`, no Corporate Catalog tool/system remains in `active` or `not-proven-done` state and no lifecycle mission remains non-DONE within the declared scope. This does not imply enterprise completeness or live-runtime completeness; runtime-only claims still require separate evidence.
+
+- HCDR + AutoDebug source implementation gates: HCDR relay result envelopes now echo `source_id`, `mission_id`, and `correlation_id`; AutoDebug has executable verified-fix diagnosis and fail-closed known-fix repair verification. Quality Gate `37081434598` and Production Verify `37081434745` both PASS at `66b602f60f671c9874c7a15ad7f7bbe8b72b7fe2`. Capability state is `source-implementation-gated`; live HOCUONG/runtime end-to-end execution remains NOT_PROVEN.
