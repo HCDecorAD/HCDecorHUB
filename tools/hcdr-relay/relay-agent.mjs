@@ -85,7 +85,16 @@ function laneFor(body){
   return "mutate:"+requested.slice(0,80);
 }
 async function runJob(body){
-  return hybrid.execute(body.tool,body.args||{},{localReachable:true});
+  const context={
+    localReachable:true,
+    approved:body.approved===true,
+    approval_scope:body.approval_scope||null,
+    source:body.source||null,
+    source_id:body.source_id||null,
+    mission_id:body.mission_id||null,
+    correlation_id:body.correlation_id||null
+  };
+  return hybrid.execute(body.tool,body.args||{},context);
 }
 
 const active=new Map();
