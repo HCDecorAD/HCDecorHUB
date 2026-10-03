@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "mode": "local-first",
+  "computeProvider": "HOCUONG_LAPTOP",
+  "paths": {
+    "dataRoot": "D:\\HC_DATA",
+    "projects": "D:\\HC_DATA\\projects",
+    "builds": "D:\\HC_DATA\\builds",
+    "cache": "D:\\HC_DATA\\cache",
+    "artifacts": "D:\\HC_DATA\\artifacts",
+    "evidence": "D:\\HC_DATA\\evidence",
+    "queuePending": "D:\\HC_DATA\\queue\\pending",
+    "queueRunning": "D:\\HC_DATA\\queue\\running",
+    "queueDone": "D:\\HC_DATA\\queue\\done",
+    "queueFailed": "D:\\HC_DATA\\queue\\failed",
+    "githubPending": "D:\\HC_DATA\\sync\\github-pending",
+    "githubSynced": "D:\\HC_DATA\\sync\\github-synced",
+    "githubRetry": "D:\\HC_DATA\\sync\\retry"
+  },
+  "policy": {
+    "buildLocalFirst": true,
+    "githubBuild": false,
+    "githubSyncAsync": true,
+    "githubQueueBlocksDone": false,
+    "artifactLocal": true,
+    "failBuildOnGithubSyncFailure": false
+  },
+  "future": {
+    "computeProviderIsReplaceable": true,
+    "dataLayoutPortable": true
+  }
+}
