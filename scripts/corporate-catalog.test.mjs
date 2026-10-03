@@ -6,7 +6,8 @@ assert.equal(c.schema_version,'1.2.0');
 assert.equal(c.projects.length,3);
 assert.deepEqual(new Set(c.projects.map(x=>x.project_id)),new Set(['HCDECOR','GSC','AMO']));
 for(const p of c.projects){assert.ok(p.workspace_id);assert.ok(p.repository);assert.ok(p.production_authority);}
-assert.equal(c.projects.some(p=>/vercel/i.test(p.production_authority)),false);
+const authorities=new Set(c.projects.map(p=>String(p.production_authority).toLowerCase().replace(/\s+/g,'-')));
+assert.deepEqual(authorities,new Set(['wordpress','github-pages']));
 assert.ok(Array.isArray(c.systems)&&c.systems.length>=11);
 for(const id of ['hc-done','transwarp','hcdr','hc-autodebug','hc-agent-control','hc-autochat','hc-moonshot','hc-design-ai-studio','hc-visual-builder','hc-mediaflow','hc-video-downloader']) assert.ok(c.systems.find(x=>x.system_id===id),id);
 for(const s of c.systems){assert.ok(s.role);assert.ok(s.state);assert.ok(Array.isArray(s.tool_refs)&&s.tool_refs.length);assert.equal(s.production_authority,false);}
@@ -32,4 +33,4 @@ assert.equal(feed.latest.components.hc_agent_control.required_chat_connector,'Gi
 assert.equal(feed.latest.components.hc_agent_control.dedicated_hcdr_action_required,false);
 assert.equal(feed.latest.update_id,'HC-GROUP-2026-10-03-HCDR-V3-GITHUB-RELAY');
 for(const [id,gate] of [['hc-autochat','HC AutoChat source contract'],['hc-mediaflow','HC MediaFlow source contract'],['hc-video-downloader','HC Video Downloader source contract'],['hc-design-ai-studio','HC Design AI Studio source contract']]){assert.equal(c.tools.find(x=>x.tool_id===id).verification_state,'runtime-source-ci',id);assert.equal(c.systems.find(x=>x.system_id===id).state,'runtime-source-ci',id);assert.equal(c.tools.find(x=>x.tool_id===id).gate,gate,id);}
-console.log('CORPORATE_CATALOG_PASS projects=3 systems='+c.systems.length+' tools='+c.tools.length+' retired_vercel=0 expanded_known_assets=1');
+console.log('CORPORATE_CATALOG_PASS projects=3 systems='+c.systems.length+' tools='+c.tools.length+' retired_external_provider=0 expanded_known_assets=1');

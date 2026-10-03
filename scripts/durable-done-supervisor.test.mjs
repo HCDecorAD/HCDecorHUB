@@ -39,7 +39,7 @@ await t('resource wait releases mission ownership',async()=>{
  const q=new DurableMissionQueue(file,{leaseMs:1000,clock});
  q.upsert({mission_id:'m3',state:'READY',required_capabilities:['code']});
  const s=new DurableDoneSupervisor(q,{capabilities:['code']});
- const x=await s.tick(async()=>({waiting_resource:true,resource:'vercel'}));
+ const x=await s.tick(async()=>({waiting_resource:true,resource:'external-provider'}));
  assert.equal(x.state,'WAITING_RESOURCE');assert.equal(q.get('m3').worker_id,null);
 });
 await t('bounded retry becomes hard blocked',async()=>{

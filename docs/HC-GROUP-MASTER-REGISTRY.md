@@ -50,10 +50,10 @@ Domain -> System -> Project -> Goal -> Mission -> Task -> Worker/Tool -> Evidenc
    - Future workspaces register by schema; no context mixing.
 
 ## Current GitHub repositories
-- HCDecorAD/HCDecorHUB — main platform/core.
-- HCDecorAD/GSC — GSC application.
-- HCDecorAD/AMONguyen — AMO application.
-- HCDecorAD/HCDecor-HCDR-Relay — HCDR transport/control queue.
+- HCDecorAD/HCDecorHUB â€” main platform/core.
+- HCDecorAD/GSC â€” GSC application.
+- HCDecorAD/AMONguyen â€” AMO application.
+- HCDecorAD/HCDecor-HCDR-Relay â€” HCDR transport/control queue.
 
 Gap: many active local projects/tools are not first-class catalog entities. The registry must cover local-only assets too.
 
@@ -120,13 +120,13 @@ Priority considers business value, dependency criticality, readiness, risk, time
 - Evidence store corruption hardening: malformed JSONL lines no longer crash operator telemetry; valid events remain readable while store health becomes `DEGRADED` with explicit malformed/valid counts. Operator Dashboard exposes this read-only health signal. Quality Gate + Production Verify PASS at `ee33a2330a9dd89f0e5763aa981f911a7589d790` and UI visibility PASS at `c4cb83761ba43e1d84bc12ebde386b97c3e5fa5c`.
 - Goal/Mission Lifecycle Registry 1.1.0: Goal and Mission records now carry validated references into Corporate Catalog Project/System/Tool entities plus explicit evidence references. Quality Gate + Production Verify PASS at `d66acce0623d957631dca45de905bbb2a811bf4f`.
 
-- MOON machine readiness baseline: restart/recovery, blocked-lane portfolio concurrency, security/release/no-Vercel, active Goal completeness, HCDR canonical local route, catalog System→Tool integrity, and declared active inventory coverage are machine-gated. The strengthened 10-check gate plus independent declared-inventory denominator are verified; current declared coverage is 34/34 = 100.00%. Enterprise completeness outside the declared inventory is not claimed.
+- MOON machine readiness baseline: restart/recovery, blocked-lane portfolio concurrency, security/release/no-retired-provider, active Goal completeness, HCDR canonical local route, catalog Systemâ†’Tool integrity, and declared active inventory coverage are machine-gated. The strengthened 10-check gate plus independent declared-inventory denominator are verified; current declared coverage is 34/34 = 100.00%. Enterprise completeness outside the declared inventory is not claimed.
 
 - Declared active asset inventory coverage: `config/active-asset-inventory.json` defines an independent machine denominator of 34 currently declared active assets (3 projects, 11 systems, 15 tools, 5 resources). Corporate Catalog covers 34/34 = 100.00% of this declared inventory; Quality Gate + Production Verify PASS at `003d6798d7d55c20605b949b4eaaee9f81de9b55`. This is not a claim that every possible HC Group asset outside the declared inventory has been discovered.
 
 - Budget deny diagnostics: atomic multi-budget admission preserves zero partial spend while exposing per-budget `sufficient:true/false` plus transaction-level `denied_by`; scheduler preserves these diagnostics without stalling unrelated READY work. Quality Gate + Production Verify PASS at `0270010c8cd7f31161ced8b2ccdacd26872a9218` and scheduler regression guard PASS at `910d9c825fa0ee61987e14e5cf8de885907a4850`.
 
-- HC AutoChat source contract: operator-UI-only separation is machine-gated; chat must not own the durable mission loop, Goal/Mission must outlive chat/session loss, direct production authority is forbidden, and evidence—not conversation—determines DONE. Quality Gate + Production Verify PASS at `7136f7aca92c988cf485198a9715abb33873f400`. Runtime remains source-contract-only.
+- HC AutoChat source contract: operator-UI-only separation is machine-gated; chat must not own the durable mission loop, Goal/Mission must outlive chat/session loss, direct production authority is forbidden, and evidenceâ€”not conversationâ€”determines DONE. Quality Gate + Production Verify PASS at `7136f7aca92c988cf485198a9715abb33873f400`. Runtime remains source-contract-only.
 - HC MediaFlow / Video Downloader / Design AI Studio source contracts: machine-readable fail-closed contracts are now gated for media routing, bounded/restart-safe download semantics, provenance/local-first design semantics, mission correlation, and no direct production publish authority. Regression guard + Quality Gate + Production Verify PASS at `b76bbbd8307e2923856fa3798fd6b61b3a9bc97a`. These are source/CI contracts only; live runtime/provider/HOCUONG execution is not claimed.
 
 - HC Agent Control source contract: machine-readable acceptance at `config/hc-agent-control-acceptance.json`; catalog/tool/system state is `source-contract-only`. Quality Gate + Production Verify PASS at `5a624a0a24ff473dea49c0c42eba042e87e2ff7a`. This proves control semantics in source/CI only; live runtime ownership, worker transport, and HOCUONG execution remain NOT_PROVEN.
@@ -134,7 +134,7 @@ Priority considers business value, dependency criticality, readiness, risk, time
 - HCDR mission/correlation source contract: relay job/result envelope now carries `source_id`, `mission_id`, and `correlation_id`; HCDR repo source-contract CI check `correlation` PASS at `6696e4e41940582ae344925c65949c25e7b4ed0f` (Actions run `37056914452`). This proves source-level contract/echo semantics only; HOCUONG runtime end-to-end propagation remains NOT_PROVEN.
 
 ## Remaining capability expansion
-- Maintain Corporate Catalog coverage at >=95% of the independent declared-active inventory; current measured coverage is 34/34 = 100.00%. Expand the inventory first when genuinely new active assets are discovered, then require catalog catch-up. Goal/Mission → Project/System/Tool/Evidence reference relations are now covered by Lifecycle Registry 1.1.0; local Worker↔Mission↔Evidence runtime relations are now covered by the durable evidence spool baseline; shared/fenced multi-writer telemetry remains an expansion area only when required.
+- Maintain Corporate Catalog coverage at >=95% of the independent declared-active inventory; current measured coverage is 34/34 = 100.00%. Expand the inventory first when genuinely new active assets are discovered, then require catalog catch-up. Goal/Mission â†’ Project/System/Tool/Evidence reference relations are now covered by Lifecycle Registry 1.1.0; local Workerâ†”Missionâ†”Evidence runtime relations are now covered by the durable evidence spool baseline; shared/fenced multi-writer telemetry remains an expansion area only when required.
 - HCDR/AutoDebug source correlation contracts are now registered and source-gated. HC Agent Control now also has a machine-readable source acceptance contract covering mission ownership, no-user-nudge ordinary progress, blocked-lane isolation, heartbeat/checkpoint requirements, evidence-backed DONE, and fail-closed uncertain side effects. Quality Gate + Production Verify PASS at `5a624a0a24ff473dea49c0c42eba042e87e2ff7a`. Agent Control remains `source-contract-only` with `runtime_done:false`; no live Agent Control runtime/HOCUONG execution is claimed. Next expansion is real runtime end-to-end evidence where execution authority exists.
 - Extend the durable budget ledger from single-Governor file-backed admission to a fenced/atomic multi-writer backend only when fleet-wide concurrent writers are actually required.
 - Extend worker heartbeat and operator telemetry from single-node local-spool diagnostics to a durable shared/fenced backend only when multi-writer runtime authority is actually required; keep the current read-only dashboard authority labels fail-honest.
@@ -164,7 +164,7 @@ CP4 TransWarp acceptance: injected failure -> recovery -> resume -> final gate.
 CP5 Portfolio pilot: HC DONE/TransWarp + HUB + AMO/GSC; blocked lane must not stall others.
 CP6 MOON gate: restart/recovery/observability/security/release evidence.
 
-## Worker Operating Law — 2026-10-02
+## Worker Operating Law â€” 2026-10-02
 This law governs all HC Group companies, projects, missions and workers. It is intentionally analogous to the existing rule that coding workers own their assigned code work through verification rather than waiting for the Owner to prompt every step.
 
 ### Mission ownership
@@ -213,9 +213,9 @@ This law governs all HC Group companies, projects, missions and workers. It is i
 TransWarp may remain WAITING/RUNNING with an exact checkpoint while its Worker advances Stage 1 -> Stage 2 -> ... -> Final Gate -> DONE. During that time, other qualified Workers continue HUB, HC DONE, AutoDebug, HCDR, GSC, AMO, Catalog or other READY missions. Only real dependency edges cause waiting.
 
 ## Retired infrastructure
-- Vercel is RETIRED/REMOVED from HC Group runtime and deployment architecture.
-- Vercel checks/statuses must not gate, block, schedule, deploy, or influence HC Group mission state.
-- Any legacy GitHub/Vercel status context is external stale integration noise unless explicitly re-authorized by Owner.
+- Retired external deployment providers are removed from HC Group runtime and deployment architecture.
+- Retired external provider checks/statuses must not gate, block, schedule, deploy, or influence HC Group mission state.
+- Any legacy external deployment status context is stale integration noise unless explicitly re-authorized by Owner.
 
 ## Source-of-truth rule
 This document is the human-readable corporate map. The machine-readable registry must become runtime source of truth. Chat summaries are inputs, not authoritative runtime state. Every status change requires timestamped evidence.
@@ -232,7 +232,7 @@ This document is the human-readable corporate map. The machine-readable registry
 
 - HCDR Mobile Remote ONE-SHOT fix package is DONE at source/CI scope: launcher `hcdr-mobile-remote-done.bat` self-elevates, syncs source, verifies HCDR contracts, installs Scheduled Task + watchdog, checks heartbeat, performs D02 live proof, then runs D06 Final Freeze. Exact HEAD `04af58e1a7dc80b0ea9b2afafd5ffd6c9b9011a9`; Quality Gate `37085462936` SUCCESS; Production Verify `37085462937` SUCCESS. Live HOCUONG state remains `LOCAL_ACTIVATION_REQUIRED` until this launcher is run once locally; relay issue `#906` remains pending meanwhile.
 
-## Corporate Update Broadcast Law — 2026-10-03
+## Corporate Update Broadcast Law â€” 2026-10-03
 - CANONICAL_UPDATE -> CORPORATE_BROADCAST -> CONSUMER_REFRESH -> STATUS_CLAIM.
 - Every material control-plane, transport, runtime, safety, or capability update must publish a machine-readable notice in `config/corporate-update-feed.json`.
 - HC DONE, Agent Control, AutoChat, AutoDebug, TransWarp, HCDR and all project adapters must refresh the latest notice before declaring a shared capability unavailable, retired, blocked, or replaced.

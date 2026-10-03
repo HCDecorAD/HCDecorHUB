@@ -25,11 +25,11 @@ ok('release contract requires verification audit and rollback',()=>{
   assert.equal(rt.tenant_isolation.fail_closed,true);
 });
 
-ok('retired Vercel is absent from active deployment registry',()=>{
+ok('retired external provider is absent from active deployment registry',()=>{
   const site=fs.readFileSync('config/site-registry.json','utf8').toLowerCase();
   const ws=fs.readFileSync('config/workspaces.json','utf8').toLowerCase();
-  assert.equal(site.includes('vercel'),false);
-  assert.equal(ws.includes('vercel'),false);
+  assert.equal(site.includes('retired-provider'),false);
+  assert.equal(ws.includes('retired-provider'),false);
 });
 
 ok('active goals are machine-complete and evidence-gated',()=>{
@@ -53,7 +53,7 @@ ok('HCDR remains canonical registered local execution route',()=>{
   assert.ok(r);
   assert.equal(r.kind,'local-execution');
   assert.ok(t?.provides?.includes('local-execution-transport'));
-  assert.equal(cat.resources.some(x=>/vercel/i.test(String(x.resource_id))),false);
+  assert.equal(cat.resources.some(x=>/retired-provider/i.test(String(x.resource_id))),false);
 });
 
 ok('declared active inventory catalog coverage is at least 95 percent',()=>{

@@ -46,7 +46,7 @@ t('completed dependency unlocks next mission after restart',()=>{
 t('waiting mission releases ownership without becoming failed',()=>{
   const q=new DurableMissionQueue(file,{leaseMs:1000,clock});
   const c=q.claim('b','w3',{workerCapabilities:['code']});
-  q.transition('b','w3',c.fence_token,'WAITING_RESOURCE',{resource:'vercel'});
+  q.transition('b','w3',c.fence_token,'WAITING_RESOURCE',{resource:'external-provider'});
   const b=q.get('b'); assert.equal(b.state,'WAITING_RESOURCE'); assert.equal(b.worker_id,null);
 });
 console.log(`GOVERNOR_DURABLE_QUEUE_PASS ${pass}/7`);

@@ -1,9 +1,9 @@
-# HCDecor Website Production Checkpoint — 2026-10-01
+# HCDecor Website Production Checkpoint â€” 2026-10-01
 
 Scope: HCDecor public website only. Production authority: WordPress.com + Elementor. GitHub remains source/version/rollback where applicable.
 
 ## Production
-- Homepage: page ID 44 — HCDecor – Design & Build
+- Homepage: page ID 44 â€” HCDecor â€“ Design & Build
 - Services: page ID 32
 - Projects: page ID 33
 - About: page ID 34
@@ -20,7 +20,7 @@ Scope: HCDecor public website only. Production authority: WordPress.com + Elemen
 - Projects page now includes verified stored HCDecor signage media: Wait Gaming and PLAY NET.
 - Live crawl: main pages HTTP 200.
 - No Elementor upgrade, no HCDecor Runtime modification.
-- No Supabase/Vercel added to HCDecor website architecture.
+- No additional external cloud deployment provider added to HCDecor website architecture.
 - Legacy GSC/AMO/WooCommerce pages left unchanged pending role verification.
 
 ## Media note
@@ -34,4 +34,4 @@ WordPress media connector returned an upstream response error after binary write
 - Review legacy public URLs before any noindex/draft/delete action.
 
 ## Guardrails
-Do not change HCDecor HUB architecture from this website task. WordPress.com remains production authority. Do not move HCDecor production to Vercel/Supabase. Do not fabricate company/project data.
+Do not change HCDecor HUB architecture from this website task. WordPress.com remains production authority. Do not move HCDecor production away from WordPress.com without explicit Owner approval. Do not fabricate company/project data.

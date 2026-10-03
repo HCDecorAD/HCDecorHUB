@@ -24,7 +24,7 @@ for(const [workspace,provider] of cases){
   pass++;
 }
 const p=deploymentProfileFromConfig(config,'hcdecor');
-const unknown=deploymentPlanFromProfile(p,{provider:'vercel',environment:'production'});
+const unknown=deploymentPlanFromProfile(p,{provider:'retired-provider',environment:'production'});
 assert.equal(unknown.ok,false);
 assert.equal(unknown.error,'deployment_provider_not_configured');
 pass++;
@@ -32,4 +32,4 @@ const missing=deploymentProfileFromConfig(config,'missing-workspace');
 assert.equal(missing.ok,false);
 assert.equal(missing.error,'workspace_not_found');
 pass++;
-console.log(`DEPLOYMENT_ADAPTER_PASS ${pass}/5 authorities=wordpress,github-pages retired_vercel=blocked`);
+console.log(`DEPLOYMENT_ADAPTER_PASS ${pass}/5 authorities=wordpress,github-pages retired_provider=blocked`);
