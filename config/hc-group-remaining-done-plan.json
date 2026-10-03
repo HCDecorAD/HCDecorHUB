@@ -22,15 +22,21 @@
       "parallel_wave": 1,
       "launcher": "hc-done-02-hcdr-live.bat",
       "terminal_gate": "live read-only health roundtrip with source/mission/correlation IDs on HOCUONG",
-      "state": "WAITING_RESOURCE(HCDR)",
-      "blocker": "Run hcdr-mobile-remote-done.bat once on HOCUONG; issue #906 remains pending until local relay consumes it.",
+      "state": "ACTIVE_RECOVERY",
+      "blocker": "Local relay on HOCUONG is still offline; stale jobs #903-#905 were closed as superseded and #906 is now first open hcdr-job. Awaiting real hcdr-result/v2 from HOCUONG.",
       "fix_package_state": "DONE_SOURCE_CI",
-      "activation_state": "LOCAL_ACTIVATION_REQUIRED",
+      "activation_state": "ACTIVE_RECOVERY_QUEUE_HEAD",
       "one_shot_launcher": "hcdr-mobile-remote-done.bat",
       "one_shot_head": "04af58e1a7dc80b0ea9b2afafd5ffd6c9b9011a9",
       "one_shot_evidence": [
         "Quality Gate 37085462936 SUCCESS",
         "Production Verify 37085462937 SUCCESS"
+      ],
+      "recovery_evidence": [
+        "HCDecorAD/HCDecor-HCDR-Relay#903 closed not_planned",
+        "HCDecorAD/HCDecor-HCDR-Relay#904 closed not_planned",
+        "HCDecorAD/HCDecor-HCDR-Relay#905 closed not_planned",
+        "HCDecorAD/HCDecor-HCDR-Relay#906 open queue head, 0 comments"
       ]
     },
     {
@@ -130,9 +136,7 @@
       "D04",
       "D05"
     ],
-    "waiting_packages": [
-      "D02"
-    ],
+    "waiting_packages": [],
     "blocked_packages": [
       "D06"
     ],
@@ -148,8 +152,14 @@
         "HEAD dfd674e15ef35e9d83d2c0f29e5620fbd62a5261"
       ],
       "D02": [
-        "relay issue HCDecorAD/HCDecor-HCDR-Relay#906 pending"
+        "HCDecorAD/HCDecor-HCDR-Relay#903 closed not_planned",
+        "HCDecorAD/HCDecor-HCDR-Relay#904 closed not_planned",
+        "HCDecorAD/HCDecor-HCDR-Relay#905 closed not_planned",
+        "HCDecorAD/HCDecor-HCDR-Relay#906 open queue head, 0 comments"
       ]
-    }
+    },
+    "active_packages": [
+      "D02"
+    ]
   }
 }
