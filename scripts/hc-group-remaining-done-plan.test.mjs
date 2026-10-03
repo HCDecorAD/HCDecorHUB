@@ -1,0 +1,10 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+const plan=JSON.parse(fs.readFileSync('config/hc-group-remaining-done-plan.json','utf8'));
+assert.equal(plan.packages.length,6);assert.deepEqual(plan.waves.map(w=>w.max_parallel),[3,2,1]);
+for(const p of plan.packages) assert.ok(fs.existsSync(p.launcher),p.launcher);
+const master=fs.readFileSync('scripts/done/remaining-program.ps1','utf8');
+assert.ok(master.includes("RunWave 1"));assert.ok(master.includes("RunWave 2"));assert.ok(master.includes("RunWave 3"));
+assert.ok(master.includes('approved plugin/web research'));assert.ok(master.includes('research-request.json'));
+const hcdr=fs.readFileSync('scripts/done/hcdr-live-proof.ps1','utf8');
+assert.ok(hcdr.includes("tool='health'"));assert.ok(hcdr.includes("hcdr-result/v2"));assert.ok(hcdr.includes('correlation_id'));
+console.log('HC_GROUP_REMAINING_DONE_PLAN_PASS packages=6 waves=3 parallel=3_2_1 live_hcdr_read_only=1');
