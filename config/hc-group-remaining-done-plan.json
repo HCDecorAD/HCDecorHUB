@@ -1,0 +1,20 @@
+{
+  "schema_version":"1.0.0",
+  "program_id":"hc-group-runtime-finish",
+  "goal":"Close remaining HC GROUP runtime-readiness without redoing verified PASS baselines.",
+  "packages":[
+    {"id":"D01","name":"Evidence Durability Final","weight":2,"depends_on":[],"parallel_wave":1,"launcher":"hc-done-01-evidence.bat","terminal_gate":"evidence store + archive index + operator telemetry PASS"},
+    {"id":"D02","name":"HCDR Live Transport Proof","weight":3,"depends_on":[],"parallel_wave":1,"launcher":"hc-done-02-hcdr-live.bat","terminal_gate":"live read-only health roundtrip with source/mission/correlation IDs on HOCUONG"},
+    {"id":"D03","name":"AutoDebug Runtime Proof","weight":2,"depends_on":[],"parallel_wave":1,"launcher":"hc-done-03-autodebug-live.bat","terminal_gate":"verified fix-memory diagnosis + repair verification executable runtime PASS"},
+    {"id":"D04","name":"Agent Control + AutoChat Runtime","weight":4,"depends_on":["D02","D03"],"parallel_wave":2,"launcher":"hc-done-04-control-runtime.bat","terminal_gate":"local runtime implementation + mission ownership/heartbeat/chat separation E2E PASS"},
+    {"id":"D05","name":"Media Runtime Bundle","weight":4,"depends_on":["D02"],"parallel_wave":2,"launcher":"hc-done-05-media-runtime.bat","terminal_gate":"MediaFlow + Video Downloader + Design AI local-safe runtime adapters PASS"},
+    {"id":"D06","name":"Portfolio Final Freeze","weight":3,"depends_on":["D01","D02","D03","D04","D05"],"parallel_wave":3,"launcher":"hc-done-06-final-freeze.bat","terminal_gate":"HC GROUP DONE package + production verify + final release evidence PASS"}
+  ],
+  "waves":[
+    {"wave":1,"packages":["D01","D02","D03"],"max_parallel":3},
+    {"wave":2,"packages":["D04","D05"],"max_parallel":2},
+    {"wave":3,"packages":["D06"],"max_parallel":1}
+  ],
+  "not_redone":["CP0-CP6","S5-S10","GSC/AMO verified baselines","catalog/lifecycle closure","canonical HC GROUP DONE package"],
+  "runtime_truth":"A package may return OWNER_REQUIRED/HARD_BLOCKED; no package may claim runtime GREEN from source/CI evidence alone."
+}
