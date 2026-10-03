@@ -2,21 +2,21 @@
 
 Local mirror: `D:\HCDecorHUB\HC_Sentinel`
 
-Status: **LOCAL_OPERATOR_READY**
-Latest completed scope: **P1 -> P29**
-Full regression: **59/59 PASS, 0 FAIL**
+Status: **APP_READY**
+Latest completed scope: **P1 -> P34**
+Full regression: **63/63 PASS, 0 FAIL**
 
 ## Purpose
 
-HC Sentinel is the visual operations, verification, watch, alerting, and repair-routing layer for the HC ecosystem.
+HC Sentinel is the visual operations, verification, watch, alerting, evidence, policy, and repair-routing layer for the HC ecosystem.
 
 Core flow:
 
 `Command -> Observe -> Detect -> Compare -> Diagnose -> Route -> Repair -> Verify -> Evidence -> Alert -> DONE`
 
-It is independent, local-first, command-driven, and multi-project capable.
+It is independent, local-first, command-driven, multi-project capable, and now ships with a live local app surface.
 
-## Current runtime modes
+## Runtime modes
 
 - MANUAL_NOW
 - COMMAND
@@ -25,7 +25,7 @@ It is independent, local-first, command-driven, and multi-project capable.
 - SCHEDULED
 - AUTO
 
-Manual/user command always has priority and must never be blocked by a schedule.
+Manual/user command always has priority and must never be blocked by a schedule/watch loop.
 
 ## Verified capability groups
 
@@ -39,26 +39,44 @@ Operator commands, project profiles, baseline manager, repair bridge, real targe
 Finding lifecycle, mission ledger, policy engine, health supervisor, release gate.
 
 ### P25-P29 — Daily operations runtime
-- notification center with pluggable sinks
-- governed baseline promotion: CANDIDATE -> REVIEW -> APPROVED / REJECTED
-- WATCH runtime with per-target intervals and finding alerts
-- local command API binding
-- local release manifest
-- Windows launcher `runtime/start-sentinel.bat`
-- local server entry `runtime/start-sentinel.js`
+Notification center, governed baseline promotion, watch runtime, local command API, Windows launcher/local release package.
 
-Verified smoke:
+### P30-P34 — App-ready integration
+- local bootstrap creates required runtime/data/evidence/log folders
+- local server serves the actual Command Center UI
+- UI is bound to live local APIs
+- Evidence Index with project/type filtering
+- Settings Store with safe allowlist
+- API endpoints for status, command, evidence, settings
+- Golden Acceptance validates UI + status + command + evidence + settings together
 
-`baseline APPROVED -> WATCH run 1 -> alert 1`
+Golden Acceptance:
 
-## Command Center UI
+`UI=true -> SENTINEL_READY -> command=RUNNING -> evidence=1 -> theme=light`
 
-UI lives in `ui/`.
+## Local app
+
+Default port:
+`43110`
+
+Launcher:
+`runtime/start-sentinel.bat`
+
+Local API:
+- `GET /api/status`
+- `POST /api/command`
+- `GET /api/evidence`
+- `GET /api/settings`
+- `POST /api/settings`
+
+Command Center is served from the same local server.
+
+## UI
 
 Theme:
 - Dark: deep navy
 - Light: gray-white
-- theme preference persisted locally
+- preference persists locally
 
 Display rule:
 - 🔵 Pxx / Phase
@@ -67,33 +85,22 @@ Display rule:
 - 🔴 FAIL / BLOCKED
 - 🟡 WAITING / REVIEW_REQUIRED
 
-## Local runtime
-
-Release manifest:
-`runtime/release-manifest.json`
-
-Default local port:
-`43110`
-
-Launcher:
-`runtime/start-sentinel.bat`
-
-The launcher and transport scripts are ASCII-safe.
-
 ## Data policy
 
 GitHub stores source, sanitized manifests/data, schemas, checkpoints, evidence indexes, and docs.
 
-Local runtime stores live state, active queues, locks, browser/session profiles, raw private evidence, cache, and secrets.
+Local runtime stores live state, queues, locks, browser/session profiles, raw private evidence, cache, logs, and secrets.
 
-## Current verified milestones
+## Verified milestones
 
 - P1-P10: **SENTINEL_READY**
 - P11-P14: **OPERATOR_READY_CORE**
 - P15-P19: **OPERATOR_READY**
 - P20-P24: **OPERATIONS_HARDENED**
 - P25-P29: **LOCAL_OPERATOR_READY**
-- Full regression: **59/59 PASS, 0 FAIL**
+- P30-P34: **APP_READY**
+- Full regression: **63/63 PASS, 0 FAIL**
+- P30-P34 workflow: `37151628113`
 
 ## Current tracked live finding
 
@@ -104,4 +111,4 @@ GSC public:
 - HCDR issue: #1265
 - state: OPEN / ROUTED / TRACKED
 
-It is intentionally not auto-repaired because current policy requires operator-reviewed handling for medium findings.
+Medium findings are not auto-repaired by default.
