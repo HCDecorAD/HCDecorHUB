@@ -1,0 +1,3 @@
+import test from "node:test";import assert from "node:assert/strict";import {readFile} from "node:fs/promises";
+test("local release manifest has node entry and launcher",async()=>{const x=JSON.parse(await readFile(new URL("../runtime/release-manifest.json",import.meta.url),"utf8"));assert.equal(x.runtimePolicy,"local-first");assert.match(x.entry,/start-sentinel\.js$/);assert.match(x.launcher,/\.bat$/);assert.equal(x.productionDeploy,false);});
+test("launcher stays ASCII safe",async()=>{const x=await readFile(new URL("../runtime/start-sentinel.bat",import.meta.url));assert.ok([...x].every(b=>b<128));});
