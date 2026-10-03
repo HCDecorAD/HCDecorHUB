@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {correlationFromJob,resultEnvelope} from '../tools/hcdr-relay/correlation.mjs';
+const body={source_id:'src-1',mission_id:'m-1',correlation_id:'c-1'};
+assert.deepEqual(correlationFromJob(body),body);
+assert.deepEqual(correlationFromJob({source_id:'  s  ',mission_id:'',correlation_id:null}),{source_id:'s'});
+const out=resultEnvelope({job:7,body,result:{ok:true,value:1}});
+assert.equal(out.schema,'hcdr-result/v2');
+assert.equal(out.job,7);
+assert.equal(out.source_id,'src-1');
+assert.equal(out.mission_id,'m-1');
+assert.equal(out.correlation_id,'c-1');
+assert.equal(out.ok,true);
+console.log('HCDR_RELAY_IMPLEMENTATION_CONTRACT_PASS correlation_echo=1 result_envelope=1 runtime_not_claimed=1');
