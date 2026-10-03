@@ -30,7 +30,7 @@ async function loadEvidence(){
   }catch{el.textContent="Evidence unavailable";}
 }
 
-async function loadFindings(){
+async function loadLogs(){\n  const el=document.getElementById("logList");\n  try{\n    const x=await api("/api/logs?limit=100");\n    renderList(el,x.items||[],i=>`${i.level??"info"} • ${i.type??"log"} • ${i.message??""}`);\n  }catch{el.textContent="Logs unavailable";}\n}\n\nasync function loadFindings(){
   const el=document.getElementById("findingList");
   try{
     const x=await api("/api/findings");
@@ -56,10 +56,10 @@ document.getElementById("runNow").addEventListener("click",async()=>{
 });
 
 document.getElementById("refreshEvidence").addEventListener("click",loadEvidence);
-document.getElementById("refreshFindings").addEventListener("click",loadFindings);
+document.getElementById("refreshFindings").addEventListener("click",loadFindings);\ndocument.getElementById("refreshLogs").addEventListener("click",loadLogs);
 
 (async()=>{
   try{const s=await api("/api/status");document.body.dataset.sentinelStatus=s.status??"UNKNOWN";}
   catch{document.body.dataset.sentinelStatus="OFFLINE";}
-  await Promise.allSettled([loadEvidence(),loadFindings()]);
+  await Promise.allSettled([loadEvidence(),loadFindings(),loadLogs()]);
 })();
