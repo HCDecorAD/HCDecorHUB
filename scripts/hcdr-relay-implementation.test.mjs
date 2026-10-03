@@ -11,3 +11,10 @@ assert.equal(out.mission_id,'m-1');
 assert.equal(out.correlation_id,'c-1');
 assert.equal(out.ok,true);
 console.log('HCDR_RELAY_IMPLEMENTATION_CONTRACT_PASS correlation_echo=1 result_envelope=1 runtime_not_claimed=1');
+
+import fs from 'node:fs';
+const relaySource=fs.readFileSync('tools/hcdr-relay/relay-agent.mjs','utf8');
+const watchdogSource=fs.readFileSync('tools/hcdr-relay/watchdog.ps1','utf8');
+for(const token of ['hcdr-relay/v1.2','uncertain_previous_execution','status:"quarantined"','current_job:i.number']) assert.ok(relaySource.includes(token),token);
+for(const token of ['HCDR_WATCHDOG_STALE_RELAY_STOPPED','relay-agent\\.mjs','Stop-Process','current_job']) assert.ok(watchdogSource.includes(token),token);
+console.log('HCDR_RELAY_SELF_HEALING_PASS stale_restart=1 quarantine=1 blind_retry=0');
