@@ -1,8 +1,9 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-call hc-group-done.bat
-if errorlevel 1 exit /b 1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\done\final-freeze-v2.ps1
+if errorlevel 1 exit /b %errorlevel%
 call hcdecor-final-release.bat
-if errorlevel 1 exit /b 1
-echo HC_DONE_D06_PASS final_freeze=1
+if errorlevel 1 exit /b %errorlevel%
+echo HC_DONE_D06_PASS final_freeze=manifest-verified
+exit /b 0
