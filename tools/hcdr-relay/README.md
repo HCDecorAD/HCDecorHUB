@@ -22,6 +22,6 @@ The relay repository uses GitHub issues labelled `hcdr-job`. Issue body:
 {"schema":"hcdr-relay/v1","tool":"health","args":{}}
 ```
 
-The agent posts a `hcdr-result/v1` JSON comment after execution.
+The agent posts a `hcdr-result/v2` JSON comment after execution and echoes `source_id`, `mission_id`, and `correlation_id` when present in the job body.
 
 Do not place tokens, secrets, .env contents, credentials, or production keys in jobs/results.
