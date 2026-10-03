@@ -35,7 +35,9 @@ if(Test-Path $heartbeat){
       if($proc -and $proc.Name -eq 'node.exe' -and $proc.CommandLine -match 'relay-agent\.mjs'){
         Stop-Process -Id ([int]$old.pid) -Force -ErrorAction SilentlyContinue
         Start-Sleep -Seconds 2
-        Write-Output ('HCDR_WATCHDOG_STALE_RELAY_STOPPED pid='+$old.pid+' current_job='+$old.current_job)
+        $jobs=''
+        if($old.workers){$jobs=(@($old.workers|ForEach-Object{$_.job}) -join ',')}
+        Write-Output ('HCDR_WATCHDOG_STALE_RELAY_STOPPED pid='+$old.pid+' active_jobs='+$jobs)
       }
     }
   }catch{}
