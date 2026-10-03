@@ -13,3 +13,4 @@ assert.equal(health.state,'DEGRADED');
 assert.equal(health.malformed_lines,1);
 assert.equal(health.valid_events,2);
 console.log('DURABLE_EVIDENCE_STORE_PASS durable=1 mission_filter=1 correlation_filter=1 fail_closed=1 malformed_tolerant=1 degraded_diagnostic=1');
+const capFile=path.join(dir,'capacity.jsonl');const cap=new DurableEvidenceStore(capFile,{warn_bytes:1});cap.append(a);const capHealth=cap.health();assert.equal(capHealth.needs_rotation,true);assert.equal(capHealth.state,'ATTENTION');assert.ok(capHealth.bytes>=1);console.log('DURABLE_EVIDENCE_CAPACITY_DIAGNOSTIC_PASS attention=1 rotation_not_automatic=1');
