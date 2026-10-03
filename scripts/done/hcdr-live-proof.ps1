@@ -18,7 +18,10 @@ while((Get-Date)-lt $deadline){
   if($LASTEXITCODE -ne 0){continue}
   $comments=$raw|ConvertFrom-Json
   foreach($c in $comments){
-    try{$j=$c.body|ConvertFrom-Json}catch{continue}
+    $text=[string]$c.body
+    if($text -match '(?s)^\s*```json\s*(\{.*\})\s*```\s*$'){$text=$matches[1]}
+    elseif($text -match '(?s)^\s*```\s*(\{.*\})\s*```\s*$'){$text=$matches[1]}
+    try{$j=$text|ConvertFrom-Json}catch{continue}
     if($j.schema -eq 'hcdr-result/v2' -and $j.correlation_id -eq $corr -and $j.mission_id -eq $mission -and $j.source_id -eq $source){
       $outDir=Join-Path $root '.runtime\remaining-done';New-Item -ItemType Directory -Force -Path $outDir|Out-Null
       $j|ConvertTo-Json -Depth 10|Set-Content -Encoding UTF8 (Join-Path $outDir 'D02-hcdr-live.json')
