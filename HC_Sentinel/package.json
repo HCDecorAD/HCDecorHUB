@@ -1,15 +1,23 @@
 {
   "name": "hc-sentinel",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.js",
     "test:p1": "node --test tests/kernel.test.js",
     "test:p2": "node --test tests/observer.test.js",
-    "test:p3": "node --test tests/visual-diff.test.js"
+    "test:p3": "node --test tests/visual-diff.test.js",
+    "test:p4": "node --test tests/p4-quality.test.js",
+    "test:p5": "node --test tests/p5-router.test.js",
+    "test:p6": "node --test tests/p6-verify.test.js",
+    "test:p7": "node --test tests/p7-autonomy.test.js",
+    "test:p8": "node --test tests/p8-observability.test.js",
+    "test:p9": "node --test tests/p9-multiproject.test.js",
+    "test:p10": "node --test tests/p10-golden.test.js"
   },
   "optionalDependencies": {
+    "axe-core": "^4.10.3",
     "playwright": "^1.55.0",
     "pixelmatch": "^7.1.0"
   }
