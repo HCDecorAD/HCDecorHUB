@@ -23,7 +23,15 @@
       "launcher": "hc-done-02-hcdr-live.bat",
       "terminal_gate": "live read-only health roundtrip with source/mission/correlation IDs on HOCUONG",
       "state": "WAITING_RESOURCE(HCDR)",
-      "blocker": "HCDR relay issue #906 has no result comment; live HOCUONG roundtrip not yet proven."
+      "blocker": "Run hcdr-mobile-remote-done.bat once on HOCUONG; issue #906 remains pending until local relay consumes it.",
+      "fix_package_state": "DONE_SOURCE_CI",
+      "activation_state": "LOCAL_ACTIVATION_REQUIRED",
+      "one_shot_launcher": "hcdr-mobile-remote-done.bat",
+      "one_shot_head": "04af58e1a7dc80b0ea9b2afafd5ffd6c9b9011a9",
+      "one_shot_evidence": [
+        "Quality Gate 37085462936 SUCCESS",
+        "Production Verify 37085462937 SUCCESS"
+      ]
     },
     {
       "id": "D03",
