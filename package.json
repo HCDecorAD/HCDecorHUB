@@ -38,7 +38,8 @@
     "test:autochat-contract": "node scripts/hc-autochat-acceptance.test.mjs",
     "test:mediaflow-contract": "node scripts/hc-mediaflow-acceptance.test.mjs",
     "test:video-downloader-contract": "node scripts/hc-video-downloader-acceptance.test.mjs",
-    "test:design-ai-contract": "node scripts/hc-design-ai-studio-acceptance.test.mjs"
+    "test:design-ai-contract": "node scripts/hc-design-ai-studio-acceptance.test.mjs",
+    "test:hcdr-relay-contract": "node scripts/hcdr-relay-implementation.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
