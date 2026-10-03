@@ -14,7 +14,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  classify:
+    runs-on: ubuntu-latest
+    outputs:
+      full: ${{ steps.risk.outputs.full }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: risk
+        shell: bash
+        run: |
+          files="$(git diff --name-only HEAD^ HEAD 2>/dev/null || true)"
+          echo "$files"
+          if [ -n "$files" ] && ! echo "$files" | grep -Ev '^(docs/|.*\.md$|.*\.txt$|\.github/ISSUE_TEMPLATE/)' >/dev/null; then
+            echo "full=false" >> "$GITHUB_OUTPUT"
+            echo "HC_DONE_RISK_FAST documentation_or_metadata_only=1"
+          else
+            echo "full=true" >> "$GITHUB_OUTPUT"
+            echo "HC_DONE_RISK_FULL runtime_or_contract_change=1"
+          fi
   quality:
+    needs: classify
+    if: needs.classify.outputs.full == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -129,3 +151,10 @@ jobs:
           HC_ALLOW_LOCAL_E2E=true npm run test:master
       - name: Cloudflare build
         run: npm run cf:build
+
+  fast-pass:
+    needs: classify
+    if: needs.classify.outputs.full == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "HC_DONE_FAST_PASS non_runtime_change=1 full_regression_skipped=1"
