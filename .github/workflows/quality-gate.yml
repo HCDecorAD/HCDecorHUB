@@ -76,10 +76,16 @@ jobs:
         run: npm run test:hcdr-relay-contract
       - name: HC Agent Control source contract
         run: npm run test:agent-control-contract
+      - name: Agent Control runtime gate
+        run: npm run test:agent-control-runtime
+      - name: AutoChat runtime gate
+        run: npm run test:autochat-runtime
       - name: HC AutoChat source contract
         run: npm run test:autochat-contract
       - name: HC MediaFlow source contract
         run: npm run test:mediaflow-contract
+      - name: Media runtime bundle gate
+        run: npm run test:mediaflow-runtime && npm run test:video-downloader-runtime && npm run test:design-ai-runtime
       - name: HC Video Downloader source contract
         run: npm run test:video-downloader-contract
       - name: HC Design AI Studio source contract
