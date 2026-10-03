@@ -120,6 +120,7 @@ if($failed){
 function Invoke-MasterE2E {
   $serverLog=Join-Path $logs 'master-server.log'
   $serverErr=Join-Path $logs 'master-server.err.log'
+  $env:HC_ALLOW_LOCAL_E2E='true'
   $server=Start-Process -FilePath 'cmd.exe' -ArgumentList @('/d','/c','npm run start -- -p 3219') -WorkingDirectory $root -RedirectStandardOutput $serverLog -RedirectStandardError $serverErr -NoNewWindow -PassThru
   try{
     $ready=$false
@@ -142,6 +143,7 @@ function Invoke-MasterE2E {
   }
   finally{
     Remove-Item Env:HCDECOR_E2E_BASE -ErrorAction SilentlyContinue
+    Remove-Item Env:HC_ALLOW_LOCAL_E2E -ErrorAction SilentlyContinue
     if($server -and -not $server.HasExited){
       cmd /d /c "taskkill /PID $($server.Id) /T /F" | Out-Null
     }
