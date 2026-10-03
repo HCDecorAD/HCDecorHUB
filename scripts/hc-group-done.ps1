@@ -26,20 +26,43 @@ $lanes = @(
 function Invoke-Lane([hashtable]$lane,[int]$attempt){
   $name=$lane.Name
   $log=Join-Path $logs ("{0}.attempt{1}.log" -f $name,$attempt)
-  $cmd=($lane.Commands -join ' && ')
-  $p=Start-Process -FilePath 'cmd.exe' -ArgumentList @('/d','/s','/c', $cmd) -WorkingDirectory $root -RedirectStandardOutput $log -RedirectStandardError ($log+'.err') -NoNewWindow -PassThru
-  return @{ Name=$name; Process=$p; Log=$log; Attempt=$attempt; Commands=$lane.Commands }
+  $runner=Join-Path $runtime ("lane-{0}.attempt{1}.cmd" -f $name,$attempt)
+  $codeFile=Join-Path $runtime ("lane-{0}.attempt{1}.exitcode" -f $name,$attempt)
+  if(Test-Path $codeFile){ Remove-Item -Force $codeFile }
+
+  $lines=@('@echo off','setlocal EnableExtensions',('cd /d "'+$root+'"'))
+  foreach($command in $lane.Commands){
+    $lines += $command
+    $lines += 'if errorlevel 1 goto :failed'
+  }
+  $lines += ('> "'+$codeFile+'" echo 0')
+  $lines += 'exit /b 0'
+  $lines += ':failed'
+  $lines += 'set RC=%ERRORLEVEL%'
+  $lines += ('> "'+$codeFile+'" echo %RC%')
+  $lines += 'exit /b %RC%'
+  $lines | Set-Content -Encoding ASCII $runner
+
+  $p=Start-Process -FilePath 'cmd.exe' -ArgumentList @('/d','/c', ('"'+$runner+'"')) -WorkingDirectory $root -RedirectStandardOutput $log -RedirectStandardError ($log+'.err') -NoNewWindow -PassThru
+  return @{ Name=$name; Process=$p; Log=$log; Attempt=$attempt; Commands=$lane.Commands; CodeFile=$codeFile; Runner=$runner }
 }
 
 function Wait-Lanes($running){
   $results=@()
   foreach($r in $running){
     $r.Process.WaitForExit()
-    $r.Process.Refresh()
-    $code=$r.Process.ExitCode
-    if($null -eq $code){
-      Write-Host "HC_DONE_EXITCODE_UNAVAILABLE lane=$($r.Name) attempt=$($r.Attempt)"
+    if(-not (Test-Path $r.CodeFile)){
+      Write-Host "HC_DONE_EXITCODE_SIDECAR_MISSING lane=$($r.Name) attempt=$($r.Attempt)"
       $code=901
+    } else {
+      $raw=(Get-Content $r.CodeFile -Raw).Trim()
+      $parsed=0
+      if(-not [int]::TryParse($raw,[ref]$parsed)){
+        Write-Host "HC_DONE_EXITCODE_SIDECAR_INVALID lane=$($r.Name) attempt=$($r.Attempt) value=$raw"
+        $code=902
+      } else {
+        $code=$parsed
+      }
     }
     $results += [pscustomobject]@{lane=$r.Name;attempt=$r.Attempt;exit_code=[int]$code;log=$r.Log;commands=$r.Commands}
   }
