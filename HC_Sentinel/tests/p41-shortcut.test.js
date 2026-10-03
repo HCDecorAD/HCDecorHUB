@@ -1,0 +1,2 @@
+import test from "node:test";import assert from "node:assert/strict";import {readFile} from "node:fs/promises";
+test("desktop shortcut opens local Command Center",async()=>{const s=await readFile(new URL("../runtime/create-desktop-shortcut.ps1",import.meta.url),"utf8");assert.match(s,/127\.0\.0\.1:43110/);assert.match(s,/GetFolderPath\("Desktop"\)/);assert.ok([...Buffer.from(s)].every(b=>b<128));});
