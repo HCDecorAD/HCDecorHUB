@@ -1,147 +1,105 @@
 # HC Sentinel — Build Phases
 
-## Foundation
+## Completed
 
-🔵 P1 — Sentinel Kernel  
+🔵 P1-P10 — Foundation  
 🟢 PASS  
 ✅✨ DONE
 
-🔵 P2 — Visual Observer  
+🔵 P11-P14 — Operator Core  
 🟢 PASS  
 ✅✨ DONE
 
-🔵 P3 — Visual Diff Engine  
+🔵 P15-P19 — Practical Operator Runtime  
 🟢 PASS  
 ✅✨ DONE
 
-🔵 P4 — Quality Sensors  
-🟢 PASS  
-✅✨ DONE
-
-🔵 P5 — Decision & Repair Routing  
-🟢 PASS  
-✅✨ DONE
-
-🔵 P6 — Verify-to-DONE Loop  
-🟢 PASS  
-✅✨ DONE
-
-🔵 P7 — Watch / Event / Schedule Autonomy  
-🟢 PASS  
-✅✨ DONE
-
-🔵 P8 — Replay & Observability Foundation  
-🟢 PASS  
-✅✨ DONE
-
-🔵 P9 — Multi-Project Sentinel  
-🟢 PASS  
-✅✨ DONE
-
-🔵 P10 — Golden Run  
-🟢 PASS  
-✅✨ DONE
-
-Gate: `SENTINEL_READY`
-
-## Operator core
-
-🔵 P11 — Operator Layer  
+🔵 P20 — Finding Lifecycle  
 🟢 PASS — 2/2  
 ✅✨ DONE
 
-🔵 P12 — Project Profiles  
+🔵 P21 — Mission Ledger  
 🟢 PASS — 1/1  
 ✅✨ DONE
 
-🔵 P13 — Baseline Manager  
+🔵 P22 — Policy Engine  
+🟢 PASS — 4/4  
+✅✨ DONE
+
+🔵 P23 — Health Supervisor  
 🟢 PASS — 2/2  
 ✅✨ DONE
 
-🔵 P14 — Repair Bridge  
+🔵 P24 — Release Gate  
 🟢 PASS — 3/3  
 ✅✨ DONE
 
-Gate: `OPERATOR_READY_CORE`
+Gate: `OPERATIONS_HARDENED`
 
-## Practical operator runtime
-
-🔵 P15 — Real Target Profiles  
+🔵 P25 — Notification Center  
 Build:
-- GSC public target
-- AMO public target
-- desktop/mobile viewports
-- target registry
-
-🟢 PASS — 2/2  
-✅✨ DONE
-
-🔵 P16 — Command Center UI  
-Build:
-- real static app UI
-- command input
-- Run Now / Compare / Verify / Route Repair
-- project cards
-- mission runtime
-- workers/evidence/activity
-- dark theme
-- light gray-white theme
-- persisted theme toggle
-
-🟢 PASS — 2/2 + browser smoke  
-✅✨ DONE
-
-Browser smoke:
-`dark -> light -> command -> RUNNING`
-
-🔵 P17 — Persistent Baseline & Evidence Store  
-Build:
-- atomic JSON store
-- read/write/update
-- temp-file replace to reduce partial-write risk
+- alert event storage
+- unread/read lifecycle
+- pluggable notification sinks
 
 🟢 PASS — 1/1  
 ✅✨ DONE
 
-🔵 P18 — Live Repair Bridge  
+🔵 P26 — Baseline Promotion Governance  
 Build:
-- HCDR repair envelope
-- execution-evidence contract
-- fail-closed wording
-- real GitHub/HCDR dispatch transport
+- CANDIDATE
+- REVIEW
+- APPROVED / REJECTED
+- no direct candidate-to-approved promotion
 
-🟢 PASS — 1/1 + live dispatch  
+🟢 PASS — 2/2  
 ✅✨ DONE
 
-Live dispatch:
-`HCDecorAD/HCDecor-HCDR-Relay#1265`
-
-🔵 P19 — End-to-End Project Runs  
+🔵 P27 — Watch Runtime  
 Build:
-- Playwright capture against real GSC + AMO public targets
-- screenshot evidence
-- network/console capture
-- quality finding extraction
-- evidence artifact
+- per-target interval
+- due-target execution
+- finding notification
+- independent from manual trigger priority
 
-🟢 PASS — 1/1 + real public target E2E  
+🟢 PASS — 2/2  
 ✅✨ DONE
 
-Results:
-- GSC: reachable, failed requests 0; 3 medium `BROKEN_MEDIA_HINT` findings routed to P18.
-- AMO: reachable, failed requests 0; quality findings 0.
+🔵 P28 — Live Command Binding  
+Build:
+- local HTTP API
+- `GET /api/status`
+- `POST /api/command`
+- operator command -> project/viewport -> execution binding
+
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P29 — Local Release Package  
+Build:
+- local release manifest
+- Node entrypoint
+- Windows BAT launcher
+- ASCII-safe launcher
+- local-first / no production deploy
+
+🟢 PASS — 2/2  
+✅✨ DONE
+
+Smoke:
+`baseline=APPROVED -> watchRuns=1 -> alerts=1`
 
 Full regression:
-`39/39 PASS — 0 FAIL`
+`59/59 PASS — 0 FAIL`
 
-Gate: `OPERATOR_READY`
+Gate: `LOCAL_OPERATOR_READY`
 
 ## Build rule
 
-- Do not redo a phase that already has execution-evidence PASS.
-- Manual/operator command keeps priority over schedule.
-- GREEN/DONE requires execution evidence.
-- UNCERTAIN_EFFECT must fail closed.
-- One failed lane must not block unrelated project lanes.
-- Runtime stays local-first; GitHub stores sanitized versionable DATA.
-- A target defect does not equal a Sentinel phase failure when Sentinel detects, records, and routes it correctly.
+- Do not redo execution-evidence PASS phases.
+- Manual/operator command outranks schedule/watch.
+- GREEN/DONE requires evidence.
+- Baselines require explicit review before promotion.
+- Medium findings route but do not auto-repair by default.
+- Critical unresolved findings block release.
+- Runtime remains local-first.
