@@ -1,0 +1,62 @@
+{
+  "schema": "hc-factory/tool-registry-v1",
+  "browser_exposed_shell": false,
+  "tools": [
+    {
+      "id": "capture_reference",
+      "stage": "V2.2",
+      "mutates": false
+    },
+    {
+      "id": "extract_design_dna",
+      "stage": "V2.3",
+      "mutates": false
+    },
+    {
+      "id": "rebuild_candidate",
+      "stage": "V2.4",
+      "mutates": true,
+      "scope": "isolated_candidate"
+    },
+    {
+      "id": "visual_diff",
+      "stage": "V2.5",
+      "mutates": false
+    },
+    {
+      "id": "auto_fix_candidate",
+      "stage": "V2.6",
+      "mutates": true,
+      "scope": "isolated_candidate",
+      "rollback": true
+    },
+    {
+      "id": "interaction_qa",
+      "stage": "V2.7",
+      "mutates": false
+    },
+    {
+      "id": "component_vault_write",
+      "stage": "V2.8",
+      "mutates": true,
+      "requires_pass": true
+    },
+    {
+      "id": "quality_gate",
+      "stage": "V2.9",
+      "mutates": false
+    },
+    {
+      "id": "publish",
+      "stage": "V2.10",
+      "mutates": true,
+      "requires_pass": true,
+      "production": true
+    },
+    {
+      "id": "watch",
+      "stage": "V2.10",
+      "mutates": false
+    }
+  ]
+}
