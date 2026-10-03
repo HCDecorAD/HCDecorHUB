@@ -1,0 +1,26 @@
+{
+  "targets": [
+    {
+      "id": "gsc-public",
+      "projectId": "gsc",
+      "name": "GSC Public",
+      "url": "https://gscsenior.hcdecorhub.com",
+      "enabled": true,
+      "viewports": {
+        "desktop": {"width": 1440, "height": 900},
+        "mobile": {"width": 390, "height": 844}
+      }
+    },
+    {
+      "id": "amo-public",
+      "projectId": "amo",
+      "name": "AMO Public",
+      "url": "https://amonguyen.hcdecorhub.com",
+      "enabled": true,
+      "viewports": {
+        "desktop": {"width": 1440, "height": 900},
+        "mobile": {"width": 390, "height": 844}
+      }
+    }
+  ]
+}

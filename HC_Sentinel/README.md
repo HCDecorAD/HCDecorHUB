@@ -2,9 +2,9 @@
 
 Local mirror: `D:\HCDecorHUB\HC_Sentinel`
 
-Status: **OPERATOR_READY_CORE**
-Latest completed scope: **P1 -> P14**
-Full regression: **32/32 PASS, 0 FAIL**
+Status: **OPERATOR_READY**
+Latest completed scope: **P1 -> P19**
+Full regression: **39/39 PASS, 0 FAIL**
 
 ## Purpose
 
@@ -14,7 +14,7 @@ Core flow:
 
 `Command -> Observe -> Detect -> Compare -> Diagnose -> Route -> Repair -> Verify -> Evidence -> DONE`
 
-It is designed to work independently, remain local-first, and reuse selected AutoWatch operating patterns without depending on the live AutoWatch runtime.
+It is independent, local-first, command-driven, and designed to supervise multiple HC projects without making schedule/remote infrastructure the owner of execution.
 
 ## Operator modes
 
@@ -25,7 +25,7 @@ It is designed to work independently, remain local-first, and reuse selected Aut
 - SCHEDULED
 - AUTO
 
-Manual/user commands always have priority and must never be blocked by a schedule.
+Manual/user command always has priority and must never be blocked by a schedule.
 
 ## Current capabilities
 
@@ -33,65 +33,71 @@ Manual/user commands always have priority and must never be blocked by a schedul
 - mission/control kernel
 - checkpoint/state transition
 - duplicate mission protection
-- effect lock / no blind duplicate side effects
+- effect lock
 - Playwright observer
 - screenshot + DOM + console/network capture
-- visual diff engine
-- threshold handling
+- visual diff + thresholds
 
 ### P4-P10 — Autonomous visual operations
 - quality sensors
-- accessibility checks with axe-core
+- axe-core accessibility
 - responsive/overflow checks
 - finding routing
 - verify-to-DONE loop
-- UNCERTAIN_EFFECT fail-closed behavior
-- trigger broker and lease recovery
+- UNCERTAIN_EFFECT fail-closed handling
+- trigger broker + lease recovery
 - observability adapter
 - project/worker registry
 - lane isolation
-- golden-run safety scenarios
+- golden safety scenarios
 
-### P11-P14 — Operator layer
-- natural command parser
+### P11-P14 — Operator core
+- natural operator command parser
 - project profile registry
 - baseline manager
 - repair bridge
-- operator planning flow
 - project + viewport resolution
 - approved-baseline requirement
 - capability-based worker dispatch
 
-Verified smoke flow:
+### P15-P19 — Practical operator runtime
+- real target profiles for GSC and AMO public sites
+- Command Center UI
+- dark/light theme toggle
+- light theme uses gray-white background
+- atomic JSON persistence adapter
+- HCDR repair-envelope adapter
+- live HCDR transport dispatch
+- real public target E2E capture
+- screenshot/evidence artifact generation
+
+Verified operator smoke:
 
 `Sentinel kiểm tra GSC mobile -> GSC -> Mobile -> Approved Baseline -> DISPATCHED -> autodebug-ui`
 
-## Project structure
+Verified public targets:
+- GSC: reachable, no failed requests; Sentinel detected 3 medium broken-media hints and routed them to HCDR issue #1265 for inspection.
+- AMO: reachable, no failed requests, no quality findings in the P19 scan.
 
-- `core/` — provider-independent kernel and runtime logic
-- `operator/` — human command/operator layer
-- `adapters/` — browser, visual diff, accessibility, telemetry, replay and future providers
-- `rules/` — visual/operational policies
-- `data/` — sanitized project profiles, schemas, mappings and manifests
-- `checkpoints/` — versioned checkpoint metadata
-- `evidence/` — evidence indexes and curated test evidence
-- `vendor/autowatch_snapshot/` — read-only AutoWatch reuse snapshot
-- `tests/` — phase and regression tests
-- `scripts/` — smoke and execution scripts
-- `docs/` — architecture, build phases and technology radar
+## Command Center UI
 
-## UI direction
+The real UI lives in `ui/`.
 
-Command Center layout:
+Main features:
 - command input
 - Run Now / Compare / Verify / Route Repair
 - project cards
-- baseline status
+- Pxx phase progress
+- mission runtime pipeline
 - workers
 - evidence
 - recent activity
-- mission runtime pipeline
-- phase progress
+- full-regression status
+
+Theme:
+- Dark: deep navy
+- Light: gray-white
+- theme preference persisted in localStorage
 
 Display rule:
 - 🔵 Pxx / Phase
@@ -99,6 +105,21 @@ Display rule:
 - ✅✨ DONE
 - 🔴 FAIL / BLOCKED
 - 🟡 WAITING / REVIEW_REQUIRED
+
+## Project structure
+
+- `core/` — provider-independent kernel/runtime
+- `operator/` — operator command layer
+- `adapters/` — browser, visual diff, accessibility, telemetry, replay, repair
+- `ui/` — Command Center app UI
+- `rules/` — visual/operational policies
+- `data/` — sanitized target/project definitions
+- `checkpoints/` — checkpoint metadata
+- `evidence/` — evidence indexes and execution evidence
+- `vendor/autowatch_snapshot/` — read-only AutoWatch reuse snapshot
+- `tests/` — phase and regression tests
+- `scripts/` — smoke/E2E scripts
+- `docs/` — architecture and roadmap
 
 ## Data policy
 
@@ -115,24 +136,30 @@ Local runtime stores:
 - active queue
 - locks
 - browser/session profiles
-- raw screenshots/video
+- raw private screenshots/video
 - cache
 - secrets/tokens
 
 GitHub is the management/source-of-record layer, not the live runtime.
 
-## Current verified milestone
+## Verified milestones
 
 - P1-P10: **SENTINEL_READY**
 - P11-P14: **OPERATOR_READY_CORE**
-- Full regression: **32/32 PASS**
-- Main merge for P11-P14: `4dd7c08a69d07ffd62981e7cd180a0b692036c65`
+- P15-P19: **OPERATOR_READY**
+- Full regression: **39/39 PASS**
+- P15-P19 workflow: `37150454260`
+- P15-P19 evidence SHA256: `f8c5e6e31dd64b1262415a87dace2035e491f4cc0d0df60db6b25e7b6949152`
 
-## Next build direction
+## Current live finding
 
-Next practical scope should focus on:
-1. real target binding for GSC/AMO and other HC projects
-2. Command Center UI
-3. persistent project/baseline storage
-4. live Repair Bridge integration
-5. real end-to-end verify-after-repair runs
+GSC public scan detected:
+- `BROKEN_MEDIA_HINT`
+- severity: medium
+- count: 3
+- failed requests: 0
+
+Repair/inspection dispatch:
+- HCDR issue #1265
+
+This finding does not invalidate the Sentinel build gate; it is evidence that the detect -> route path works against a real target.

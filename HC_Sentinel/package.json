@@ -1,6 +1,6 @@
 {
   "name": "hc-sentinel",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -18,7 +18,12 @@
     "test:p11": "node --test tests/p11-operator.test.js",
     "test:p12": "node --test tests/p12-profiles.test.js",
     "test:p13": "node --test tests/p13-baseline.test.js",
-    "test:p14": "node --test tests/p14-repair-bridge.test.js"
+    "test:p14": "node --test tests/p14-repair-bridge.test.js",
+    "test:p15": "node --test tests/p15-targets.test.js",
+    "test:p16": "node --test tests/p16-ui.test.js",
+    "test:p17": "node --test tests/p17-store.test.js",
+    "test:p18": "node --test tests/p18-live-bridge.test.js",
+    "test:p19": "node --test tests/p19-e2e.test.js"
   },
   "optionalDependencies": {
     "axe-core": "^4.10.3",
