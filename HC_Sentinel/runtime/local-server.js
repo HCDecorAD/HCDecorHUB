@@ -22,7 +22,7 @@ export function createLocalServer({controller,status=()=>({status:"READY"}),evid
         res.end(JSON.stringify(result));
       }catch(e){
         await logs?.append?.({level:"error",type:"COMMAND_ERROR",message:String(e.message||e)});
-        res.statusCode=400;res.end(JSON.stringify({status:"BLOCKED",error:String(e.message||e)});
+        res.statusCode=400;res.end(JSON.stringify({status:"BLOCKED",error:String(e.message||e)}));
       }
       return;
     }
