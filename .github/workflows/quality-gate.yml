@@ -68,6 +68,8 @@ jobs:
         run: npm run test:corporate-catalog
       - name: HC Agent Control source contract
         run: npm run test:agent-control-contract
+      - name: HC AutoChat source contract
+        run: npm run test:autochat-contract
       - name: Active asset coverage gate
         run: npm run test:active-asset-coverage
       - name: Capability registry gate
