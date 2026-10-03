@@ -35,7 +35,13 @@ function Wait-Lanes($running){
   $results=@()
   foreach($r in $running){
     $r.Process.WaitForExit()
-    $results += [pscustomobject]@{lane=$r.Name;attempt=$r.Attempt;exit_code=$r.Process.ExitCode;log=$r.Log;commands=$r.Commands}
+    $r.Process.Refresh()
+    $code=$r.Process.ExitCode
+    if($null -eq $code){
+      Write-Host "HC_DONE_EXITCODE_UNAVAILABLE lane=$($r.Name) attempt=$($r.Attempt)"
+      $code=901
+    }
+    $results += [pscustomobject]@{lane=$r.Name;attempt=$r.Attempt;exit_code=[int]$code;log=$r.Log;commands=$r.Commands}
   }
   return $results
 }
