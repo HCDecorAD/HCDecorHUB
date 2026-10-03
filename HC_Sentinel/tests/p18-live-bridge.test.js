@@ -1,0 +1,2 @@
+import test from "node:test";import assert from "node:assert/strict";import {buildHcdrIssue} from "../adapters/repair/hcdr-envelope.js";
+test("HCDR repair envelope contains fail-closed contract",()=>{const x=buildHcdrIssue({projectId:"gsc",targetId:"gsc-public",missionId:"m1",finding:{kind:"VISUAL_DIFF"}});assert.match(x.title,/gsc/);assert.match(x.body,/Do not report DONE without execution evidence/);assert.match(x.body,/mission_id: m1/);});
