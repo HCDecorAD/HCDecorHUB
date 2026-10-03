@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "system_id": "hc-agent-control",
-  "verification_state": "source-contract-only",
+  "verification_state": "source-contract-plus-live-transport",
   "runtime_done": false,
   "principles": {
     "mission_ownership_until_terminal": true,
@@ -26,5 +26,20 @@
     "blocker",
     "next_action"
   ],
-  "acceptance_limits": "This contract proves source-level control semantics only. It does not prove a live Agent Control runtime, worker transport, or HOCUONG execution."
+  "acceptance_limits": "Agent Control application/runtime completion is still tracked separately. This contract DOES prove that HCDR v3 is the active default local transport to HOCUONG; chats must not report HCDR as unavailable without a fresh failed health proof.",
+  "transport": {
+    "default_local_transport": "HCDR v3",
+    "control_plane_repo": "HCDecorAD/HCDecor-HCDR-Relay",
+    "relay_label": "hcdr-job",
+    "request_schema": "hcdr-relay/v1.2",
+    "result_schema": "hcdr-result/v2",
+    "local_root": "D:/HCDecorHUB",
+    "status": "ACTIVE",
+    "live_verified": true,
+    "live_proof_issue": 1016,
+    "live_provider": "local",
+    "live_node": "v24.21.0",
+    "blocked_lane_does_not_stall_unrelated_work": true,
+    "worker_pool": 4
+  }
 }
