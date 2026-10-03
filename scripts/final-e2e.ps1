@@ -42,26 +42,10 @@ try{
 } finally {
   if($server -and -not $server.HasExited){cmd /d /c "taskkill /PID $($server.Id) /T /F" *> $null}
 }
-# OpenNext invokes `next build` again. On Windows, a stale .next\lock from the
-# previous build can survive briefly and make the second build report another
-# build is running. Never kill unrelated processes: wait for a matching build
-# process, and only remove the lock when this checkout has no active build.
-$nextLock=Join-Path $Root '.next\lock'
-if(Test-Path -LiteralPath $nextLock){
-  $deadline=(Get-Date).AddSeconds(45)
-  do {
-    $buildProcs=@(Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object {
-      $_.CommandLine -and $_.CommandLine -like ('*'+$Root+'*') -and
-      $_.CommandLine -match 'next(\.exe)?\s+build|next[\\/]dist[\\/]bin[\\/]next.*build'
-    })
-    if($buildProcs.Count -eq 0){break}
-    Start-Sleep -Seconds 1
-  } while((Get-Date) -lt $deadline)
-  if($buildProcs.Count -gt 0){throw 'next build still active before cf-build'}
-  Remove-Item -LiteralPath $nextLock -Force
-  Write-Output 'HCDECOR_STALE_NEXT_BUILD_LOCK_CLEARED'
-}
-RunGate 'cf-build' 'npm run cf:build'
+# The regular Next.js build already passed above and is used by local E2E.
+# Ask OpenNext to package that verified build instead of starting a second
+# concurrent `next build` on Windows.
+RunGate 'cf-build' 'npm run cf:build -- --skipNextBuild'
 RunGate 'production-smoke' 'powershell -NoProfile -ExecutionPolicy Bypass -File scripts\production-smoke.ps1'
 RunGate 'production-health' 'powershell -NoProfile -ExecutionPolicy Bypass -File scripts\production-health-snapshot.ps1'
 @{ok=$true;run=$run;production_mutation='locked';dynamic_port=$port;checked_at=(Get-Date).ToUniversalTime().ToString('o')}|ConvertTo-Json|Set-Content (Join-Path $run 'FINAL-PASS.json')
