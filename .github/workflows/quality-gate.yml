@@ -66,6 +66,8 @@ jobs:
         run: npm run test:evidence-envelope
       - name: Durable evidence store gate
         run: npm run test:evidence-store
+      - name: Evidence archive index gate
+        run: npm run test:evidence-archive-index
       - name: Corporate catalog gate
         run: npm run test:corporate-catalog
       - name: HCDR relay implementation contract
