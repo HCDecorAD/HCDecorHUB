@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0.0",
+  "skill_id": "imaster.continuous-control",
+  "name": "iMaster Continuous Control 24/7",
+  "owner": "iMaster",
+  "scope": "global",
+  "autoload": true,
+  "activation": {
+    "mode": "automatic",
+    "condition": "a durable goal/mission exists and terminal state has not been reached"
+  },
+  "loop": [
+    "OBSERVE_GLOBAL_STATE",
+    "VERIFY_PREVIOUS_CYCLE",
+    "LEARN_AND_SYNC",
+    "COMPUTE_NEXT_BEST_ACTIONS",
+    "PRIORITIZE_READY_SAFE_WORK",
+    "DISPATCH_PARALLEL",
+    "MONITOR_LEASES_AND_BLOCKERS",
+    "RECOVER_OR_REPLAN",
+    "CHECK_TERMINAL_STATE",
+    "REPEAT"
+  ],
+  "next_action_policy": {
+    "objective_order": [
+      "safety",
+      "owner intent",
+      "unblock critical path",
+      "finish highest-value READY work",
+      "repair regressions",
+      "reduce systemic risk",
+      "improve reusable capability"
+    ],
+    "auto_continue": true,
+    "requires_chat_next": false,
+    "parallel_skill": "imaster.parallel-execution",
+    "research_skill": "imaster.advisor-research",
+    "repair_skill": "imaster.repair-council-7x7",
+    "learning_skill": "imaster.learning-memory",
+    "local_skill": "imaster.local-first-execution"
+  },
+  "terminal_states": [
+    "DONE",
+    "OWNER_REQUIRED",
+    "SAFETY_STOP",
+    "HARD_EXTERNAL_BLOCKED"
+  ],
+  "yield_states": [
+    "WAITING_DEPENDENCY",
+    "WAITING_RESOURCE"
+  ],
+  "laws": [
+    "GOAL_MUST_OUTLIVE_CHAT",
+    "NEXT_ACTION_IS_SYSTEM_RESPONSIBILITY",
+    "WAITING_ONE_MISSION != WAITING_THE_COMPANY",
+    "READY_WORK + SAFE_CAPACITY -> EXECUTE",
+    "UPDATE_WITHOUT_IMASTER_SYNC = NOT_DONE",
+    "NO_EVIDENCE_NO_GREEN"
+  ],
+  "owner_boundary": "When owner authority/approval/credential/destructive or gated production action is required, checkpoint and surface the exact decision needed; continue independent safe work.",
+  "evidence_gate": "scripts/imaster-continuous-control.test.mjs"
+}
