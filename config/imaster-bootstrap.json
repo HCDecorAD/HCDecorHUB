@@ -202,5 +202,24 @@
     ],
     "evidence_required_before_rdc": true,
     "route_evidence_required": true
+  },
+  "hcdr_final_acceptance": {
+    "status": "VERIFIED",
+    "date": "2026-10-04",
+    "relay_repo": "HCDecorAD/HCDecor-HCDR-Relay",
+    "job_issue": 1276,
+    "source_id": "imaster",
+    "mission_id": "IMASTER-HCDR-FINAL-ACCEPTANCE-20261004",
+    "correlation_id": "imaster-hcdr-final-acceptance-20261004",
+    "result": {
+      "ok": true,
+      "provider": "local",
+      "code": 0,
+      "host": "HOCUONG",
+      "cwd": "D:\\HCDecorHUB",
+      "stdout_marker": "IMASTER_HCDR_FINAL_ACCEPTANCE_PASS"
+    },
+    "policy_state": "HCDR_DEFAULT_VERIFIED",
+    "rdc_state": "RESCUE_ONLY"
   }
 }
