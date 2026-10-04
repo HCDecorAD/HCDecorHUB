@@ -5,6 +5,7 @@
   "compatibility_date": "2026-09-30",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {"directory": ".open-next/assets","binding":"ASSETS"},
+  "ai": {"binding":"AI"},
   "services": [{"binding":"HC_SHOP_ENGINE","service":"hc-shop-engine"},{"binding":"GSC_SERVICE","service":"gsc-senior"},{"binding":"AMO_SERVICE","service":"amo-nguyen"}],
   "observability": {"enabled": true}
 }
