@@ -45,7 +45,8 @@
     "AUTHORITY_DOES_NOT_BYPASS_SECURITY_POLICY",
     "PRODUCTION_WRITES_FAIL_CLOSED",
     "DESTRUCTIVE_AND_CREDENTIAL_BOUNDARIES_REMAIN_GATED",
-    "NO_EVIDENCE_NO_GREEN"
+    "NO_EVIDENCE_NO_GREEN",
+    "LOCAL_FIRST_OPERATING_LAW"
   ],
   "mission_ownership": "iMaster durable control plane",
   "scope": [
@@ -59,5 +60,22 @@
     "recovery",
     "public-state"
   ],
-  "evidence_gate": "scripts/imaster-global-authority.test.mjs"
+  "evidence_gate": "scripts/imaster-global-authority.test.mjs",
+  "operating_law_local_first": {
+    "status": "MANDATORY",
+    "route": [
+      "CODE",
+      "HOCUONG_LOCAL",
+      "HCDR",
+      "LOCAL_TEST_AND_EVIDENCE",
+      "GITHUB",
+      "CI"
+    ],
+    "rdc_policy": "RESCUE_ONLY",
+    "enforcement": [
+      "NO_EVIDENCE_NO_GREEN",
+      "DO_NOT_REDO_PASS",
+      "TEST_BEFORE_GITHUB"
+    ]
+  }
 }
