@@ -1,15 +1,15 @@
 {
   "name": "hc-sentinel",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "test:p45": "node --test tests/p45-heartbeat.test.js",
-    "test:p46": "node --test tests/p46-watchdog.test.js",
-    "test:p47": "node --test tests/p47-retention.test.js",
-    "test:p48": "node --test tests/p48-local-notifier.test.js",
-    "test:p49": "node scripts/p49-self-recovery-acceptance.js"
+    "test:p50": "node --test tests/p50-watchdog-task.test.js",
+    "test:p51": "node --test tests/p51-maintenance.test.js",
+    "test:p52": "node --test tests/p52-runtime-health.test.js",
+    "test:p53": "node --test tests/p53-release-freeze.test.js",
+    "test:p54": "node scripts/p54-soak-acceptance.js"
   },
   "optionalDependencies": {
     "axe-core": "^4.10.3",

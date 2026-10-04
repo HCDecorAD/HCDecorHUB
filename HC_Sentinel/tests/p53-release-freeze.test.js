@@ -1,0 +1,2 @@
+import test from "node:test";import assert from "node:assert/strict";import {readFile} from "node:fs/promises";
+test("release freeze requires watchdog backup retention and green regression",async()=>{const x=JSON.parse(await readFile(new URL("../runtime/release-freeze.json",import.meta.url),"utf8"));assert.equal(x.requiresWatchdog,true);assert.equal(x.requiresBackup,true);assert.equal(x.requiresRetention,true);assert.equal(x.requiresGreenRegression,true);assert.equal(x.productionDeploy,false);});
