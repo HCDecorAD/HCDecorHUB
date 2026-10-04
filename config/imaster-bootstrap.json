@@ -12,6 +12,11 @@
     "config/imaster-all-phase-freeze.json",
     "config/imaster-capability-acquisition.json",
     "config/imaster-skills/parallel-execution.json",
+    "config/imaster-skills/advisor-research.json",
+    "config/imaster-skills/learning-memory.json",
+    "config/imaster-skills/proactive-improvement.json",
+    "config/imaster-skills/repair-council.json",
+    "config/imaster-skills/operator-visual-status.json",
     "docs/HC-GROUP-MASTER-REGISTRY.md"
   ],
   "identity": {
@@ -28,7 +33,11 @@
     "DISCOVER_BEFORE_CREATE",
     "PRODUCTION_WRITES_FAIL_CLOSED",
     "NEVER_MIX_WORKSPACES",
-    "PARALLEL_READY_WORK_BY_DEFAULT"
+    "PARALLEL_READY_WORK_BY_DEFAULT",
+    "RESEARCH_BEFORE_HARD_BLOCK",
+    "LEARN_FROM_VERIFIED_REPAIRS",
+    "PROACTIVE_SAFE_IMPROVEMENT",
+    "VISUAL_STATUS_MUST_MATCH_EVIDENCE"
   ],
   "startup_checks": [
     "load portfolio and repositories",
@@ -59,7 +68,12 @@
   },
   "new_chat_rule": "A new chat must bootstrap from this contract before declaring a capability/project missing or starting replacement work.",
   "skill_autoload": [
-    "config/imaster-skills/parallel-execution.json"
+    "config/imaster-skills/parallel-execution.json",
+    "config/imaster-skills/advisor-research.json",
+    "config/imaster-skills/learning-memory.json",
+    "config/imaster-skills/proactive-improvement.json",
+    "config/imaster-skills/repair-council.json",
+    "config/imaster-skills/operator-visual-status.json"
   ],
   "parallel_execution_rule": "When >=2 independent tasks are READY and safe capacity exists, Capability Router MUST prefer imaster.parallel-execution over serial execution."
 }
