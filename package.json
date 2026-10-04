@@ -81,7 +81,8 @@
     "test:hcdecor-v9-packages": "node scripts/hcdecor-v9-package-manifest.test.mjs",
     "imaster:v9-wave": "node scripts/hcdecor-v9-package-wave.mjs",
     "test:hcdecor-v9-app-shell": "node scripts/hcdecor-v9-app-shell.test.mjs",
-    "test:hcdecor-v9-core-centers": "node scripts/hcdecor-v9-core-centers.test.mjs"
+    "test:hcdecor-v9-core-centers": "node scripts/hcdecor-v9-core-centers.test.mjs",
+    "test:hcdecor-v9-sentinel": "node --test HC_Sentinel/tests/visual-diff.test.js HC_Sentinel/tests/p6-verify.test.js HC_Sentinel/tests/p14-repair-bridge.test.js HC_Sentinel/tests/p25-notifications.test.js && node scripts/autodebug-implementation.test.mjs && node scripts/autodebug-repair-verification.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
