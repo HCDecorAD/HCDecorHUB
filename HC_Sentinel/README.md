@@ -2,32 +2,21 @@
 
 Local mirror: `D:\HCDecorHUB\HC_Sentinel`
 
-Status: **SELF_OPERATING_READY**
-Latest completed scope: **P1 -> P49**
-Full regression: **81/81 PASS, 0 FAIL**
+Status: **AUTONOMOUS_OPERATIONS_READY**
+Latest completed scope: **P1 -> P54**
+Full regression: **88/88 PASS, 0 FAIL**
 
 ## Purpose
 
-HC Sentinel is the local-first visual operations, verification, watch, evidence, policy, repair-routing, desktop operations, and self-recovery layer for the HC ecosystem.
+HC Sentinel is the local-first visual operations, verification, watch, evidence, policy, repair-routing, desktop operations, self-recovery, and autonomous maintenance layer for the HC ecosystem.
 
 Core flow:
 
 `Command -> Observe -> Detect -> Compare -> Diagnose -> Route -> Repair -> Verify -> Evidence -> Alert -> DONE`
 
-Self-operation flow:
+Autonomous operations flow:
 
-`Heartbeat -> Health Check -> Watchdog -> Recovery -> Notify -> Retention`
-
-## Runtime modes
-
-- MANUAL_NOW
-- COMMAND
-- EVENT
-- WATCH
-- SCHEDULED
-- AUTO
-
-Manual/operator command always outranks schedule/watch.
+`Heartbeat -> Watchdog -> Recovery -> Maintenance -> Retention -> Health Aggregate -> Release Gate`
 
 ## Capability milestones
 
@@ -39,86 +28,55 @@ Manual/operator command always outranks schedule/watch.
 - P35-P39: Desktop operations
 - P40-P44: Daily-use integration
 - P45-P49: Self-operating runtime
+- P50-P54: Autonomous operations
 
-## P45-P49 self-operating features
+## P50-P54 autonomous operations
 
-### Heartbeat
-`core/heartbeat.js`
+### Watchdog Scheduled Task
+`runtime/register-watchdog-task.ps1`
 
-Tracks local runtime heartbeat state:
+Registers the local watchdog in Windows Task Scheduler:
+- hidden PowerShell execution
+- every 2 minutes
+- overlapping instances ignored
+- start when available
+
+### Maintenance Runner
+`core/maintenance-runner.js`
+
+Runs independent maintenance jobs and reports PASS/FAIL per job without crashing the entire maintenance cycle.
+
+### Runtime Health Aggregate
+`core/runtime-health.js`
+
+Combines:
+- heartbeat
+- workers
+- targets
+- critical findings
+
+States:
 - HEALTHY
+- DEGRADED
 - STALE
-- UNKNOWN
 
-### Watchdog
-`runtime/watchdog.js`
-`runtime/watchdog-loop.ps1`
+### Release Freeze
+`runtime/release-freeze.json`
 
-Checks local runtime health, restarts through the hidden launcher only when needed, and enforces restart cooldown to avoid restart storms.
+Requires:
+- green regression
+- no unresolved critical findings
+- watchdog
+- backup
+- retention
 
-### Retention
-`core/retention.js`
+Runtime remains local-first and `productionDeploy=false`.
 
-Supports bounded cleanup by:
-- max file count
-- max file age
+### Soak Acceptance
+Simulated 24 operating cycles with one forced runtime outage.
 
-Intended for raw evidence/log retention, not live state deletion.
-
-### Local notification adapter
-`core/local-notifier.js`
-
-Delivers structured local notification events through a pluggable writer.
-
-### Self-recovery acceptance
 Verified:
-
-`UNKNOWN -> RECOVERED -> HEALTHY -> notification=1`
-
-## Local app
-
-Default port:
-`43110`
-
-Launchers:
-- `runtime/start-sentinel.bat`
-- `runtime/start-hidden.vbs`
-
-Windows operations:
-- `runtime/install-local.ps1`
-- `runtime/register-startup.ps1`
-- `runtime/create-desktop-shortcut.ps1`
-- `runtime/watchdog-loop.ps1`
-
-Local API:
-- `GET /api/status`
-- `POST /api/command`
-- `GET /api/evidence`
-- `GET /api/findings`
-- `GET /api/logs`
-- `GET /api/settings`
-- `POST /api/settings`
-
-## UI
-
-Theme:
-- Dark: deep navy
-- Light: gray-white
-
-Live panels:
-- Command Center
-- Evidence Viewer
-- Finding Inbox
-- Log Viewer
-- Workers
-- tracked repair state
-
-Display rule:
-- 🔵 Pxx / Phase
-- 🟢 PASS
-- ✅✨ DONE
-- 🔴 FAIL / BLOCKED
-- 🟡 WAITING / REVIEW_REQUIRED
+`cycles=24 -> restarts=1 -> maintenance=true -> finalHealth=HEALTHY -> recovered=true`
 
 ## Verified milestones
 
@@ -131,8 +89,9 @@ Display rule:
 - P35-P39: **DESKTOP_OPERATIONS_READY**
 - P40-P44: **DAILY_USE_READY**
 - P45-P49: **SELF_OPERATING_READY**
-- Full regression: **81/81 PASS, 0 FAIL**
-- P45-P49 workflow: `37163753552`
+- P50-P54: **AUTONOMOUS_OPERATIONS_READY**
+- Full regression: **88/88 PASS, 0 FAIL**
+- P50-P54 workflow: `37164073803`
 
 ## Current tracked live finding
 
