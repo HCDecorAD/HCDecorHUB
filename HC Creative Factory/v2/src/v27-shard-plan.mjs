@@ -1,0 +1,1 @@
+export function shardV27(viewports=[1440,768,390],types=["navigation","links","forms","responsive"]){return viewports.flatMap(viewport=>types.map(type=>({key:`${viewport}:${type}`,stage:"V2.7",viewport,type,parallel:true})))}
