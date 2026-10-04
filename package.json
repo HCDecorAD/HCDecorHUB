@@ -71,7 +71,8 @@
     "test:content-factory": "node scripts/content-factory.test.mjs",
     "test:imaster-hub-final-done": "node scripts/imaster-hub-final-done.test.mjs",
     "test:imaster-continuation": "node scripts/imaster-continuation-skill.test.mjs",
-    "test:imaster-continuous-control": "node scripts/imaster-continuous-control.test.mjs"
+    "test:imaster-continuous-control": "node scripts/imaster-continuous-control.test.mjs",
+    "test:imaster-persistent-controller": "node scripts/imaster-persistent-controller.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
