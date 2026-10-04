@@ -19,6 +19,12 @@ export class DesktopWatchEngine{
     const tail=String(snap.assistant_tail??"").slice(-4000).toUpperCase();
     return (w.donePatterns??["DONE"]).some(p=>tail.includes(String(p).toUpperCase()));
   }
+  heldByBlocker(w,snap){
+    if(w.sourceType!=="CHATGPT"||w.blockerAware===false)return false;
+    const tail=String(snap.assistant_tail??"").slice(-4000).toUpperCase();
+    const patterns=w.blockerPatterns??["WAITING_RESOURCE","REVIEW_REQUIRED","BLOCKED("," = LOCKED","STATUS: LOCKED"];
+    return patterns.some(p=>tail.includes(String(p).toUpperCase()));
+  }
   async tickOne(w){
     const now=this.now(),rt0=w.runtime??{},interval=Math.max(0,Number(w.intervalSec??60))*1000;
     if(interval>0&&rt0.lastCheckedAtMs!==undefined&&now-rt0.lastCheckedAtMs<interval)return {id:w.id,state:"WAITING",previousState:rt0.state??null,skipped:true};
@@ -36,6 +42,12 @@ export class DesktopWatchEngine{
       await this.store.patch(w.id,{enabled:false,runtime:{...(w.runtime??{}),state:"DONE",lastCheckedAt:new Date(now).toISOString(),lastCheckedAtMs:now,lastHash:snap.hash}});
       await this.tray?.send?.({title:`Sentinel Watch — ${w.name??w.id}`,message:"DONE detected. Watch stopped.",level:"info"});
       return {id:w.id,state:"DONE"};
+    }
+    if(this.heldByBlocker(w,snap)){
+      const rt=w.runtime??{},state="BLOCKER_HOLD",runtime={...rt,state,lastCheckedAt:new Date(now).toISOString(),lastCheckedAtMs:now,lastHash:snap.hash,assistantTail:snap.assistant_tail?.slice(-1200)??null,error:null};
+      await this.store.patch(w.id,{runtime});
+      if(state!==rt.state)await this.logs?.append?.({level:"warning",type:"DESKTOP_WATCH",message:`${w.id} ${state}`});
+      return {id:w.id,state,sent:false,dispatch:null};
     }
     const rt=w.runtime??{},changed=!rt.lastHash||rt.lastHash!==snap.hash;
     const lastChangeAt=changed?now:(rt.lastChangeAtMs??now);
