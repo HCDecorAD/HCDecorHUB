@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "skill_id": "imaster.repair-council-7x7",
+  "name": "Repair Council 7x7",
+  "owner": "iMaster",
+  "scope": "global",
+  "autoload": true,
+  "activation": {
+    "mode": "automatic",
+    "condition": "before or during a non-trivial repair/debug/update"
+  },
+  "phases": [
+    "inspect local evidence and prior Fix Memory",
+    "invoke relevant installed plugins/connectors",
+    "research official/current web guidance",
+    "expand through 7x7 advisor matrix when uncertainty remains",
+    "rank candidates by fit/security/maintainability/license",
+    "acquire/reuse the best safe candidate",
+    "isolated test",
+    "regression test",
+    "promote only verified result"
+  ],
+  "stop_rule": "Evidence convergence beats source-count vanity; do not collect low-quality sources merely to reach 49.",
+  "evidence_gate": "scripts/imaster-skills.test.mjs"
+}
