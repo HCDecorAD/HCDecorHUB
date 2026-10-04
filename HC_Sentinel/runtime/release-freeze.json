@@ -1,0 +1,13 @@
+{
+  "product": "HC Sentinel",
+  "channel": "local",
+  "gate": "AUTONOMOUS_OPERATIONS_READY",
+  "version": "1.1.0",
+  "productionDeploy": false,
+  "runtimePolicy": "local-first",
+  "requiresGreenRegression": true,
+  "requiresNoCriticalFindings": true,
+  "requiresWatchdog": true,
+  "requiresBackup": true,
+  "requiresRetention": true
+}
