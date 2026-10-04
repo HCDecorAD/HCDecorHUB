@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "policy": {
+    "rule": "independent lifecycle -> separate repo; small internal module -> stay embedded; shared by 2+ systems -> consider shared package",
+    "migration": "register -> backup -> parity test -> cutover -> remove duplicate only after evidence",
+    "production_safety": "no source removal during registry decomposition"
+  },
+  "assets": [
+    {
+      "id": "HCDecorHUB",
+      "state": "separate",
+      "repo": "HCDecorAD/HCDecorHUB",
+      "action": "KEEP_MASTER_OS"
+    },
+    {
+      "id": "HC-Sentinel",
+      "state": "embedded-source",
+      "source_path": "HC_Sentinel/",
+      "target_repo": "HCDecorAD/HC-Sentinel",
+      "action": "SPLIT_CANDIDATE_HIGH",
+      "evidence": "dedicated source tree + workflows + tests"
+    },
+    {
+      "id": "HC-AutoDebug",
+      "state": "embedded-source",
+      "source_path": "lib/autodebug.mjs",
+      "target_repo": "HCDecorAD/HC-AutoDebug",
+      "action": "SPLIT_CANDIDATE_MEDIUM",
+      "evidence": "source + implementation/repair tests"
+    },
+    {
+      "id": "HC-Agent-Control",
+      "state": "embedded-source",
+      "source_path": "lib/agent-control-runtime.mjs",
+      "target_repo": "HCDecorAD/HC-Agent-Control",
+      "action": "SPLIT_CANDIDATE_MEDIUM",
+      "evidence": "runtime source + acceptance/runtime tests"
+    },
+    {
+      "id": "HC-AutoChat",
+      "state": "embedded-contract",
+      "source_path": "HC_Sentinel/runtime/autochat-bridge.py",
+      "target_repo": "HCDecorAD/HC-AutoChat",
+      "action": "DISCOVER_MORE_BEFORE_SPLIT"
+    },
+    {
+      "id": "HC-MediaFlow",
+      "state": "embedded-contract",
+      "target_repo": "HCDecorAD/HC-MediaFlow",
+      "action": "DISCOVER_MORE_BEFORE_SPLIT"
+    },
+    {
+      "id": "HC-Video-Downloader",
+      "state": "embedded-contract",
+      "target_repo": "HCDecorAD/HC-Video-Downloader",
+      "action": "DISCOVER_MORE_BEFORE_SPLIT"
+    },
+    {
+      "id": "HC-Visual-Builder",
+      "state": "registered-no-obvious-root-tree",
+      "target_repo": "HCDecorAD/HC-Visual-Builder",
+      "action": "DISCOVER_MORE_BEFORE_SPLIT"
+    },
+    {
+      "id": "HC-DONE",
+      "state": "embedded-control-plane",
+      "target_repo": "HCDecorAD/HC-DONE",
+      "action": "KEEP_UNTIL_DEPENDENCY_MAP_COMPLETE"
+    }
+  ]
+}
