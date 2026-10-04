@@ -16,4 +16,5 @@ for(const id of ['local-execution-transport','failure-diagnosis','repair-verific
   if(['local-execution-transport','failure-diagnosis','repair-verification'].includes(id)) assert.equal(c.contract_state,'source-implementation-gated');
   else assert.equal(c.contract_state,'source-contract-only');
 }
+assert.ok(registry.capabilities.length >= 16, 'expected expanded iMaster capability registry');
 console.log('CAPABILITY_REGISTRY_PASS capabilities='+r.capabilities.length+' fail_closed=1 correlation_contracts=3 hcdr_source_implementation=1 autodebug_diagnosis_implementation=1 autodebug_repair_implementation=1');
