@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "skill_id": "imaster.parallel-execution",
+  "name": "iMaster Parallel Execution",
+  "owner": "iMaster",
+  "scope": "global",
+  "autoload": true,
+  "activation": {
+    "mode": "automatic",
+    "condition": "independent_ready_tasks >= 2 AND safe_capacity > 0"
+  },
+  "contract": {
+    "planner": "continuous-planner",
+    "scheduler": "group-governor/resource-scheduler",
+    "worker_factory": "autonomous-worker-factory",
+    "durability": "durable-queue",
+    "recovery": "lease-expire-requeue",
+    "isolation": "blocked lane yields without stalling independent work",
+    "concurrency": "bounded by worker/resource/budget capacity"
+  },
+  "laws": [
+    "DO_NOT_REDO_PASS",
+    "READY_WORK + SAFE_CAPACITY -> EXECUTE",
+    "WAITING_ONE_MISSION != WAITING_THE_COMPANY",
+    "SINGLE_WORKER_FAILURE != COMPANY_STALL"
+  ],
+  "evidence_gate": "scripts/imaster-parallel-skill.test.mjs",
+  "runtime": "lib/imaster-next-moon.mjs",
+  "claim_policy": "Skill is available to every iMaster bootstrap consumer; LIVE claims still require runtime evidence in the active environment."
+}
