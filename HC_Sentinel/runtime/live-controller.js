@@ -20,7 +20,8 @@ export function createLiveController({projects,getTargets,targets:staticTargets,
   async function captureMission(input,mode="CHECK"){
     const resolved=await resolveMission(input);if(resolved.error)return resolved.error;
     const {command,target,viewportName,viewport}=resolved;
-    const prior=(await evidence.list({projectId:target.projectId,type:"screenshot"})).filter(x=>x.targetId===target.id&&x.viewport===viewportName).at(-1)??null;
+    const priorItems=typeof evidence?.list==="function"?await evidence.list({projectId:target.projectId,type:"screenshot"}):[];
+    const prior=priorItems.filter(x=>x.targetId===target.id&&x.viewport===viewportName).at(-1)??null;
     await logs?.append?.({level:"info",type:"MISSION_START",message:`${mode} ${target.id} ${viewportName}`});
     try{
       const capture=await observer.capture({url:target.url,waitUntil:"domcontentloaded",timeoutMs:45000},{viewport,fullPage:false});
