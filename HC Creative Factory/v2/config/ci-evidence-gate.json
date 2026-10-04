@@ -1,0 +1,18 @@
+{
+  "schema": "hc-factory/ci-evidence-gate-v1",
+  "stage_range": "V2.7-V2.9",
+  "required_workflow": "HC Creative Factory V2 Gate",
+  "accepted_triggers": [
+    "pull_request",
+    "push",
+    "workflow_dispatch"
+  ],
+  "required_conclusion": "success",
+  "runtime_truth_separate": true,
+  "no_ci_run": {
+    "status": "BLOCKED",
+    "recovery": "7x7",
+    "queue_jobs": 0
+  },
+  "production_mutation": "deny"
+}
