@@ -1,0 +1,1 @@
+export function history(){const past=[],future=[];return{record(x){past.push(x);future.length=0;return x},undo(){const x=past.pop();if(!x)return null;future.push(x);return x.rollback??null},redo(){const x=future.pop();if(!x)return null;past.push(x);return x.after??null},state(){return{undo:past.length,redo:future.length}}}}
