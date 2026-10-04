@@ -12,7 +12,7 @@ export const hubNav=[
   ["WIN_PROJECTS","Project Center","Trung Tâm Dự Án","/hub/projects"],
   ["WIN_IMASTER","iMaster Center","Trung Tâm iMaster","/hub/agents"],
   ["WIN_BUSINESS","Business Center","Trung Tâm Kinh Doanh","/hub/business"],
-  ["WIN_SYSTEM","System Center","Trung Tâm Hệ Thống","/admin"]
+  ["WIN_SYSTEM","System Center","Trung Tâm Hệ Thống","/hub/system"]
 ];
 
 export function HubShell({title,eyebrow="HCDECOR HUB / MASTER",children,sidePanel=null,aiPanel=null}){
