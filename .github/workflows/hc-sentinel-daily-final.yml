@@ -1,0 +1,37 @@
+name: HC Sentinel DAILY FINAL
+
+on:
+  push:
+    branches: [hc-sentinel-daily-final-real-controls]
+    paths:
+      - "HC_Sentinel/**"
+      - ".github/workflows/hc-sentinel-daily-final.yml"
+  workflow_dispatch:
+
+jobs:
+  daily-final:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Full Regression
+        run: npm test
+      - name: Verify real UI controls
+        run: |
+          grep -q 'id="runNow"' ui/index.html
+          grep -q 'id="compareNow"' ui/index.html
+          grep -q 'id="verifyNow"' ui/index.html
+          grep -q 'id="repairNow"' ui/index.html
+          grep -q 'id="saveProject"' ui/index.html
+      - name: Verify tray agent
+        run: |
+          grep -q 'NotifyIcon' runtime/tray-agent.ps1
+          grep -q 'HC_SENTINEL_TRAY' runtime/tray-agent.ps1
