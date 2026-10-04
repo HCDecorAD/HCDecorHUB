@@ -1,0 +1,2 @@
+import test from "node:test";import assert from "node:assert/strict";import {readFile} from "node:fs/promises";
+test("tray agent has icon open and notification loop",async()=>{const s=await readFile(new URL("../runtime/tray-agent.ps1",import.meta.url),"utf8");assert.match(s,/NotifyIcon/);assert.match(s,/Open Command Center/);assert.match(s,/ShowBalloonTip/);assert.match(s,/tray-notifications\.jsonl/);});
