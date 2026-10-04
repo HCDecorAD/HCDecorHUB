@@ -2,9 +2,9 @@
 
 Local mirror: `D:\HCDecorHUB\HC_Sentinel`
 
-Status: **LOCAL_FINAL_READY**
+Status: **DAILY_FINAL_READY**
 Latest completed scope: **P1 -> P64**
-Full regression: **99/99 PASS, 0 FAIL**
+Full regression: **102/102 PASS, 0 FAIL**
 
 Core flow:
 `Command -> Observe -> Detect -> Compare -> Diagnose -> Route -> Repair -> Verify -> Evidence -> Alert -> DONE`
@@ -94,3 +94,18 @@ Verified on HOCUONG:
 - suppressed findings: `BROKEN_MEDIA_HINT ×3`
 - failed requests: `0`
 - regression: `100/100 PASS — 0 FAIL`
+
+
+## DAILY FINAL — Real controls
+
+Verified on HOCUONG:
+- Run Now: **REAL / DONE**
+- Compare: **REAL / SAME or CHANGED**
+- Verify: **REAL / VERIFIED or ROUTED**
+- Route Repair: **REAL / persisted repair queue**
+- Add Project: **REAL / persistent live target**
+- Tray Notification: **REAL / Windows NotifyIcon singleton**
+
+Golden smoke completed all six controls. Temporary smoke project/finding state was restored after verification.
+
+Gate: **DAILY_FINAL_READY**
