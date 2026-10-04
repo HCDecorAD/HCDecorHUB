@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "phase": "PHASE_4_EXTRACTION_PACKAGES",
+  "safety": {
+    "source_of_truth": "HCDecorAD/HCDecorHUB@main until target parity passes",
+    "delete_embedded_source": false,
+    "production_authority_change": false,
+    "cutover_requires": [
+      "target repository exists",
+      "target CI PASS",
+      "source manifest parity PASS",
+      "rollback reference recorded"
+    ]
+  },
+  "packages": [
+    {
+      "id": "HC-Sentinel",
+      "target_repo": "HCDecorAD/HC-Sentinel",
+      "source_roots": [
+        "HC_Sentinel/"
+      ],
+      "required_tests": [
+        "HC_Sentinel/tests/"
+      ],
+      "workflow_sources": [
+        ".github/workflows/hc-sentinel-*.yml"
+      ],
+      "integration_contracts": [
+        "HCDR repair bridge",
+        "AutoChat bridge"
+      ],
+      "rollback": {
+        "mode": "retain embedded source",
+        "authority": "HCDecorHUB main SHA before cutover"
+      },
+      "state": "READY_FOR_PROVISIONING"
+    },
+    {
+      "id": "HC-AutoDebug",
+      "target_repo": "HCDecorAD/HC-AutoDebug",
+      "source_roots": [
+        "lib/autodebug.mjs"
+      ],
+      "required_config": [
+        "config/fix-memory.json"
+      ],
+      "required_tests": [
+        "scripts/autodebug-implementation.test.mjs",
+        "scripts/autodebug-repair-verification.test.mjs"
+      ],
+      "integration_contracts": [
+        "verified fix memory",
+        "evidence-gated repair"
+      ],
+      "rollback": {
+        "mode": "retain HUB adapter/source until parity",
+        "authority": "HCDecorHUB main SHA before cutover"
+      },
+      "state": "READY_FOR_EXTRACTION"
+    },
+    {
+      "id": "HC-Agent-Control",
+      "target_repo": "HCDecorAD/HC-Agent-Control",
+      "source_roots": [
+        "lib/agent-control-runtime.mjs"
+      ],
+      "required_config": [
+        "config/hc-agent-control-acceptance.json"
+      ],
+      "required_tests": [
+        "scripts/hc-agent-control-acceptance.test.mjs",
+        "scripts/hc-agent-control-runtime.test.mjs"
+      ],
+      "integration_contracts": [
+        "HCDR v3",
+        "AutoChat operator bridge",
+        "evidence-required DONE"
+      ],
+      "rollback": {
+        "mode": "retain HUB adapter/source until parity",
+        "authority": "HCDecorHUB main SHA before cutover"
+      },
+      "state": "READY_FOR_EXTRACTION"
+    }
+  ]
+}

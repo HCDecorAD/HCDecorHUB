@@ -53,7 +53,8 @@
     "test:hcdr-always-on": "node scripts/hcdr-always-on.test.mjs",
     "test:hcdr-mobile-remote-done": "node scripts/hcdr-mobile-remote-done.test.mjs",
     "test:mobile-hc-done-cloud": "node scripts/mobile-hc-done-cloud.test.mjs",
-    "test:repo-decomposition": "node scripts/repo-decomposition-parity.test.mjs"
+    "test:repo-decomposition": "node scripts/repo-decomposition-parity.test.mjs",
+    "test:repo-extraction": "node scripts/repo-extraction-package.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
