@@ -46,7 +46,10 @@
     "PRODUCTION_WRITES_FAIL_CLOSED",
     "DESTRUCTIVE_AND_CREDENTIAL_BOUNDARIES_REMAIN_GATED",
     "NO_EVIDENCE_NO_GREEN",
-    "LOCAL_FIRST_OPERATING_LAW"
+    "LOCAL_FIRST_OPERATING_LAW",
+    "HCDR_MANDATORY_DEFAULT",
+    "MACHINE_CONTROL_MUST_ATTEMPT_HCDR_FIRST",
+    "RDC_RESCUE_ONLY_AFTER_HCDR_FAILURE_EVIDENCE"
   ],
   "mission_ownership": "iMaster durable control plane",
   "scope": [
@@ -71,11 +74,36 @@
       "GITHUB",
       "CI"
     ],
-    "rdc_policy": "RESCUE_ONLY",
+    "rdc_policy": "RESCUE_ONLY_AFTER_HCDR_FAILURE_EVIDENCE",
     "enforcement": [
       "NO_EVIDENCE_NO_GREEN",
       "DO_NOT_REDO_PASS",
-      "TEST_BEFORE_GITHUB"
-    ]
+      "TEST_BEFORE_GITHUB",
+      "HCDR_MANDATORY_DEFAULT",
+      "RDC_RESCUE_ONLY_AFTER_HCDR_FAILURE_EVIDENCE"
+    ],
+    "hcdr_policy": {
+      "status": "MANDATORY_DEFAULT",
+      "target": "HOCUONG",
+      "first_attempt_required": true,
+      "normal_paths": [
+        "code",
+        "build",
+        "test",
+        "debug",
+        "file",
+        "health",
+        "deploy",
+        "machine-control"
+      ],
+      "fallback_to_rdc_only_after": [
+        "UNAVAILABLE",
+        "FAILED",
+        "NO_CLAIM",
+        "TIMEOUT",
+        "MISSING_REQUIRED_CAPABILITY"
+      ],
+      "route_evidence_required": true
+    }
   }
 }
