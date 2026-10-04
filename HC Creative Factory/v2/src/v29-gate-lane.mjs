@@ -1,0 +1,1 @@
+import{runtimeBundle}from"./runtime-bundle.mjs";export function runV29(input){const bundle=runtimeBundle(input);return{stage:"V2.9",status:bundle.status,real:bundle.real,publish_candidate:bundle.publish_candidate,evidence:bundle}}
