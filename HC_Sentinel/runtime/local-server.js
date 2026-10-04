@@ -7,7 +7,7 @@ const MIME={".html":"text/html; charset=utf-8",".js":"text/javascript; charset=u
 async function readBody(req){let body="";for await(const chunk of req) body+=chunk;return body?JSON.parse(body):{};}
 const send=(res,data,code=200)=>{res.statusCode=code;res.setHeader("content-type",MIME[".json"]);res.end(JSON.stringify(data));};
 
-export function createLocalServer({controller,status=()=>({status:"READY"}),evidence=null,settings=null,findings=null,logs=null,targetStore=null,projects=null,repairQueue=null,uiDir=null}){
+export function createLocalServer({controller,status=()=>({status:"READY"}),evidence=null,settings=null,findings=null,logs=null,targetStore=null,projects=null,repairQueue=null,watchStore=null,watchEngine=null,windowProvider=null,chatBridge=null,uiDir=null}){
   const uiRoot=uiDir?resolve(fileURLToPath(uiDir)):null;
   return http.createServer(async(req,res)=>{
     const url=new URL(req.url,"http://127.0.0.1");
@@ -32,6 +32,30 @@ export function createLocalServer({controller,status=()=>({status:"READY"}),evid
       }catch(e){send(res,{status:"BLOCKED",error:String(e.message||e)},400);return;}
     }
     if(req.method==="GET"&&url.pathname==="/api/repairs"){send(res,{items:repairQueue?await repairQueue.list():[]});return;}
+    if(req.method==="GET"&&url.pathname==="/api/windows"){try{send(res,{items:windowProvider?await windowProvider.list():[]});}catch(e){send(res,{items:[],error:String(e.message||e)},500);}return;}
+    if(req.method==="GET"&&url.pathname==="/api/chat-targets"){try{send(res,chatBridge?await chatBridge.list():{items:[]});}catch(e){send(res,{items:[],error:String(e.message||e)},500);}return;}
+    if(url.pathname==="/api/watchers"&&watchStore){
+      try{
+        if(req.method==="GET"){send(res,{items:await watchStore.list()});return;}
+        if(req.method==="POST"){
+          const data=await readBody(req);const id=data.id??`watch-${Date.now()}`;
+          await watchStore.upsert({...data,id});send(res,{status:"SAVED",watch:(await watchStore.list()).find(x=>x.id===id)});return;
+        }
+      }catch(e){send(res,{status:"BLOCKED",error:String(e.message||e)},400);return;}
+    }
+    const wm=url.pathname.match(/^\/api\/watchers\/([^/]+)\/(start|stop|tick|remove)$/);
+    if(wm&&watchStore&&watchEngine){
+      const id=decodeURIComponent(wm[1]),op=wm[2];
+      try{
+        if(op==="start"){send(res,{status:"STARTED",watch:await watchStore.patch(id,{enabled:true,runtime:{state:"ARMED"}})});return;}
+        if(op==="stop"){send(res,{status:"STOPPED",watch:await watchStore.patch(id,{enabled:false,runtime:{...(await watchStore.list()).find(x=>x.id===id)?.runtime,state:"STOPPED"}})});return;}
+        if(op==="remove"){await watchStore.remove(id);send(res,{status:"REMOVED",id});return;}
+        if(op==="tick"){
+          const w=(await watchStore.list()).find(x=>x.id===id);if(!w)throw new Error("WATCH_NOT_FOUND");
+          const result=await watchEngine.tickOne({...w,intervalSec:0});send(res,{status:"TICKED",result});return;
+        }
+      }catch(e){send(res,{status:"BLOCKED",error:String(e.message||e)},400);return;}
+    }
     if(req.method==="GET"&&url.pathname==="/api/evidence"){send(res,{items:evidence?await evidence.list({projectId:url.searchParams.get("projectId")||undefined,type:url.searchParams.get("type")||undefined}):[]});return;}
     if(req.method==="GET"&&url.pathname==="/api/findings"){send(res,{items:findings?await findings.list({state:url.searchParams.get("state")||undefined,projectId:url.searchParams.get("projectId")||undefined}):[]});return;}
     if(req.method==="GET"&&url.pathname==="/api/logs"){send(res,{items:logs?await logs.list({level:url.searchParams.get("level")||undefined,limit:url.searchParams.get("limit")||100}):[]});return;}
