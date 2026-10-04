@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "purpose": "Independent declared-active denominator for HC Group catalog coverage. This file is not generated from corporate-catalog.json.",
   "source_refs": [
     "config/site-registry.json",
@@ -49,5 +49,27 @@
     "cloudflare",
     "wordpress",
     "github-pages"
+  ],
+  "portfolio_assets": [
+    "HCDECOR-HUB",
+    "GSC",
+    "AMO",
+    "HCDR",
+    "TRANSWARP",
+    "DESIGN-AI",
+    "CREATIVE-FACTORY",
+    "HC-FUTURE",
+    "HC-ENGLISH-WORLD"
+  ],
+  "repositories": [
+    "HCDecorAD/HCDecorHUB",
+    "HCDecorAD/GSC",
+    "HCDecorAD/AMONguyen",
+    "HCDecorAD/HCDecor-HCDR-Relay",
+    "HCDecorAD/HC-TransWarp-Infrastructure",
+    "HCDecorAD/HC-Design-AI-Studio",
+    "HCDecorAD/HC-Creative-Factory",
+    "HCDecorAD/HC-Future",
+    "HCDecorAD/HC-English-World"
   ]
 }
