@@ -1,0 +1,1 @@
+export function v29Manifest({mission_id,frozen,quorum}){const ok=frozen?.status==="PASS"&&quorum?.status==="PASS"&&quorum?.quorum===true;return{schema:"hc-factory/v29-manifest-v1",mission_id,status:ok?"PASS":"BLOCKED",freeze_sha256:frozen?.sha256??null,quorum:quorum?.quorum===true,ready_for_v210:ok}}
