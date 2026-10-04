@@ -92,6 +92,8 @@ jobs:
         run: npm run test:evidence-store
       - name: Evidence archive index gate
         run: npm run test:evidence-archive-index
+      - name: iMaster operating skills gate
+        run: npm run test:imaster-skills
       - name: iMaster parallel execution skill gate
         run: npm run test:imaster-parallel-skill
       - name: iMaster NEXT MOON runtime gate
