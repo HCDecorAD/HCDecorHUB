@@ -21,7 +21,7 @@ for(const token of ['runtimeCapabilities','CMS Write Config','Drive Write Config
 
 assert.equal(boot.panda_24_7.status,'DONE');
 assert.ok(auth.laws.includes('LOCAL_FIRST_OPERATING_LAW'));
-assert.equal(auth.operating_law_local_first.rdc_policy,'RESCUE_ONLY');
+assert.equal(auth.operating_law_local_first.rdc_policy,'RESCUE_ONLY_AFTER_HCDR_FAILURE_EVIDENCE');assert.ok(auth.laws.includes('HCDR_MANDATORY_DEFAULT'));assert.equal(auth.operating_law_local_first.hcdr_policy.first_attempt_required,true);
 
 for(const id of ['PKG-02','PKG-04','PKG-12','PKG-14']) assert.ok(manifest.packages.find(x=>x.id===id),id);
 console.log('HCDECOR_V9_CORE_CENTERS_PASS imaster=1 system=1 panda_reuse=1 local_first_reuse=1');
