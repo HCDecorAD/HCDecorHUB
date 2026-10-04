@@ -29,9 +29,18 @@
     <section class="hero"><div><h2>Command Center</h2><p>Ra lệnh, quan sát, phát hiện, định tuyến, xác minh.</p></div></section>
     <section class="command-card">
       <input id="commandInput" placeholder="Ví dụ: Sentinel kiểm tra GSC mobile">
-      <div class="actions"><button class="primary" id="runNow">▶ Run Now</button><button>⇄ Compare</button><button>◈ Verify</button><button>⌘ Route Repair</button></div>
+      <div class="actions"><button class="primary" id="runNow">▶ Run Now</button><button id="compareNow">⇄ Compare</button><button id="verifyNow">◈ Verify</button><button id="repairNow">⌘ Route Repair</button><button id="toggleAddProject">＋ Add Project</button></div>
     </section>
-    <section class="project-grid">
+    <section id="addProjectPanel" class="panel add-project" hidden>
+  <div class="panel-head"><h3>Add Project / Target</h3><span id="addProjectStatus" class="muted">Persistent local target</span></div>
+  <div class="project-form">
+    <input id="projectIdInput" placeholder="Project ID, e.g. demo">
+    <input id="projectNameInput" placeholder="Project name">
+    <input id="projectUrlInput" placeholder="https://example.com">
+    <button id="saveProject">Save Project</button>
+  </div>
+</section>
+<section class="project-grid">
       <article><h3>GSC</h3><span class="chip ok">HEALTHY</span><p>Public project target</p><div class="meter"><i style="width:98%"></i></div></article>
       <article><h3>AMO</h3><span class="chip ok">HEALTHY</span><p>Commerce project target</p><div class="meter"><i style="width:96%"></i></div></article>
       <article><h3>Creative Factory</h3><span class="chip ready">READY</span><p>Content & Creative</p><div class="meter"><i style="width:94%"></i></div></article>
@@ -54,7 +63,7 @@
   </main>
   <aside class="rightbar">
     <section class="panel"><h3>Workers <small>3/3 Online</small></h3><p>● autodebug-ui <b>RUNNING</b></p><p>● visual-checker <b>RUNNING</b></p><p>● baseline-keeper <b>RUNNING</b></p></section>
-    <section class="panel"><h3>Tracked Finding</h3><p>GSC #1265 <b>ROUTED</b></p></section>
+    <section class="panel"><h3>Repair Queue</h3><div id="repairList" class="listbox"><span class="muted">No repair jobs</span></div></section>
     <section class="panel"><h3>Recent Activity</h3><p>✓ Mission completed</p><p>✓ Visual check passed</p><p>✓ Baseline approved</p></section>
   </aside>
 </div>
