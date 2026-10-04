@@ -109,18 +109,63 @@
     "continuation_skill": "imaster.continuation-engine"
   },
   "panda_24_7": {
-    "status": "ACCEPTANCE_PENDING",
+    "status": "PANDA_24_7_LIVE",
     "cluster": "imaster.panda-cluster-v2",
-    "required_evidence": [
-      "auto_wake",
-      "post_merge_verify",
-      "durable_restart",
-      "missed_event_recovery",
-      "duplicate_safe",
-      "bounded_repair",
-      "owner_boundary",
-      "soak"
-    ],
-    "claim_policy": "PANDA_24_7_LIVE only when every required evidence flag is verified true."
+    "verified_main_sha": "064952ff874f4272806346c541ea9bfae7e74cb2",
+    "evidence": {
+      "auto_wake": {
+        "verified": true,
+        "runs": [
+          35,
+          36
+        ]
+      },
+      "post_merge_verify": {
+        "verified": true,
+        "quality_run": 705,
+        "production_run": 567
+      },
+      "durable_restart": {
+        "verified": true,
+        "runtime_acceptance_run": 4
+      },
+      "missed_event_recovery": {
+        "verified": true,
+        "runtime_acceptance_run": 4,
+        "soak_run": 2
+      },
+      "duplicate_safe": {
+        "verified": true,
+        "runtime_acceptance_run": 4,
+        "soak_run": 2
+      },
+      "bounded_repair": {
+        "verified": true,
+        "runtime_acceptance_run": 4,
+        "soak_run": 2
+      },
+      "owner_boundary": {
+        "verified": true,
+        "runtime_acceptance_run": 4,
+        "soak_run": 2
+      },
+      "soak": {
+        "verified": true,
+        "run": 2,
+        "cycles": 48
+      }
+    },
+    "artifacts": {
+      "runtime_acceptance": {
+        "id": 11306548011,
+        "digest": "sha256:9150f022df12e0a6a14d8c569903e8befa603a796c1c87d829c65e6b2ee6a7fc"
+      },
+      "soak": {
+        "id": 11307066078,
+        "digest": "sha256:46aca56e9923f1003aea66d3d41763c1c2c918c920d62c41c31078dfda8317bc"
+      }
+    },
+    "claim_policy": "LIVE is valid only while required evidence remains verified and production-write owner boundaries remain fail-closed.",
+    "frozen_at": "2026-10-04"
   }
 }
