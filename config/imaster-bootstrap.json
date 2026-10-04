@@ -17,6 +17,7 @@
     "config/imaster-skills/proactive-improvement.json",
     "config/imaster-skills/repair-council.json",
     "config/imaster-skills/operator-visual-status.json",
+    "config/imaster-skills/local-first-execution.json",
     "docs/HC-GROUP-MASTER-REGISTRY.md"
   ],
   "identity": {
@@ -37,7 +38,10 @@
     "RESEARCH_BEFORE_HARD_BLOCK",
     "LEARN_FROM_VERIFIED_REPAIRS",
     "PROACTIVE_SAFE_IMPROVEMENT",
-    "VISUAL_STATUS_MUST_MATCH_EVIDENCE"
+    "VISUAL_STATUS_MUST_MATCH_EVIDENCE",
+    "LOCAL_FIRST",
+    "HCDR_BEFORE_RDC",
+    "TEST_BEFORE_GITHUB"
   ],
   "startup_checks": [
     "load portfolio and repositories",
@@ -73,7 +77,9 @@
     "config/imaster-skills/learning-memory.json",
     "config/imaster-skills/proactive-improvement.json",
     "config/imaster-skills/repair-council.json",
-    "config/imaster-skills/operator-visual-status.json"
+    "config/imaster-skills/operator-visual-status.json",
+    "config/imaster-skills/local-first-execution.json"
   ],
-  "parallel_execution_rule": "When >=2 independent tasks are READY and safe capacity exists, Capability Router MUST prefer imaster.parallel-execution over serial execution."
+  "parallel_execution_rule": "When >=2 independent tasks are READY and safe capacity exists, Capability Router MUST prefer imaster.parallel-execution over serial execution.",
+  "local_execution_default": "CODE -> HOCUONG_LOCAL -> HCDR -> TEST/EVIDENCE -> GITHUB; RDC rescue only."
 }
