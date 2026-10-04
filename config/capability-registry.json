@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "capabilities": [
     {
       "capability_id": "durable-queue",
@@ -170,6 +170,125 @@
       "production_write": false,
       "fail_closed": true,
       "contract_state": "source-implementation-gated"
+    },
+    {
+      "capability_id": "worker-coordination",
+      "provider_tool": "hc-agent-control",
+      "inputs": [
+        "mission"
+      ],
+      "outputs": [
+        "state",
+        "evidence"
+      ],
+      "risk_class": "control-plane",
+      "gate": "HC Agent Control source contract",
+      "cost_class": "medium",
+      "production_write": false,
+      "fail_closed": true,
+      "contract_state": "registered-existing-capability"
+    },
+    {
+      "capability_id": "operator-conversation-ui",
+      "provider_tool": "hc-autochat",
+      "inputs": [
+        "mission"
+      ],
+      "outputs": [
+        "state",
+        "evidence"
+      ],
+      "risk_class": "operator-ui",
+      "gate": "HC AutoChat source contract",
+      "cost_class": "medium",
+      "production_write": false,
+      "fail_closed": true,
+      "contract_state": "registered-existing-capability"
+    },
+    {
+      "capability_id": "visual-editor",
+      "provider_tool": "hc-visual-builder",
+      "inputs": [
+        "mission"
+      ],
+      "outputs": [
+        "state",
+        "evidence"
+      ],
+      "risk_class": "content-editing",
+      "gate": "AMO/GSC visual editor gates",
+      "cost_class": "medium",
+      "production_write": false,
+      "fail_closed": true,
+      "contract_state": "registered-existing-capability"
+    },
+    {
+      "capability_id": "media-routing",
+      "provider_tool": "hc-mediaflow",
+      "inputs": [
+        "mission"
+      ],
+      "outputs": [
+        "state",
+        "evidence"
+      ],
+      "risk_class": "media",
+      "gate": "HC MediaFlow source contract",
+      "cost_class": "medium",
+      "production_write": false,
+      "fail_closed": true,
+      "contract_state": "registered-existing-capability"
+    },
+    {
+      "capability_id": "media-download",
+      "provider_tool": "hc-video-downloader",
+      "inputs": [
+        "mission"
+      ],
+      "outputs": [
+        "state",
+        "evidence"
+      ],
+      "risk_class": "media",
+      "gate": "HC Video Downloader source contract",
+      "cost_class": "medium",
+      "production_write": false,
+      "fail_closed": true,
+      "contract_state": "registered-existing-capability"
+    },
+    {
+      "capability_id": "ai-design",
+      "provider_tool": "hc-design-ai-studio",
+      "inputs": [
+        "mission"
+      ],
+      "outputs": [
+        "state",
+        "evidence"
+      ],
+      "risk_class": "creative",
+      "gate": "HC Design AI Studio source contract",
+      "cost_class": "medium",
+      "production_write": false,
+      "fail_closed": true,
+      "contract_state": "registered-existing-capability"
+    },
+    {
+      "capability_id": "mission-readiness-gate",
+      "provider_tool": "hc-moonshot",
+      "inputs": [
+        "mission"
+      ],
+      "outputs": [
+        "state",
+        "evidence"
+      ],
+      "risk_class": "qa",
+      "gate": "HC Group MOON gate",
+      "cost_class": "medium",
+      "production_write": false,
+      "fail_closed": true,
+      "contract_state": "registered-existing-capability"
     }
   ]
 }
