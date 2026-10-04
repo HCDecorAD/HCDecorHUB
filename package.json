@@ -80,7 +80,8 @@
     "test:panda-24x7-final": "node scripts/panda-24x7-final.test.mjs",
     "test:hcdecor-v9-packages": "node scripts/hcdecor-v9-package-manifest.test.mjs",
     "imaster:v9-wave": "node scripts/hcdecor-v9-package-wave.mjs",
-    "test:hcdecor-v9-app-shell": "node scripts/hcdecor-v9-app-shell.test.mjs"
+    "test:hcdecor-v9-app-shell": "node scripts/hcdecor-v9-app-shell.test.mjs",
+    "test:hcdecor-v9-core-centers": "node scripts/hcdecor-v9-core-centers.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
