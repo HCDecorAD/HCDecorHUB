@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.2.0",
+  "schema_version": "2.0.0",
   "generated_from": [
     "config/site-registry.json",
     "config/workspaces.json",
@@ -323,5 +323,75 @@
       "production_authority": false
     }
   ],
-  "corporate_update_feed": "config/corporate-update-feed.json"
+  "corporate_update_feed": "config/corporate-update-feed.json",
+  "portfolio_assets": [
+    {
+      "asset_id": "HCDECOR-HUB",
+      "kind": "platform",
+      "repository": "HCDecorAD/HCDecorHUB",
+      "mission": "AI Operating System / Multi-Business Command Center",
+      "authority": "WordPress + registered control-plane adapters"
+    },
+    {
+      "asset_id": "GSC",
+      "kind": "business-workspace",
+      "repository": "HCDecorAD/GSC",
+      "mission": "Senior Living & Wellness Digital Twin",
+      "authority": "GitHub Pages"
+    },
+    {
+      "asset_id": "AMO",
+      "kind": "business-workspace",
+      "repository": "HCDecorAD/AMONguyen",
+      "mission": "Premium men's footwear commerce",
+      "authority": "GitHub Pages"
+    },
+    {
+      "asset_id": "HCDR",
+      "kind": "infrastructure",
+      "repository": "HCDecorAD/HCDecor-HCDR-Relay",
+      "mission": "Canonical local execution transport",
+      "authority": "non-production transport"
+    },
+    {
+      "asset_id": "TRANSWARP",
+      "kind": "infrastructure",
+      "repository": "HCDecorAD/HC-TransWarp-Infrastructure",
+      "mission": "Capability/mission routing and durable recovery infrastructure",
+      "authority": "non-production control infrastructure"
+    },
+    {
+      "asset_id": "DESIGN-AI",
+      "kind": "product",
+      "repository": "HCDecorAD/HC-Design-AI-Studio",
+      "mission": "Architecture/interior/exterior AI design and rendering",
+      "authority": "independent product"
+    },
+    {
+      "asset_id": "CREATIVE-FACTORY",
+      "kind": "product",
+      "repository": "HCDecorAD/HC-Creative-Factory",
+      "mission": "Creative/media production pipeline",
+      "authority": "independent product"
+    },
+    {
+      "asset_id": "HC-FUTURE",
+      "kind": "education",
+      "repository": "HCDecorAD/HC-Future",
+      "mission": "THCS to THPT to University learning ecosystem",
+      "authority": "independent product"
+    },
+    {
+      "asset_id": "HC-ENGLISH-WORLD",
+      "kind": "education",
+      "repository": "HCDecorAD/HC-English-World",
+      "mission": "Independent English learning ecosystem",
+      "authority": "independent product"
+    }
+  ],
+  "discovery": {
+    "policy": "discover-before-create",
+    "census_snapshot": "config/corporate-census.json",
+    "anti_amnesia_gate": "scripts/anti-amnesia-gate.test.mjs"
+  }
 }

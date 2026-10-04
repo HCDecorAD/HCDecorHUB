@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "captured_at": "2026-10-04",
+  "source": "GitHub connector census of HCDecorAD plus HCDecorHUB registry",
+  "repository_count": 9,
+  "repositories": [
+    {
+      "repository": "HCDecorAD/HCDecorHUB",
+      "asset_id": "HCDECOR-HUB",
+      "kind": "platform",
+      "registered": true
+    },
+    {
+      "repository": "HCDecorAD/GSC",
+      "asset_id": "GSC",
+      "kind": "business-workspace",
+      "registered": true
+    },
+    {
+      "repository": "HCDecorAD/AMONguyen",
+      "asset_id": "AMO",
+      "kind": "business-workspace",
+      "registered": true
+    },
+    {
+      "repository": "HCDecorAD/HCDecor-HCDR-Relay",
+      "asset_id": "HCDR",
+      "kind": "infrastructure",
+      "registered": true
+    },
+    {
+      "repository": "HCDecorAD/HC-TransWarp-Infrastructure",
+      "asset_id": "TRANSWARP",
+      "kind": "infrastructure",
+      "registered": true
+    },
+    {
+      "repository": "HCDecorAD/HC-Design-AI-Studio",
+      "asset_id": "DESIGN-AI",
+      "kind": "product",
+      "registered": true
+    },
+    {
+      "repository": "HCDecorAD/HC-Creative-Factory",
+      "asset_id": "CREATIVE-FACTORY",
+      "kind": "product",
+      "registered": true
+    },
+    {
+      "repository": "HCDecorAD/HC-Future",
+      "asset_id": "HC-FUTURE",
+      "kind": "education",
+      "registered": true
+    },
+    {
+      "repository": "HCDecorAD/HC-English-World",
+      "asset_id": "HC-ENGLISH-WORLD",
+      "kind": "education",
+      "registered": true
+    }
+  ],
+  "policy": {
+    "unknown_active_repository": "REVIEW_REQUIRED",
+    "missing_registered_repository": "REVIEW_REQUIRED",
+    "create_new_capability": "DISCOVER_MATCH_REUSE_EXTEND_CREATE"
+  }
+}
