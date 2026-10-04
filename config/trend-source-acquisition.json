@@ -1,0 +1,11 @@
+{
+  "schema_version":"1.0.0",
+  "purpose":"Provenance registry for Trend & Monetization research patterns. No third-party source code is vendored by this file.",
+  "candidates":[
+    {"id":"youtube-niche-finder","repo":"pandich93/youtube-niche-finder","license":"MIT","status":"REFERENCE_APPROVED","use":["outlier research","view velocity snapshots","niche discovery","self-hosted local-first pattern"],"adoption":"reimplement patterns behind HCDecor adapters; preserve attribution if substantial code is later copied"},
+    {"id":"youtube-outlier-finder","repo":"slaavass/youtube-outlier-finder","license":"MIT","status":"REFERENCE_APPROVED","use":["median-relative outlier detection","small-channel breakout discovery"],"adoption":"algorithm inspiration; HCDecor implementation remains independent"},
+    {"id":"youtubepro","repo":"AgriciDaniel/youtubepro","license":"Apache-2.0","status":"REFERENCE_APPROVED","use":["evidence-grounded research","observed-vs-inferred separation","server-side API key pattern"],"adoption":"architecture inspiration; retain NOTICE requirements if substantial code is later copied"},
+    {"id":"pytrends","repo":"GeneralMills/pytrends","license":"Apache-2.0","status":"REFERENCE_ONLY_ARCHIVED","use":["historical Google Trends interface reference"],"risk":"archived 2025; unofficial backend; not a production dependency"}
+  ],
+  "laws":["LICENSE_BEFORE_ACQUIRE","PROVENANCE_BEFORE_PROMOTION","NO_ARCHIVED_UNOFFICIAL_SOURCE_AS_PRIMARY_RUNTIME","OBSERVED_DATA_NE_INFERENCE","NO_SOURCE_CODE_COPY_WITHOUT_LICENSE_COMPLIANCE"]
+}
