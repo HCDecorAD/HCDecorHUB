@@ -428,6 +428,26 @@
         "HCDR",
         "RDC_RESCUE_ONLY"
       ]
+    },
+    {
+      "capability_id": "imaster.continuous-control",
+      "provider_tool": "group-governor",
+      "inputs": [
+        "global_state",
+        "missions",
+        "safe_capacity"
+      ],
+      "outputs": [
+        "next_best_actions",
+        "dispatch_or_checkpoint",
+        "evidence"
+      ],
+      "risk_class": "control-plane",
+      "gate": "iMaster continuous control gate",
+      "cost_class": "low",
+      "production_write": false,
+      "fail_closed": true,
+      "activation": "AUTO_WHILE_NON_TERMINAL_GOAL_EXISTS"
     }
   ]
 }
