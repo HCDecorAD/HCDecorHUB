@@ -62,7 +62,8 @@
     "test:imaster-bootstrap": "node scripts/imaster-bootstrap.test.mjs",
     "test:imaster-v3": "node scripts/imaster-v3-contract.test.mjs",
     "test:imaster-next-moon": "node scripts/imaster-next-moon.test.mjs",
-    "test:imaster-parallel-skill": "node scripts/imaster-parallel-skill.test.mjs"
+    "test:imaster-parallel-skill": "node scripts/imaster-parallel-skill.test.mjs",
+    "test:imaster-skills": "node scripts/imaster-skills.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
