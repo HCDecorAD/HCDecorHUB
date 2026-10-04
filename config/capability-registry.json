@@ -289,6 +289,36 @@
       "production_write": false,
       "fail_closed": true,
       "contract_state": "registered-existing-capability"
+    },
+    {
+      "capability_id": "imaster.parallel-execution",
+      "provider_tool": "group-governor",
+      "inputs": [
+        "task_dag",
+        "workers",
+        "resources",
+        "budgets?"
+      ],
+      "outputs": [
+        "parallel_dispatch_plan",
+        "worker_leases",
+        "yielded_lanes",
+        "evidence"
+      ],
+      "risk_class": "control-plane",
+      "gate": "iMaster parallel execution skill gate",
+      "cost_class": "low",
+      "production_write": false,
+      "fail_closed": true,
+      "activation": "AUTO_WHEN_TWO_OR_MORE_INDEPENDENT_READY_TASKS",
+      "runtime": "lib/imaster-next-moon.mjs",
+      "invariants": [
+        "PARALLEL_BOUNDED",
+        "BLOCKED_LANE_YIELDS",
+        "LEASE_EXPIRE_REQUEUE",
+        "FENCING_REQUIRED",
+        "SINGLE_WORKER_FAILURE_NE_COMPANY_STALL"
+      ]
     }
   ]
 }
