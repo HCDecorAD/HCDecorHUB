@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "phase": "PHASE_7_PROVISIONING_HANDOFF",
+  "status": "BLOCKED_EXTERNAL_CAPABILITY",
+  "blocker": "Connected GitHub toolset does not expose repository creation.",
+  "independent_work_must_continue": true,
+  "targets": [
+    "HCDecorAD/HC-Sentinel",
+    "HCDecorAD/HC-AutoDebug",
+    "HCDecorAD/HC-Agent-Control"
+  ],
+  "preconditions_complete": [
+    "extraction package contracts",
+    "source integrity manifest",
+    "target bootstrap contract",
+    "target parity verifier"
+  ],
+  "when_provisioning_available": [
+    "create target repository",
+    "bootstrap main branch",
+    "copy package preserving source identity",
+    "run target CI",
+    "generate target source-integrity.json",
+    "run source-vs-target parity verifier",
+    "record rollback SHA",
+    "cut over authority only after parity PASS",
+    "update corporate registry"
+  ],
+  "safety": {
+    "embedded_source_delete": false,
+    "production_authority_change": false,
+    "fake_live_pass": false
+  }
+}
