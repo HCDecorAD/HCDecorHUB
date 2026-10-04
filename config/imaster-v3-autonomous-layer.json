@@ -67,5 +67,13 @@
     }
   ],
   "completion_law": "UPDATE_WITHOUT_IMASTER_SYNC = NOT_DONE",
-  "runtime_claim_policy": "No CONTRACT_READY or PARTIAL_BASELINE component may be called LIVE without acceptance evidence."
+  "runtime_claim_policy": "No CONTRACT_READY or PARTIAL_BASELINE component may be called LIVE without acceptance evidence.",
+  "multithread_policy": {
+    "mode": "PARALLEL_BOUNDED",
+    "law": "ALL INDEPENDENT READY PACKAGES MAY RUN IN PARALLEL WITHIN SAFE CAPACITY",
+    "blocked_lane": "YIELD",
+    "worker_failure": "LEASE_EXPIRE_REQUEUE",
+    "company_stall_on_single_worker_failure": false,
+    "resource_control": "resource scheduler + durable budget + per-worker concurrency limit"
+  }
 }
