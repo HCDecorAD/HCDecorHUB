@@ -1,0 +1,12 @@
+import assert from "node:assert/strict";
+import {shaModel,idempotencyKey,classifyFailure,remediation,reconcile} from "../lib/imaster-panda-cluster.mjs";
+const base={repo:"HCDecorAD/HCDecorHUB",mission_id:"m1",state:"CI_RUNNING",trigger_sha:"a",controller_sha:"b",desired_sha:"c"};
+assert.equal(shaModel({...base,actual_sha:"x"}).action,"RECONCILE_STALE_STATE");
+const k=idempotencyKey({repo:base.repo,mission_id:"m1",event_id:"e1",action:"MERGE",target_sha:"c"});
+assert.equal(k.length,64);
+assert.equal(reconcile({mission:base,event:{event_id:"e1",action:"MERGE"},actual_sha:"c",ledger:new Set([k])}).action,"NOOP_DUPLICATE");
+assert.equal(classifyFailure({kind:"network"}),"TRANSIENT");
+assert.equal(remediation({failure_class:"TRANSIENT",attempt:2}).action,"OWNER_REQUIRED");
+assert.equal(reconcile({mission:base,event:{event_id:"e2",action:"CHECK",type:"CHECK_FAILED",kind:"assertion"},actual_sha:"c"}).action,"REPAIR");
+assert.equal(reconcile({mission:{...base,state:"DONE"},event:{event_id:"e3"},actual_sha:"c"}).action,"STOP");
+console.log("PANDA cluster acceptance PASS");
