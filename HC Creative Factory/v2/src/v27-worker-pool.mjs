@@ -1,0 +1,1 @@
+export async function runPool(shards,worker,{concurrency=4}={}){const q=[...shards],out=[];async function lane(){while(q.length){const shard=q.shift();try{out.push({...shard,...await worker(shard)})}catch(e){out.push({...shard,status:"FAIL",real:false,error:String(e?.message??e)})}}await Promise.all(Array.from({length:Math.min(concurrency,shards.length||1)},lane));return out}
