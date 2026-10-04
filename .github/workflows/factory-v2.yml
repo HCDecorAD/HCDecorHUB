@@ -1,6 +1,7 @@
 name: HC Creative Factory V2 Gate
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'HC Creative Factory/v2/**'
       - 'package.json'
