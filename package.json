@@ -68,7 +68,8 @@
     "test:imaster-global-authority": "node scripts/imaster-global-authority.test.mjs",
     "test:trend-opportunity": "node scripts/trend-opportunity.test.mjs",
     "test:trend-outlier": "node scripts/trend-outlier-scanner.test.mjs",
-    "test:content-factory": "node scripts/content-factory.test.mjs"
+    "test:content-factory": "node scripts/content-factory.test.mjs",
+    "test:imaster-hub-final-done": "node scripts/imaster-hub-final-done.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
