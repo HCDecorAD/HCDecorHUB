@@ -476,7 +476,7 @@
       "id": "PKG-10",
       "phase": "P5_TREND_BUSINESS",
       "name": "BUSINESS_CENTER",
-      "state": "BUILDING",
+      "state": "LOCAL_PASS",
       "depends_on": [
         "PKG-01"
       ],
@@ -495,13 +495,22 @@
         "business-crud-pass",
         "workflow-pass"
       ],
-      "blocker": "Customer, Quotation and Payment authorities/workflows are not yet configured and verified.",
+      "blocker": "Google credential and business API token are not configured on HOCUONG; live Customer/Quotation/Payment writes are not yet evidenced.",
       "foundation_evidence": {
         "win_business_route": "PASS",
         "crm_stage": "PASS",
         "project_stage": "PASS",
         "unconfigured_authorities_fail_visible": "PASS",
         "production_build": "PASS"
+      },
+      "evidence": {
+        "business_contract_gate": "PASS",
+        "production_build": "PASS",
+        "master_e2e": "PASS",
+        "customers_read": "200 fail-visible credentials=false",
+        "quotations_read": "200 fail-visible credentials=false",
+        "payments_read": "200 fail-visible credentials=false",
+        "write_guard": "403 same-origin fail-closed"
       }
     },
     {

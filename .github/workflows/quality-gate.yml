@@ -108,6 +108,8 @@ jobs:
         run: npm run test:hcdecor-v9-sentinel
       - name: HCDecor HUB V9 Project AI Business foundation gate
         run: npm run test:hcdecor-v9-centers-foundation
+      - name: HCDecor HUB V9 Business Center gate
+        run: npm run test:hcdecor-v9-business
       - name: iMaster local-first HCDR skill gate
         run: npm run test:imaster-local-first
       - name: iMaster operating skills gate
