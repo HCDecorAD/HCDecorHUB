@@ -92,6 +92,8 @@ jobs:
         run: npm run test:evidence-store
       - name: Evidence archive index gate
         run: npm run test:evidence-archive-index
+      - name: iMaster NEXT MOON runtime gate
+        run: npm run test:imaster-next-moon
       - name: iMaster V3 autonomous/public state gate
         run: npm run test:imaster-v3
       - name: iMaster bootstrap anti-amnesia gate
