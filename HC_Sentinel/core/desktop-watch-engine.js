@@ -20,18 +20,20 @@ export class DesktopWatchEngine{
     return (w.donePatterns??["DONE"]).some(p=>tail.includes(String(p).toUpperCase()));
   }
   async tickOne(w){
-    const now=this.now();let snap;
+    const now=this.now(),rt0=w.runtime??{},interval=Math.max(1,Number(w.intervalSec??60))*1000;
+    if(rt0.lastCheckedAtMs&&now-rt0.lastCheckedAtMs<interval)return {id:w.id,state:rt0.state??"WAITING",skipped:true};
+    let snap;
     try{snap=await this.sourceSnapshot(w);}catch(e){snap={online:false,state:"BLOCKED",error:String(e.message||e)};}
     if(!snap.online){
-      const state=snap.state??"OFFLINE";await this.store.patch(w.id,{runtime:{...(w.runtime??{}),state,lastCheckedAt:new Date(now).toISOString(),error:snap.error??null}});
+      const state=snap.state??"OFFLINE";await this.store.patch(w.id,{runtime:{...(w.runtime??{}),state,lastCheckedAt:new Date(now).toISOString(),lastCheckedAtMs:now,error:snap.error??null}});
       return {id:w.id,state};
     }
     if(snap.busy){
-      await this.store.patch(w.id,{runtime:{...(w.runtime??{}),state:"BUSY",lastCheckedAt:new Date(now).toISOString(),lastHash:snap.hash??w.runtime?.lastHash}});
+      await this.store.patch(w.id,{runtime:{...(w.runtime??{}),state:"BUSY",lastCheckedAt:new Date(now).toISOString(),lastCheckedAtMs:now,lastHash:snap.hash??w.runtime?.lastHash}});
       return {id:w.id,state:"BUSY"};
     }
     if(this.done(w,snap)){
-      await this.store.patch(w.id,{enabled:false,runtime:{...(w.runtime??{}),state:"DONE",lastCheckedAt:new Date(now).toISOString(),lastHash:snap.hash}});
+      await this.store.patch(w.id,{enabled:false,runtime:{...(w.runtime??{}),state:"DONE",lastCheckedAt:new Date(now).toISOString(),lastCheckedAtMs:now,lastHash:snap.hash}});
       await this.tray?.send?.({title:`Sentinel Watch — ${w.name??w.id}`,message:"DONE detected. Watch stopped.",level:"info"});
       return {id:w.id,state:"DONE"};
     }
@@ -51,7 +53,7 @@ export class DesktopWatchEngine{
         }
       }else state="COOLDOWN";
     }
-    const runtime={state,lastCheckedAt:new Date(now).toISOString(),lastHash:snap.hash,lastChangeAtMs:lastChangeAt,lastSendAtMs:sent?now:(rt.lastSendAtMs??0),sentEpoch,evidencePath:snap.evidencePath??null,assistantTail:snap.assistant_tail?.slice(-1200)??null,error:null};
+    const runtime={state,lastCheckedAt:new Date(now).toISOString(),lastCheckedAtMs:now,lastHash:snap.hash,lastChangeAtMs:lastChangeAt,lastSendAtMs:sent?now:(rt.lastSendAtMs??0),sentEpoch,evidencePath:snap.evidencePath??null,assistantTail:snap.assistant_tail?.slice(-1200)??null,error:null};
     await this.store.patch(w.id,{runtime});
     await this.logs?.append?.({level:state==="STUCK"?"warning":"info",type:"DESKTOP_WATCH",message:`${w.id} ${state}`});
     return {id:w.id,state,sent,dispatch};
