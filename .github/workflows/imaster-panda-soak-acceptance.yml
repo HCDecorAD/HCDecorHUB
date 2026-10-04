@@ -1,0 +1,25 @@
+name: iMaster Panda Soak Acceptance
+on:
+  push:
+    branches: ["main","feature/panda-soak-final"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: imaster-panda-soak
+  cancel-in-progress: false
+jobs:
+  soak:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PANDA 48-cycle soak with restart missed-event dedupe repair owner-boundary
+        run: node scripts/panda-soak-acceptance.mjs
+      - name: Emit soak evidence
+        run: |
+          mkdir -p evidence
+          node scripts/panda-soak-acceptance.mjs > evidence/panda-soak-acceptance.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: panda-soak-acceptance-evidence
+          path: evidence/panda-soak-acceptance.json
