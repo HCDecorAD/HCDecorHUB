@@ -1,0 +1,34 @@
+name: HC Sentinel P50-P54
+
+on:
+  push:
+    branches: [hc-sentinel-p50-p54]
+    paths:
+      - "HC_Sentinel/**"
+      - ".github/workflows/hc-sentinel-p50-p54.yml"
+  workflow_dispatch:
+
+jobs:
+  p50-p54:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: P50 Watchdog Scheduled Task
+        run: npm run test:p50
+      - name: P51 Maintenance Runner
+        run: npm run test:p51
+      - name: P52 Runtime Health
+        run: npm run test:p52
+      - name: P53 Release Freeze
+        run: npm run test:p53
+      - name: P54 Soak Acceptance
+        run: npm run test:p54
+      - name: Full Regression
+        run: npm test
