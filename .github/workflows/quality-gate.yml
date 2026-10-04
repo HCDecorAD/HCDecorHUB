@@ -92,6 +92,8 @@ jobs:
         run: npm run test:evidence-store
       - name: Evidence archive index gate
         run: npm run test:evidence-archive-index
+      - name: iMaster V3 autonomous/public state gate
+        run: npm run test:imaster-v3
       - name: iMaster bootstrap anti-amnesia gate
         run: npm run test:imaster-bootstrap
       - name: iMaster capability acquisition gate
