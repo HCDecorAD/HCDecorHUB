@@ -1,0 +1,33 @@
+name: HC Sentinel Command Console UI
+
+on:
+  push:
+    branches: [hc-sentinel-command-console-ui]
+    paths:
+      - "HC_Sentinel/ui/**"
+      - "HC_Sentinel/tests/**"
+      - ".github/workflows/hc-sentinel-command-console-ui.yml"
+  workflow_dispatch:
+
+jobs:
+  command-console:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Full Regression
+        run: npm test
+      - name: Compact UI Contract
+        run: |
+          grep -q 'id="projectSelect"' ui/index.html
+          grep -q 'id="viewportSelect"' ui/index.html
+          grep -q 'id="resultTitle"' ui/index.html
+          grep -q 'id="projectModal" hidden' ui/index.html
+          grep -q 'data-tab="evidence"' ui/index.html
+          ! grep -q '<h3>Milestones</h3>' ui/index.html
