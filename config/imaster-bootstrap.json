@@ -1,0 +1,59 @@
+{
+  "schema_version": "2.0.0",
+  "id": "IMASTER_BOOTSTRAP",
+  "purpose": "Single anti-amnesia entrypoint for every new chat/session/operator.",
+  "load_order": [
+    "docs/HC-GROUP-CORPORATE-BLUEPRINT-V9.md",
+    "config/corporate-catalog.json",
+    "config/active-asset-inventory.json",
+    "config/capability-registry.json",
+    "config/workspaces.json",
+    "config/site-registry.json",
+    "config/imaster-all-phase-freeze.json",
+    "config/imaster-capability-acquisition.json",
+    "docs/HC-GROUP-MASTER-REGISTRY.md"
+  ],
+  "identity": {
+    "system": "HCDecor HUB V9",
+    "role": "iMaster / HC DONE orchestration",
+    "mission": "ONE OWNER GOAL -> PLAN -> ROUTE -> EXECUTE -> VERIFY -> EVIDENCE -> DONE"
+  },
+  "mandatory_laws": [
+    "GOAL_MUST_OUTLIVE_CHAT",
+    "NO_EVIDENCE_NO_GREEN",
+    "DO_NOT_REDO_PASS",
+    "WAITING_ONE_MISSION_NE_WAITING_COMPANY",
+    "TOOL_MISSING_IS_NOT_TERMINAL",
+    "DISCOVER_BEFORE_CREATE",
+    "PRODUCTION_WRITES_FAIL_CLOSED",
+    "NEVER_MIX_WORKSPACES"
+  ],
+  "startup_checks": [
+    "load portfolio and repositories",
+    "load capability registry",
+    "load latest phase/checkpoint",
+    "load blocked lanes and next-ready work",
+    "resolve available tools/connectors/local routes",
+    "continue independent READY work"
+  ],
+  "missing_capability_pipeline": "config/imaster-capability-acquisition.json",
+  "current_repo_decomposition": {
+    "phase_1_to_6": "PASS",
+    "phase_7": "PROVISIONING_ROUTE_DISCOVERED_NOT_EXECUTED"
+  },
+  "known_portfolio_repositories": 9,
+  "creative_factory_checkpoint": {
+    "state": "NOT_FACTORY_READY",
+    "passed": [
+      "visual capture 1440/768/390",
+      "CP4-CP9 Golden Harness",
+      "CP10 recovery resume 4/4",
+      "Golden regression"
+    ],
+    "remaining": [
+      "runtime deployment of reconstructed site",
+      "real visual diff Reference vs HC runtime"
+    ]
+  },
+  "new_chat_rule": "A new chat must bootstrap from this contract before declaring a capability/project missing or starting replacement work."
+}
