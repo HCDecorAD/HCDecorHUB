@@ -59,7 +59,8 @@
     "test:repo-target-bootstrap": "node scripts/repo-target-bootstrap.test.mjs && node scripts/target-repo-parity.mjs",
     "test:imaster-all-phase": "node scripts/imaster-all-phase.test.mjs",
     "test:imaster-capability-acquisition": "node scripts/imaster-capability-acquisition.test.mjs",
-    "test:imaster-bootstrap": "node scripts/imaster-bootstrap.test.mjs"
+    "test:imaster-bootstrap": "node scripts/imaster-bootstrap.test.mjs",
+    "test:imaster-v3": "node scripts/imaster-v3-contract.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
