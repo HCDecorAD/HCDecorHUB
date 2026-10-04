@@ -70,13 +70,27 @@ The previous runtime command stub was also replaced with the live controller:
 
 A physical reboot was not forced during the active remote session; Startup and watchdog recovery were both exercised directly.
 
-## Current tracked live finding
+## GSC known media placeholder
 
-GSC public:
-- `BROKEN_MEDIA_HINT`
-- severity: medium
-- count: 3
-- HCDR issue: #1265
-- state: OPEN / ROUTED / TRACKED
+GSC public currently contains 3 intentional media placeholders.
 
-Medium findings remain non-auto-repair by default.
+Operator decision:
+- status: `PASS / NO_CHANGE`
+- HCDR issue: `#1265` closed
+- finding kind: `BROKEN_MEDIA_HINT`
+- count: `3`
+- handling: suppressed for `gsc-public`
+- reason: media links will be configured later
+
+Current target policy:
+
+`suppressFindings: ["BROKEN_MEDIA_HINT"]`
+
+When GSC media links are configured, remove this suppression and run Sentinel verification again.
+
+Verified on HOCUONG:
+- GSC mobile mission: `DONE`
+- active findings: `0`
+- suppressed findings: `BROKEN_MEDIA_HINT ×3`
+- failed requests: `0`
+- regression: `100/100 PASS — 0 FAIL`
