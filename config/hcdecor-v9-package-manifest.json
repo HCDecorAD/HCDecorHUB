@@ -738,7 +738,21 @@
         "full-e2e-pass",
         "cross-window-state-pass",
         "responsive-pass"
-      ]
+      ],
+      "prebuild_evidence": {
+        "window_routes": "11/11 PASS",
+        "readiness_api": "PASS",
+        "integration_blockers": [
+          "PKG-05",
+          "PKG-06",
+          "PKG-07",
+          "PKG-08",
+          "PKG-09",
+          "PKG-10",
+          "PKG-11"
+        ],
+        "final_green": false
+      }
     },
     {
       "id": "PKG-16",
@@ -762,7 +776,12 @@
         "production-pass",
         "evidence-complete",
         "v9-frozen-done"
-      ]
+      ],
+      "prebuild_evidence": {
+        "final_gate": "PASS_BLOCKED_CORRECTLY",
+        "no_evidence_no_green": true,
+        "release_ready": false
+      }
     }
   ],
   "scheduler": {
