@@ -85,7 +85,8 @@
     "test:hcdecor-v9-sentinel": "node --test HC_Sentinel/tests/visual-diff.test.js HC_Sentinel/tests/p6-verify.test.js HC_Sentinel/tests/p14-repair-bridge.test.js HC_Sentinel/tests/p25-notifications.test.js && node scripts/autodebug-implementation.test.mjs && node scripts/autodebug-repair-verification.test.mjs",
     "test:hcdecor-v9-centers-foundation": "node scripts/hcdecor-v9-centers-foundation.test.mjs",
     "test:hcdecor-v9-wave2": "node scripts/hcdecor-v9-wave2-core.test.mjs",
-    "test:hcdecor-v9-project-lifecycle": "node scripts/hcdecor-v9-project-lifecycle.test.mjs"
+    "test:hcdecor-v9-project-lifecycle": "node scripts/hcdecor-v9-project-lifecycle.test.mjs",
+    "test:hcdecor-v9-business": "node scripts/hcdecor-v9-business-center.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
