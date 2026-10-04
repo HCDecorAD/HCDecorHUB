@@ -55,7 +55,8 @@
     "test:mobile-hc-done-cloud": "node scripts/mobile-hc-done-cloud.test.mjs",
     "test:repo-decomposition": "node scripts/repo-decomposition-parity.test.mjs",
     "test:repo-extraction": "node scripts/repo-extraction-package.test.mjs",
-    "test:repo-integrity": "node scripts/repo-source-integrity.test.mjs"
+    "test:repo-integrity": "node scripts/repo-source-integrity.test.mjs",
+    "test:repo-target-bootstrap": "node scripts/repo-target-bootstrap.test.mjs && node scripts/target-repo-parity.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
