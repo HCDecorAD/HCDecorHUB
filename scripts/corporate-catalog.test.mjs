@@ -2,7 +2,10 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
 const c=JSON.parse(fs.readFileSync('config/corporate-catalog.json','utf8'));
-assert.equal(c.schema_version,'1.2.0');
+assert.equal(c.schema_version,'2.0.0');
+assert.ok(Array.isArray(c.portfolio_assets)&&c.portfolio_assets.length>=9);
+assert.equal(new Set(c.portfolio_assets.map(x=>x.repository)).size,c.portfolio_assets.length);
+assert.equal(c.discovery.policy,'discover-before-create');
 assert.equal(c.projects.length,3);
 assert.deepEqual(new Set(c.projects.map(x=>x.project_id)),new Set(['HCDECOR','GSC','AMO']));
 for(const p of c.projects){assert.ok(p.workspace_id);assert.ok(p.repository);assert.ok(p.production_authority);}
