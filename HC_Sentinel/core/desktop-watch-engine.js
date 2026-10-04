@@ -52,10 +52,12 @@ export class DesktopWatchEngine{
           else state=dispatch?.status??"BLOCKED";
         }
       }else state="COOLDOWN";
+    }else if(state==="STUCK"&&sentEpoch){
+      state="WAITING_RESPONSE";
     }
     const runtime={state,lastCheckedAt:new Date(now).toISOString(),lastCheckedAtMs:now,lastHash:snap.hash,lastChangeAtMs:lastChangeAt,lastSendAtMs:sent?now:(rt.lastSendAtMs??0),sentEpoch,evidencePath:snap.evidencePath??null,assistantTail:snap.assistant_tail?.slice(-1200)??null,error:null};
     await this.store.patch(w.id,{runtime});
-    await this.logs?.append?.({level:state==="STUCK"?"warning":"info",type:"DESKTOP_WATCH",message:`${w.id} ${state}`});
+    if(state!==rt.state)await this.logs?.append?.({level:state==="STUCK"?"warning":"info",type:"DESKTOP_WATCH",message:`${w.id} ${state}`});
     return {id:w.id,state,sent,dispatch};
   }
   async tick(){
