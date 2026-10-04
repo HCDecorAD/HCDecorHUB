@@ -21,13 +21,14 @@
     {
       "priority": 1,
       "transport": "HCDR",
-      "role": "PRIMARY_LOCAL_EXECUTION"
+      "role": "MANDATORY_DEFAULT_MACHINE_CONTROL",
+      "when": "all normal machine-control, code, build, test, debug, file, health, deploy and local execution operations"
     },
     {
       "priority": 2,
       "transport": "RDC",
       "role": "RESCUE_FALLBACK_ONLY",
-      "when": "HCDR unavailable, failed, missing required capability, or GUI-only operation is required"
+      "when": "only after HCDR first-attempt evidence shows UNAVAILABLE, FAILED, NO_CLAIM, TIMEOUT, or MISSING_REQUIRED_CAPABILITY"
     }
   ],
   "laws": [
@@ -36,10 +37,26 @@
     "TEST_BEFORE_GITHUB",
     "NO_EVIDENCE_NO_GREEN",
     "RDC_IS_RESCUE_NOT_DEFAULT",
-    "PRODUCTION_WRITES_FAIL_CLOSED"
+    "PRODUCTION_WRITES_FAIL_CLOSED",
+    "HCDR_MANDATORY_DEFAULT",
+    "MACHINE_CONTROL_MUST_ATTEMPT_HCDR_FIRST",
+    "RDC_RESCUE_ONLY_AFTER_HCDR_FAILURE_EVIDENCE"
   ],
   "fallback": {
-    "on_hcdr_failure": "record evidence -> attempt safe HCDR recovery -> use RDC only when necessary -> verify result -> record route used"
+    "on_hcdr_failure": "record HCDR failure evidence -> attempt safe HCDR recovery -> use RDC only if blocker remains -> verify result -> record transport used",
+    "rdc_precondition": "HCDR first-attempt evidence is mandatory",
+    "direct_rdc_normal_path": "FORBIDDEN"
   },
-  "evidence_gate": "scripts/imaster-local-first-skill.test.mjs"
+  "evidence_gate": "scripts/imaster-local-first-skill.test.mjs",
+  "enforcement": {
+    "normal_machine_control_default": "HCDR",
+    "rdc_without_hcdr_attempt": "POLICY_VIOLATION",
+    "evidence_fields": [
+      "transport_attempted",
+      "hcdr_status",
+      "fallback_reason",
+      "transport_used",
+      "verification_result"
+    ]
+  }
 }
