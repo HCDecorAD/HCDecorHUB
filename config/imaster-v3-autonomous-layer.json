@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "IMASTER_V3_AUTONOMOUS_OPERATING_LAYER",
-  "status": "ARCHITECTURE_BASELINE",
+  "status": "NEXT_MOON_RUNTIME_CANDIDATE",
   "inherits": [
     "DONE evidence discipline",
     "HC DONE durable execution",
@@ -18,18 +18,30 @@
     },
     {
       "id": "global-state-graph",
-      "state": "CONTRACT_READY",
-      "purpose": "Unify Business->Project->Goal->Mission->Task->Worker/Tool->Artifact->Evidence->Checkpoint relationships."
+      "state": "IMPLEMENTED_BASELINE",
+      "purpose": "Unify Business->Project->Goal->Mission->Task->Worker/Tool->Artifact->Evidence->Checkpoint relationships.",
+      "evidence": [
+        "lib/imaster-next-moon.mjs",
+        "scripts/imaster-next-moon.test.mjs"
+      ]
     },
     {
       "id": "continuous-planner",
-      "state": "PARTIAL_BASELINE",
-      "law": "READY_WORK + SAFE_CAPACITY -> EXECUTE; WAITING yields capacity."
+      "state": "IMPLEMENTED_BASELINE",
+      "law": "READY_WORK + SAFE_CAPACITY -> EXECUTE; WAITING yields capacity.",
+      "evidence": [
+        "lib/imaster-next-moon.mjs",
+        "lib/governor/resource-scheduler.mjs"
+      ]
     },
     {
       "id": "autonomous-worker-factory",
-      "state": "PARTIAL_BASELINE",
-      "purpose": "Dynamic worker allocation, lease/requeue, crash isolation, bounded concurrency."
+      "state": "IMPLEMENTED_BASELINE",
+      "purpose": "Dynamic worker allocation, lease/requeue, crash isolation, bounded concurrency.",
+      "evidence": [
+        "lib/imaster-next-moon.mjs",
+        "lib/governor/durable-queue.mjs"
+      ]
     },
     {
       "id": "capability-acquisition",
