@@ -332,7 +332,6 @@
         "secret-server-only-pass",
         "binding-pass"
       ],
-      "blocker": "Live provider credential test and verified model bindings are not yet evidenced.",
       "foundation_evidence": {
         "modules": 10,
         "server_only_secret_policy": "PASS",
@@ -344,7 +343,18 @@
         "wave2_gate": "PASS",
         "architecture": "18/18 PASS",
         "production_build": "PASS",
-        "master_e2e": "PASS"
+        "master_e2e": "PASS",
+        "cloudflare_auth": "PASS ai+workers permission",
+        "workers_ai_binding": "PASS",
+        "live_provider": "cloudflare-workers-ai",
+        "live_health": "healthy",
+        "content_live": "PASS @cf/meta/llama-3.2-3b-instruct",
+        "image_live": "PASS @cf/black-forest-labs/flux-1-schnell",
+        "trend_live": "PASS @cf/meta/llama-3.2-3b-instruct",
+        "video_route": "EXTERNAL_REQUIRED",
+        "secret_policy": "SERVER_ONLY",
+        "remote_preview_deep_probe": "PASS",
+        "production_write": false
       }
     },
     {

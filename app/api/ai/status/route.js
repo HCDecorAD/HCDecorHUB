@@ -1,2 +1,2 @@
 import {aiConnectionStatus,probeAIConnections} from "../../../../lib/ai/connections";
-export async function GET(request){const live=new URL(request.url).searchParams.get("live")==="1";const status=aiConnectionStatus();const probes=live?await probeAIConnections():null;return Response.json({service:"ok",...status,liveHealth:live?probes:"not_checked",checkedAt:new Date().toISOString()})}
+export async function GET(request){const u=new URL(request.url),live=u.searchParams.get("live")==="1",deep=u.searchParams.get("deep")==="1";const status=aiConnectionStatus();const probes=live?await probeAIConnections({deep}):null;return Response.json({service:"ok",...status,liveHealth:live?probes:"not_checked",checkedAt:new Date().toISOString()})}
