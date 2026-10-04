@@ -1,0 +1,33 @@
+name: iMaster Panda Continuation
+on:
+  workflow_run:
+    workflows: ["HCDecor HUB Quality Gate", "HCDecor HUB Production Verify"]
+    types: [completed]
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: read
+  pull-requests: read
+concurrency:
+  group: imaster-panda-continuation
+  cancel-in-progress: false
+jobs:
+  panda-watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate continuation contracts
+        run: |
+          npm run test:imaster-continuation
+          npm run test:imaster-continuous-control
+          npm run test:imaster-persistent-controller
+      - name: Emit watcher evidence
+        run: |
+          mkdir -p evidence
+          printf '{"controller":"imaster-panda","mode":"watch","write_policy":"read-only","result":"PASS"}\n' > evidence/imaster-panda-watch.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: imaster-panda-watch-evidence
+          path: evidence/imaster-panda-watch.json
