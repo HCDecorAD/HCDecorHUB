@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Durable restart and lease recovery
-        run: npm run test:governor-durable-queue
+        run: npm run test:governor-durable
       - name: PANDA cluster idempotency and bounded retry
         run: npm run test:imaster-panda-cluster
       - name: PANDA durable mission lease
