@@ -1,0 +1,1 @@
+import assert from"node:assert/strict";import{shouldRecover,circuit,dedupe}from"../lib/panda-hardening.mjs";assert.equal(shouldRecover({event_seen:false}),true);assert.equal(circuit({failures:3}).open,true);const s=new Set;assert.equal(dedupe(s,"x"),true);assert.equal(dedupe(s,"x"),false);console.log("PANDA G4 PASS");
