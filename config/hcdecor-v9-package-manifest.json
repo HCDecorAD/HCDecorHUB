@@ -153,23 +153,19 @@
         "no-duplicate-shell"
       ],
       "evidence": {
-        "local_manifest_gate": "PASS",
-        "local_shell_gate": "PASS",
-        "architecture": "18/18 PASS",
-        "production_build": "PASS",
-        "master_e2e": "PASS",
-        "runtime_readiness": "PASS",
         "pr": 89,
         "quality_run": 714,
         "quality_run_id": 37215341323,
-        "merge_sha": "18c9e3d03cda8496d96d22c78f34c4dc39300cde"
+        "merge_sha": "18c9e3d03cda8496d96d22c78f34c4dc39300cde",
+        "local_build": "PASS",
+        "master_e2e": "PASS"
       }
     },
     {
       "id": "PKG-02",
       "phase": "P2_CORE_CONTROL",
       "name": "IMASTER_CORE",
-      "state": "DONE",
+      "state": "LOCAL_PASS",
       "depends_on": [
         "PKG-01"
       ],
@@ -193,19 +189,18 @@
         "continuation-pass"
       ],
       "evidence": {
-        "quality_run": 723,
-        "production_run": 578,
-        "runtime_run": 15,
-        "soak_run": 13,
-        "continuation_run": 66,
-        "verified_main_sha": "59829f8f3c9a72158de7cc60ee119555b09f84b3"
+        "manifest_gate": "PASS",
+        "wave2_gate": "PASS",
+        "architecture": "18/18 PASS",
+        "production_build": "PASS",
+        "master_e2e": "PASS"
       }
     },
     {
       "id": "PKG-03",
       "phase": "P2_CORE_CONTROL",
       "name": "PROJECT_CENTER",
-      "state": "BUILDING",
+      "state": "LOCAL_PASS",
       "depends_on": [
         "PKG-01"
       ],
@@ -231,13 +226,20 @@
         "list_api": "PASS",
         "write_guards": "same-origin+token+fresh-approval+rate-limit",
         "production_build": "PASS"
+      },
+      "evidence": {
+        "manifest_gate": "PASS",
+        "wave2_gate": "PASS",
+        "architecture": "18/18 PASS",
+        "production_build": "PASS",
+        "master_e2e": "PASS"
       }
     },
     {
       "id": "PKG-04",
       "phase": "P2_CORE_CONTROL",
       "name": "SYSTEM_CENTER",
-      "state": "DONE",
+      "state": "LOCAL_PASS",
       "depends_on": [
         "PKG-01"
       ],
@@ -258,18 +260,18 @@
         "connection-state-pass"
       ],
       "evidence": {
-        "quality_run": 723,
-        "production_run": 578,
-        "runtime_run": 15,
-        "soak_run": 13,
-        "verified_main_sha": "59829f8f3c9a72158de7cc60ee119555b09f84b3"
+        "manifest_gate": "PASS",
+        "wave2_gate": "PASS",
+        "architecture": "18/18 PASS",
+        "production_build": "PASS",
+        "master_e2e": "PASS"
       }
     },
     {
       "id": "PKG-05",
       "phase": "P3_AI_CONNECTIONS",
       "name": "AI_CONNECTIONS",
-      "state": "BUILDING",
+      "state": "LOCAL_PASS",
       "depends_on": [
         "PKG-01"
       ],
@@ -311,6 +313,13 @@
         "server_only_secret_policy": "PASS",
         "live_probe_endpoint": "PASS",
         "production_build": "PASS"
+      },
+      "evidence": {
+        "manifest_gate": "PASS",
+        "wave2_gate": "PASS",
+        "architecture": "18/18 PASS",
+        "production_build": "PASS",
+        "master_e2e": "PASS"
       }
     },
     {
