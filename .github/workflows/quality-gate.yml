@@ -92,6 +92,8 @@ jobs:
         run: npm run test:evidence-store
       - name: Evidence archive index gate
         run: npm run test:evidence-archive-index
+      - name: iMaster capability acquisition gate
+        run: npm run test:imaster-capability-acquisition
       - name: iMaster ALL Phase freeze gate
         run: npm run test:imaster-all-phase
       - name: Target repo bootstrap and parity gate

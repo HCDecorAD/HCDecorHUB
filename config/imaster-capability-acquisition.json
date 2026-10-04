@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0.0",
+  "id": "IMASTER_CAPABILITY_ACQUISITION",
+  "name": "Discover → Acquire → Verify → Execute",
+  "trigger": "Required capability is missing, unavailable, blocked by current tool surface, or existing route fails.",
+  "law": "TOOL_MISSING is not a terminal state.",
+  "pipeline": [
+    "DISCOVER_EXISTING_CAPABILITY",
+    "SEARCH_OFFICIAL_AND_TRUSTED_SOURCES",
+    "REUSE_OR_INSTALL_OR_ADAPT",
+    "VERIFY_SECURITY_AUTHORITY_AND_LICENSE",
+    "TEST_IN_ISOLATION",
+    "EXECUTE_REQUIRED_TASK",
+    "VERIFY_RESULT",
+    "STORE_EVIDENCE_AND_FIX_MEMORY"
+  ],
+  "fallback_order": [
+    "existing HC capability registry",
+    "installed connectors/plugins",
+    "official CLI/API/SDK",
+    "trusted open-source project",
+    "HOCUONG local/HCDR execution",
+    "browser automation when appropriate"
+  ],
+  "terminal_states": [
+    "DONE",
+    "OWNER_REQUIRED",
+    "SAFETY_STOP",
+    "HARD_EXTERNAL_BLOCKED"
+  ],
+  "rules": {
+    "prefer_official": true,
+    "prefer_existing": true,
+    "open_source_first": true,
+    "no_secret_exfiltration": true,
+    "no_unverified_binary_execution": true,
+    "no_fake_pass": true,
+    "independent_work_continues": true
+  },
+  "acceptance_case": {
+    "need": "create GitHub repository",
+    "current_connector": "missing create_repository action",
+    "discovered_routes": [
+      "GitHub CLI: gh repo create",
+      "GitHub REST API: POST /user/repos or organization repository endpoint",
+      "HOCUONG authenticated gh CLI via local execution"
+    ],
+    "status": "ROUTE_DISCOVERED_REQUIRES_AUTHORITY_CHECK"
+  }
+}
