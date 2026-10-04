@@ -92,6 +92,8 @@ jobs:
         run: npm run test:evidence-store
       - name: Evidence archive index gate
         run: npm run test:evidence-archive-index
+      - name: iMaster continuous control gate
+        run: npm run test:imaster-continuous-control
       - name: iMaster global authority gate
         run: npm run test:imaster-global-authority
       - name: iMaster local-first HCDR skill gate
