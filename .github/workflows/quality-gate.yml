@@ -96,6 +96,8 @@ jobs:
         run: npm run test:imaster-global-authority
       - name: HCDecor HUB V9 package manifest gate
         run: npm run test:hcdecor-v9-packages
+      - name: HCDecor HUB V9 app shell gate
+        run: npm run test:hcdecor-v9-app-shell
       - name: iMaster local-first HCDR skill gate
         run: npm run test:imaster-local-first
       - name: iMaster operating skills gate

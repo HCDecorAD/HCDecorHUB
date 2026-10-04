@@ -92,7 +92,7 @@
       "id": "PKG-00",
       "phase": "P0_FREEZE",
       "name": "APP_CONTRACT",
-      "state": "LOCAL_PASS",
+      "state": "DONE",
       "depends_on": [],
       "scope": [
         "naming-v3",
@@ -108,13 +108,19 @@
         "schema-valid",
         "naming-contract-pass",
         "dependency-graph-pass"
-      ]
+      ],
+      "evidence": {
+        "pr": 88,
+        "quality_run": 712,
+        "quality_run_id": 37214807585,
+        "merge_sha": "159c2ce1de5d12b313a30a25688b199cbb2ac160"
+      }
     },
     {
       "id": "PKG-01",
       "phase": "P1_SHELL",
       "name": "APP_SHELL",
-      "state": "WAITING_DEP",
+      "state": "LOCAL_PASS",
       "depends_on": [
         "PKG-00"
       ],
@@ -145,7 +151,15 @@
         "desktop-shell-pass",
         "mobile-shell-pass",
         "no-duplicate-shell"
-      ]
+      ],
+      "evidence": {
+        "local_manifest_gate": "PASS",
+        "local_shell_gate": "PASS",
+        "architecture": "18/18 PASS",
+        "production_build": "PASS",
+        "master_e2e": "PASS",
+        "runtime_readiness": "PASS"
+      }
     },
     {
       "id": "PKG-02",
