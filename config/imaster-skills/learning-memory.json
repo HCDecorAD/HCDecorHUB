@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "skill_id": "imaster.learning-memory",
+  "name": "Verified Experience Learning",
+  "owner": "iMaster",
+  "scope": "global",
+  "autoload": true,
+  "activation": {
+    "mode": "automatic",
+    "condition": "after a repair, workaround, optimization, or failure resolution is verified"
+  },
+  "pipeline": [
+    "capture failure fingerprint/context",
+    "record attempted and successful repair",
+    "isolated verification",
+    "regression verification",
+    "promote verified fix into Fix Memory",
+    "derive reusable skill/capability candidate when pattern is general",
+    "sync iMaster registry/update state"
+  ],
+  "promotion_rule": "NO_VERIFIED_EVIDENCE -> NO_SKILL_PROMOTION",
+  "outputs": [
+    "fix_memory_record",
+    "lesson",
+    "skill_candidate?",
+    "regression_evidence"
+  ],
+  "evidence_gate": "scripts/imaster-skills.test.mjs"
+}

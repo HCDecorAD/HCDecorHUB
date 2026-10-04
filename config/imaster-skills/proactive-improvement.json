@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "skill_id": "imaster.proactive-improvement",
+  "name": "Proactive System Improvement",
+  "owner": "iMaster",
+  "scope": "global",
+  "autoload": true,
+  "activation": {
+    "mode": "automatic",
+    "condition": "a safe, material improvement is discovered during normal work"
+  },
+  "permissions": {
+    "may": [
+      "analyze",
+      "propose",
+      "create non-production artifacts",
+      "add tests",
+      "create branch/PR",
+      "register safe capability candidates"
+    ],
+    "must_gate": [
+      "production mutation",
+      "credential/permission changes",
+      "destructive operations",
+      "external paid commitments"
+    ]
+  },
+  "law": "PROPOSE_AND_BUILD_SAFE_IMPROVEMENTS_WITHOUT_WAITING; FAIL_CLOSED_AT_AUTHORITY_BOUNDARIES",
+  "evidence_gate": "scripts/imaster-skills.test.mjs"
+}
