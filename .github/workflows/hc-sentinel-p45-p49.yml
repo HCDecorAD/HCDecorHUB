@@ -1,0 +1,34 @@
+name: HC Sentinel P45-P49
+
+on:
+  push:
+    branches: [hc-sentinel-p45-p49]
+    paths:
+      - "HC_Sentinel/**"
+      - ".github/workflows/hc-sentinel-p45-p49.yml"
+  workflow_dispatch:
+
+jobs:
+  p45-p49:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: P45 Heartbeat
+        run: npm run test:p45
+      - name: P46 Watchdog Recovery
+        run: npm run test:p46
+      - name: P47 Retention Cleanup
+        run: npm run test:p47
+      - name: P48 Local Notification
+        run: npm run test:p48
+      - name: P49 Self Recovery Acceptance
+        run: npm run test:p49
+      - name: Full Regression
+        run: npm test

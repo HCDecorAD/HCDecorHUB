@@ -1,0 +1,3 @@
+import test from "node:test";import assert from "node:assert/strict";import {Watchdog} from "../runtime/watchdog.js";
+test("watchdog recovers unhealthy runtime once",async()=>{let running=false,starts=0;const w=new Watchdog({probe:async()=>({ok:running}),start:async()=>{running=true;starts++;},now:()=>1000,cooldownMs:10});const r=await w.tick();assert.equal(r.status,"RECOVERED");assert.equal(starts,1);});
+test("watchdog respects cooldown",async()=>{let now=1000,starts=0;const w=new Watchdog({probe:async()=>({ok:false}),start:async()=>{starts++;},now:()=>now,cooldownMs:100});await w.tick();now=1050;const r=await w.tick();assert.equal(r.status,"COOLDOWN");assert.equal(starts,1);});

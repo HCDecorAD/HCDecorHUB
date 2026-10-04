@@ -1,0 +1,2 @@
+import test from "node:test";import assert from "node:assert/strict";import {LocalNotifier} from "../core/local-notifier.js";
+test("local notifier delivers structured notification",async()=>{let written;const n=new LocalNotifier({write:async x=>{written=x;}});const r=await n.send({level:"warning",title:"GSC",message:"3 findings"});assert.equal(r.delivered,true);assert.equal(written.level,"warning");assert.equal(written.title,"GSC");});

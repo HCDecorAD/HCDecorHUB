@@ -2,17 +2,21 @@
 
 Local mirror: `D:\HCDecorHUB\HC_Sentinel`
 
-Status: **DAILY_USE_READY**
-Latest completed scope: **P1 -> P44**
-Full regression: **75/75 PASS, 0 FAIL**
+Status: **SELF_OPERATING_READY**
+Latest completed scope: **P1 -> P49**
+Full regression: **81/81 PASS, 0 FAIL**
 
 ## Purpose
 
-HC Sentinel is the local-first visual operations, verification, watch, evidence, policy, repair-routing, and daily desktop operations layer for the HC ecosystem.
+HC Sentinel is the local-first visual operations, verification, watch, evidence, policy, repair-routing, desktop operations, and self-recovery layer for the HC ecosystem.
 
 Core flow:
 
 `Command -> Observe -> Detect -> Compare -> Diagnose -> Route -> Repair -> Verify -> Evidence -> Alert -> DONE`
+
+Self-operation flow:
+
+`Heartbeat -> Health Check -> Watchdog -> Recovery -> Notify -> Retention`
 
 ## Runtime modes
 
@@ -34,38 +38,42 @@ Manual/operator command always outranks schedule/watch.
 - P30-P34: App-ready integration
 - P35-P39: Desktop operations
 - P40-P44: Daily-use integration
+- P45-P49: Self-operating runtime
 
-## P40-P44 daily-use features
+## P45-P49 self-operating features
 
-### Windows startup
-`runtime/register-startup.ps1`
+### Heartbeat
+`core/heartbeat.js`
 
-Registers HC Sentinel in the current user's Windows Startup folder and launches through `start-hidden.vbs`.
+Tracks local runtime heartbeat state:
+- HEALTHY
+- STALE
+- UNKNOWN
 
-### Desktop shortcut
-`runtime/create-desktop-shortcut.ps1`
+### Watchdog
+`runtime/watchdog.js`
+`runtime/watchdog-loop.ps1`
 
-Creates an HC Sentinel desktop shortcut opening:
+Checks local runtime health, restarts through the hidden launcher only when needed, and enforces restart cooldown to avoid restart storms.
 
-`http://127.0.0.1:43110`
+### Retention
+`core/retention.js`
 
-### Backup / restore
-`core/state-backup.js`
+Supports bounded cleanup by:
+- max file count
+- max file age
 
-Supports named local state snapshots and restore with traversal-safe backup names.
+Intended for raw evidence/log retention, not live state deletion.
 
-### Log Viewer
-- persisted log store
-- bounded history
-- level filtering
-- `GET /api/logs`
-- Command Center Log Viewer
-- command/startup logging
+### Local notification adapter
+`core/local-notifier.js`
 
-### Daily acceptance
+Delivers structured local notification events through a pluggable writer.
+
+### Self-recovery acceptance
 Verified:
 
-`ui=true -> SENTINEL_READY -> findings=1 -> evidence=1 -> logs=1`
+`UNKNOWN -> RECOVERED -> HEALTHY -> notification=1`
 
 ## Local app
 
@@ -76,10 +84,11 @@ Launchers:
 - `runtime/start-sentinel.bat`
 - `runtime/start-hidden.vbs`
 
-Install/bootstrap:
+Windows operations:
 - `runtime/install-local.ps1`
 - `runtime/register-startup.ps1`
 - `runtime/create-desktop-shortcut.ps1`
+- `runtime/watchdog-loop.ps1`
 
 Local API:
 - `GET /api/status`
@@ -121,8 +130,9 @@ Display rule:
 - P30-P34: **APP_READY**
 - P35-P39: **DESKTOP_OPERATIONS_READY**
 - P40-P44: **DAILY_USE_READY**
-- Full regression: **75/75 PASS, 0 FAIL**
-- P40-P44 workflow: `37163324817`
+- P45-P49: **SELF_OPERATING_READY**
+- Full regression: **81/81 PASS, 0 FAIL**
+- P45-P49 workflow: `37163753552`
 
 ## Current tracked live finding
 
