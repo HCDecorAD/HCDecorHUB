@@ -53,7 +53,10 @@
     "ASYNC_BOUNDARY_MUST_ARM_CONTINUATION",
     "NEXT_ACTION_IS_SYSTEM_RESPONSIBILITY",
     "AUTO_CONTINUE_UNTIL_TERMINAL",
-    "LOCAL_FIRST_OPERATING_LAW"
+    "LOCAL_FIRST_OPERATING_LAW",
+    "HCDR_MANDATORY_DEFAULT",
+    "MACHINE_CONTROL_MUST_ATTEMPT_HCDR_FIRST",
+    "RDC_RESCUE_ONLY_AFTER_HCDR_FAILURE_EVIDENCE"
   ],
   "startup_checks": [
     "load portfolio and repositories",
@@ -95,7 +98,7 @@
     "config/imaster-skills/continuous-control.json"
   ],
   "parallel_execution_rule": "When >=2 independent tasks are READY and safe capacity exists, Capability Router MUST prefer imaster.parallel-execution over serial execution.",
-  "local_execution_default": "CODE -> HOCUONG_LOCAL -> HCDR -> LOCAL_TEST/EVIDENCE -> GITHUB -> CI; RDC rescue only.",
+  "local_execution_default": "CODE -> HOCUONG_LOCAL -> HCDR_PRIMARY -> LOCAL_TEST/EVIDENCE -> GITHUB -> CI; every normal machine-control action MUST attempt HCDR first; RDC is rescue-only after recorded HCDR UNAVAILABLE/FAILED/NO_CLAIM/TIMEOUT.",
   "global_authority": "config/imaster-global-authority.json",
   "continuation_engine": "config/imaster-skills/continuation-engine.json",
   "continuous_control": {
@@ -111,7 +114,11 @@
   },
   "panda_24_7": {
     "status": "DONE",
-    "lifecycle": ["PANDA_24_7_LIVE", "FROZEN", "DONE"],
+    "lifecycle": [
+      "PANDA_24_7_LIVE",
+      "FROZEN",
+      "DONE"
+    ],
     "cluster": "imaster.panda-cluster-v2",
     "verified_main_sha": "9441de320758f07cb6625dfa7f4b72547bcb6e7b",
     "evidence": {
@@ -173,9 +180,27 @@
       "production_run": 568,
       "runtime_acceptance_run": 5,
       "soak_run": 3,
-      "continuation_runs": [38, 39]
+      "continuation_runs": [
+        38,
+        39
+      ]
     },
     "frozen_at": "2026-10-04",
     "done_at": "2026-10-04"
+  },
+  "machine_control_policy": {
+    "default_transport": "HCDR",
+    "target": "HOCUONG",
+    "mandatory_first_attempt": true,
+    "rdc_role": "RESCUE_ONLY",
+    "rdc_allowed_when": [
+      "HCDR_UNAVAILABLE",
+      "HCDR_FAILED",
+      "HCDR_NO_CLAIM",
+      "HCDR_TIMEOUT",
+      "HCDR_MISSING_REQUIRED_CAPABILITY"
+    ],
+    "evidence_required_before_rdc": true,
+    "route_evidence_required": true
   }
 }
