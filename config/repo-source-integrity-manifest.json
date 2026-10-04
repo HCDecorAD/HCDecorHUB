@@ -1,0 +1,984 @@
+{
+  "schema_version": "1.0.0",
+  "source_repository": "HCDecorAD/HCDecorHUB",
+  "source_ref": "main",
+  "source_commit": "68072a2e7d40eca97bdc32bbbfac19499f4512b0",
+  "policy": {
+    "identity": "git blob SHA is canonical per-file source identity",
+    "cutover": "target manifest must match required source blob SHAs before authority changes",
+    "embedded_delete": false
+  },
+  "packages": [
+    {
+      "id": "HC-Sentinel",
+      "target_repo": "HCDecorAD/HC-Sentinel",
+      "file_count": 182,
+      "files": [
+        {
+          "path": "HC_Sentinel/.gitignore",
+          "blob_sha": "080a7112445210f08b085965867605c5c037c4e0",
+          "size": 376
+        },
+        {
+          "path": "HC_Sentinel/README.md",
+          "blob_sha": "4dc7555dde04a3bcc99e3614fd15777c382f090d",
+          "size": 4561
+        },
+        {
+          "path": "HC_Sentinel/adapters/README.md",
+          "blob_sha": "c4bb13fa385dae20a1918faf493cd11aa8cbafa0",
+          "size": 253
+        },
+        {
+          "path": "HC_Sentinel/adapters/accessibility/axe-adapter.js",
+          "blob_sha": "079dd654f9f217dca82b35b89d4bacfd1981fd20",
+          "size": 737
+        },
+        {
+          "path": "HC_Sentinel/adapters/browser/observer-contract.js",
+          "blob_sha": "21f1773b3eef542cb5da3db1b11e46df4d2fba7d",
+          "size": 129
+        },
+        {
+          "path": "HC_Sentinel/adapters/browser/playwright-observer.js",
+          "blob_sha": "23699ebf911f052fe1b2e5b985148f83b377691c",
+          "size": 1618
+        },
+        {
+          "path": "HC_Sentinel/adapters/repair/hcdr-envelope.js",
+          "blob_sha": "06f85da48242015eb38b3a7a3d8c0f99038354a9",
+          "size": 735
+        },
+        {
+          "path": "HC_Sentinel/adapters/repair/hdcr-status-sync.js",
+          "blob_sha": "843243166438841d4b46dc3419112b9c1afd48aa",
+          "size": 328
+        },
+        {
+          "path": "HC_Sentinel/adapters/replay/replay-contract.js",
+          "blob_sha": "709d80874a31a01ef637ef123ed34621e281af8d",
+          "size": 164
+        },
+        {
+          "path": "HC_Sentinel/adapters/telemetry/otel-exporter.js",
+          "blob_sha": "072209e222be5c43015eeb7d23deaf228f2a3f51",
+          "size": 168
+        },
+        {
+          "path": "HC_Sentinel/adapters/visual_diff/basic-rgba-diff.js",
+          "blob_sha": "09786cbf950560754734bd7c16fcf7e77c9a2b36",
+          "size": 1299
+        },
+        {
+          "path": "HC_Sentinel/adapters/visual_diff/diff-contract.js",
+          "blob_sha": "899c0a7f71fb8f8a7a1784a6a1edd20498cad353",
+          "size": 136
+        },
+        {
+          "path": "HC_Sentinel/adapters/visual_diff/pixelmatch-adapter.js",
+          "blob_sha": "51a654023d672da83a33a84f99e3edd0df563bc1",
+          "size": 1031
+        },
+        {
+          "path": "HC_Sentinel/checkpoints/README.md",
+          "blob_sha": "1fada924007c138f587276ddc1db4c74b64243de",
+          "size": 207
+        },
+        {
+          "path": "HC_Sentinel/core/README.md",
+          "blob_sha": "6cd0519244a65cf70112cee2913e2968bf6ccd40",
+          "size": 271
+        },
+        {
+          "path": "HC_Sentinel/core/alert-dedupe.js",
+          "blob_sha": "6fc86003fd667962c883dab0fc366548cae2fde4",
+          "size": 312
+        },
+        {
+          "path": "HC_Sentinel/core/audit-ledger.js",
+          "blob_sha": "d3e053071ef079856ca251915f76449f57aafddd",
+          "size": 464
+        },
+        {
+          "path": "HC_Sentinel/core/baseline-manager.js",
+          "blob_sha": "faa05e7565cb488ab27ac82ffd32fe5eb385e592",
+          "size": 840
+        },
+        {
+          "path": "HC_Sentinel/core/baseline-promotion.js",
+          "blob_sha": "7e0edad5954b23e542d313458931cbdd1bb67b45",
+          "size": 960
+        },
+        {
+          "path": "HC_Sentinel/core/config-snapshot.js",
+          "blob_sha": "1abd925d9ac1dec256364e0856711ae777e6491e",
+          "size": 259
+        },
+        {
+          "path": "HC_Sentinel/core/control-plane.js",
+          "blob_sha": "28adfdeada88e5c3d7261f305637874fbe3ca9ed",
+          "size": 2032
+        },
+        {
+          "path": "HC_Sentinel/core/desktop-watch-engine.js",
+          "blob_sha": "0415f0e7abd94301d1f88faa6f23101db34d78ec",
+          "size": 4287
+        },
+        {
+          "path": "HC_Sentinel/core/desktop-watch-store.js",
+          "blob_sha": "098c634615872306291552bfc659ddc54c467166",
+          "size": 1129
+        },
+        {
+          "path": "HC_Sentinel/core/events.js",
+          "blob_sha": "ff07295fa52debb3eb3198283115b4a636d5d445",
+          "size": 274
+        },
+        {
+          "path": "HC_Sentinel/core/evidence-index.js",
+          "blob_sha": "a682f415bce8b0f216757ee76b26e9a6c0e55d8f",
+          "size": 467
+        },
+        {
+          "path": "HC_Sentinel/core/finding-lifecycle.js",
+          "blob_sha": "b05d35a69286f665f81bedf2373dc7e4106575e3",
+          "size": 721
+        },
+        {
+          "path": "HC_Sentinel/core/finding-store.js",
+          "blob_sha": "9034b77be18044d9d17a59756fc7dee4a007240a",
+          "size": 640
+        },
+        {
+          "path": "HC_Sentinel/core/health-supervisor.js",
+          "blob_sha": "517da9aedc6f286e269b9bcbf4bb73c1629af25e",
+          "size": 428
+        },
+        {
+          "path": "HC_Sentinel/core/heartbeat.js",
+          "blob_sha": "ff9159a73186c272bdcc8e55c1a92e83792f4f32",
+          "size": 456
+        },
+        {
+          "path": "HC_Sentinel/core/incident-timeline.js",
+          "blob_sha": "d84195ed0bd6666e688dd51aed83764c8c18b93e",
+          "size": 424
+        },
+        {
+          "path": "HC_Sentinel/core/json-store.js",
+          "blob_sha": "214e94abc1ba80a4e51c6a7ef7e112072efa6d8d",
+          "size": 694
+        },
+        {
+          "path": "HC_Sentinel/core/lease.js",
+          "blob_sha": "741187a17d36ba4e6065695ee728d1a84cc9f274",
+          "size": 610
+        },
+        {
+          "path": "HC_Sentinel/core/local-notifier.js",
+          "blob_sha": "691eda41d6c824c20b292c3a34a70b9bc17b634f",
+          "size": 367
+        },
+        {
+          "path": "HC_Sentinel/core/log-store.js",
+          "blob_sha": "0d9aceef0c503f08214c6e7916906111613b423b",
+          "size": 538
+        },
+        {
+          "path": "HC_Sentinel/core/maintenance-runner.js",
+          "blob_sha": "679ef73657142494e25725a11bba39de1dbc310b",
+          "size": 407
+        },
+        {
+          "path": "HC_Sentinel/core/mission-ledger.js",
+          "blob_sha": "fcba75ea92503154302be3082926b70e3b8a7b07",
+          "size": 287
+        },
+        {
+          "path": "HC_Sentinel/core/mission.js",
+          "blob_sha": "eafe9602dc32ad396ea02e8bcdf15c4bfa571bd8",
+          "size": 1144
+        },
+        {
+          "path": "HC_Sentinel/core/notification-center.js",
+          "blob_sha": "12e9e5e9f6f42a2ff559e6adcdeeca2ad2b0e93e",
+          "size": 470
+        },
+        {
+          "path": "HC_Sentinel/core/offline-queue.js",
+          "blob_sha": "4d86c09fc12065552b26f63f3d95631f1fda7f7f",
+          "size": 652
+        },
+        {
+          "path": "HC_Sentinel/core/policy-engine.js",
+          "blob_sha": "aba3914d40dd3fbe6b0bfdfb1884558cbec090e8",
+          "size": 458
+        },
+        {
+          "path": "HC_Sentinel/core/project-registry.js",
+          "blob_sha": "5442cdae409f5755b81cc64b11ba196221d15e3f",
+          "size": 497
+        },
+        {
+          "path": "HC_Sentinel/core/quality.js",
+          "blob_sha": "1ee328e7d2f4bf72933fc88cb74334815e9151eb",
+          "size": 617
+        },
+        {
+          "path": "HC_Sentinel/core/release-gate.js",
+          "blob_sha": "09c5761fedaa9fb9448acb16f588d86015bfffd2",
+          "size": 481
+        },
+        {
+          "path": "HC_Sentinel/core/release-integrity.js",
+          "blob_sha": "c08aae39bf4126b3631b7cae7eeb142b62bc8194",
+          "size": 248
+        },
+        {
+          "path": "HC_Sentinel/core/repair-bridge.js",
+          "blob_sha": "704279a13e8a09b5d74a1cdfefdd04c68a052720",
+          "size": 551
+        },
+        {
+          "path": "HC_Sentinel/core/repair-queue.js",
+          "blob_sha": "460a9067e55ce2fec56debf282632a0e2a13008e",
+          "size": 459
+        },
+        {
+          "path": "HC_Sentinel/core/resource-budget.js",
+          "blob_sha": "b433f4d271dc55d07fa755971e34aac236ca20fd",
+          "size": 361
+        },
+        {
+          "path": "HC_Sentinel/core/retention.js",
+          "blob_sha": "00f64513184659ee3a6f92fc0563bed2c3666b6f",
+          "size": 771
+        },
+        {
+          "path": "HC_Sentinel/core/rollback-marker.js",
+          "blob_sha": "54514591f99a8bb790b83e406c976dedac1a1c81",
+          "size": 291
+        },
+        {
+          "path": "HC_Sentinel/core/router.js",
+          "blob_sha": "7ffb8fc4df653e3225319cca1400a288327c819e",
+          "size": 669
+        },
+        {
+          "path": "HC_Sentinel/core/runtime-health.js",
+          "blob_sha": "36b9e2a59400a68eaed8962ec4f0ee6b14a95154",
+          "size": 601
+        },
+        {
+          "path": "HC_Sentinel/core/scheduler.js",
+          "blob_sha": "b599211ee4aa86460eaba951c0bbd3695a4273c3",
+          "size": 473
+        },
+        {
+          "path": "HC_Sentinel/core/settings-store.js",
+          "blob_sha": "0e28156091a620931178c92dc9f74225b757543c",
+          "size": 525
+        },
+        {
+          "path": "HC_Sentinel/core/state-backup.js",
+          "blob_sha": "9b199bcfdf63ebf622d0e060ce87a2f506327f74",
+          "size": 1069
+        },
+        {
+          "path": "HC_Sentinel/core/target-registry.js",
+          "blob_sha": "ccf3478f2115ed2351bb439fd80ad13903154907",
+          "size": 483
+        },
+        {
+          "path": "HC_Sentinel/core/target-store.js",
+          "blob_sha": "1b1959c41db9479dfd59f62cb232f006c30a772f",
+          "size": 937
+        },
+        {
+          "path": "HC_Sentinel/core/telemetry.js",
+          "blob_sha": "d56d37f1f50425ee8b8eb4ca63eca6c0a9f11e79",
+          "size": 315
+        },
+        {
+          "path": "HC_Sentinel/core/tray-notifier.js",
+          "blob_sha": "6febff137531eb937cdd81f8b5560b89e9ed1232",
+          "size": 419
+        },
+        {
+          "path": "HC_Sentinel/core/update-policy.js",
+          "blob_sha": "ce4e993ac22c43ed9b065d214626e4c1a5c78bcc",
+          "size": 343
+        },
+        {
+          "path": "HC_Sentinel/core/verify-loop.js",
+          "blob_sha": "6b19b49230f0001144441ee46811724370b6fa8c",
+          "size": 631
+        },
+        {
+          "path": "HC_Sentinel/core/watch-runtime.js",
+          "blob_sha": "ec1dcc176ebd8dd87aa38c8336a725a90177bd89",
+          "size": 850
+        },
+        {
+          "path": "HC_Sentinel/core/worker-registry.js",
+          "blob_sha": "533bd947e20efe0465f5e342cbb1884d9942f5d8",
+          "size": 606
+        },
+        {
+          "path": "HC_Sentinel/data/README.md",
+          "blob_sha": "f9e290e3bba04f369ca3b2962fc1f1c8c9f05667",
+          "size": 240
+        },
+        {
+          "path": "HC_Sentinel/data/projects.example.json",
+          "blob_sha": "93e5530db8bd78a3a67f32ab3300ae80f7c477eb",
+          "size": 413
+        },
+        {
+          "path": "HC_Sentinel/data/targets.json",
+          "blob_sha": "ae503057aea83dd3e707ba52f3d260154584f3bc",
+          "size": 899
+        },
+        {
+          "path": "HC_Sentinel/docs/ARCHITECTURE.md",
+          "blob_sha": "6c0970a1ab76111a91281b8540591f0cceaf7f9e",
+          "size": 2454
+        },
+        {
+          "path": "HC_Sentinel/docs/BUILD-PHASES.md",
+          "blob_sha": "0e1998dc962d3982089151816cc18707873573d8",
+          "size": 1301
+        },
+        {
+          "path": "HC_Sentinel/docs/DAILY-FINAL-2026-10-04.md",
+          "blob_sha": "8d203e5192a95b465494d260159ae7b0cd42f0a0",
+          "size": 2216
+        },
+        {
+          "path": "HC_Sentinel/docs/DESKTOP-WATCH-2026-10-04.md",
+          "blob_sha": "5198df485b6d0aca61dac9ba3932ea294446189e",
+          "size": 2448
+        },
+        {
+          "path": "HC_Sentinel/docs/LOCAL-FINAL-2026-10-04.md",
+          "blob_sha": "dae29467bd3f75f4b83e5e13dd7af0a956e8044c",
+          "size": 2852
+        },
+        {
+          "path": "HC_Sentinel/docs/TECH-RADAR.md",
+          "blob_sha": "6f581394114be1f80207f4fe14ae2426cdcee773",
+          "size": 1985
+        },
+        {
+          "path": "HC_Sentinel/evidence/README.md",
+          "blob_sha": "afb87e836de6e8b2f673eb6ddadb7b8df257b457",
+          "size": 213
+        },
+        {
+          "path": "HC_Sentinel/operator/command-controller.js",
+          "blob_sha": "d6c8eb7ca095da304761fbabe89675fcab61b062",
+          "size": 646
+        },
+        {
+          "path": "HC_Sentinel/operator/command-parser.js",
+          "blob_sha": "182bee304aeab07889060b39238129fc3d06d3e8",
+          "size": 906
+        },
+        {
+          "path": "HC_Sentinel/operator/operator-service.js",
+          "blob_sha": "cb3fb825b6bc702d23e1d0a8fad51383c1fe72a2",
+          "size": 603
+        },
+        {
+          "path": "HC_Sentinel/package.json",
+          "blob_sha": "5ebfb4c406a6f16483f2504cfda0177d67058bb3",
+          "size": 902
+        },
+        {
+          "path": "HC_Sentinel/rules/README.md",
+          "blob_sha": "9c3a96f8c4a6feae453f6efde829237192c14597",
+          "size": 235
+        },
+        {
+          "path": "HC_Sentinel/runtime/autochat-bridge.py",
+          "blob_sha": "0c56223e4be69b2475e9259668df4120ec3ea309",
+          "size": 3995
+        },
+        {
+          "path": "HC_Sentinel/runtime/bootstrap.js",
+          "blob_sha": "119958a82b60d7bc905671716fad3fef30452de1",
+          "size": 493
+        },
+        {
+          "path": "HC_Sentinel/runtime/capture-window.ps1",
+          "blob_sha": "30bdd2cbd372003d154547747f16537cec91bd5e",
+          "size": 1416
+        },
+        {
+          "path": "HC_Sentinel/runtime/create-desktop-shortcut.ps1",
+          "blob_sha": "47dbbebcf0bccdc5ed78b5c6c4a39cdef36c335a",
+          "size": 452
+        },
+        {
+          "path": "HC_Sentinel/runtime/desktop-watch-adapters.js",
+          "blob_sha": "e05f51b5d848f67eaa7631c0059c86da15c85bba",
+          "size": 1613
+        },
+        {
+          "path": "HC_Sentinel/runtime/install-local.ps1",
+          "blob_sha": "66d221e5f503e4857409efe7295399fc4a629bba",
+          "size": 720
+        },
+        {
+          "path": "HC_Sentinel/runtime/list-windows.ps1",
+          "blob_sha": "f31007056a7d1954b876e350a01e01004c096202",
+          "size": 305
+        },
+        {
+          "path": "HC_Sentinel/runtime/live-controller.js",
+          "blob_sha": "35a3ba0c52348d3ddc28cb22aeb75f8d2930517a",
+          "size": 6155
+        },
+        {
+          "path": "HC_Sentinel/runtime/local-server.js",
+          "blob_sha": "aedaf3d8adb92773238073f014aade2823b5533a",
+          "size": 5784
+        },
+        {
+          "path": "HC_Sentinel/runtime/register-startup.ps1",
+          "blob_sha": "0189a36221db3422b217bdf49a75fc1d02aa5f52",
+          "size": 608
+        },
+        {
+          "path": "HC_Sentinel/runtime/register-watchdog-task.ps1",
+          "blob_sha": "4f70d64922c31a11c02aa586c1b20d8f381782f3",
+          "size": 453
+        },
+        {
+          "path": "HC_Sentinel/runtime/release-freeze.json",
+          "blob_sha": "de8afe044ad9696c768c237301749ba4b7702603",
+          "size": 335
+        },
+        {
+          "path": "HC_Sentinel/runtime/release-manifest.json",
+          "blob_sha": "1347a38d5b56c7d13c3c6e889f269902a0ce86f4",
+          "size": 249
+        },
+        {
+          "path": "HC_Sentinel/runtime/start-hidden.vbs",
+          "blob_sha": "39fddb1856bf496751fe62edf3e2b3cec661bca3",
+          "size": 367
+        },
+        {
+          "path": "HC_Sentinel/runtime/start-sentinel.bat",
+          "blob_sha": "ba274e7d91862a31d3a1bd200c9860490e5596cd",
+          "size": 134
+        },
+        {
+          "path": "HC_Sentinel/runtime/start-sentinel.js",
+          "blob_sha": "38fc5136c9083c39efecffa4cee503096ee58f4b",
+          "size": 3239
+        },
+        {
+          "path": "HC_Sentinel/runtime/tray-agent.ps1",
+          "blob_sha": "9c74992009625b0e0f4f6eb64ed6aea1e0336468",
+          "size": 1670
+        },
+        {
+          "path": "HC_Sentinel/runtime/watchdog-loop.ps1",
+          "blob_sha": "a6db473bc8403a8bf7b17f4cc6378e59d0137b30",
+          "size": 400
+        },
+        {
+          "path": "HC_Sentinel/runtime/watchdog.js",
+          "blob_sha": "a6b7173b213786f927a0c64188bf85fefb5caff2",
+          "size": 630
+        },
+        {
+          "path": "HC_Sentinel/scripts/capture-smoke.js",
+          "blob_sha": "72c4f07e24e6847c674b4510918737669fc23db7",
+          "size": 1080
+        },
+        {
+          "path": "HC_Sentinel/scripts/diff-smoke.js",
+          "blob_sha": "e176272157355fd97346f9c0f2994ffdf297b7e4",
+          "size": 886
+        },
+        {
+          "path": "HC_Sentinel/scripts/p10-golden-smoke.js",
+          "blob_sha": "afb302deecbc2fe1cfa04fcc57b45653d85ea391",
+          "size": 1575
+        },
+        {
+          "path": "HC_Sentinel/scripts/p11-p14-smoke.js",
+          "blob_sha": "47b37010009fddd7fdef83c8a99deaff36d37dfb",
+          "size": 1677
+        },
+        {
+          "path": "HC_Sentinel/scripts/p16-ui-smoke.js",
+          "blob_sha": "767ff75643e68ece9c4fa40869f8e42eb21abe1b",
+          "size": 863
+        },
+        {
+          "path": "HC_Sentinel/scripts/p19-e2e-public.js",
+          "blob_sha": "03ee76158bc156748889b466dd3419fb6b39cce2",
+          "size": 1400
+        },
+        {
+          "path": "HC_Sentinel/scripts/p20-p24-smoke.js",
+          "blob_sha": "25bf537bb44d3c8dd8e818cc203a677a3d7ad32d",
+          "size": 1030
+        },
+        {
+          "path": "HC_Sentinel/scripts/p25-p29-smoke.js",
+          "blob_sha": "772bf761a23feec62057f6e790a377a3c23ef4b5",
+          "size": 761
+        },
+        {
+          "path": "HC_Sentinel/scripts/p34-acceptance.js",
+          "blob_sha": "444ce8a2f4e83938a6527b6f4ef2131b651553c1",
+          "size": 1932
+        },
+        {
+          "path": "HC_Sentinel/scripts/p35-p39-smoke.js",
+          "blob_sha": "8c7f4844b0dbd6087926e1f8c42296237cc51925",
+          "size": 881
+        },
+        {
+          "path": "HC_Sentinel/scripts/p4-quality-smoke.js",
+          "blob_sha": "5a895747083c1e9c0dfec3c419a16e21ba170ea6",
+          "size": 1147
+        },
+        {
+          "path": "HC_Sentinel/scripts/p44-daily-acceptance.js",
+          "blob_sha": "830724c8a39fcfaee85a2d2da3f59d818fbe921b",
+          "size": 1934
+        },
+        {
+          "path": "HC_Sentinel/scripts/p49-self-recovery-acceptance.js",
+          "blob_sha": "bcfa7052a738dc102d5ee3b607b47b42eb26a8b6",
+          "size": 906
+        },
+        {
+          "path": "HC_Sentinel/scripts/p54-soak-acceptance.js",
+          "blob_sha": "aaf9fb68002010bf0049ccaf94c9ce49593393fb",
+          "size": 1328
+        },
+        {
+          "path": "HC_Sentinel/scripts/p64-final-acceptance.js",
+          "blob_sha": "79249b238d50fc97f644373022cb07df155e9aea",
+          "size": 1039
+        },
+        {
+          "path": "HC_Sentinel/tests/daily-final-target-store.test.js",
+          "blob_sha": "45efaba7948238569d44e40fef97905f4e5bf889",
+          "size": 782
+        },
+        {
+          "path": "HC_Sentinel/tests/daily-final-tray.test.js",
+          "blob_sha": "588f678622da56bcb6a0a4b8c6372a3519436c19",
+          "size": 408
+        },
+        {
+          "path": "HC_Sentinel/tests/desktop-watch-api.test.js",
+          "blob_sha": "71516fb6453b14a5d8053fe0ff0a4c475dd75156",
+          "size": 1499
+        },
+        {
+          "path": "HC_Sentinel/tests/desktop-watch-engine.test.js",
+          "blob_sha": "df4da6121600ca547db264a8580b729b6043e0e5",
+          "size": 2604
+        },
+        {
+          "path": "HC_Sentinel/tests/desktop-watch-safety.test.js",
+          "blob_sha": "0843415c0bd58d8d7a0d9e42bba7ea3434c90cbc",
+          "size": 993
+        },
+        {
+          "path": "HC_Sentinel/tests/desktop-watch-ui.test.js",
+          "blob_sha": "1b264bee121a5ea0f72b955ee4b03053c83536d5",
+          "size": 451
+        },
+        {
+          "path": "HC_Sentinel/tests/gsc-known-placeholder.test.js",
+          "blob_sha": "e8f07c2739b0904401551d3003f00a4d40698b92",
+          "size": 1440
+        },
+        {
+          "path": "HC_Sentinel/tests/kernel.test.js",
+          "blob_sha": "c1a54d94691b1fa8bbca0d914b1f8977d451139b",
+          "size": 1437
+        },
+        {
+          "path": "HC_Sentinel/tests/local-final-live-controller.test.js",
+          "blob_sha": "1361293cfbb19101627842a891415bcf16427fc8",
+          "size": 2031
+        },
+        {
+          "path": "HC_Sentinel/tests/observer.test.js",
+          "blob_sha": "32e60798faaa3cf62393565a77f04f597b094c14",
+          "size": 630
+        },
+        {
+          "path": "HC_Sentinel/tests/p10-golden.test.js",
+          "blob_sha": "22f4e291b7aa143b938b8f723b3e9ff33bc16ec7",
+          "size": 1260
+        },
+        {
+          "path": "HC_Sentinel/tests/p11-operator.test.js",
+          "blob_sha": "6748a45243c735288daaa7f872ca9a70c04b1557",
+          "size": 654
+        },
+        {
+          "path": "HC_Sentinel/tests/p12-profiles.test.js",
+          "blob_sha": "a7b9b33fcd8961d74305b6e58ff7a8eb4f5c5672",
+          "size": 380
+        },
+        {
+          "path": "HC_Sentinel/tests/p13-baseline.test.js",
+          "blob_sha": "dd59173069513d984524ebdda86261ec5ea25894",
+          "size": 597
+        },
+        {
+          "path": "HC_Sentinel/tests/p14-repair-bridge.test.js",
+          "blob_sha": "bcf0115c0085ec04c7120c3d7d3392128520190e",
+          "size": 1109
+        },
+        {
+          "path": "HC_Sentinel/tests/p15-targets.test.js",
+          "blob_sha": "2f80b60fee9fbc9a450fb89e390b688a95bdd24f",
+          "size": 486
+        },
+        {
+          "path": "HC_Sentinel/tests/p16-ui.test.js",
+          "blob_sha": "2f5f544b8fffc7accd315ee7ccf085b453fdc718",
+          "size": 584
+        },
+        {
+          "path": "HC_Sentinel/tests/p17-store.test.js",
+          "blob_sha": "59ddead231069cb49f8ba26a453e66eb24e1ac43",
+          "size": 588
+        },
+        {
+          "path": "HC_Sentinel/tests/p18-live-bridge.test.js",
+          "blob_sha": "042e4341099faeef8ad6f3f62b321f629b4a20f2",
+          "size": 447
+        },
+        {
+          "path": "HC_Sentinel/tests/p19-e2e.test.js",
+          "blob_sha": "8513060c2542b49146d0f252b44470216b6b1e55",
+          "size": 347
+        },
+        {
+          "path": "HC_Sentinel/tests/p20-findings.test.js",
+          "blob_sha": "ba46dd0b6f850f9bd1230b7ca73b54932a478caa",
+          "size": 605
+        },
+        {
+          "path": "HC_Sentinel/tests/p21-ledger.test.js",
+          "blob_sha": "4f07c7bd9e4c692dd9d71fc41fe93f643ff98e00",
+          "size": 645
+        },
+        {
+          "path": "HC_Sentinel/tests/p22-policy.test.js",
+          "blob_sha": "e46f285063d26131646bd99cf4ccabfd713c7953",
+          "size": 681
+        },
+        {
+          "path": "HC_Sentinel/tests/p23-health.test.js",
+          "blob_sha": "94c4eee133a4b7e9d326a3d85a4eb568abf45fbf",
+          "size": 650
+        },
+        {
+          "path": "HC_Sentinel/tests/p24-release-gate.test.js",
+          "blob_sha": "cc3915698a869369b36bedb870a73a18c1b3217c",
+          "size": 633
+        },
+        {
+          "path": "HC_Sentinel/tests/p25-notifications.test.js",
+          "blob_sha": "0b7fcfc5d239eb473af0fa386f06c1e8dcbb2792",
+          "size": 440
+        },
+        {
+          "path": "HC_Sentinel/tests/p26-baseline-promotion.test.js",
+          "blob_sha": "32d879ae2d312f41f4071c2737bb13396d583739",
+          "size": 647
+        },
+        {
+          "path": "HC_Sentinel/tests/p27-watch-runtime.test.js",
+          "blob_sha": "ff3fa63c0801cd6b5465c51a9b2dfd5e767185c0",
+          "size": 769
+        },
+        {
+          "path": "HC_Sentinel/tests/p28-command-live.test.js",
+          "blob_sha": "ab39a550986b8d4b87c2cec43cce16616fbd385d",
+          "size": 1173
+        },
+        {
+          "path": "HC_Sentinel/tests/p29-release-package.test.js",
+          "blob_sha": "7bb78b057f6d9017fcba5d9431984a2aa7fbb26f",
+          "size": 610
+        },
+        {
+          "path": "HC_Sentinel/tests/p30-bootstrap.test.js",
+          "blob_sha": "e52f1b23852ee6bcea1409a91b6d1d4270bd628f",
+          "size": 538
+        },
+        {
+          "path": "HC_Sentinel/tests/p31-live-app.test.js",
+          "blob_sha": "20cc0b88b0ea19f329dd4806e24739f35d7b9db9",
+          "size": 895
+        },
+        {
+          "path": "HC_Sentinel/tests/p32-evidence-index.test.js",
+          "blob_sha": "236256f775c02705f54bf17db1d3fd85e1fb81f2",
+          "size": 737
+        },
+        {
+          "path": "HC_Sentinel/tests/p33-settings.test.js",
+          "blob_sha": "19fe101762b4639c8c36add53fe6f0a4c175a206",
+          "size": 764
+        },
+        {
+          "path": "HC_Sentinel/tests/p35-windows-install.test.js",
+          "blob_sha": "de5d526997e772721ed28598f33ea0f967f3825d",
+          "size": 398
+        },
+        {
+          "path": "HC_Sentinel/tests/p36-hidden-launch.test.js",
+          "blob_sha": "2d505aea1637727cc4e4d7073ad6a2d50c438fd1",
+          "size": 399
+        },
+        {
+          "path": "HC_Sentinel/tests/p37-evidence-viewer.test.js",
+          "blob_sha": "f6b0d2e74ba0a34af7d0ddebfeac1755fbfc6594",
+          "size": 338
+        },
+        {
+          "path": "HC_Sentinel/tests/p38-finding-inbox.test.js",
+          "blob_sha": "2473b0a08568092b8c019a590b715b50f1a540e4",
+          "size": 775
+        },
+        {
+          "path": "HC_Sentinel/tests/p39-hcdr-sync.test.js",
+          "blob_sha": "04c91d5248b1aa083c9b53418e4a2558258c39cd",
+          "size": 601
+        },
+        {
+          "path": "HC_Sentinel/tests/p4-quality.test.js",
+          "blob_sha": "e8981c3d64ba78ce10bed32b03cfcd4509b7b661",
+          "size": 434
+        },
+        {
+          "path": "HC_Sentinel/tests/p40-startup.test.js",
+          "blob_sha": "a5d4576e2c7b27e469b5c5a8cecc4e02a25fcb5b",
+          "size": 447
+        },
+        {
+          "path": "HC_Sentinel/tests/p41-shortcut.test.js",
+          "blob_sha": "a4604e7e7509a2d41335eefa9ac53ae71d58ceb9",
+          "size": 403
+        },
+        {
+          "path": "HC_Sentinel/tests/p42-backup.test.js",
+          "blob_sha": "e13ab2d81ab934ec94ad4b4b42d3872694409605",
+          "size": 956
+        },
+        {
+          "path": "HC_Sentinel/tests/p43-log-viewer.test.js",
+          "blob_sha": "9256e76110a3b1b2fcc441ec2d7429ef9eb9f0b4",
+          "size": 706
+        },
+        {
+          "path": "HC_Sentinel/tests/p45-heartbeat.test.js",
+          "blob_sha": "f2e909911a83f2bfd6d38d6f0d8af83e991052b2",
+          "size": 475
+        },
+        {
+          "path": "HC_Sentinel/tests/p46-watchdog.test.js",
+          "blob_sha": "9c87a9bcb2ec77b5c5a3cf5861ac912790354fde",
+          "size": 689
+        },
+        {
+          "path": "HC_Sentinel/tests/p47-retention.test.js",
+          "blob_sha": "3341962daa1f3d6fb714527c5a6487bcfd59262a",
+          "size": 689
+        },
+        {
+          "path": "HC_Sentinel/tests/p48-local-notifier.test.js",
+          "blob_sha": "a81c8e7f9f1a275eb34c61ebe98410e2f3c8d80f",
+          "size": 440
+        },
+        {
+          "path": "HC_Sentinel/tests/p5-router.test.js",
+          "blob_sha": "c69ef2d27ce697a83bc708f7e03ce5e99e69dc53",
+          "size": 409
+        },
+        {
+          "path": "HC_Sentinel/tests/p50-watchdog-task.test.js",
+          "blob_sha": "e07d179917825f4c485fb9902522d040f0e4f667",
+          "size": 497
+        },
+        {
+          "path": "HC_Sentinel/tests/p51-maintenance.test.js",
+          "blob_sha": "89cebc3833e029c64243a7047f40ce934201d23d",
+          "size": 611
+        },
+        {
+          "path": "HC_Sentinel/tests/p52-runtime-health.test.js",
+          "blob_sha": "84ec1d5d898c6ce46a47250e2f761eea4b9aaccb",
+          "size": 731
+        },
+        {
+          "path": "HC_Sentinel/tests/p53-release-freeze.test.js",
+          "blob_sha": "255b77520af5b2535d5b766b8620c61981ac0ac2",
+          "size": 502
+        },
+        {
+          "path": "HC_Sentinel/tests/p55-config-snapshot.test.js",
+          "blob_sha": "00e4ef74da0e00b1f75f823f0441debae3ce397b",
+          "size": 386
+        },
+        {
+          "path": "HC_Sentinel/tests/p56-alert-dedupe.test.js",
+          "blob_sha": "9b25e919399637519fcc6b94b02f8d0fd3ce0bd5",
+          "size": 365
+        },
+        {
+          "path": "HC_Sentinel/tests/p57-incident-timeline.test.js",
+          "blob_sha": "435e7949cc2381accde830e228a935fe60b7c1d4",
+          "size": 666
+        },
+        {
+          "path": "HC_Sentinel/tests/p58-offline-queue.test.js",
+          "blob_sha": "ab2c0e03c301f692b99c094729302e482ec46965",
+          "size": 712
+        },
+        {
+          "path": "HC_Sentinel/tests/p59-audit-ledger.test.js",
+          "blob_sha": "5e5a1efe1ae3de56f89fdd3bf53956531d01390d",
+          "size": 661
+        },
+        {
+          "path": "HC_Sentinel/tests/p6-verify.test.js",
+          "blob_sha": "53598895d675eac205c486d112d14ded06cbdbe6",
+          "size": 503
+        },
+        {
+          "path": "HC_Sentinel/tests/p60-update-policy.test.js",
+          "blob_sha": "fa6888d568a537a603fc822920f35716eec29315",
+          "size": 497
+        },
+        {
+          "path": "HC_Sentinel/tests/p61-rollback-marker.test.js",
+          "blob_sha": "bf5ac00082316519ef0aaa22e34922ac60a5374e",
+          "size": 601
+        },
+        {
+          "path": "HC_Sentinel/tests/p62-resource-budget.test.js",
+          "blob_sha": "52f70690942dcf4695f14395f37e21a6e08044b1",
+          "size": 383
+        },
+        {
+          "path": "HC_Sentinel/tests/p63-release-integrity.test.js",
+          "blob_sha": "1ba6db8e7787e57c2f8dfbf8c97c05783b347e44",
+          "size": 367
+        },
+        {
+          "path": "HC_Sentinel/tests/p7-autonomy.test.js",
+          "blob_sha": "593f0f7b1eb4bbebf6add173ffbe8d584495c5e9",
+          "size": 557
+        },
+        {
+          "path": "HC_Sentinel/tests/p8-observability.test.js",
+          "blob_sha": "033d5046a1ab7d0ac3fe39615c03ad600fedde46",
+          "size": 430
+        },
+        {
+          "path": "HC_Sentinel/tests/p9-multiproject.test.js",
+          "blob_sha": "0e0bbfde0289950d8b4961b4bc63bcb81f7700e0",
+          "size": 697
+        },
+        {
+          "path": "HC_Sentinel/tests/visual-diff.test.js",
+          "blob_sha": "e2eb0cce64cbf36b8cc89160196167c12f8837c5",
+          "size": 1014
+        },
+        {
+          "path": "HC_Sentinel/ui/app.js",
+          "blob_sha": "5f3ed131eb2b12b83d9e9ca9f559fc3d50df0a0a",
+          "size": 13395
+        },
+        {
+          "path": "HC_Sentinel/ui/index.html",
+          "blob_sha": "a4309ff05c60d966ede45702a311087829f6010d",
+          "size": 8097
+        },
+        {
+          "path": "HC_Sentinel/ui/styles.css",
+          "blob_sha": "923631c666dddf4c1aa8bf4bb4c550cd01c63f3f",
+          "size": 8315
+        },
+        {
+          "path": "HC_Sentinel/vendor/autowatch_snapshot/README.md",
+          "blob_sha": "b8400a82b0dce7e0e6d57bb295d8e4f182949563",
+          "size": 407
+        }
+      ]
+    },
+    {
+      "id": "HC-AutoDebug",
+      "target_repo": "HCDecorAD/HC-AutoDebug",
+      "file_count": 4,
+      "files": [
+        {
+          "path": "config/fix-memory.json",
+          "blob_sha": "aa54efebd9e7359e4455811c9b9bebc9c5b04483",
+          "size": 1976
+        },
+        {
+          "path": "lib/autodebug.mjs",
+          "blob_sha": "e82a9f52b0783914ea856e505eec50fdc37c5451",
+          "size": 1869
+        },
+        {
+          "path": "scripts/autodebug-implementation.test.mjs",
+          "blob_sha": "9f4ac1f50731ec47bb470c0f3304e217243dc323",
+          "size": 690
+        },
+        {
+          "path": "scripts/autodebug-repair-verification.test.mjs",
+          "blob_sha": "ab9ad8ff3998aa0eb68b7974d09ea591545a071d",
+          "size": 979
+        }
+      ]
+    },
+    {
+      "id": "HC-Agent-Control",
+      "target_repo": "HCDecorAD/HC-Agent-Control",
+      "file_count": 4,
+      "files": [
+        {
+          "path": "config/hc-agent-control-acceptance.json",
+          "blob_sha": "94f9a5577aa18f17cf11c51584a9a7dac36d67b4",
+          "size": 2247
+        },
+        {
+          "path": "lib/agent-control-runtime.mjs",
+          "blob_sha": "77150706e1460da1f82f21d43d0e71f056b64d9e",
+          "size": 1837
+        },
+        {
+          "path": "scripts/hc-agent-control-acceptance.test.mjs",
+          "blob_sha": "c00ff9f6c5d2be7a60424e4fad55b50a4136d51c",
+          "size": 1895
+        },
+        {
+          "path": "scripts/hc-agent-control-runtime.test.mjs",
+          "blob_sha": "5f414ceab6f1eefb13c9d2ead5f5fec2f18aeacc",
+          "size": 929
+        }
+      ]
+    }
+  ]
+}

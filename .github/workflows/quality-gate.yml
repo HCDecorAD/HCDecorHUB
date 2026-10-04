@@ -92,6 +92,8 @@ jobs:
         run: npm run test:evidence-store
       - name: Evidence archive index gate
         run: npm run test:evidence-archive-index
+      - name: Repo source integrity gate
+        run: npm run test:repo-integrity
       - name: Repo extraction package gate
         run: npm run test:repo-extraction
       - name: Repo decomposition parity gate
