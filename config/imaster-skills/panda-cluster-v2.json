@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "id": "imaster.panda-cluster-v2",
+  "name": "PANDA Durable Reconciliation Cluster",
+  "status": "IMPLEMENTED_CONTRACT",
+  "components": [
+    "durable-mission-envelope",
+    "three-sha-model",
+    "idempotency-ledger-contract",
+    "failure-classifier",
+    "bounded-retry",
+    "reconciler"
+  ],
+  "laws": [
+    "WAIT_NE_STOP",
+    "MERGED_NE_DONE",
+    "MUTATION_REQUIRES_CURRENT_SHA",
+    "DUPLICATE_EVENT_NE_DUPLICATE_ACTION",
+    "RETRY_MUST_BE_BOUNDED",
+    "UNKNOWN_FAILURE_FAILS_CLOSED",
+    "NO_EVIDENCE_NO_GREEN"
+  ],
+  "terminal_states": [
+    "DONE",
+    "OWNER_REQUIRED",
+    "SAFETY_STOP",
+    "HARD_EXTERNAL_BLOCKED"
+  ],
+  "claim_policy": "Executable cluster contract; durable external database/queue and autonomous mutation remain separate deployment gates."
+}
