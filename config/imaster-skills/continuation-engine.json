@@ -1,0 +1,15 @@
+{
+  "schema_version":"1.0.0",
+  "id":"imaster.continuation-engine",
+  "name":"Panda Continuation Box",
+  "status":"IMPLEMENTED_POLICY",
+  "purpose":"Keep missions alive across asynchronous boundaries such as CI, merge, queue, deploy and verification.",
+  "trigger_states":["CI_RUNNING","QUEUE_WAITING","MERGE_READY","POST_MERGE_VERIFY","EXTERNAL_JOB_RUNNING","RETRY_PENDING"],
+  "loop":["OBSERVE_EVENT","LOAD_MISSION_STATE","VERIFY_PREVIOUS_STEP","COMPUTE_NEXT_ACTION","EXECUTE_SAFE_ACTION","PERSIST_EVIDENCE","ARM_NEXT_WATCH","REPEAT_UNTIL_TERMINAL"],
+  "terminal_states":["DONE","OWNER_REQUIRED","SAFETY_STOP","HARD_EXTERNAL_BLOCKED"],
+  "laws":["WAIT_NE_STOP","CI_RUNNING_NE_MISSION_END","MERGED_NE_DONE","ASYNC_BOUNDARY_MUST_ARM_CONTINUATION","NO_EVIDENCE_NO_GREEN","PRODUCTION_WRITES_FAIL_CLOSED"],
+  "watchers":{"github_ci":"status/conclusion by immutable SHA","merge_gate":"mergeable + required checks","post_merge":"main SHA quality + production verify","queue":"lease/completion/requeue","external_job":"poll/callback when supported"},
+  "actions":{"success":"advance","failure":"repair_council_then_retry","timeout":"recheck_or_escalate","owner_boundary":"OWNER_REQUIRED"},
+  "panda_box":["GitHub Actions events/status","durable mission state","HCDR local executor","AutoDebug/Repair Council","scheduled/condition watcher where available"],
+  "claim_policy":"Policy/runtime contract is not 24/7 LIVE until an external persistent controller is deployed and acceptance-tested."
+}
