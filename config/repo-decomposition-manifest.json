@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "policy": {
     "rule": "independent lifecycle -> separate repo; small internal module -> stay embedded; shared by 2+ systems -> consider shared package",
     "migration": "register -> backup -> parity test -> cutover -> remove duplicate only after evidence",
@@ -18,7 +18,14 @@
       "source_path": "HC_Sentinel/",
       "target_repo": "HCDecorAD/HC-Sentinel",
       "action": "SPLIT_CANDIDATE_HIGH",
-      "evidence": "dedicated source tree + workflows + tests"
+      "evidence": "dedicated source tree + workflows + tests",
+      "readiness": {
+        "source_files": 202,
+        "evidence_files": 111,
+        "source_authority": "HC_Sentinel/",
+        "parity_gate": "scripts/repo-decomposition-parity.test.mjs",
+        "status": "READY_FOR_REPO_PROVISIONING"
+      }
     },
     {
       "id": "HC-AutoDebug",
@@ -26,7 +33,12 @@
       "source_path": "lib/autodebug.mjs",
       "target_repo": "HCDecorAD/HC-AutoDebug",
       "action": "SPLIT_CANDIDATE_MEDIUM",
-      "evidence": "source + implementation/repair tests"
+      "evidence": "source + implementation/repair tests",
+      "readiness": {
+        "source_files": 1,
+        "evidence_files": 2,
+        "status": "DEPENDENCY_MAP_REQUIRED"
+      }
     },
     {
       "id": "HC-Agent-Control",
@@ -34,7 +46,12 @@
       "source_path": "lib/agent-control-runtime.mjs",
       "target_repo": "HCDecorAD/HC-Agent-Control",
       "action": "SPLIT_CANDIDATE_MEDIUM",
-      "evidence": "runtime source + acceptance/runtime tests"
+      "evidence": "runtime source + acceptance/runtime tests",
+      "readiness": {
+        "source_files": 1,
+        "evidence_files": 4,
+        "status": "DEPENDENCY_MAP_REQUIRED"
+      }
     },
     {
       "id": "HC-AutoChat",
@@ -67,5 +84,10 @@
       "target_repo": "HCDecorAD/HC-DONE",
       "action": "KEEP_UNTIL_DEPENDENCY_MAP_COMPLETE"
     }
-  ]
+  ],
+  "phase": "PHASE_2_MIGRATION_READINESS",
+  "provisioning": {
+    "github_connector_create_repository": false,
+    "rule": "Do not fabricate repository existence. Prepare migration packages and parity gates until provisioning is available."
+  }
 }
