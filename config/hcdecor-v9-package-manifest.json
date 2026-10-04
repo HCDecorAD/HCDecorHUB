@@ -420,7 +420,20 @@
         "real-publish-pass",
         "verify-pass",
         "analytics-pass"
-      ]
+      ],
+      "prebuild_evidence": {
+        "metricool_brand": "7127887",
+        "configured_networks": [
+          "instagram",
+          "tiktok",
+          "youtube",
+          "facebook"
+        ],
+        "schedule_plan": "PASS",
+        "verify_plan": "PASS",
+        "analytics_authority": "metricool-configured",
+        "production_publish": "BLOCKED_UNTIL_EXPLICIT_APPROVAL_AND_VERIFIED_EXECUTION"
+      }
     },
     {
       "id": "PKG-08",
@@ -450,7 +463,14 @@
       "done_gate": [
         "batch-publish-pass",
         "partial-failure-safe-pass"
-      ]
+      ],
+      "prebuild_evidence": {
+        "multi_publish_route": "PASS",
+        "batch_plan": "PASS",
+        "idempotency": "PASS",
+        "partial_unknown_result_policy": "RECONCILE_NO_BLIND_RETRY",
+        "runtime_smoke": "4 jobs verified publish=false"
+      }
     },
     {
       "id": "PKG-09",
