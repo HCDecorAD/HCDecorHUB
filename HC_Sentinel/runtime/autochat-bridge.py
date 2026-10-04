@@ -25,7 +25,7 @@ def pages():
 def busy(page):
     r=CDPRPC(page["websocket"])
     try:
-        x=r.call("Runtime.evaluate",{"expression":r'''(()=>!!document.querySelector('button[data-testid="stop-button"],button[aria-label*="Dừng"],button[aria-label*="Stop"]'))()''',"returnByValue":True})
+        x=r.call("Runtime.evaluate",{"expression":r'''(()=>!!document.querySelector('button[data-testid="stop-button"],button[aria-label*="Dừng"],button[aria-label*="Ngừng"],button[aria-label*="Stop"]'))()''',"returnByValue":True})
         return bool(x.get("result",{}).get("value"))
     finally:r.close()
 
