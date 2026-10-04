@@ -1,0 +1,1 @@
+import{recovery49}from"./recovery.mjs";export function recoverV27V29(status,error="V2.7-V2.9 blocker"){if(status?.overall==="PASS")return{action:"NONE",queue_jobs:0};const failed=status?.v27?.fail??0;if(failed>0||status?.v29?.status==="BLOCKED"){const advisory=recovery49(error);return{action:"RECOVERY_7X7",queue_jobs:0,advisory}}return{action:"WAIT_EVIDENCE",queue_jobs:0}}
