@@ -30,5 +30,7 @@
     "production authority change",
     "verified release/merge"
   ],
-  "secrets_policy": "Never publish secrets, credentials, tokens, private payloads or sensitive runtime data."
+  "secrets_policy": "Never publish secrets, credentials, tokens, private payloads or sensitive runtime data.",
+  "global_authority": "config/imaster-global-authority.json",
+  "authority_summary": "OWNER -> iMaster -> Master Agent -> Department Agents -> Workers -> Tools"
 }
