@@ -100,6 +100,8 @@ jobs:
         run: npm run test:hcdecor-v9-app-shell
       - name: HCDecor HUB V9 Wave 2 core gate
         run: npm run test:hcdecor-v9-wave2
+      - name: HCDecor HUB V9 project lifecycle gate
+        run: npm run test:hcdecor-v9-project-lifecycle
       - name: HCDecor HUB V9 core centers gate
         run: npm run test:hcdecor-v9-core-centers
       - name: HCDecor HUB V9 Sentinel AutoDebug gate
