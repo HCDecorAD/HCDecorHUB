@@ -1,0 +1,1 @@
+export async function runV28(components,write){const accepted=components.filter(x=>x.qa==="PASS"&&x.real===true);const rejected=components.filter(x=>!accepted.includes(x));const saved=await Promise.all(accepted.map(write));return{stage:"V2.8",status:rejected.length?"BLOCKED":"PASS",saved,rejected:rejected.map(x=>x.id)}}
