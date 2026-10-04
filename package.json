@@ -64,7 +64,8 @@
     "test:imaster-next-moon": "node scripts/imaster-next-moon.test.mjs",
     "test:imaster-parallel-skill": "node scripts/imaster-parallel-skill.test.mjs",
     "test:imaster-skills": "node scripts/imaster-skills.test.mjs",
-    "test:imaster-local-first": "node scripts/imaster-local-first-skill.test.mjs"
+    "test:imaster-local-first": "node scripts/imaster-local-first-skill.test.mjs",
+    "test:imaster-global-authority": "node scripts/imaster-global-authority.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",

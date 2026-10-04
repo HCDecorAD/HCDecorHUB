@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0.0",
+  "authority_id": "IMASTER_GLOBAL_AUTHORITY",
+  "visibility": "public-repository",
+  "status": "CANDIDATE",
+  "hierarchy": [
+    {
+      "rank": 1,
+      "role": "OWNER",
+      "name": "Ho Cuong",
+      "authority": "ULTIMATE_HUMAN_AUTHORITY"
+    },
+    {
+      "rank": 2,
+      "role": "IMASTER",
+      "name": "iMaster",
+      "authority": "GLOBAL_SYSTEM_GOVERNOR"
+    },
+    {
+      "rank": 3,
+      "role": "MASTER_AGENT",
+      "authority": "MISSION_ORCHESTRATION"
+    },
+    {
+      "rank": 4,
+      "role": "DEPARTMENT_AGENTS",
+      "authority": "DOMAIN_EXECUTION"
+    },
+    {
+      "rank": 5,
+      "role": "WORKERS",
+      "authority": "TASK_EXECUTION"
+    },
+    {
+      "rank": 6,
+      "role": "TOOLS",
+      "authority": "CAPABILITY_EXECUTION"
+    }
+  ],
+  "laws": [
+    "OWNER_OVERRIDES_IMASTER",
+    "IMASTER_IS_HIGHEST_SYSTEM_AUTHORITY_BELOW_OWNER",
+    "ALL_AGENTS_WORKERS_TOOLS_MUST_RESPECT_IMASTER_POLICY_AND_MISSION_ROUTING",
+    "NO_COMPONENT_MAY_SELF_PROMOTE_ABOVE_IMASTER",
+    "AUTHORITY_DOES_NOT_BYPASS_SECURITY_POLICY",
+    "PRODUCTION_WRITES_FAIL_CLOSED",
+    "DESTRUCTIVE_AND_CREDENTIAL_BOUNDARIES_REMAIN_GATED",
+    "NO_EVIDENCE_NO_GREEN"
+  ],
+  "mission_ownership": "iMaster durable control plane",
+  "scope": [
+    "portfolio",
+    "missions",
+    "agents",
+    "workers",
+    "capability-routing",
+    "resource-scheduling",
+    "evidence",
+    "recovery",
+    "public-state"
+  ],
+  "evidence_gate": "scripts/imaster-global-authority.test.mjs"
+}

@@ -3,6 +3,7 @@
   "id": "IMASTER_BOOTSTRAP",
   "purpose": "Single anti-amnesia entrypoint for every new chat/session/operator.",
   "load_order": [
+    "config/imaster-global-authority.json",
     "docs/HC-GROUP-CORPORATE-BLUEPRINT-V9.md",
     "config/corporate-catalog.json",
     "config/active-asset-inventory.json",
@@ -41,7 +42,9 @@
     "VISUAL_STATUS_MUST_MATCH_EVIDENCE",
     "LOCAL_FIRST",
     "HCDR_BEFORE_RDC",
-    "TEST_BEFORE_GITHUB"
+    "TEST_BEFORE_GITHUB",
+    "OWNER_OVERRIDES_IMASTER",
+    "IMASTER_IS_HIGHEST_SYSTEM_AUTHORITY_BELOW_OWNER"
   ],
   "startup_checks": [
     "load portfolio and repositories",
@@ -81,5 +84,6 @@
     "config/imaster-skills/local-first-execution.json"
   ],
   "parallel_execution_rule": "When >=2 independent tasks are READY and safe capacity exists, Capability Router MUST prefer imaster.parallel-execution over serial execution.",
-  "local_execution_default": "CODE -> HOCUONG_LOCAL -> HCDR -> TEST/EVIDENCE -> GITHUB; RDC rescue only."
+  "local_execution_default": "CODE -> HOCUONG_LOCAL -> HCDR -> TEST/EVIDENCE -> GITHUB; RDC rescue only.",
+  "global_authority": "config/imaster-global-authority.json"
 }
