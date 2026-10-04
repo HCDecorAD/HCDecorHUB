@@ -2,9 +2,9 @@
 
 Local mirror: `D:\HCDecorHUB\HC_Sentinel`
 
-Status: **FINAL_OPERATIONS_READY**
+Status: **LOCAL_FINAL_READY**
 Latest completed scope: **P1 -> P64**
-Full regression: **97/97 PASS, 0 FAIL**
+Full regression: **99/99 PASS, 0 FAIL**
 
 Core flow:
 `Command -> Observe -> Detect -> Compare -> Diagnose -> Route -> Repair -> Verify -> Evidence -> Alert -> DONE`
@@ -44,6 +44,31 @@ P64 acceptance:
 
 Full regression: **97/97 PASS, 0 FAIL**
 Workflow: `37164523539`
+
+## LOCAL FINAL verified on HOCUONG
+
+Canonical root:
+`D:\HCDecorHUB\HC_Sentinel`
+
+Verified:
+- local install/bootstrap: PASS
+- Startup shortcut: PASS
+- Desktop shortcut: PASS
+- watchdog scheduled task: PASS
+- watchdog recovery simulation: PASS
+- Startup-link recovery simulation: PASS
+- local API: `SENTINEL_READY v1.2.0`
+- real AMO mobile mission: `DONE`
+- real GSC mobile mission: `ROUTED`
+- local regression: `99/99 PASS — 0 FAIL`
+- GitHub LOCAL FINAL workflow: `37165027922`
+
+The first HOCUONG install exposed a Windows ScheduledTasks compatibility issue. LOCAL FINAL replaced trigger-property mutation with compatible `schtasks.exe /SC MINUTE /MO 2` registration.
+
+The previous runtime command stub was also replaced with the live controller:
+`Command -> Resolve Target -> Playwright Capture -> Inspect -> Evidence -> DONE / ROUTED`
+
+A physical reboot was not forced during the active remote session; Startup and watchdog recovery were both exercised directly.
 
 ## Current tracked live finding
 

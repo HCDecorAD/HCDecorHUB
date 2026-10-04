@@ -1,0 +1,28 @@
+name: HC Sentinel LOCAL FINAL
+
+on:
+  push:
+    branches: [hc-sentinel-local-final-fix]
+    paths:
+      - "HC_Sentinel/**"
+      - ".github/workflows/hc-sentinel-local-final.yml"
+  workflow_dispatch:
+
+jobs:
+  local-final-code-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Live Controller Tests
+        run: node --test tests/local-final-live-controller.test.js
+      - name: Full Regression
+        run: npm test
