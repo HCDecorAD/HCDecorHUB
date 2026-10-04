@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0.0",
+  "phase": "PHASE_6_TARGET_BOOTSTRAP",
+  "source_integrity_manifest": "config/repo-source-integrity-manifest.json",
+  "rules": {
+    "default_branch": "main",
+    "required_ci": "npm test",
+    "parity_before_cutover": true,
+    "source_authority_until_parity": "HCDecorAD/HCDecorHUB",
+    "production_authority_change": false
+  },
+  "targets": [
+    {
+      "id": "HC-Sentinel",
+      "repo": "HCDecorAD/HC-Sentinel",
+      "bootstrap": [
+        "README.md",
+        "package.json",
+        ".github/workflows/quality.yml",
+        "source-integrity.json"
+      ],
+      "test_command": "npm test",
+      "parity_mode": "git-blob-source-manifest"
+    },
+    {
+      "id": "HC-AutoDebug",
+      "repo": "HCDecorAD/HC-AutoDebug",
+      "bootstrap": [
+        "README.md",
+        "package.json",
+        ".github/workflows/quality.yml",
+        "source-integrity.json"
+      ],
+      "test_command": "node scripts/autodebug-implementation.test.mjs && node scripts/autodebug-repair-verification.test.mjs",
+      "parity_mode": "git-blob-source-manifest"
+    },
+    {
+      "id": "HC-Agent-Control",
+      "repo": "HCDecorAD/HC-Agent-Control",
+      "bootstrap": [
+        "README.md",
+        "package.json",
+        ".github/workflows/quality.yml",
+        "source-integrity.json"
+      ],
+      "test_command": "node scripts/hc-agent-control-acceptance.test.mjs && node scripts/hc-agent-control-runtime.test.mjs",
+      "parity_mode": "git-blob-source-manifest"
+    }
+  ]
+}
