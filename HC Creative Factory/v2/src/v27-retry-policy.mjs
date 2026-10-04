@@ -1,0 +1,1 @@
+export function retryV27(shard,{attempt=0,maxAttempts=2}={}){if(shard?.status==="PASS")return{action:"ACCEPT",attempt};if(attempt>=maxAttempts)return{action:"RECOVERY_7X7",attempt,queue_jobs:0};return{action:"REQUEUE_SHARD",attempt:attempt+1,scope:shard?.key??null}}
