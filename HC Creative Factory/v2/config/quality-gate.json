@@ -1,0 +1,20 @@
+{
+  "schema": "hc-factory/quality-gate-v1",
+  "required_viewports": [
+    1440,
+    768,
+    390
+  ],
+  "gates": {
+    "capture_http_200": true,
+    "rendered_html": true,
+    "screenshot": true,
+    "visual_diff_real": true,
+    "interaction_qa": true,
+    "responsive_qa": true,
+    "rollback_authority": true
+  },
+  "publish": {
+    "allow_only_when_all_required_pass": true
+  }
+}

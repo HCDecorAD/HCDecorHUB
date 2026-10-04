@@ -1,0 +1,1 @@
+export async function interactionQA({runtime,runner}){const checks=await runner.run(runtime);const required=["navigation","links","forms","responsive"];const normalized=Object.fromEntries(required.map(k=>[k,Boolean(checks?.[k])]));return {stage:"V2.7",status:Object.values(normalized).every(Boolean)?"PASS":"FAIL",checks:normalized}}

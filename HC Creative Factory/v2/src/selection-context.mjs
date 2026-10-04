@@ -1,0 +1,1 @@
+export function selectionContext(x){if(!x)return null;const allowed=["page","section","component","element","viewport"];const out={};for(const k of allowed)if(x[k]!=null)out[k]=x[k];return Object.keys(out).length?out:null}

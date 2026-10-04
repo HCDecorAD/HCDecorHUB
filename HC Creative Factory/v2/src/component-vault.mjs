@@ -1,0 +1,1 @@
+export function vaultCandidate(component,evidence){if(!component?.id)throw new Error("INVALID_COMPONENT");if(!evidence||evidence.status!=="PASS")return {stage:"V2.8",status:"BLOCKED",reason:"QA_PASS_REQUIRED"};return {stage:"V2.8",status:"PASS",entry:{...component,qa_evidence:evidence,immutable_source:true}}}

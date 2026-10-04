@@ -1,0 +1,1 @@
+import{createHash}from"node:crypto";export function freezeEvidence({mission_id,stage,status,artifacts=[],metrics={}}){const body={mission_id,stage,status,artifacts,metrics};const sha256=createHash("sha256").update(JSON.stringify(body)).digest("hex");return {...body,sha256,timestamp:new Date().toISOString()}}

@@ -1,0 +1,1 @@
+import assert from"node:assert/strict";import{readyLanes}from"../src/parallel-plan.mjs";assert.deepEqual(readyLanes(new Set()),["capture","dna"]);assert.deepEqual(readyLanes(new Set(["V2.2","V2.3"])),["rebuild"]);const r=readyLanes(new Set(["V2.2","V2.3","V2.4"]));assert.ok(r.includes("visual")&&r.includes("interaction"));console.log("FACTORY_V2_PARALLEL_PLAN_PASS");

@@ -1,0 +1,2 @@
+const px=v=>{const n=Number.parseFloat(v);return Number.isFinite(n)?n:null};
+export function extractDesignDNA(snapshot){return {schema:"hc-factory/design-dna-v1",colors:[...new Set(snapshot.colors||[])],fonts:[...new Set(snapshot.fonts||[])],spacing:(snapshot.spacing||[]).map(px).filter(v=>v!==null),radii:(snapshot.radii||[]).map(px).filter(v=>v!==null),shadows:[...new Set(snapshot.shadows||[])],components:[...new Set(snapshot.components||[])],breakpoints:snapshot.breakpoints||[1440,768,390]}}

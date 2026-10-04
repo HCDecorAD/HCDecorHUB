@@ -1,0 +1,2 @@
+export const VIEWPORTS=[1440,768,390];
+export async function captureReference({url,browser}){if(!/^https?:\/\//.test(url))throw new Error("INVALID_REFERENCE_URL");const artifacts=[];for(const width of VIEWPORTS){const r=await browser.capture({url,width});artifacts.push({width,http_status:r.http_status,rendered_html:r.rendered_html,screenshot:r.screenshot,sha256:r.sha256})}const pass=artifacts.every(x=>x.http_status===200&&x.rendered_html&&x.screenshot);return {stage:"V2.2",status:pass?"PASS":"FAIL",artifacts}}

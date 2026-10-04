@@ -1,0 +1,1 @@
+export const REQUIRED_STAGES=["V2.1","V2.2","V2.3","V2.4","V2.5","V2.6","V2.7","V2.8","V2.9"];export function stageCompleteness(evidence=[]){const pass=new Set(evidence.filter(x=>x?.status==="PASS").map(x=>x.stage));const missing=REQUIRED_STAGES.filter(x=>!pass.has(x));return{pass:missing.length===0,missing}}

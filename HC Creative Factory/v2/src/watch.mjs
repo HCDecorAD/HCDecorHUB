@@ -1,0 +1,1 @@
+export function evaluateWatch({baseline,current}){if(!baseline||!current)return {stage:"V2.10",status:"BLOCKED",reason:"MISSING_BASELINE"};const drift=current.similarity<baseline.minimum_similarity;return {stage:"V2.10",status:drift?"FAIL":"PASS",drift,baseline,current}}

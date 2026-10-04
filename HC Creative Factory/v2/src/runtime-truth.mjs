@@ -1,0 +1,1 @@
+export function runtimeTruth({ci=[],runtime=[]}={}){const ciPass=ci.length>0&&ci.every(x=>x.status==="PASS");const real=runtime.filter(x=>x.real===true);const runtimePass=real.length>0&&real.every(x=>x.status==="PASS");return{control_plane:ciPass?"PASS":"BLOCKED",runtime:runtimePass?"PASS":"RUNNING",green_allowed:ciPass&&runtimePass,real_evidence_count:real.length}}

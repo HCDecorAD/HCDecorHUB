@@ -1,0 +1,1 @@
+import assert from"node:assert/strict";import{relayGuard}from"../src/relay-guard.mjs";const x=relayGuard([{id:1261,state:"open",comments:0},{id:1262,state:"open",comments:0}]);assert.equal(x.healthy,false);assert.equal(x.dispatch_allowed,false);assert.equal(x.recovery,"7x7");assert.deepEqual(x.stalled,[1261,1262]);console.log("FACTORY_V2_RELAY_GUARD_PASS");

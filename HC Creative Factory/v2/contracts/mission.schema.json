@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HC Factory Mission",
+  "type": "object",
+  "required": [
+    "mission_id",
+    "reference",
+    "target",
+    "viewports"
+  ],
+  "properties": {
+    "mission_id": {
+      "type": "string"
+    },
+    "reference": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "brand": {
+          "type": "string"
+        },
+        "brief": {
+          "type": "string"
+        }
+      }
+    },
+    "viewports": {
+      "type": "array",
+      "items": {
+        "enum": [
+          1440,
+          768,
+          390
+        ]
+      },
+      "minItems": 1
+    },
+    "max_fix_iterations": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 20,
+      "default": 5
+    },
+    "publish": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

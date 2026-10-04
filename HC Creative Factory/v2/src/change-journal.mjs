@@ -1,0 +1,1 @@
+export function journalEntry({mission_id,tool,before,after,rollback,timestamp=new Date().toISOString()}){if(!mission_id||!tool||!rollback)return{status:"BLOCKED",reason:"ROLLBACK_REQUIRED"};return{status:"PASS",mission_id,tool,before,after,rollback,timestamp}}

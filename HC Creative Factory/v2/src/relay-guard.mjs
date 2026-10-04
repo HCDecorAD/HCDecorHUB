@@ -1,0 +1,1 @@
+export function relayGuard(jobs,{maxOpenWithoutResult=1}={}){const stalled=jobs.filter(j=>j.state==="open"&&(j.comments??0)===0);return{healthy:stalled.length<maxOpenWithoutResult,stalled:stalled.map(j=>j.id),dispatch_allowed:stalled.length<maxOpenWithoutResult,recovery:stalled.length>=maxOpenWithoutResult?"7x7":null}}

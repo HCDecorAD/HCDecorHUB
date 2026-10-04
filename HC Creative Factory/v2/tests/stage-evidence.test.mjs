@@ -1,0 +1,1 @@
+import assert from"node:assert/strict";import{REQUIRED_STAGES,stageCompleteness}from"../src/stage-evidence.mjs";assert.equal(stageCompleteness(REQUIRED_STAGES.map(stage=>({stage,status:"PASS"}))).pass,true);const x=stageCompleteness([{stage:"V2.9",status:"PASS"}]);assert.equal(x.pass,false);assert.ok(x.missing.includes("V2.1"));console.log("FACTORY_V2_STAGE_COMPLETENESS_PASS");
