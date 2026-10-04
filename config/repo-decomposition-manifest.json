@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "policy": {
     "rule": "independent lifecycle -> separate repo; small internal module -> stay embedded; shared by 2+ systems -> consider shared package",
     "migration": "register -> backup -> parity test -> cutover -> remove duplicate only after evidence",
@@ -37,7 +37,21 @@
       "readiness": {
         "source_files": 1,
         "evidence_files": 2,
-        "status": "DEPENDENCY_MAP_REQUIRED"
+        "status": "READY_FOR_PACKAGE_EXTRACTION",
+        "note": "Small engine; extract with fix-memory contract fixture/adapter, keep HUB adapter until parity."
+      },
+      "dependencies": {
+        "runtime": [
+          "node:fs"
+        ],
+        "internal": [
+          "config/fix-memory.json"
+        ],
+        "tests": [
+          "scripts/autodebug-implementation.test.mjs",
+          "scripts/autodebug-repair-verification.test.mjs"
+        ],
+        "external_runtime": []
       }
     },
     {
@@ -50,7 +64,23 @@
       "readiness": {
         "source_files": 1,
         "evidence_files": 4,
-        "status": "DEPENDENCY_MAP_REQUIRED"
+        "status": "READY_FOR_PACKAGE_EXTRACTION",
+        "note": "Runtime is self-contained; acceptance config and integration contracts must travel with package."
+      },
+      "dependencies": {
+        "runtime": [],
+        "internal": [
+          "config/hc-agent-control-acceptance.json"
+        ],
+        "tests": [
+          "scripts/hc-agent-control-acceptance.test.mjs",
+          "scripts/hc-agent-control-runtime.test.mjs"
+        ],
+        "integration": [
+          "HCDR v3 contract",
+          "AutoChat operator bridge"
+        ],
+        "external_runtime": []
       }
     },
     {
@@ -85,7 +115,7 @@
       "action": "KEEP_UNTIL_DEPENDENCY_MAP_COMPLETE"
     }
   ],
-  "phase": "PHASE_2_MIGRATION_READINESS",
+  "phase": "PHASE_3_DEPENDENCY_MAP",
   "provisioning": {
     "github_connector_create_repository": false,
     "rule": "Do not fabricate repository existence. Prepare migration packages and parity gates until provisioning is available."
