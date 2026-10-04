@@ -1,0 +1,612 @@
+{
+  "schema_version": "1.0.0",
+  "program_id": "HCDECOR_HUB_V9_APP",
+  "status": "ACTIVE",
+  "source_blueprint": "HCDecor HUB Blueprint + Module & Window Naming Guide V3",
+  "laws": [
+    "ONE_GOAL_REAL_WORKFLOW_REAL_ACTION_VERIFY_DONE",
+    "NO_FAKE_BUTTONS",
+    "LOCAL_FIRST_OPERATING_LAW",
+    "NO_EVIDENCE_NO_GREEN",
+    "DO_NOT_REDO_PASS"
+  ],
+  "state_machine": [
+    "READY",
+    "BUILDING",
+    "LOCAL_PASS",
+    "INTEGRATED",
+    "DONE",
+    "WAITING_DEP"
+  ],
+  "execution_route": [
+    "CODE",
+    "HOCUONG_LOCAL",
+    "HCDR",
+    "LOCAL_TEST_AND_EVIDENCE",
+    "GITHUB",
+    "CI"
+  ],
+  "waves": [
+    {
+      "id": "W0",
+      "packages": [
+        "PKG-00"
+      ],
+      "mode": "serial"
+    },
+    {
+      "id": "W1",
+      "packages": [
+        "PKG-01"
+      ],
+      "mode": "serial"
+    },
+    {
+      "id": "W2",
+      "packages": [
+        "PKG-02",
+        "PKG-03",
+        "PKG-04",
+        "PKG-05"
+      ],
+      "mode": "parallel"
+    },
+    {
+      "id": "W3",
+      "packages": [
+        "PKG-06",
+        "PKG-09",
+        "PKG-10",
+        "PKG-12",
+        "PKG-13",
+        "PKG-14"
+      ],
+      "mode": "parallel"
+    },
+    {
+      "id": "W4",
+      "packages": [
+        "PKG-07",
+        "PKG-08",
+        "PKG-11"
+      ],
+      "mode": "parallel"
+    },
+    {
+      "id": "W5",
+      "packages": [
+        "PKG-15"
+      ],
+      "mode": "serial"
+    },
+    {
+      "id": "W6",
+      "packages": [
+        "PKG-16"
+      ],
+      "mode": "serial"
+    }
+  ],
+  "packages": [
+    {
+      "id": "PKG-00",
+      "phase": "P0_FREEZE",
+      "name": "APP_CONTRACT",
+      "state": "LOCAL_PASS",
+      "depends_on": [],
+      "scope": [
+        "naming-v3",
+        "window-module-ids",
+        "action-contract",
+        "theme-contract",
+        "responsive-contract",
+        "done-contract"
+      ],
+      "windows": [],
+      "modules": [],
+      "done_gate": [
+        "schema-valid",
+        "naming-contract-pass",
+        "dependency-graph-pass"
+      ]
+    },
+    {
+      "id": "PKG-01",
+      "phase": "P1_SHELL",
+      "name": "APP_SHELL",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-00"
+      ],
+      "scope": [
+        "app-shell",
+        "layout",
+        "navigation",
+        "light-dark",
+        "responsive",
+        "focus-mode",
+        "runtime-drawer"
+      ],
+      "windows": [],
+      "modules": [
+        "NAV",
+        "TOPBAR",
+        "WORKSPACE",
+        "TABS",
+        "SIDE_PANEL",
+        "AI_PANEL",
+        "NOTICE",
+        "QUICK_ACTION",
+        "LANGUAGE",
+        "ACCOUNT_MENU",
+        "SEARCH"
+      ],
+      "done_gate": [
+        "desktop-shell-pass",
+        "mobile-shell-pass",
+        "no-duplicate-shell"
+      ]
+    },
+    {
+      "id": "PKG-02",
+      "phase": "P2_CORE_CONTROL",
+      "name": "IMASTER_CORE",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-01"
+      ],
+      "scope": [
+        "goal",
+        "plan",
+        "execute",
+        "verify",
+        "repair",
+        "learn",
+        "next",
+        "done"
+      ],
+      "windows": [
+        "WIN_IMASTER"
+      ],
+      "modules": [],
+      "done_gate": [
+        "real-actions-pass",
+        "evidence-pass",
+        "continuation-pass"
+      ]
+    },
+    {
+      "id": "PKG-03",
+      "phase": "P2_CORE_CONTROL",
+      "name": "PROJECT_CENTER",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-01"
+      ],
+      "scope": [
+        "projects",
+        "files",
+        "tasks",
+        "workers",
+        "outputs"
+      ],
+      "windows": [
+        "WIN_PROJECTS"
+      ],
+      "modules": [],
+      "done_gate": [
+        "project-crud-pass",
+        "worker-binding-pass",
+        "output-pass"
+      ]
+    },
+    {
+      "id": "PKG-04",
+      "phase": "P2_CORE_CONTROL",
+      "name": "SYSTEM_CENTER",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-01"
+      ],
+      "scope": [
+        "connections",
+        "plugins",
+        "security",
+        "hcdr",
+        "logs",
+        "settings"
+      ],
+      "windows": [
+        "WIN_SYSTEM"
+      ],
+      "modules": [],
+      "done_gate": [
+        "system-runtime-pass",
+        "connection-state-pass"
+      ]
+    },
+    {
+      "id": "PKG-05",
+      "phase": "P3_AI_CONNECTIONS",
+      "name": "AI_CONNECTIONS",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-01"
+      ],
+      "scope": [
+        "providers",
+        "models",
+        "router",
+        "keys",
+        "oauth",
+        "connections",
+        "plugins",
+        "flow",
+        "test",
+        "binding"
+      ],
+      "windows": [
+        "WIN_AI_CONNECTIONS"
+      ],
+      "modules": [
+        "AI_PROVIDERS",
+        "AI_MODELS",
+        "AI_ROUTER",
+        "AI_KEYS",
+        "AI_LOGIN",
+        "CONNECTIONS",
+        "PLUGIN_CENTER",
+        "AI_FLOW",
+        "AI_TEST",
+        "AI_BINDING"
+      ],
+      "done_gate": [
+        "provider-test-pass",
+        "secret-server-only-pass",
+        "binding-pass"
+      ]
+    },
+    {
+      "id": "PKG-06",
+      "phase": "P4_SOCIAL_FACTORY",
+      "name": "CREATE_POST",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-01",
+        "PKG-05"
+      ],
+      "scope": [
+        "content",
+        "media",
+        "networks",
+        "accounts",
+        "ai-variants",
+        "preview"
+      ],
+      "windows": [
+        "WIN_CREATE_POST",
+        "WIN_SOCIAL"
+      ],
+      "modules": [
+        "SOC_CONTENT",
+        "SOC_MEDIA",
+        "SOC_NETWORKS",
+        "SOC_ACCOUNTS",
+        "SOC_AI",
+        "SOC_VARIANTS",
+        "SOC_PREVIEW",
+        "SOC_ACCOUNT_GROUPS",
+        "SOC_BULK_IMPORT"
+      ],
+      "done_gate": [
+        "draft-flow-pass",
+        "preview-pass",
+        "real-media-pass"
+      ]
+    },
+    {
+      "id": "PKG-07",
+      "phase": "P4_SOCIAL_FACTORY",
+      "name": "PUBLISH_ENGINE",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-06"
+      ],
+      "scope": [
+        "schedule",
+        "publish",
+        "verify",
+        "analytics"
+      ],
+      "windows": [
+        "WIN_SOCIAL"
+      ],
+      "modules": [
+        "SOC_SCHEDULE",
+        "SOC_PUBLISH",
+        "SOC_VERIFY",
+        "SOC_ANALYTICS"
+      ],
+      "done_gate": [
+        "real-publish-pass",
+        "verify-pass",
+        "analytics-pass"
+      ]
+    },
+    {
+      "id": "PKG-08",
+      "phase": "P4_SOCIAL_FACTORY",
+      "name": "MULTI_PUBLISH",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-06",
+        "PKG-07"
+      ],
+      "scope": [
+        "multi-post",
+        "multi-media",
+        "multi-network",
+        "multi-account",
+        "schedule"
+      ],
+      "windows": [
+        "WIN_MULTI_PUBLISH"
+      ],
+      "modules": [
+        "SOC_ACCOUNT_GROUPS",
+        "SOC_SCHEDULE",
+        "SOC_PUBLISH",
+        "SOC_VERIFY"
+      ],
+      "done_gate": [
+        "batch-publish-pass",
+        "partial-failure-safe-pass"
+      ]
+    },
+    {
+      "id": "PKG-09",
+      "phase": "P5_TREND_BUSINESS",
+      "name": "TREND_ENGINE",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-01",
+        "PKG-05"
+      ],
+      "scope": [
+        "scan",
+        "score",
+        "ai-recommend",
+        "produce",
+        "multi-publish",
+        "analytics",
+        "learn",
+        "scale"
+      ],
+      "windows": [
+        "WIN_TREND"
+      ],
+      "modules": [],
+      "done_gate": [
+        "one-real-trend-cycle-pass",
+        "analytics-learn-pass"
+      ]
+    },
+    {
+      "id": "PKG-10",
+      "phase": "P5_TREND_BUSINESS",
+      "name": "BUSINESS_CENTER",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-01"
+      ],
+      "scope": [
+        "lead",
+        "customer",
+        "quotation",
+        "order-project",
+        "payment"
+      ],
+      "windows": [
+        "WIN_BUSINESS"
+      ],
+      "modules": [],
+      "done_gate": [
+        "business-crud-pass",
+        "workflow-pass"
+      ]
+    },
+    {
+      "id": "PKG-11",
+      "phase": "P6_UI_BUILDER",
+      "name": "UI_DESIGNER",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-01",
+        "PKG-05"
+      ],
+      "scope": [
+        "request",
+        "schema",
+        "ai-patch",
+        "validate",
+        "preview",
+        "apply",
+        "version",
+        "undo"
+      ],
+      "windows": [
+        "WIN_UI_DESIGNER"
+      ],
+      "modules": [
+        "UI_EDIT_AI",
+        "UI_SCHEMA",
+        "UI_PREVIEW",
+        "UI_APPLY",
+        "UI_UNDO",
+        "UI_VERSIONS"
+      ],
+      "done_gate": [
+        "schema-patch-pass",
+        "preview-pass",
+        "apply-pass",
+        "undo-pass"
+      ]
+    },
+    {
+      "id": "PKG-12",
+      "phase": "P7_OPERATIONS",
+      "name": "PANDA_WORKERS",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-01"
+      ],
+      "scope": [
+        "orchestration",
+        "queue",
+        "workers",
+        "continuation",
+        "retry",
+        "checkpoint"
+      ],
+      "windows": [
+        "WIN_IMASTER"
+      ],
+      "modules": [],
+      "done_gate": [
+        "mission-continuation-pass",
+        "worker-recovery-pass"
+      ]
+    },
+    {
+      "id": "PKG-13",
+      "phase": "P7_OPERATIONS",
+      "name": "SENTINEL_AUTODEBUG",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-01"
+      ],
+      "scope": [
+        "health",
+        "compare",
+        "verify",
+        "repair",
+        "notification"
+      ],
+      "windows": [
+        "WIN_SYSTEM"
+      ],
+      "modules": [
+        "NOTICE"
+      ],
+      "done_gate": [
+        "detect-pass",
+        "repair-pass",
+        "verify-after-repair-pass"
+      ]
+    },
+    {
+      "id": "PKG-14",
+      "phase": "P7_OPERATIONS",
+      "name": "LOCAL_FIRST",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-00"
+      ],
+      "scope": [
+        "local-routing",
+        "hcdr-primary",
+        "rdc-rescue",
+        "local-test",
+        "evidence",
+        "github-ci"
+      ],
+      "windows": [],
+      "modules": [],
+      "done_gate": [
+        "local-first-skill-pass",
+        "global-authority-pass",
+        "bootstrap-pass"
+      ]
+    },
+    {
+      "id": "PKG-15",
+      "phase": "P8_FINAL",
+      "name": "INTEGRATION",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-02",
+        "PKG-03",
+        "PKG-04",
+        "PKG-05",
+        "PKG-06",
+        "PKG-07",
+        "PKG-08",
+        "PKG-09",
+        "PKG-10",
+        "PKG-11",
+        "PKG-12",
+        "PKG-13",
+        "PKG-14"
+      ],
+      "scope": [
+        "all-windows",
+        "auth",
+        "state",
+        "events",
+        "responsive",
+        "ux",
+        "e2e"
+      ],
+      "windows": [
+        "WIN_HOME",
+        "WIN_TREND",
+        "WIN_SOCIAL",
+        "WIN_PROJECTS",
+        "WIN_IMASTER",
+        "WIN_BUSINESS",
+        "WIN_SYSTEM",
+        "WIN_CREATE_POST",
+        "WIN_MULTI_PUBLISH",
+        "WIN_AI_CONNECTIONS",
+        "WIN_UI_DESIGNER"
+      ],
+      "modules": [],
+      "done_gate": [
+        "full-e2e-pass",
+        "cross-window-state-pass",
+        "responsive-pass"
+      ]
+    },
+    {
+      "id": "PKG-16",
+      "phase": "P8_FINAL",
+      "name": "RELEASE_FREEZE",
+      "state": "WAITING_DEP",
+      "depends_on": [
+        "PKG-15"
+      ],
+      "scope": [
+        "production-verify",
+        "regression",
+        "evidence",
+        "docs",
+        "version",
+        "freeze"
+      ],
+      "windows": [],
+      "modules": [],
+      "done_gate": [
+        "production-pass",
+        "evidence-complete",
+        "v9-frozen-done"
+      ]
+    }
+  ],
+  "scheduler": {
+    "policy": "run-all-unblocked-in-parallel",
+    "yield_on_wait": true,
+    "do_not_block_independent_packages": true,
+    "max_state_transition_without_evidence": "BUILDING",
+    "terminal_state": "DONE"
+  }
+}
