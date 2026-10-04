@@ -5,8 +5,8 @@ import {parseOperatorCommand} from "../operator/command-parser.js";
 
 const digest=b=>createHash("sha256").update(b).digest("hex");
 
-export function createLiveController({projects,getTargets,observer,inspectSnapshot,evidence,findings,logs,evidenceDir,repairQueue,tray}){
-  const targets=async()=>typeof getTargets==="function"?await getTargets():getTargets;
+export function createLiveController({projects,getTargets,targets:staticTargets,observer,inspectSnapshot,evidence,findings,logs,evidenceDir,repairQueue,tray}){
+  const targets=async()=>typeof getTargets==="function"?await getTargets():(staticTargets??[]);
   async function resolveMission(input){
     const command=parseOperatorCommand(input,projects);
     if(!command.projectId)return {error:{status:"REVIEW_REQUIRED",reason:"PROJECT_NOT_RESOLVED",command}};
