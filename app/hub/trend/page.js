@@ -1,4 +1,5 @@
 import {HubShell,PageCards} from "../../../components/HubShell";
+import TrendAIClient from "./TrendAIClient";
 
 const modules=[
 ["TREND_RADAR","Trend Radar","Scan fast-moving signals across supported sources. Start here to see what is rising now.","https://support.google.com/trends/answer/3076011?hl=en"],
@@ -19,6 +20,7 @@ export default function TrendMonetization(){
  return <HubShell title="Trend & Monetization" eyebrow="HCDECOR HUB / OPPORTUNITY ENGINE">
    <div className="notice"><b>Operating loop:</b> SCAN → EARLY SIGNAL → SCORE → CONTENT GAP → MONEY FIT → AI ANGLE → PRODUCE → TEST → WINNER → SCALE. Guide links explain the evidence source; they do not imply an API is connected.</div>
    <PageCards items={modules}/>
+   <TrendAIClient/>
    <section className="masterHero">
     <div><span className="masterBadge">DECISION RULE</span><h2>Learn fast. Scale winners.</h2><p>Do not optimize for post count first. Optimize the speed of learning: test small, verify real performance, stop weak ideas, and multiply evidence-backed winners.</p></div>
     <div className="masterFlow">

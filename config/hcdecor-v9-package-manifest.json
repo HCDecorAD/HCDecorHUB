@@ -296,7 +296,7 @@
       "id": "PKG-05",
       "phase": "P3_AI_CONNECTIONS",
       "name": "AI_CONNECTIONS",
-      "state": "LOCAL_PASS",
+      "state": "DONE",
       "depends_on": [
         "PKG-01"
       ],
@@ -354,14 +354,22 @@
         "video_route": "EXTERNAL_REQUIRED",
         "secret_policy": "SERVER_ONLY",
         "remote_preview_deep_probe": "PASS",
-        "production_write": false
+        "production_write": false,
+        "pr": 102,
+        "pr_quality_run": 746,
+        "post_merge_quality_run": 747,
+        "production_run": 589,
+        "runtime_run": 26,
+        "soak_run": 24,
+        "continuation_run": 100,
+        "merge_sha": "065bb337512eab755cd523133efd29475e85562a"
       }
     },
     {
       "id": "PKG-06",
       "phase": "P4_SOCIAL_FACTORY",
       "name": "CREATE_POST",
-      "state": "WAITING_DEP",
+      "state": "LOCAL_PASS",
       "depends_on": [
         "PKG-01",
         "PKG-05"
@@ -401,6 +409,17 @@
         "runtime_smoke": "PASS",
         "master_e2e": "PASS",
         "ai_dependency": "BLOCKED_BY_PKG_05"
+      },
+      "evidence": {
+        "activation_gate": "PASS",
+        "production_build": "PASS",
+        "cloudflare_build": "PASS",
+        "remote_preview": "PASS",
+        "workers_ai_provider": "cloudflare-workers-ai",
+        "content_ai_draft": "PASS",
+        "text_generation": "PASS",
+        "image_generation": "PASS",
+        "preview": "PASS"
       }
     },
     {
@@ -486,7 +505,7 @@
       "id": "PKG-09",
       "phase": "P5_TREND_BUSINESS",
       "name": "TREND_ENGINE",
-      "state": "WAITING_DEP",
+      "state": "LOCAL_PASS",
       "depends_on": [
         "PKG-01",
         "PKG-05"
@@ -515,6 +534,15 @@
         "trend_score_runtime": "DO_NOW score=89",
         "trend_tests": "PASS",
         "ai_dependency": "BLOCKED_BY_PKG_05"
+      },
+      "evidence": {
+        "activation_gate": "PASS",
+        "production_build": "PASS",
+        "cloudflare_build": "PASS",
+        "remote_preview": "PASS",
+        "workers_ai_provider": "cloudflare-workers-ai",
+        "trend_score": "82 DO_NOW",
+        "ai_recommendation": "PASS"
       }
     },
     {
@@ -569,7 +597,7 @@
       "id": "PKG-11",
       "phase": "P6_UI_BUILDER",
       "name": "UI_DESIGNER",
-      "state": "WAITING_DEP",
+      "state": "LOCAL_PASS",
       "depends_on": [
         "PKG-01",
         "PKG-05"
@@ -609,6 +637,16 @@
         "versions": "PASS",
         "undo": "PASS",
         "ai_patch": "BLOCKED_BY_PKG_05"
+      },
+      "evidence": {
+        "activation_gate": "PASS",
+        "production_build": "PASS",
+        "cloudflare_build": "PASS",
+        "remote_preview": "PASS",
+        "workers_ai_provider": "cloudflare-workers-ai",
+        "ai_patch": "PASS",
+        "validate_apply_undo": "PASS",
+        "production_write": false
       }
     },
     {

@@ -91,7 +91,8 @@
     "test:hcdecor-v9-publish-prebuild": "node scripts/hcdecor-v9-publish-prebuild.test.mjs",
     "test:hcdecor-v9-final-preflight": "node scripts/hcdecor-v9-final-preflight.test.mjs",
     "test:hcdecor-v9-business-schema": "node scripts/hcdecor-v9-business-schema.test.mjs",
-    "test:hcdecor-v9-ai-connections": "node scripts/hcdecor-v9-ai-connections.test.mjs"
+    "test:hcdecor-v9-ai-connections": "node scripts/hcdecor-v9-ai-connections.test.mjs",
+    "test:hcdecor-v9-ai-activation": "node scripts/hcdecor-v9-ai-activation.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
