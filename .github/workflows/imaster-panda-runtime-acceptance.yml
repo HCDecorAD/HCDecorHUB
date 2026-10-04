@@ -2,7 +2,7 @@ name: iMaster Panda Runtime Acceptance
 on:
   workflow_dispatch:
   push:
-    branches: ["feature/panda-runtime-acceptance"]
+    branches: ["main", "feature/panda-runtime-acceptance", "fix/panda-acceptance-main-trigger"]
 permissions:
   contents: read
 concurrency:
