@@ -1,0 +1,12 @@
+import {Heartbeat} from "../core/heartbeat.js";import {Watchdog} from "../runtime/watchdog.js";import {LocalNotifier} from "../core/local-notifier.js";
+let now=1000,running=false,notices=[];
+const hb=new Heartbeat({ttlMs:100,now:()=>now});
+const notifier=new LocalNotifier({write:async x=>notices.push(x)});
+const wd=new Watchdog({probe:async()=>({ok:running}),start:async()=>{running=true;hb.beat("runtime");},now:()=>now,cooldownMs:50});
+const before=hb.status("runtime").state;
+const recovery=await wd.tick();
+const after=hb.status("runtime").state;
+if(recovery.status==="RECOVERED")await notifier.send({level:"info",title:"HC Sentinel",message:"Runtime recovered"});
+const result={before,recovery:recovery.status,after,notifications:notices.length};
+console.log(JSON.stringify(result));
+if(before!=="UNKNOWN"||result.recovery!=="RECOVERED"||after!=="HEALTHY"||result.notifications!==1)process.exit(2);
