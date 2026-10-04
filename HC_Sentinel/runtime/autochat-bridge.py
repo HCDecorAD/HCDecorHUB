@@ -32,7 +32,8 @@ def busy(page):
 def assistant_tail(page):
     r=CDPRPC(page["websocket"])
     try:
-        x=r.call("Runtime.evaluate",{"expression":r'''(()=>{const xs=[...document.querySelectorAll('[data-message-author-role="assistant"]')];return xs.length?(xs.at(-1).innerText||""):""})()''',"returnByValue":True})
+        expr=r'''(()=>{const xs=[...document.querySelectorAll('[data-message-author-role="assistant"], .group\\/assistant-message')];if(xs.length)return xs.at(-1).innerText||"";const t=document.body.innerText||"";const marks=["ChatGPT đã nói:","ChatGPT said:"];let idx=-1,mark="";for(const m of marks){const i=t.lastIndexOf(m);if(i>idx){idx=i;mark=m}}if(idx<0)return t.slice(-12000);let s=t.slice(idx+mark.length);for(const end of ["Bạn đã nói:","You said:"]){const j=s.indexOf(end);if(j>=0)s=s.slice(0,j)}return s.trim().slice(-12000)})()'''
+        x=r.call("Runtime.evaluate",{"expression":expr,"returnByValue":True})
         return str(x.get("result",{}).get("value") or "")
     finally:r.close()
 
