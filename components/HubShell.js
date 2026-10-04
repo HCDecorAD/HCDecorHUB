@@ -83,7 +83,7 @@ export function HubShell({title,eyebrow="HCDECOR HUB / MASTER",children,sidePane
           </label>
         </div>
         <div className="v9TopActions">
-          <a className="v9ActionLink" href="/hub/content" data-module="QUICK_ACTION">+ {lang==="EN"?"Create":"Tạo Mới"}</a>
+          <a className="v9ActionLink" href="/hub/create-post" data-module="QUICK_ACTION">+ {lang==="EN"?"Create":"Tạo Mới"}</a>
           <button className="v9ActionBtn" onClick={toggleLang} data-module="LANGUAGE" title="EN | VN">{lang}</button>
           <ThemeToggle/>
           <a className="v9IconLink" href="/hub/review" data-module="NOTICE" title={lang==="EN"?"Notifications / approvals":"Thông báo / duyệt"}>●</a>
