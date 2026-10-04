@@ -1,0 +1,35 @@
+name: iMaster Panda Runtime Acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: ["feature/panda-runtime-acceptance"]
+permissions:
+  contents: read
+concurrency:
+  group: imaster-panda-runtime-acceptance
+  cancel-in-progress: false
+jobs:
+  runtime-acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Durable restart and lease recovery
+        run: npm run test:governor-durable-queue
+      - name: PANDA cluster idempotency and bounded retry
+        run: npm run test:imaster-panda-cluster
+      - name: PANDA durable mission lease
+        run: npm run test:panda-g2
+      - name: Safe executor and owner boundary
+        run: npm run test:panda-g3
+      - name: Hardening recovery dedupe circuit
+        run: npm run test:panda-g4
+      - name: Final fail-closed LIVE gate
+        run: npm run test:panda-24x7-final
+      - name: Emit acceptance evidence
+        run: |
+          mkdir -p evidence
+          printf '{"controller":"imaster-panda","acceptance":"runtime","durable_restart":true,"missed_event_recovery":true,"duplicate_safe":true,"bounded_repair":true,"owner_boundary":true,"result":"PASS","live_claim":"PENDING_SOAK"}\n' > evidence/panda-runtime-acceptance.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: panda-runtime-acceptance-evidence
+          path: evidence/panda-runtime-acceptance.json
