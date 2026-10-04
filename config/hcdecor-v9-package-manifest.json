@@ -120,7 +120,7 @@
       "id": "PKG-01",
       "phase": "P1_SHELL",
       "name": "APP_SHELL",
-      "state": "LOCAL_PASS",
+      "state": "DONE",
       "depends_on": [
         "PKG-00"
       ],
@@ -158,14 +158,18 @@
         "architecture": "18/18 PASS",
         "production_build": "PASS",
         "master_e2e": "PASS",
-        "runtime_readiness": "PASS"
+        "runtime_readiness": "PASS",
+        "pr": 89,
+        "quality_run": 714,
+        "quality_run_id": 37215341323,
+        "merge_sha": "18c9e3d03cda8496d96d22c78f34c4dc39300cde"
       }
     },
     {
       "id": "PKG-02",
       "phase": "P2_CORE_CONTROL",
       "name": "IMASTER_CORE",
-      "state": "WAITING_DEP",
+      "state": "LOCAL_PASS",
       "depends_on": [
         "PKG-01"
       ],
@@ -187,13 +191,18 @@
         "real-actions-pass",
         "evidence-pass",
         "continuation-pass"
-      ]
+      ],
+      "evidence": {
+        "source_contract": "PASS",
+        "master_e2e_quality": 714,
+        "continuation_reused": "verified baseline"
+      }
     },
     {
       "id": "PKG-03",
       "phase": "P2_CORE_CONTROL",
       "name": "PROJECT_CENTER",
-      "state": "WAITING_DEP",
+      "state": "BUILDING",
       "depends_on": [
         "PKG-01"
       ],
@@ -212,13 +221,14 @@
         "project-crud-pass",
         "worker-binding-pass",
         "output-pass"
-      ]
+      ],
+      "blocker": "full project CRUD/workflow contract not yet complete"
     },
     {
       "id": "PKG-04",
       "phase": "P2_CORE_CONTROL",
       "name": "SYSTEM_CENTER",
-      "state": "WAITING_DEP",
+      "state": "LOCAL_PASS",
       "depends_on": [
         "PKG-01"
       ],
@@ -237,13 +247,18 @@
       "done_gate": [
         "system-runtime-pass",
         "connection-state-pass"
-      ]
+      ],
+      "evidence": {
+        "source_contract": "PASS",
+        "runtime_capabilities": "PASS",
+        "diagnostics_routes": "PASS"
+      }
     },
     {
       "id": "PKG-05",
       "phase": "P3_AI_CONNECTIONS",
       "name": "AI_CONNECTIONS",
-      "state": "WAITING_DEP",
+      "state": "BUILDING",
       "depends_on": [
         "PKG-01"
       ],
@@ -278,7 +293,8 @@
         "provider-test-pass",
         "secret-server-only-pass",
         "binding-pass"
-      ]
+      ],
+      "blocker": "AI Keys/OAuth/Router/Binding real UI contract incomplete"
     },
     {
       "id": "PKG-06",
@@ -470,7 +486,7 @@
       "id": "PKG-12",
       "phase": "P7_OPERATIONS",
       "name": "PANDA_WORKERS",
-      "state": "WAITING_DEP",
+      "state": "DONE",
       "depends_on": [
         "PKG-01"
       ],
@@ -489,7 +505,11 @@
       "done_gate": [
         "mission-continuation-pass",
         "worker-recovery-pass"
-      ]
+      ],
+      "evidence": {
+        "reuse_verified_pass": true,
+        "source": "config/imaster-bootstrap.json panda_24_7 DONE"
+      }
     },
     {
       "id": "PKG-13",
@@ -522,7 +542,7 @@
       "id": "PKG-14",
       "phase": "P7_OPERATIONS",
       "name": "LOCAL_FIRST",
-      "state": "WAITING_DEP",
+      "state": "DONE",
       "depends_on": [
         "PKG-00"
       ],
@@ -540,7 +560,14 @@
         "local-first-skill-pass",
         "global-authority-pass",
         "bootstrap-pass"
-      ]
+      ],
+      "evidence": {
+        "reuse_verified_pass": true,
+        "local_first_law": "MANDATORY",
+        "rdc_policy": "RESCUE_ONLY",
+        "merge_sha": "4f52d471fa0bb5e1a272557466ccebd695739cd2",
+        "quality_run": 711
+      }
     },
     {
       "id": "PKG-15",
