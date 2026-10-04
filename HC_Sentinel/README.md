@@ -2,81 +2,31 @@
 
 Local mirror: `D:\HCDecorHUB\HC_Sentinel`
 
-Status: **AUTONOMOUS_OPERATIONS_READY**
-Latest completed scope: **P1 -> P54**
-Full regression: **88/88 PASS, 0 FAIL**
-
-## Purpose
-
-HC Sentinel is the local-first visual operations, verification, watch, evidence, policy, repair-routing, desktop operations, self-recovery, and autonomous maintenance layer for the HC ecosystem.
+Status: **FINAL_OPERATIONS_READY**
+Latest completed scope: **P1 -> P64**
+Full regression: **97/97 PASS, 0 FAIL**
 
 Core flow:
-
 `Command -> Observe -> Detect -> Compare -> Diagnose -> Route -> Repair -> Verify -> Evidence -> Alert -> DONE`
 
-Autonomous operations flow:
+Autonomous flow:
+`Heartbeat -> Watchdog -> Recovery -> Maintenance -> Retention -> Health -> Audit -> Safe Update -> Rollback -> Integrity`
 
-`Heartbeat -> Watchdog -> Recovery -> Maintenance -> Retention -> Health Aggregate -> Release Gate`
+## Latest hardening P55-P64
 
-## Capability milestones
+- P55 Config Snapshot with secret/token/password redaction
+- P56 Alert Dedupe with time window suppression
+- P57 Incident Timeline persistence
+- P58 Offline Queue with retry and remaining-item preservation
+- P59 Operator/System Audit Ledger
+- P60 Safe Update Policy requiring green tests and zero critical findings
+- P61 Rollback Marker for version + commit
+- P62 Resource Budget with CPU/memory/queue throttle decision
+- P63 Release SHA256 Integrity Digest
+- P64 Golden Final Acceptance
 
-- P1-P10: Sentinel foundation
-- P11-P19: Operator runtime
-- P20-P24: Operations hardening
-- P25-P29: Daily operations runtime
-- P30-P34: App-ready integration
-- P35-P39: Desktop operations
-- P40-P44: Daily-use integration
-- P45-P49: Self-operating runtime
-- P50-P54: Autonomous operations
-
-## P50-P54 autonomous operations
-
-### Watchdog Scheduled Task
-`runtime/register-watchdog-task.ps1`
-
-Registers the local watchdog in Windows Task Scheduler:
-- hidden PowerShell execution
-- every 2 minutes
-- overlapping instances ignored
-- start when available
-
-### Maintenance Runner
-`core/maintenance-runner.js`
-
-Runs independent maintenance jobs and reports PASS/FAIL per job without crashing the entire maintenance cycle.
-
-### Runtime Health Aggregate
-`core/runtime-health.js`
-
-Combines:
-- heartbeat
-- workers
-- targets
-- critical findings
-
-States:
-- HEALTHY
-- DEGRADED
-- STALE
-
-### Release Freeze
-`runtime/release-freeze.json`
-
-Requires:
-- green regression
-- no unresolved critical findings
-- watchdog
-- backup
-- retention
-
-Runtime remains local-first and `productionDeploy=false`.
-
-### Soak Acceptance
-Simulated 24 operating cycles with one forced runtime outage.
-
-Verified:
-`cycles=24 -> restarts=1 -> maintenance=true -> finalHealth=HEALTHY -> recovered=true`
+P64 acceptance:
+`alerts=[true,false,true] -> update=READY -> budget=OK -> integrity=true`
 
 ## Verified milestones
 
@@ -90,8 +40,10 @@ Verified:
 - P40-P44: **DAILY_USE_READY**
 - P45-P49: **SELF_OPERATING_READY**
 - P50-P54: **AUTONOMOUS_OPERATIONS_READY**
-- Full regression: **88/88 PASS, 0 FAIL**
-- P50-P54 workflow: `37164073803`
+- P55-P64: **FINAL_OPERATIONS_READY**
+
+Full regression: **97/97 PASS, 0 FAIL**
+Workflow: `37164523539`
 
 ## Current tracked live finding
 
@@ -102,4 +54,4 @@ GSC public:
 - HCDR issue: #1265
 - state: OPEN / ROUTED / TRACKED
 
-Medium findings are not auto-repaired by default.
+Medium findings remain non-auto-repair by default.

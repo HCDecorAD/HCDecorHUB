@@ -1,0 +1,2 @@
+import test from "node:test";import assert from "node:assert/strict";import {evaluateUpdate} from "../core/update-policy.js";
+test("update requires green tests and no critical findings",()=>{assert.equal(evaluateUpdate({current:"1",candidate:"2",testsGreen:false}).status,"BLOCKED");assert.equal(evaluateUpdate({current:"1",candidate:"2",testsGreen:true,criticalOpen:1}).status,"BLOCKED");assert.equal(evaluateUpdate({current:"1",candidate:"2",testsGreen:true,criticalOpen:0}).status,"READY");});

@@ -1,15 +1,20 @@
 {
   "name": "hc-sentinel",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "test:p50": "node --test tests/p50-watchdog-task.test.js",
-    "test:p51": "node --test tests/p51-maintenance.test.js",
-    "test:p52": "node --test tests/p52-runtime-health.test.js",
-    "test:p53": "node --test tests/p53-release-freeze.test.js",
-    "test:p54": "node scripts/p54-soak-acceptance.js"
+    "test:p55": "node --test tests/p55-config-snapshot.test.js",
+    "test:p56": "node --test tests/p56-alert-dedupe.test.js",
+    "test:p57": "node --test tests/p57-incident-timeline.test.js",
+    "test:p58": "node --test tests/p58-offline-queue.test.js",
+    "test:p59": "node --test tests/p59-audit-ledger.test.js",
+    "test:p60": "node --test tests/p60-update-policy.test.js",
+    "test:p61": "node --test tests/p61-rollback-marker.test.js",
+    "test:p62": "node --test tests/p62-resource-budget.test.js",
+    "test:p63": "node --test tests/p63-release-integrity.test.js",
+    "test:p64": "node scripts/p64-final-acceptance.js"
   },
   "optionalDependencies": {
     "axe-core": "^4.10.3",

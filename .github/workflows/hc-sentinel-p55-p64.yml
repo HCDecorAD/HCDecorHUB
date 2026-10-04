@@ -1,0 +1,34 @@
+name: HC Sentinel P55-P64
+
+on:
+  push:
+    branches: [hc-sentinel-p55-p64]
+    paths:
+      - "HC_Sentinel/**"
+      - ".github/workflows/hc-sentinel-p55-p64.yml"
+  workflow_dispatch:
+
+jobs:
+  p55-p64:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm run test:p55
+      - run: npm run test:p56
+      - run: npm run test:p57
+      - run: npm run test:p58
+      - run: npm run test:p59
+      - run: npm run test:p60
+      - run: npm run test:p61
+      - run: npm run test:p62
+      - run: npm run test:p63
+      - run: npm run test:p64
+      - name: Full Regression
+        run: npm test

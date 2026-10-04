@@ -1,74 +1,65 @@
 # HC Sentinel — Build Phases
 
-## Completed milestones
-
-🔵 P1-P49 — Foundation through Self-Operating Runtime  
+🔵 P1-P54 — Foundation through Autonomous Operations  
 🟢 PASS  
 ✅✨ DONE
 
-Gate: `SELF_OPERATING_READY`
-
-🔵 P50 — Watchdog Scheduled Task  
-- Windows Task Scheduler registration
-- hidden execution
-- 2-minute watchdog cadence
-- ignore overlapping instances
-
+🔵 P55 — Config Snapshot  
 🟢 PASS — 1/1  
 ✅✨ DONE
 
-🔵 P51 — Maintenance Runner  
-- independent maintenance jobs
-- per-job PASS/FAIL
-- one failed maintenance job does not crash the runner
-
-🟢 PASS — 2/2  
-✅✨ DONE
-
-🔵 P52 — Runtime Health Aggregate  
-- heartbeat health
-- worker health
-- target health
-- critical finding health
-- HEALTHY / DEGRADED / STALE
-
-🟢 PASS — 3/3  
-✅✨ DONE
-
-🔵 P53 — Release Freeze  
-Requires:
-- green regression
-- no critical unresolved findings
-- watchdog
-- backup
-- retention
-
+🔵 P56 — Alert Dedupe  
 🟢 PASS — 1/1  
 ✅✨ DONE
 
-🔵 P54 — Golden Soak Acceptance  
-24-cycle simulation with one forced runtime outage.
+🔵 P57 — Incident Timeline  
+🟢 PASS — 1/1  
+✅✨ DONE
 
+🔵 P58 — Offline Queue  
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P59 — Audit Ledger  
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P60 — Safe Update Policy  
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P61 — Rollback Marker  
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P62 — Resource Budget  
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P63 — Release Integrity  
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P64 — Golden Final Acceptance  
 Acceptance:
-`cycles=24 -> restarts=1 -> allMaintenance=true -> finalHealth=HEALTHY -> recovered=true`
+`alerts=[true,false,true] -> update=READY -> budget=OK -> integrity=true`
 
-🟢 PASS — Acceptance Flow  
+🟢 PASS  
 ✅✨ DONE
 
 Full regression:
-`88/88 PASS — 0 FAIL`
+`97/97 PASS — 0 FAIL`
 
-Gate: `AUTONOMOUS_OPERATIONS_READY`
+Gate: `FINAL_OPERATIONS_READY`
 
-## Build rule
-
-- Do not redo execution-evidence PASS phases.
-- Manual/operator command outranks schedule/watch.
-- GREEN/DONE requires evidence.
-- Baselines require explicit review before promotion.
-- Medium findings route but do not auto-repair by default.
-- Critical unresolved findings block release.
-- Watchdog prevents restart storms.
-- Maintenance jobs are lane-isolated.
-- Retention must not delete live state.
-- Runtime remains local-first.
+Build rules remain:
+- no redo for execution-evidence PASS phases
+- manual command outranks schedule/watch
+- no fake GREEN
+- medium findings route but do not auto-repair
+- critical findings block release
+- watchdog cooldown prevents restart storms
+- retention never deletes live state
+- updates require green tests
+- rollback marker required before update
+- runtime remains local-first
