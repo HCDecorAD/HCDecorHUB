@@ -7,9 +7,19 @@
       "url": "https://gscsenior.hcdecorhub.com",
       "enabled": true,
       "viewports": {
-        "desktop": {"width": 1440, "height": 900},
-        "mobile": {"width": 390, "height": 844}
-      }
+        "desktop": {
+          "width": 1440,
+          "height": 900
+        },
+        "mobile": {
+          "width": 390,
+          "height": 844
+        }
+      },
+      "suppressFindings": [
+        "BROKEN_MEDIA_HINT"
+      ],
+      "suppressionReason": "Known intentional media placeholders; media links will be configured later."
     },
     {
       "id": "amo-public",
@@ -18,8 +28,14 @@
       "url": "https://amonguyen.hcdecorhub.com",
       "enabled": true,
       "viewports": {
-        "desktop": {"width": 1440, "height": 900},
-        "mobile": {"width": 390, "height": 844}
+        "desktop": {
+          "width": 1440,
+          "height": 900
+        },
+        "mobile": {
+          "width": 390,
+          "height": 844
+        }
       }
     }
   ]

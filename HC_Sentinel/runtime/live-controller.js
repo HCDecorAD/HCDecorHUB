@@ -14,7 +14,10 @@ export function createLiveController({projects,targets,observer,inspectSnapshot,
       await logs?.append?.({level:"info",type:"MISSION_START",message:`${command.action} ${target.id} ${viewportName}`});
       try{
         const capture=await observer.capture({url:target.url,waitUntil:"domcontentloaded",timeoutMs:45000},{viewport,fullPage:false});
-        const qualityFindings=inspectSnapshot({dom:capture.dom,failedRequests:capture.failedRequests,viewport});
+        const detectedFindings=inspectSnapshot({dom:capture.dom,failedRequests:capture.failedRequests,viewport});
+        const suppressedKinds=new Set(target.suppressFindings??[]);
+        const suppressedFindings=detectedFindings.filter(f=>suppressedKinds.has(f.kind));
+        const qualityFindings=detectedFindings.filter(f=>!suppressedKinds.has(f.kind));
         await mkdir(evidenceDir,{recursive:true});
         const stamp=new Date().toISOString().replace(/[:.]/g,"-");
         const screenshotPath=resolve(evidenceDir,`${target.id}-${viewportName}-${stamp}.png`);
@@ -24,7 +27,8 @@ export function createLiveController({projects,targets,observer,inspectSnapshot,
           id:evidenceId,projectId:target.projectId,targetId:target.id,type:"screenshot",
           path:screenshotPath,title:capture.title,viewport:viewportName,
           consoleCount:capture.consoleMessages.length,failedRequestCount:capture.failedRequests.length,
-          findings:qualityFindings
+          findings:qualityFindings,
+          suppressedFindings
         });
         for(const f of qualityFindings){
           await findings.upsert({
@@ -36,7 +40,7 @@ export function createLiveController({projects,targets,observer,inspectSnapshot,
         await logs?.append?.({level:qualityFindings.length?"warning":"info",type:"MISSION_COMPLETE",message:`${target.id} ${status}`});
         return {
           status,projectId:target.projectId,targetId:target.id,viewport:viewportName,
-          evidenceId,findings:qualityFindings,failedRequestCount:capture.failedRequests.length,
+          evidenceId,findings:qualityFindings,suppressedFindings,failedRequestCount:capture.failedRequests.length,
           consoleCount:capture.consoleMessages.length,title:capture.title
         };
       }catch(e){
