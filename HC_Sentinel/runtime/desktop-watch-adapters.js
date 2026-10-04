@@ -11,6 +11,6 @@ export function createWindowProvider({root}){
 export function createChatBridge({root}){
   const py=process.env.HC_SENTINEL_PYTHON??"python";
   const script=resolve(root,"runtime/autochat-bridge.py");
-  async function call(args){try{const {stdout}=await exec(py,[script,...args],{windowsHide:true,maxBuffer:1024*1024});return parse(stdout);}catch(e){const out=parse(e.stdout);return out??{status:"BLOCKED",error:String(e.message||e)};}}
+  async function call(args){try{const {stdout}=await exec(py,[script,...args],{windowsHide:true,maxBuffer:1024*1024,env:{...process.env,PYTHONIOENCODING:"utf-8",PYTHONUTF8:"1"}});return parse(stdout);}catch(e){const out=parse(e.stdout);return out??{status:"BLOCKED",error:String(e.message||e)};}}
   return {list:()=>call(["list"]),snapshot:a=>call(["snapshot",a]),send:(a,c)=>call(["send",a,c])};
 }
