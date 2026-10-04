@@ -11,6 +11,7 @@ export default function SystemCenter(){
     ["INTEGRATIONS","Integrations","Configured plugins, connectors and production sources.","/admin/integrations"],
     ["SETTINGS","Settings","Server-side configuration and operating controls.","/admin/settings"],
     ["HCDR","Local-First / HCDR","Primary local execution path and relay controls.","/api/runtime/diagnostics"],
+    ["UI_DESIGNER","UI Designer","Schema, preview, version and undo workspace.","/hub/ui-designer"],
     ["DEPLOY","Release Gate","Production deployment verification and guarded release.","/admin/deploy"]
   ];
   return <HubShell title="System Center" eyebrow="WIN_SYSTEM / SYSTEM CENTER">

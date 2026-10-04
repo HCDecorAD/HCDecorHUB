@@ -383,7 +383,15 @@
         "draft-flow-pass",
         "preview-pass",
         "real-media-pass"
-      ]
+      ],
+      "prebuild_evidence": {
+        "create_post_route": "PASS",
+        "content_factory_api": "PASS",
+        "social_modules": "9/9",
+        "runtime_smoke": "PASS",
+        "master_e2e": "PASS",
+        "ai_dependency": "BLOCKED_BY_PKG_05"
+      }
     },
     {
       "id": "PKG-07",
@@ -470,7 +478,14 @@
       "done_gate": [
         "one-real-trend-cycle-pass",
         "analytics-learn-pass"
-      ]
+      ],
+      "prebuild_evidence": {
+        "opportunity_api": "PASS",
+        "outlier_api": "PASS",
+        "trend_score_runtime": "DO_NOW score=89",
+        "trend_tests": "PASS",
+        "ai_dependency": "BLOCKED_BY_PKG_05"
+      }
     },
     {
       "id": "PKG-10",
@@ -548,7 +563,16 @@
         "preview-pass",
         "apply-pass",
         "undo-pass"
-      ]
+      ],
+      "prebuild_evidence": {
+        "schema_editor": "PASS",
+        "validate": "PASS",
+        "preview": "PASS",
+        "apply_local": "PASS",
+        "versions": "PASS",
+        "undo": "PASS",
+        "ai_patch": "BLOCKED_BY_PKG_05"
+      }
     },
     {
       "id": "PKG-12",

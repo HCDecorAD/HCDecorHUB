@@ -7,7 +7,7 @@ const manifest=JSON.parse(fs.readFileSync('config/hcdecor-v9-package-manifest.js
 
 for(const id of ['WIN_HOME','WIN_TREND','WIN_SOCIAL','WIN_PROJECTS','WIN_IMASTER','WIN_BUSINESS','WIN_SYSTEM']) assert.ok(shell.includes(id),id);
 for(const mod of ['NAV','TOPBAR','WORKSPACE','TABS','SIDE_PANEL','AI_PANEL','NOTICE','QUICK_ACTION','LANGUAGE','ACCOUNT_MENU','SEARCH']) assert.ok(shell.includes('data-module="'+mod+'"'),mod);
-for(const token of ['hcdecor-v9-shell','hcdecor-language','Focus Mode','/api/master/readiness','/hub/content','/hub/review','/admin/settings']) assert.ok(shell.includes(token),token);
+for(const token of ['hcdecor-v9-shell','hcdecor-language','Focus Mode','/api/master/readiness','/hub/create-post','/hub/review','/admin/settings']) assert.ok(shell.includes(token),token);
 for(const klass of ['.v9Shell','.v9Nav','.v9Top','.v9Workspace','.v9Runtime','.isCollapsed','.isFocus']) assert.ok(css.includes(klass),klass);
 assert.ok(!shell.includes('onClick={()=>{}}'),'fake click handler');
 const pkg=manifest.packages.find(x=>x.id==='PKG-01');
