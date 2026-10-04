@@ -4,6 +4,7 @@
   "purpose": "Single anti-amnesia entrypoint for every new chat/session/operator.",
   "load_order": [
     "config/imaster-global-authority.json",
+    "config/imaster-skills/continuous-control.json",
     "docs/HC-GROUP-CORPORATE-BLUEPRINT-V9.md",
     "config/corporate-catalog.json",
     "config/active-asset-inventory.json",
@@ -44,7 +45,9 @@
     "HCDR_BEFORE_RDC",
     "TEST_BEFORE_GITHUB",
     "OWNER_OVERRIDES_IMASTER",
-    "IMASTER_IS_HIGHEST_SYSTEM_AUTHORITY_BELOW_OWNER"
+    "IMASTER_IS_HIGHEST_SYSTEM_AUTHORITY_BELOW_OWNER",
+    "NEXT_ACTION_IS_SYSTEM_RESPONSIBILITY",
+    "AUTO_CONTINUE_UNTIL_TERMINAL"
   ],
   "startup_checks": [
     "load portfolio and repositories",
@@ -81,9 +84,20 @@
     "config/imaster-skills/proactive-improvement.json",
     "config/imaster-skills/repair-council.json",
     "config/imaster-skills/operator-visual-status.json",
-    "config/imaster-skills/local-first-execution.json"
+    "config/imaster-skills/local-first-execution.json",
+    "config/imaster-skills/continuous-control.json"
   ],
   "parallel_execution_rule": "When >=2 independent tasks are READY and safe capacity exists, Capability Router MUST prefer imaster.parallel-execution over serial execution.",
   "local_execution_default": "CODE -> HOCUONG_LOCAL -> HCDR -> TEST/EVIDENCE -> GITHUB; RDC rescue only.",
-  "global_authority": "config/imaster-global-authority.json"
+  "global_authority": "config/imaster-global-authority.json",
+  "continuous_control": {
+    "skill": "imaster.continuous-control",
+    "requires_chat_next": false,
+    "terminal_states": [
+      "DONE",
+      "OWNER_REQUIRED",
+      "SAFETY_STOP",
+      "HARD_EXTERNAL_BLOCKED"
+    ]
+  }
 }
