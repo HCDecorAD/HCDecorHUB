@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "title": "iMaster ALL Phase Freeze",
+  "source_commit": "d643520773f9570cb0a75bae3e5bb5e44047f738",
+  "repo_decomposition": {
+    "phase_1_to_6": "PASS_ON_MAIN",
+    "phase_7": "BLOCKED_EXTERNAL_CAPABILITY"
+  },
+  "v9": {
+    "S5_3_workspace_schema": {
+      "status": "IMPLEMENTED_VERIFIED_BY_CI",
+      "evidence": [
+        "config/workspaces.json schema 2.1.0",
+        "3 registered workspaces"
+      ]
+    },
+    "S5_4_deployment_adapter": {
+      "status": "IMPLEMENTED_VERIFIED_BY_CI",
+      "evidence": [
+        "lib/deployment-adapter-core.mjs",
+        "scripts/deployment-adapter.test.mjs",
+        "quality-gate Deployment adapter gate"
+      ]
+    },
+    "S5_5_policy_engine": {
+      "status": "IMPLEMENTED_VERIFIED_BY_CI",
+      "evidence": [
+        "lib/policy-engine-core.mjs",
+        "scripts/policy-engine.test.mjs",
+        "quality-gate Policy engine gate"
+      ]
+    }
+  },
+  "production_mutation": false,
+  "rule": "Do not redo PASS. Continue independent phases when one lane is externally blocked."
+}
