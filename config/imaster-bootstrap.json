@@ -94,7 +94,7 @@
     "config/imaster-skills/continuous-control.json"
   ],
   "parallel_execution_rule": "When >=2 independent tasks are READY and safe capacity exists, Capability Router MUST prefer imaster.parallel-execution over serial execution.",
-  "local_execution_default": "CODE -> HOCUONG_LOCAL -> HCDR -> TEST/EVIDENCE -> GITHUB; RDC rescue only.",
+  "local_execution_default": "CODE -> HOCUONG_LOCAL -> HCDR -> LOCAL_TEST/EVIDENCE -> GITHUB -> CI; RDC rescue only.",
   "global_authority": "config/imaster-global-authority.json",
   "continuation_engine": "config/imaster-skills/continuation-engine.json",
   "continuous_control": {
@@ -109,9 +109,10 @@
     "continuation_skill": "imaster.continuation-engine"
   },
   "panda_24_7": {
-    "status": "PANDA_24_7_LIVE",
+    "status": "DONE",
+    "lifecycle": ["PANDA_24_7_LIVE", "FROZEN", "DONE"],
     "cluster": "imaster.panda-cluster-v2",
-    "verified_main_sha": "064952ff874f4272806346c541ea9bfae7e74cb2",
+    "verified_main_sha": "9441de320758f07cb6625dfa7f4b72547bcb6e7b",
     "evidence": {
       "auto_wake": {
         "verified": true,
@@ -165,7 +166,15 @@
         "digest": "sha256:46aca56e9923f1003aea66d3d41763c1c2c918c920d62c41c31078dfda8317bc"
       }
     },
-    "claim_policy": "LIVE is valid only while required evidence remains verified and production-write owner boundaries remain fail-closed.",
-    "frozen_at": "2026-10-04"
+    "claim_policy": "DONE is valid only with frozen LIVE evidence plus post-merge Quality, Production, Runtime, Soak, and Continuation verification on the merged main SHA; production-write owner boundaries remain fail-closed.",
+    "post_merge_evidence": {
+      "quality_run": 707,
+      "production_run": 568,
+      "runtime_acceptance_run": 5,
+      "soak_run": 3,
+      "continuation_runs": [38, 39]
+    },
+    "frozen_at": "2026-10-04",
+    "done_at": "2026-10-04"
   }
 }

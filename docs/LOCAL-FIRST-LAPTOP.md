@@ -45,3 +45,9 @@ HC-LOCAL-FIRST.bat sync
 A successful local build is **PASS DONE** even when GitHub sync is pending.
 
 Future migration only changes the compute provider (PC/server/cloud); the DATA and queue contract remains stable.
+
+## Hard execution route
+
+`CODE -> HOCUONG LOCAL -> HCDR -> LOCAL TEST/EVIDENCE -> GitHub -> CI`
+
+RDC is rescue-only. It is used only when HCDR is unavailable, failed, lacks a required capability, or a GUI-only operation is required. GitHub/CI cannot replace local test evidence for code/build changes.

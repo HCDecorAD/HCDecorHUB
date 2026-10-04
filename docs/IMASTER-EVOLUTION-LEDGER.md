@@ -27,3 +27,9 @@ The next iMaster generation adds machine contracts for: Global State Graph, Cont
 - Required evidence 8/8: auto_wake, post_merge_verify, durable_restart, missed_event_recovery, duplicate_safe, bounded_repair, owner_boundary, soak.
 - Production/secret/destructive writes remain fail-closed at Owner boundary.
 - Status: `PANDA_24_7_LIVE`.
+
+## PANDA 24/7 terminal freeze — 2026-10-04
+- PR #85 merged to main at `9441de320758f07cb6625dfa7f4b72547bcb6e7b` after Quality #706 PASS.
+- Post-merge verification on the merge SHA: Quality #707 PASS; Production Verify #568 PASS; Runtime Acceptance #5 PASS; PANDA Soak #3 PASS; PANDA Continuation #38/#39 PASS.
+- Lifecycle: `PANDA_24_7_LIVE -> FROZEN -> DONE`.
+- `NO_EVIDENCE_NO_GREEN` remains mandatory; production/secret/destructive writes remain fail-closed at Owner boundary.
