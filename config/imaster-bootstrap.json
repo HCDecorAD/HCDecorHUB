@@ -107,5 +107,20 @@
       "HARD_EXTERNAL_BLOCKED"
     ],
     "continuation_skill": "imaster.continuation-engine"
+  },
+  "panda_24_7": {
+    "status": "ACCEPTANCE_PENDING",
+    "cluster": "imaster.panda-cluster-v2",
+    "required_evidence": [
+      "auto_wake",
+      "post_merge_verify",
+      "durable_restart",
+      "missed_event_recovery",
+      "duplicate_safe",
+      "bounded_repair",
+      "owner_boundary",
+      "soak"
+    ],
+    "claim_policy": "PANDA_24_7_LIVE only when every required evidence flag is verified true."
   }
 }

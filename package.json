@@ -76,7 +76,8 @@
     "test:imaster-panda-cluster": "node scripts/imaster-panda-cluster.test.mjs",
     "test:panda-g2": "node scripts/panda-g2-durable.test.mjs",
     "test:panda-g3": "node scripts/panda-g3-executor.test.mjs",
-    "test:panda-g4": "node scripts/panda-g4-hardening.test.mjs"
+    "test:panda-g4": "node scripts/panda-g4-hardening.test.mjs",
+    "test:panda-24x7-final": "node scripts/panda-24x7-final.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
