@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "id": "IMASTER_PUBLIC_STATE",
+  "visibility": "public-repository",
+  "source_repository": "HCDecorAD/HCDecorHUB",
+  "canonical_bootstrap": "config/imaster-bootstrap.json",
+  "evolution_ledger": "docs/IMASTER-EVOLUTION-LEDGER.md",
+  "autonomous_layer": "config/imaster-v3-autonomous-layer.json",
+  "registries": [
+    "config/corporate-catalog.json",
+    "config/active-asset-inventory.json",
+    "config/capability-registry.json",
+    "config/workspaces.json",
+    "config/site-registry.json"
+  ],
+  "update_feed": "config/corporate-update-feed.json",
+  "publication_law": "UPDATE_WITHOUT_IMASTER_SYNC = NOT_DONE",
+  "consumers": [
+    "new chat",
+    "existing chat",
+    "mobile operator",
+    "dashboard",
+    "agents",
+    "workers"
+  ],
+  "refresh_triggers": [
+    "verified capability change",
+    "system/project registration change",
+    "phase/checkpoint change",
+    "production authority change",
+    "verified release/merge"
+  ],
+  "secrets_policy": "Never publish secrets, credentials, tokens, private payloads or sensitive runtime data."
+}

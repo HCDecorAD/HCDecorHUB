@@ -1,5 +1,5 @@
 # HC GROUP MASTER REGISTRY
-Version: 2026-10-02
+Version: 2026-10-04
 Owner: Ho Cuong
 Status: LIVING SOURCE OF TRUTH
 
@@ -50,12 +50,17 @@ Domain -> System -> Project -> Goal -> Mission -> Task -> Worker/Tool -> Evidenc
    - Future workspaces register by schema; no context mixing.
 
 ## Current GitHub repositories
-- HCDecorAD/HCDecorHUB â€” main platform/core.
-- HCDecorAD/GSC â€” GSC application.
-- HCDecorAD/AMONguyen â€” AMO application.
-- HCDecorAD/HCDecor-HCDR-Relay â€” HCDR transport/control queue.
+- HCDecorAD/HCDecorHUB — main platform / AI OS.
+- HCDecorAD/GSC — GSC business workspace.
+- HCDecorAD/AMONguyen — AMO business workspace.
+- HCDecorAD/HCDecor-HCDR-Relay — canonical local transport.
+- HCDecorAD/HC-TransWarp-Infrastructure — routing/recovery infrastructure.
+- HCDecorAD/HC-Design-AI-Studio — independent AI design product.
+- HCDecorAD/HC-Creative-Factory — independent creative production product.
+- HCDecorAD/HC-Future — education ecosystem.
+- HCDecorAD/HC-English-World — English learning ecosystem.
 
-Gap: many active local projects/tools are not first-class catalog entities. The registry must cover local-only assets too.
+New-chat bootstrap authority: `config/imaster-bootstrap.json`. Before declaring something missing, load the bootstrap contract and follow its load order. TOOL_MISSING is not terminal; use `config/imaster-capability-acquisition.json` to discover/acquire/verify an alternate route.
 
 ## Portfolio
 | Project/System | Role | Known state | Next gate |

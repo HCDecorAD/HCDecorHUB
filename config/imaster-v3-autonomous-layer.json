@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0.0",
+  "id": "IMASTER_V3_AUTONOMOUS_OPERATING_LAYER",
+  "status": "ARCHITECTURE_BASELINE",
+  "inherits": [
+    "DONE evidence discipline",
+    "HC DONE durable execution",
+    "Master Agent orchestration",
+    "iMaster bootstrap and capability acquisition"
+  ],
+  "components": [
+    {
+      "id": "persistent-mission-brain",
+      "state": "IMPLEMENTED_BASELINE",
+      "evidence": [
+        "lib/governor/durable-queue.mjs"
+      ]
+    },
+    {
+      "id": "global-state-graph",
+      "state": "CONTRACT_READY",
+      "purpose": "Unify Business->Project->Goal->Mission->Task->Worker/Tool->Artifact->Evidence->Checkpoint relationships."
+    },
+    {
+      "id": "continuous-planner",
+      "state": "PARTIAL_BASELINE",
+      "law": "READY_WORK + SAFE_CAPACITY -> EXECUTE; WAITING yields capacity."
+    },
+    {
+      "id": "autonomous-worker-factory",
+      "state": "PARTIAL_BASELINE",
+      "purpose": "Dynamic worker allocation, lease/requeue, crash isolation, bounded concurrency."
+    },
+    {
+      "id": "capability-acquisition",
+      "state": "IMPLEMENTED_POLICY",
+      "evidence": [
+        "config/imaster-capability-acquisition.json"
+      ]
+    },
+    {
+      "id": "self-healing-learning-loop",
+      "state": "PARTIAL_BASELINE",
+      "purpose": "Failure fingerprint -> fix memory -> repair -> isolated verify -> regression -> promote verified fix."
+    },
+    {
+      "id": "universal-operator-gateway",
+      "state": "CONTRACT_READY",
+      "purpose": "Chat/mobile/dashboard/local are operator surfaces; none owns mission lifecycle."
+    },
+    {
+      "id": "public-state-service",
+      "state": "CONTRACT_READY",
+      "purpose": "Every verified update produces Update Record -> Update Feed -> Current State Manifest -> Public snapshot."
+    }
+  ],
+  "completion_law": "UPDATE_WITHOUT_IMASTER_SYNC = NOT_DONE",
+  "runtime_claim_policy": "No CONTRACT_READY or PARTIAL_BASELINE component may be called LIVE without acceptance evidence."
+}
