@@ -425,7 +425,7 @@
       "id": "PKG-10",
       "phase": "P5_TREND_BUSINESS",
       "name": "BUSINESS_CENTER",
-      "state": "WAITING_DEP",
+      "state": "BUILDING",
       "depends_on": [
         "PKG-01"
       ],
@@ -443,7 +443,8 @@
       "done_gate": [
         "business-crud-pass",
         "workflow-pass"
-      ]
+      ],
+      "blocker": "V9 Business scope still lacks complete Lead -> Customer -> Quotation -> Order/Project -> Payment workflow; existing Commerce Center is not treated as equivalent."
     },
     {
       "id": "PKG-11",
@@ -515,7 +516,7 @@
       "id": "PKG-13",
       "phase": "P7_OPERATIONS",
       "name": "SENTINEL_AUTODEBUG",
-      "state": "WAITING_DEP",
+      "state": "LOCAL_PASS",
       "depends_on": [
         "PKG-01"
       ],
@@ -536,7 +537,15 @@
         "detect-pass",
         "repair-pass",
         "verify-after-repair-pass"
-      ]
+      ],
+      "evidence": {
+        "visual_compare": "3/3 PASS",
+        "verify": "2/2 PASS",
+        "repair_bridge": "3/3 PASS",
+        "notification": "1/1 PASS",
+        "autodebug_implementation": "PASS",
+        "autodebug_repair_verification": "PASS"
+      }
     },
     {
       "id": "PKG-14",
