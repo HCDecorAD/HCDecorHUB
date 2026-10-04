@@ -110,6 +110,8 @@ jobs:
         run: npm run test:hcdecor-v9-centers-foundation
       - name: HCDecor HUB V9 Business Center gate
         run: npm run test:hcdecor-v9-business
+      - name: HCDecor HUB V9 Business schema gate
+        run: npm run test:hcdecor-v9-business-schema
       - name: HCDecor HUB V9 dependent prebuild gate
         run: npm run test:hcdecor-v9-dependent-prebuild
       - name: HCDecor HUB V9 publish prebuild gate
