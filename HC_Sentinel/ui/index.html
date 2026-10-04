@@ -1,173 +1,180 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="vi" data-theme="light">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>HC Sentinel</title><link rel="stylesheet" href="./styles.css">
 </head>
 <body>
 <!-- compatibility markers: P15 P19 -->
-<div class="shell">
-  <aside class="sidebar" id="sidebar">
-    <div class="brand"><div class="logo">◆</div><div><h1>HC Sentinel</h1><small>Command Control</small></div></div>
-    <button class="nav active">⌂ Command Center</button>
-    <button class="nav" id="openProjects">▣ Projects</button>
-    <button class="nav" data-tab="evidence">▤ Evidence</button>
-    <button class="nav" data-tab="findings">⚠ Findings</button>
-    <button class="nav" data-tab="logs">☷ Logs</button>
-    <button class="nav" data-tab="watch">◉ Desktop Watch</button>
-    <div class="sidebar-spacer"></div>
-    <div class="system-mini"><span>● SENTINEL_READY</span><small>LOCAL · v1.2.0</small></div>
-  </aside>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">S</div>
+      <div><div class="brandline"><h1>HC Sentinel</h1><span class="live">LIVE</span></div><small>Desktop Watch · Command Center</small></div>
+    </div>
+    <div class="top-actions">
+      <div class="runtime-pill"><b>Runtime</b><span id="runtimeStatus">● CHECKING</span></div>
+      <button id="themeToggle" class="btn ghost">☾ Tối</button>
+      <button id="pauseAll" class="btn dark">Ⅱ Tạm dừng</button>
+    </div>
+  </header>
 
-  <main class="workspace">
-    <header class="topbar">
-      <button id="toggleSidebar" class="icon-btn">☰</button>
-      <div>
-        <h2>Command Center</h2>
-        <p>Ra lệnh → chạy → xem kết quả → xử lý.</p>
-      </div>
-      <div class="top-actions">
-        <span id="missionStatus" class="status-pill">READY</span>
-        <button id="themeToggle" class="icon-btn">☀ / ◐</button>
-        <button id="toggleOps" class="icon-btn">☷</button>
-      </div>
-    </header>
+  <section class="stats">
+    <div class="stat"><strong id="statTotal">0</strong><span>Watch đang quản lý</span></div>
+    <div class="stat"><strong id="statHealthy">0</strong><span>Luồng bình thường</span></div>
+    <div class="stat"><strong id="statAttention">0</strong><span>Cần chú ý</span></div>
+    <div class="stat"><strong>114/114</strong><span>Regression PASS</span></div>
+  </section>
 
-    <section class="console">
-      <div class="command-row">
-        <select id="projectSelect" aria-label="Project">
-          <option value="gsc">GSC</option>
-          <option value="amo">AMO</option>
-        </select>
-        <select id="viewportSelect" aria-label="Viewport">
-          <option value="desktop">Desktop</option>
-          <option value="mobile">Mobile</option>
-        </select>
-        <input id="commandInput" value="Sentinel kiem tra GSC desktop" aria-label="Command">
-      </div>
-      <div class="action-row">
-        <button class="primary" id="runNow">▶ Run Now</button>
-        <button id="compareNow">⇄ Compare</button>
-        <button id="verifyNow">◇ Verify</button>
-        <button id="repairNow">⌘ Route Repair</button>
-        <button id="toggleAddProject">＋ Add Project</button>
-      </div>
-    </section>
-
-    <section class="result-card">
-      <div class="result-head">
-        <div>
-          <small>LAST RESULT</small>
-          <h3 id="resultTitle">Ready for command</h3>
+  <div class="layout">
+    <main class="panel watch-panel">
+      <div class="panel-head">
+        <div><h2>Desktop Watch</h2><p>Chọn luồng → xem trạng thái → thao tác. Không cần chỉnh JSON.</p></div>
+        <div class="head-actions">
+          <button id="addWatch" class="btn dark">＋ Add Watch</button>
+          <button id="toggleTools" class="btn ghost">⚙ Tools</button>
         </div>
-        <span id="resultBadge" class="status-pill">READY</span>
       </div>
-      <div class="result-grid">
-        <div><span>Project</span><b id="resultProject">—</b></div>
-        <div><span>Action</span><b id="resultAction">—</b></div>
-        <div><span>Viewport</span><b id="resultViewport">—</b></div>
-        <div><span>Evidence</span><b id="resultEvidence">—</b></div>
-      </div>
-      <div id="resultMessage" class="result-message">Chọn Project / Viewport hoặc nhập lệnh trực tiếp rồi chạy.</div>
-    </section>
 
-    <section class="project-strip">
-      <button class="project-chip active" data-project="gsc">GSC <span>HEALTHY</span></button>
-      <button class="project-chip" data-project="amo">AMO <span>HEALTHY</span></button>
-      <button class="project-chip" id="addProjectQuick">＋</button>
-    </section>
+      <div class="watch-body">
+        <aside class="watch-list-col">
+          <div class="eyebrow">WATCH LIST</div>
+          <div id="watchList" class="watch-list"><div class="empty">Đang tải watch…</div></div>
+        </aside>
 
-    <section class="tabs">
-      <div class="tab-head">
-        <button class="tab-btn active" data-tab="evidence">Evidence</button>
-        <button class="tab-btn" data-tab="findings">Findings</button>
-        <button class="tab-btn" data-tab="logs">Logs</button>
-        <button class="tab-btn" data-tab="repairs">Repair Queue</button>
-        <button class="tab-btn" data-tab="watch">Desktop Watch</button>
-      </div>
-      <div class="tab-body active" id="tab-evidence">
-        <div class="panel-head"><span>Latest evidence</span><button id="refreshEvidence">Refresh</button></div>
-        <div id="evidenceList" class="listbox"><span class="muted">No evidence loaded</span></div>
-      </div>
-      <div class="tab-body" id="tab-findings">
-        <div class="panel-head"><span>Current findings</span><button id="refreshFindings">Refresh</button></div>
-        <div id="findingList" class="listbox"><span class="muted">No findings</span></div>
-      </div>
-      <div class="tab-body" id="tab-logs">
-        <div class="panel-head"><span>Runtime logs</span><button id="refreshLogs">Refresh</button></div>
-        <div id="logList" class="listbox"><span class="muted">No logs</span></div>
-      </div>
-      <div class="tab-body" id="tab-repairs">
-        <div class="panel-head"><span>Repair queue</span><button id="refreshRepairs">Refresh</button></div>
-        <div id="repairList" class="listbox"><span class="muted">No repair jobs</span></div>
-      </div>
-      <div class="tab-body" id="tab-watch">
-        <div class="watch-builder">
-          <div class="watch-head">
-            <div><b>Desktop Watch</b><small>Watch → detect stuck → exact auto command</small></div>
-            <button id="refreshWatchSources">↻ Sources</button>
+        <section class="watch-detail">
+          <div id="emptyDetail" class="empty-detail">
+            <div class="empty-icon">◉</div><h3>Chọn một Watch</h3><p>Trạng thái và thao tác sẽ hiển thị tại đây.</p>
           </div>
-          <div class="watch-grid">
-            <label>Mode
-              <select id="watchSourceType">
-                <option value="CHATGPT">ChatGPT Exact</option>
-                <option value="WINDOW">Windows Window</option>
-              </select>
-            </label>
-            <label>Source
-              <select id="watchSourceSelect"></select>
-            </label>
-            <label>Dispatch Chat
-              <select id="watchDispatchAlias"></select>
-            </label>
-            <label>Interval (sec)
-              <input id="watchInterval" type="number" min="5" value="60">
-            </label>
-            <label>Stuck after (sec)
-              <input id="watchStuck" type="number" min="15" value="300">
-            </label>
-            <label>Cooldown (sec)
-              <input id="watchCooldown" type="number" min="30" value="600">
-            </label>
-            <label class="watch-command">Command
-              <input id="watchCommand" value="iMaster next">
-            </label>
-            <label class="checkline"><input id="watchAutoSend" type="checkbox" checked> Auto Send</label>
-            <label class="checkline"><input id="watchStopDone" type="checkbox"> Stop on DONE</label>
+          <div id="detail" hidden>
+            <div class="detail-top">
+              <div><div class="title-row"><span id="detailDot" class="dot"></span><h3 id="detailName">—</h3></div><p id="detailMeta">—</p></div>
+              <span id="detailState" class="state">—</span>
+            </div>
+
+            <div class="current-box">
+              <div class="eyebrow">TÌNH TRẠNG HIỆN TẠI</div>
+              <strong id="detailNote">—</strong>
+              <p id="detailExplain">—</p>
+            </div>
+
+            <div class="mini-grid">
+              <div><span>Ngưỡng STUCK</span><b id="detailStuck">—</b></div>
+              <div><span>Lệnh tự động</span><b id="detailCommand">—</b></div>
+              <div><span>Auto Send</span><b id="detailAuto">—</b></div>
+            </div>
+
+            <div class="action-row">
+              <button id="watchRun" class="btn dark">▶ Run Now</button>
+              <button id="watchStart" class="btn ghost">▶ Start</button>
+              <button id="watchStop" class="btn ghost">■ Stop</button>
+              <button id="watchToggleAuto" class="btn success">● Auto ON</button>
+              <button id="watchRemove" class="btn danger">Remove</button>
+            </div>
+
+            <details class="advanced">
+              <summary>Advanced Watch Settings</summary>
+              <div class="advanced-grid">
+                <label>Interval<input id="advInterval" readonly></label>
+                <label>Cooldown<input id="advCooldown" readonly></label>
+                <label>Exact target<input id="advTarget" readonly></label>
+                <label>Safety<input value="Fail-closed" readonly></label>
+              </div>
+            </details>
           </div>
-          <div class="watch-actions">
-            <span id="watchFormStatus" class="muted">Exact chat only for auto-send. Native window mode is fail-closed.</span>
-            <button id="saveWatch" class="primary">＋ Add Watch</button>
-          </div>
+        </section>
+      </div>
+    </main>
+
+    <aside class="right-col">
+      <section class="panel compact">
+        <div class="side-title"><h3>Quick Actions</h3><span>REAL</span></div>
+        <div class="quick-grid">
+          <button id="quickProject">Add Project</button>
+          <button id="quickEvidence">Open Evidence</button>
+          <button id="quickTray">Tray Test</button>
+          <button id="quickBackup">Backup State</button>
         </div>
-        <div class="panel-head watch-list-head"><span>Active watches</span><button id="refreshWatchers">Refresh</button></div>
-        <div id="watchList" class="watch-list"><span class="muted">No watches</span></div>
-      </div>
-    </section>
-  </main>
+      </section>
 
-  <aside class="ops-drawer" id="opsDrawer">
-    <div class="drawer-head"><b>Operations</b><button id="closeOps">×</button></div>
-    <div class="ops-card"><span>Runtime</span><b>LOCAL</b></div>
-    <div class="ops-card"><span>Workers</span><b>3/3 Online</b></div>
-    <div class="ops-card"><span>Watchdog</span><b>ACTIVE</b></div>
-    <div class="ops-card"><span>Tray</span><b>ACTIVE</b></div>
-    <div class="ops-card"><span>Regression</span><b>102/102 PASS</b></div>
-  </aside>
+      <section class="panel compact">
+        <h3>Safety</h3>
+        <div class="safety-list">
+          <div><span>Exact-send only</span><b>ON</b></div>
+          <div><span>Blocker-aware</span><b>ON</b></div>
+          <div><span>Duplicate guard</span><b>ON</b></div>
+          <div><span>STOP_ALL</span><b>ARMED</b></div>
+        </div>
+      </section>
+
+      <section class="panel compact activity-card">
+        <div class="side-title"><h3>Recent Activity</h3><button id="refreshActivity">↻</button></div>
+        <div id="activity" class="activity"><div class="empty">Đang tải…</div></div>
+      </section>
+    </aside>
+  </div>
+
+  <section id="toolsPanel" class="panel tools" hidden>
+    <div class="panel-head">
+      <div><h2>Project Tools</h2><p>Compare / Verify / Repair giữ nguyên, nhưng không chiếm vùng làm việc chính.</p></div>
+      <button id="closeTools" class="btn ghost">× Đóng</button>
+    </div>
+    <div class="tool-grid">
+      <select id="projectSelect"></select>
+      <select id="viewportSelect"><option value="desktop">Desktop</option><option value="mobile">Mobile</option></select>
+      <input id="commandInput" placeholder="Sentinel kiểm tra project desktop">
+    </div>
+    <div class="action-row">
+      <button id="projectRun" class="btn dark">▶ Run Check</button>
+      <button id="compareNow" class="btn ghost">⇄ Compare</button>
+      <button id="verifyNow" class="btn ghost">✓ Verify</button>
+      <button id="repairNow" class="btn ghost">⚡ Route Repair</button>
+    </div>
+    <div id="projectResult" class="tool-result">Ready.</div>
+  </section>
+
+  <footer class="footer">
+    <span>HC Sentinel v1.2.0 · Local Runtime · 127.0.0.1:43110</span>
+    <div><span id="footerRuntime">● Runtime</span><button id="toggleLog">⌃ Runtime Log</button></div>
+  </footer>
+
+  <section id="logPanel" class="panel log-panel" hidden>
+    <div class="side-title"><h3>Runtime Log</h3><button id="refreshLog">↻ Refresh</button></div>
+    <div id="logList" class="log-list"></div>
+  </section>
 </div>
 
-<div class="modal-backdrop" id="projectModal" hidden>
+<div id="watchModal" class="modal-backdrop" hidden>
   <div class="modal">
-    <div class="drawer-head"><b>Add Project / Target</b><button id="closeProjectModal">×</button></div>
-    <label>Project ID<input id="projectIdInput" placeholder="demo"></label>
-    <label>Project name<input id="projectNameInput" placeholder="Demo Project"></label>
-    <label>URL<input id="projectUrlInput" placeholder="https://example.com"></label>
-    <div class="modal-actions">
-      <span id="addProjectStatus" class="muted">Saved locally and available immediately.</span>
-      <button class="primary" id="saveProject">Save Project</button>
+    <div class="modal-head"><div><h3>Add Watch</h3><p>Exact Chat để auto-send; Windows Window mặc định Watch Only.</p></div><button data-close="watchModal">×</button></div>
+    <div class="form-grid">
+      <label>Mode<select id="watchSourceType"><option value="CHATGPT">ChatGPT Exact</option><option value="WINDOW">Windows Window</option></select></label>
+      <label>Source<select id="watchSourceSelect"></select></label>
+      <label>Preset<select id="watchPreset"><option value="continue">iMaster Continue · 5 phút</option><option value="strict">Strict · 10 phút</option><option value="watch">Watch Only</option></select></label>
+      <label>Dispatch Chat<select id="watchDispatchAlias"></select></label>
+      <label>Command<input id="watchCommand" value="iMaster next"></label>
+      <label>Stuck after<input id="watchStuck" type="number" value="300" min="15"></label>
+      <label>Interval<input id="watchInterval" type="number" value="60" min="5"></label>
+      <label>Cooldown<input id="watchCooldown" type="number" value="600" min="30"></label>
     </div>
+    <div class="safety-note"><b>Safety:</b> Native Window sẽ tự chuyển Auto Send = OFF. Exact conversation ID mới được quyền dispatch.</div>
+    <div class="modal-actions"><span id="watchFormStatus">Ready.</span><button id="saveWatch" class="btn dark">Add & Start Watch</button></div>
   </div>
 </div>
 
+<div id="projectModal" class="modal-backdrop" hidden>
+  <div class="modal">
+    <div class="modal-head"><div><h3>Add Project</h3><p>Thêm target mới vào Sentinel.</p></div><button data-close="projectModal">×</button></div>
+    <div class="form-grid">
+      <label>Project ID<input id="projectIdInput" placeholder="demo"></label>
+      <label>Name<input id="projectNameInput" placeholder="Demo Project"></label>
+      <label class="wide">URL<input id="projectUrlInput" placeholder="https://example.com"></label>
+    </div>
+    <div class="modal-actions"><span id="projectFormStatus">Ready.</span><button id="saveProject" class="btn dark">Save Project</button></div>
+  </div>
+</div>
+
+<div id="legacyHooks" hidden aria-hidden="true"><input id="watchAutoSend" type="checkbox"><button id="refreshEvidence">Refresh</button><div id="evidenceList"></div></div>
+<div id="toast" class="toast" hidden></div>
 <script src="./app.js"></script>
 </body></html>

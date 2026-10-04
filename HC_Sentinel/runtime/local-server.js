@@ -7,11 +7,19 @@ const MIME={".html":"text/html; charset=utf-8",".js":"text/javascript; charset=u
 async function readBody(req){let body="";for await(const chunk of req) body+=chunk;return body?JSON.parse(body):{};}
 const send=(res,data,code=200)=>{res.statusCode=code;res.setHeader("content-type",MIME[".json"]);res.end(JSON.stringify(data));};
 
-export function createLocalServer({controller,status=()=>({status:"READY"}),evidence=null,settings=null,findings=null,logs=null,targetStore=null,projects=null,repairQueue=null,watchStore=null,watchEngine=null,windowProvider=null,chatBridge=null,uiDir=null}){
+export function createLocalServer({controller,status=()=>({status:"READY"}),evidence=null,settings=null,findings=null,logs=null,targetStore=null,projects=null,repairQueue=null,watchStore=null,watchEngine=null,windowProvider=null,chatBridge=null,tray=null,stateBackup=null,uiDir=null}){
   const uiRoot=uiDir?resolve(fileURLToPath(uiDir)):null;
   return http.createServer(async(req,res)=>{
     const url=new URL(req.url,"http://127.0.0.1");
     if(req.method==="GET"&&url.pathname==="/api/status"){send(res,status());return;}
+    if(req.method==="POST"&&url.pathname==="/api/tray-test"){
+      try{const out=tray?await tray.send({title:"HC Sentinel",message:"Tray notification test",level:"info"}):{delivered:false};await logs?.append?.({level:"info",type:"TRAY_TEST",message:"Tray notification test"});send(res,{status:out.delivered?"DELIVERED":"UNAVAILABLE",...out});}
+      catch(e){send(res,{status:"BLOCKED",error:String(e.message||e)},400);}return;
+    }
+    if(req.method==="POST"&&url.pathname==="/api/backup-state"){
+      try{if(!stateBackup)throw new Error("BACKUP_UNAVAILABLE");const name=`ui-${Date.now()}`;const path=await stateBackup.create(name);await logs?.append?.({level:"info",type:"STATE_BACKUP",message:name});send(res,{status:"BACKED_UP",name,path});}
+      catch(e){send(res,{status:"BLOCKED",error:String(e.message||e)},400);}return;
+    }
     if(req.method==="POST"&&url.pathname==="/api/command"){
       try{const data=await readBody(req);await logs?.append?.({level:"info",type:"COMMAND",message:String(data.command??"")});send(res,await controller.run(data.command));}
       catch(e){await logs?.append?.({level:"error",type:"COMMAND_ERROR",message:String(e.message||e)});send(res,{status:"BLOCKED",error:String(e.message||e)},400);}return;
