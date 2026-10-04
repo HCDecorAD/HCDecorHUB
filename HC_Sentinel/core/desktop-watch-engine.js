@@ -20,8 +20,8 @@ export class DesktopWatchEngine{
     return (w.donePatterns??["DONE"]).some(p=>tail.includes(String(p).toUpperCase()));
   }
   async tickOne(w){
-    const now=this.now(),rt0=w.runtime??{},interval=Math.max(1,Number(w.intervalSec??60))*1000;
-    if(rt0.lastCheckedAtMs&&now-rt0.lastCheckedAtMs<interval)return {id:w.id,state:rt0.state??"WAITING",skipped:true};
+    const now=this.now(),rt0=w.runtime??{},interval=Math.max(0,Number(w.intervalSec??60))*1000;
+    if(interval>0&&rt0.lastCheckedAtMs!==undefined&&now-rt0.lastCheckedAtMs<interval)return {id:w.id,state:"WAITING",previousState:rt0.state??null,skipped:true};
     let snap;
     try{snap=await this.sourceSnapshot(w);}catch(e){snap={online:false,state:"BLOCKED",error:String(e.message||e)};}
     if(!snap.online){
