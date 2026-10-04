@@ -30,58 +30,62 @@
 🟢 PASS  
 ✅✨ DONE
 
-Gate: `DESKTOP_OPERATIONS_READY`
-
-🔵 P40 — Windows Startup Registration  
-- Startup folder shortcut
-- hidden VBS launcher
-- ASCII-safe PowerShell
-
-🟢 PASS — 1/1  
+🔵 P40-P44 — Daily-Use Integration  
+🟢 PASS  
 ✅✨ DONE
 
-🔵 P41 — Desktop Shortcut  
-- creates HC Sentinel shortcut
-- opens local Command Center
+Gate: `DAILY_USE_READY`
 
-🟢 PASS — 1/1  
-✅✨ DONE
-
-🔵 P42 — State Backup / Restore  
-- named snapshots
-- atomic restore staging
-- path traversal rejected
+🔵 P45 — Runtime Heartbeat  
+- runtime heartbeat tracking
+- HEALTHY / STALE / UNKNOWN
+- configurable TTL
 
 🟢 PASS — 2/2  
 ✅✨ DONE
 
-🔵 P43 — Log Viewer  
-- persisted bounded logs
-- level filter
-- `GET /api/logs`
-- Command Center Log Viewer
+🔵 P46 — Watchdog Recovery  
+- health probe
+- hidden restart path
+- restart cooldown
+- recovery verification
+
+🟢 PASS — 2/2  
+✅✨ DONE
+
+🔵 P47 — Retention Cleanup  
+- max file count
+- max file age
+- safe no-op when folder is absent
 
 🟢 PASS — 1/1  
 ✅✨ DONE
 
-🔵 P44 — Golden Daily Acceptance  
+🔵 P48 — Local Notification Sink  
+- structured notification event
+- pluggable writer
+- delivery confirmation
+
+🟢 PASS — 1/1  
+✅✨ DONE
+
+🔵 P49 — Golden Self-Recovery Acceptance  
 Validates:
-- UI online
-- status SENTINEL_READY
-- tracked finding present
-- evidence present
-- runtime log present
+- heartbeat initially UNKNOWN
+- watchdog recovers runtime
+- heartbeat becomes HEALTHY
+- one recovery notification emitted
 
 🟢 PASS — Acceptance Flow  
 ✅✨ DONE
 
 Acceptance:
-`ui=true -> status=SENTINEL_READY -> findings=1 -> evidence=1 -> logs=1`
+`before=UNKNOWN -> recovery=RECOVERED -> after=HEALTHY -> notifications=1`
 
 Full regression:
-`75/75 PASS — 0 FAIL`
+`81/81 PASS — 0 FAIL`
 
-Gate: `DAILY_USE_READY`
+Gate: `SELF_OPERATING_READY`
 
 ## Build rule
 
@@ -91,4 +95,6 @@ Gate: `DAILY_USE_READY`
 - Baselines require explicit review before promotion.
 - Medium findings route but do not auto-repair by default.
 - Critical unresolved findings block release.
+- Restart storms are blocked by watchdog cooldown.
+- Retention must not delete live state.
 - Runtime remains local-first.
