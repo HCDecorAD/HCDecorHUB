@@ -1,3 +1,5 @@
 import test from "node:test";import assert from "node:assert/strict";import {readFile} from "node:fs/promises";
 test("autochat bridge requires exact registered target and busy check",async()=>{const s=await readFile(new URL("../runtime/autochat-bridge.py",import.meta.url),"utf8");assert.match(s,/CHAT_ALIAS_NOT_REGISTERED/);assert.match(s,/STOP_ALL_ACTIVE/);assert.match(s,/if busy\(p\)/);assert.match(s,/LiveTransaction/);});
 test("native capture and window list scripts exist",async()=>{const a=await readFile(new URL("../runtime/list-windows.ps1",import.meta.url),"utf8");const b=await readFile(new URL("../runtime/capture-window.ps1",import.meta.url),"utf8");assert.match(a,/MainWindowTitle/);assert.match(b,/PrintWindow/);assert.match(b,/SHA256/);});
+
+test("autochat bridge has localized assistant-tail fallback",async()=>{const s=await readFile(new URL("../runtime/autochat-bridge.py",import.meta.url),"utf8");assert.match(s,/ChatGPT đã nói:/);assert.match(s,/Bạn đã nói:/);});
