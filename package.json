@@ -73,7 +73,8 @@
     "test:imaster-continuation": "node scripts/imaster-continuation-skill.test.mjs",
     "test:imaster-continuous-control": "node scripts/imaster-continuous-control.test.mjs",
     "test:imaster-persistent-controller": "node scripts/imaster-persistent-controller.test.mjs",
-    "test:imaster-panda-cluster": "node scripts/imaster-panda-cluster.test.mjs"
+    "test:imaster-panda-cluster": "node scripts/imaster-panda-cluster.test.mjs",
+    "test:panda-g2": "node scripts/panda-g2-durable.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
