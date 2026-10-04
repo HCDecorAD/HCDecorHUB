@@ -1,0 +1,2 @@
+import test from "node:test";import assert from "node:assert/strict";import {readFile} from "node:fs/promises";
+test("desktop watch controls are present",async()=>{const h=await readFile(new URL("../ui/index.html",import.meta.url),"utf8");for(const id of ["watchSourceType","watchSourceSelect","watchDispatchAlias","watchInterval","watchStuck","watchCooldown","watchCommand","watchAutoSend","saveWatch","watchList"])assert.match(h,new RegExp(id));});

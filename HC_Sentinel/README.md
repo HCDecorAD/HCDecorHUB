@@ -2,9 +2,9 @@
 
 Local mirror: `D:\HCDecorHUB\HC_Sentinel`
 
-Status: **DAILY_FINAL_READY**
+Status: **DESKTOP_WATCH_READY**
 Latest completed scope: **P1 -> P64**
-Full regression: **102/102 PASS, 0 FAIL**
+Full regression: **111/111 PASS, 0 FAIL**
 
 Core flow:
 `Command -> Observe -> Detect -> Compare -> Diagnose -> Route -> Repair -> Verify -> Evidence -> Alert -> DONE`
@@ -109,3 +109,32 @@ Verified on HOCUONG:
 Golden smoke completed all six controls. Temporary smoke project/finding state was restored after verification.
 
 Gate: **DAILY_FINAL_READY**
+
+
+## DESKTOP WATCH — Real window monitoring + auto command
+
+Status: **DESKTOP_WATCH_READY**
+
+Desktop Watch now supports:
+
+- real visible Windows window discovery
+- per-window screenshot SHA256 fingerprint
+- ChatGPT exact-target response fingerprint
+- ACTIVE / IDLE / STUCK / BUSY / OFFLINE / SENT states
+- configurable interval, stuck threshold and cooldown
+- exact AutoChat dispatch only through registered alias + conversation ID
+- one send per stuck epoch
+- Windows tray notification
+- Start / Stop / Run Once / Remove controls
+
+HOCUONG acceptance:
+- native window: `ACTIVE -> STUCK`, no unsafe send
+- background engine: automatic state update PASS
+- exact VISUAL chat: `ACTIVE -> SENT`
+- exact send post-verify: PASS with real message ID
+- temporary QA watchers: removed
+
+Recommended first rule:
+`ChatGPT Exact / 60s / stuck 300s / cooldown 600s / iMaster next / Auto Send ON`
+
+See: `docs/DESKTOP-WATCH-2026-10-04.md`

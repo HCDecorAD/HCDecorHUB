@@ -14,6 +14,7 @@
     <button class="nav" data-tab="evidence">▤ Evidence</button>
     <button class="nav" data-tab="findings">⚠ Findings</button>
     <button class="nav" data-tab="logs">☷ Logs</button>
+    <button class="nav" data-tab="watch">◉ Desktop Watch</button>
     <div class="sidebar-spacer"></div>
     <div class="system-mini"><span>● SENTINEL_READY</span><small>LOCAL · v1.2.0</small></div>
   </aside>
@@ -82,6 +83,7 @@
         <button class="tab-btn" data-tab="findings">Findings</button>
         <button class="tab-btn" data-tab="logs">Logs</button>
         <button class="tab-btn" data-tab="repairs">Repair Queue</button>
+        <button class="tab-btn" data-tab="watch">Desktop Watch</button>
       </div>
       <div class="tab-body active" id="tab-evidence">
         <div class="panel-head"><span>Latest evidence</span><button id="refreshEvidence">Refresh</button></div>
@@ -98,6 +100,48 @@
       <div class="tab-body" id="tab-repairs">
         <div class="panel-head"><span>Repair queue</span><button id="refreshRepairs">Refresh</button></div>
         <div id="repairList" class="listbox"><span class="muted">No repair jobs</span></div>
+      </div>
+      <div class="tab-body" id="tab-watch">
+        <div class="watch-builder">
+          <div class="watch-head">
+            <div><b>Desktop Watch</b><small>Watch → detect stuck → exact auto command</small></div>
+            <button id="refreshWatchSources">↻ Sources</button>
+          </div>
+          <div class="watch-grid">
+            <label>Mode
+              <select id="watchSourceType">
+                <option value="CHATGPT">ChatGPT Exact</option>
+                <option value="WINDOW">Windows Window</option>
+              </select>
+            </label>
+            <label>Source
+              <select id="watchSourceSelect"></select>
+            </label>
+            <label>Dispatch Chat
+              <select id="watchDispatchAlias"></select>
+            </label>
+            <label>Interval (sec)
+              <input id="watchInterval" type="number" min="5" value="60">
+            </label>
+            <label>Stuck after (sec)
+              <input id="watchStuck" type="number" min="15" value="300">
+            </label>
+            <label>Cooldown (sec)
+              <input id="watchCooldown" type="number" min="30" value="600">
+            </label>
+            <label class="watch-command">Command
+              <input id="watchCommand" value="iMaster next">
+            </label>
+            <label class="checkline"><input id="watchAutoSend" type="checkbox" checked> Auto Send</label>
+            <label class="checkline"><input id="watchStopDone" type="checkbox"> Stop on DONE</label>
+          </div>
+          <div class="watch-actions">
+            <span id="watchFormStatus" class="muted">Exact chat only for auto-send. Native window mode is fail-closed.</span>
+            <button id="saveWatch" class="primary">＋ Add Watch</button>
+          </div>
+        </div>
+        <div class="panel-head watch-list-head"><span>Active watches</span><button id="refreshWatchers">Refresh</button></div>
+        <div id="watchList" class="watch-list"><span class="muted">No watches</span></div>
       </div>
     </section>
   </main>

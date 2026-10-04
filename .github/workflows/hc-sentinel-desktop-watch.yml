@@ -1,0 +1,36 @@
+name: HC Sentinel Desktop Watch
+
+on:
+  push:
+    branches: [hc-sentinel-desktop-watch]
+    paths:
+      - "HC_Sentinel/**"
+      - ".github/workflows/hc-sentinel-desktop-watch.yml"
+  workflow_dispatch:
+
+jobs:
+  desktop-watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: HC_Sentinel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Full Regression
+        run: npm test
+      - name: Desktop Watch UI Contract
+        run: |
+          grep -q 'id="watchSourceType"' ui/index.html
+          grep -q 'id="watchSourceSelect"' ui/index.html
+          grep -q 'id="watchDispatchAlias"' ui/index.html
+          grep -q 'id="saveWatch"' ui/index.html
+      - name: Safety Contract
+        run: |
+          grep -q 'STOP_ALL_ACTIVE' runtime/autochat-bridge.py
+          grep -q 'CHAT_ALIAS_NOT_REGISTERED' runtime/autochat-bridge.py
+          grep -q 'LiveTransaction' runtime/autochat-bridge.py
+          grep -q 'PrintWindow' runtime/capture-window.ps1

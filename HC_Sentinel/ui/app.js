@@ -40,6 +40,98 @@ async function loadEvidence(){const el=document.getElementById("evidenceList");t
 async function loadFindings(){const el=document.getElementById("findingList");try{const x=await api("/api/findings");renderList(el,x.items||[],i=>`${i.projectId??"-"} · ${i.state??"UNKNOWN"} · ${i.kind??i.id}`);}catch{el.textContent="Findings unavailable";}}
 async function loadLogs(){const el=document.getElementById("logList");try{const x=await api("/api/logs?limit=100");renderList(el,x.items||[],i=>`${i.level??"info"} · ${i.type??"log"} · ${i.message??""}`);}catch{el.textContent="Logs unavailable";}}
 async function loadRepairs(){const el=document.getElementById("repairList");try{const x=await api("/api/repairs");renderList(el,x.items||[],i=>`${i.state} · ${i.projectId} · ${i.kind} · ${i.id}`);}catch{el.textContent="Repair queue unavailable";}}
+
+let desktopSources={windows:[],chats:[]};
+
+async function loadWatchSources(){
+  const status=document.getElementById("watchFormStatus");
+  try{
+    const [w,c]=await Promise.all([api("/api/windows"),api("/api/chat-targets")]);
+    desktopSources={windows:w.items||[],chats:c.items||[]};
+    const dispatch=document.getElementById("watchDispatchAlias");
+    dispatch.innerHTML='<option value="">— Alert only —</option>';
+    for(const x of desktopSources.chats){
+      const o=document.createElement("option");o.value=x.alias;o.textContent=`${x.alias}${x.enabled?"":" (disabled)"}`;dispatch.appendChild(o);
+    }
+    renderWatchSourceOptions();
+    status.textContent=`${desktopSources.windows.length} windows · ${desktopSources.chats.length} exact chats`;
+  }catch(e){status.textContent="Source discovery BLOCKED: "+String(e.message||e);}
+}
+function renderWatchSourceOptions(){
+  const type=document.getElementById("watchSourceType").value;
+  const sel=document.getElementById("watchSourceSelect");sel.innerHTML="";
+  if(type==="CHATGPT"){
+    for(const x of desktopSources.chats){
+      const o=document.createElement("option");o.value=x.alias;o.textContent=`${x.alias} · ${x.title||x.conversation_id}`;sel.appendChild(o);
+    }
+    const d=document.getElementById("watchDispatchAlias");if(sel.value)d.value=sel.value;
+  }else{
+    for(const x of desktopSources.windows){
+      const o=document.createElement("option");o.value=String(x.hwnd);o.textContent=`${x.processName} · ${x.title}`;o.dataset.process=x.processName;o.dataset.title=x.title;sel.appendChild(o);
+    }
+  }
+}
+async function saveWatch(){
+  const type=document.getElementById("watchSourceType").value;
+  const source=document.getElementById("watchSourceSelect");
+  const selected=source.options[source.selectedIndex];
+  if(!selected){document.getElementById("watchFormStatus").textContent="Chưa chọn source.";return;}
+  const autoSend=document.getElementById("watchAutoSend").checked;
+  let dispatchAlias=document.getElementById("watchDispatchAlias").value;
+  const payload={
+    name:selected.textContent,
+    sourceType:type,
+    intervalSec:Number(document.getElementById("watchInterval").value||60),
+    stuckSec:Number(document.getElementById("watchStuck").value||300),
+    cooldownSec:Number(document.getElementById("watchCooldown").value||600),
+    command:document.getElementById("watchCommand").value.trim()||"iMaster next",
+    autoSend,
+    dispatchAlias:dispatchAlias||null,
+    stopOnDone:document.getElementById("watchStopDone").checked,
+    donePatterns:["DONE"],
+    enabled:false
+  };
+  if(type==="CHATGPT"){
+    payload.chatAlias=source.value;
+    if(autoSend&&!payload.dispatchAlias)payload.dispatchAlias=source.value;
+  }else{
+    payload.processName=selected.dataset.process;
+    payload.titleContains=selected.dataset.title;
+  }
+  try{
+    const r=await api("/api/watchers",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});
+    document.getElementById("watchFormStatus").textContent=`SAVED · ${r.watch.id} · bấm Start để arm`;
+    await loadWatchers();
+  }catch(e){document.getElementById("watchFormStatus").textContent="BLOCKED: "+String(e.message||e);}
+}
+async function watcherAction(id,op){
+  try{
+    const r=await api(`/api/watchers/${encodeURIComponent(id)}/${op}`,{method:"POST"});
+    if(op==="tick"&&r.result)document.getElementById("watchFormStatus").textContent=`${id} → ${r.result.state}${r.result.sent?" · SENT":""}`;
+    await loadWatchers();
+  }catch(e){document.getElementById("watchFormStatus").textContent="BLOCKED: "+String(e.message||e);}
+}
+async function loadWatchers(){
+  const el=document.getElementById("watchList");if(!el)return;
+  try{
+    const x=await api("/api/watchers"),items=x.items||[];el.innerHTML="";
+    if(!items.length){el.innerHTML='<span class="muted">No watches</span>';return;}
+    for(const w of items.slice().reverse()){
+      const row=document.createElement("div");row.className="watch-row";
+      const info=document.createElement("div");info.className="watch-info";
+      const title=document.createElement("b");title.textContent=w.name||w.id;
+      const meta=document.createElement("small");meta.textContent=`${w.sourceType} · ${w.intervalSec}s · stuck ${w.stuckSec}s · ${w.autoSend?"AUTO":"ALERT"}`;
+      info.append(title,meta);
+      const state=document.createElement("span");state.className="watch-state";state.dataset.state=w.runtime?.state|| (w.enabled?"ARMED":"STOPPED");state.textContent=w.runtime?.state|| (w.enabled?"ARMED":"STOPPED");
+      const actions=document.createElement("div");actions.className="watch-row-actions";
+      for(const [op,label] of [["start","Start"],["stop","Stop"],["tick","Run Once"],["remove","Remove"]]){
+        const b=document.createElement("button");b.textContent=label;b.onclick=()=>watcherAction(w.id,op);actions.appendChild(b);
+      }
+      row.append(info,state,actions);el.appendChild(row);
+    }
+  }catch(e){el.textContent="Watch list unavailable";}
+}
+
 async function loadProjects(){
   try{
     const x=await api("/api/projects"), current=projectSelect.value;
@@ -78,9 +170,14 @@ document.getElementById("refreshEvidence").onclick=loadEvidence;
 document.getElementById("refreshFindings").onclick=loadFindings;
 document.getElementById("refreshLogs").onclick=loadLogs;
 document.getElementById("refreshRepairs").onclick=loadRepairs;
+document.getElementById("refreshWatchSources").onclick=loadWatchSources;
+document.getElementById("refreshWatchers").onclick=loadWatchers;
+document.getElementById("watchSourceType").onchange=renderWatchSourceOptions;
+document.getElementById("watchSourceSelect").onchange=()=>{if(document.getElementById("watchSourceType").value==="CHATGPT")document.getElementById("watchDispatchAlias").value=document.getElementById("watchSourceSelect").value;};
+document.getElementById("saveWatch").onclick=saveWatch;
 document.getElementById("themeToggle").onclick=async()=>{const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;localStorage.setItem("hc-sentinel-theme",next);try{await api("/api/settings",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({theme:next})});}catch{}};
 document.getElementById("toggleSidebar").onclick=()=>document.getElementById("sidebar").classList.toggle("collapsed");
 document.getElementById("toggleOps").onclick=()=>document.getElementById("opsDrawer").classList.toggle("open");
 document.getElementById("closeOps").onclick=()=>document.getElementById("opsDrawer").classList.remove("open");
 
-(async()=>{try{const s=await api("/api/status");setStatus(s.status??"READY");}catch{setStatus("OFFLINE");}await loadProjects();templateCommand();await Promise.allSettled([loadEvidence(),loadFindings(),loadLogs(),loadRepairs()]);})();
+(async()=>{try{const s=await api("/api/status");setStatus(s.status??"READY");}catch{setStatus("OFFLINE");}await loadProjects();templateCommand();await Promise.allSettled([loadEvidence(),loadFindings(),loadLogs(),loadRepairs(),loadWatchSources(),loadWatchers()]);})();
