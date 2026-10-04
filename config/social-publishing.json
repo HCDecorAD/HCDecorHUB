@@ -17,11 +17,13 @@
     },
     "youtube": {
       "config_state": "configured",
-      "live_health": "not_checked"
+      "live_health": "not_checked",
+      "channel_id": "UC5yfCYp8BJNIHbX1-VNXVig"
     },
     "facebook": {
-      "config_state": "pending",
-      "live_health": "not_checked"
+      "config_state": "configured",
+      "live_health": "not_checked",
+      "account_id": "223079764519203"
     }
   },
   "workflow": [
