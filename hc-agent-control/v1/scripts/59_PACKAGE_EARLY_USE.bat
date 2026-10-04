@@ -8,6 +8,7 @@ mkdir "%OUT%" || exit /b 60
 xcopy src "%OUT%\src\" /E /I /Y >nul || exit /b 61
 xcopy scripts "%OUT%\scripts\" /E /I /Y >nul || exit /b 62
 xcopy docs "%OUT%\docs\" /E /I /Y >nul 2>nul
+xcopy tests "%OUT%\tests\" /E /I /Y >nul || exit /b 63
 mkdir "%OUT%\data" 2>nul
 mkdir "%OUT%\logs" 2>nul
 mkdir "%OUT%\runtime" 2>nul
