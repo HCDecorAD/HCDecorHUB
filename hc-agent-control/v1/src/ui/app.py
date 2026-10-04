@@ -24,19 +24,77 @@ class AutoChatApp(tk.Tk):
   self.registry=ChatRegistry(ROOT/"data"/"chats.json");self.queue=CommandQueue(ROOT/"data"/"queue.json");self.discovery=CDPDiscovery();self.live=LiveStatusTracker();self.transitions=TransitionTracker();self.alerts=AlertTracker()
   self.status=tk.StringVar(value="SAFE · SEND OFF");self.alias=tk.StringVar(value="MASTER");self.command=tk.StringVar(value="/auto");self.theme=tk.StringVar(value=self.settings.get("theme","system"));self.pages=[];self.refresh_job=None;self.queue_filter=tk.StringVar(value="ALL");self._build();self.apply_theme();self.refresh();self.after(300,self.maybe_first_run);self.schedule_refresh()
  def _build(self):
-  top=ttk.Frame(self,padding=12);top.pack(fill="x");ttk.Label(top,text="HC HUB  /  AUTOCHAT",style="Hero.TLabel").pack(side="left")
-  ttk.Combobox(top,textvariable=self.theme,values=("system","dark","light"),width=9,state="readonly").pack(side="right",padx=8);ttk.Button(top,text="Theme",command=self.apply_theme).pack(side="right");ttk.Label(top,textvariable=self.status).pack(side="right",padx=12)
-  body=ttk.Panedwindow(self,orient="horizontal");body.pack(fill="both",expand=True,padx=12,pady=(0,12));left=ttk.Frame(body,padding=10);right=ttk.Frame(body,padding=10);body.add(left,weight=2);body.add(right,weight=3)
-  ttk.Label(left,text="AGENTS & CHATS",style="Section.TLabel").pack(anchor="w");self.tree=ttk.Treeview(left,columns=("alias","status","id","title"),show="headings",height=15)
-  for c,t in (("alias","Alias"),("status","Status"),("id","Conversation"),("title","Title")):self.tree.heading(c,text=t)
+  top=ttk.Frame(self,padding=(16,12,16,8));top.pack(fill="x")
+  brand=ttk.Frame(top);brand.pack(side="left")
+  ttk.Label(brand,text="iMaster",style="Brand.TLabel").pack(side="left")
+  ttk.Label(brand,text="  Chat Control",style="Hero.TLabel").pack(side="left")
+  ttk.Label(top,textvariable=self.status,style="Status.TLabel").pack(side="right",padx=12)
+
+  self.tabs=ttk.Notebook(self);self.tabs.pack(fill="both",expand=True,padx=12,pady=(0,12))
+  chat_tab=ttk.Frame(self.tabs,padding=12);self.tabs.add(chat_tab,text="Chat Control")
+  queue_tab=ttk.Frame(self.tabs,padding=12);self.tabs.add(queue_tab,text="Queue")
+  activity_tab=ttk.Frame(self.tabs,padding=12);self.tabs.add(activity_tab,text="Activity")
+  settings_tab=ttk.Frame(self.tabs,padding=12);self.tabs.add(settings_tab,text="Settings")
+
+  body=ttk.Panedwindow(chat_tab,orient="horizontal");body.pack(fill="both",expand=True)
+  left=ttk.Frame(body,padding=10);right=ttk.Frame(body,padding=10);body.add(left,weight=2);body.add(right,weight=3)
+
+  ttk.Label(left,text="CHATS OPEN",style="Section.TLabel").pack(anchor="w")
+  ttk.Label(left,text="Chọn chat đang mở, gắn alias và theo dõi trạng thái.",style="Hint.TLabel").pack(anchor="w",pady=(0,8))
+  self.tree=ttk.Treeview(left,columns=("alias","status","id","title"),show="headings",height=15)
+  for c,t in (("alias","Alias"),("status","Status"),("id","Conversation"),("title","Title")): self.tree.heading(c,text=t)
   self.tree.pack(fill="both",expand=True,pady=8)
-  bar=ttk.Frame(left);bar.pack(fill="x");ttk.Button(bar,text="Refresh",command=self.refresh).pack(side="left");ttk.Button(bar,text="Bind",command=self.bind_selected).pack(side="left",padx=4);ttk.Button(bar,text="Unbind",command=self.unbind).pack(side="left");ttk.Button(bar,text="Open Chat",command=self.open_chat).pack(side="left",padx=4);ttk.Button(bar,text="Pause/Resume",command=self.toggle_pause).pack(side="left",padx=4);ttk.Button(bar,text="Resume All",command=self.resume_all).pack(side="right",padx=4);ttk.Button(bar,text="STOP ALL",command=self.stop_all,style="Danger.TButton").pack(side="right")
-  ttk.Label(right,text="COMMAND CENTER",style="Section.TLabel").pack(anchor="w");row=ttk.Frame(right);row.pack(fill="x",pady=8);ttk.Combobox(row,textvariable=self.alias,values=("MASTER","GSC","VISUAL","VIDEO","WORKER-01"),width=16,state="readonly").pack(side="left");ttk.Entry(row,textvariable=self.command).pack(side="left",fill="x",expand=True,padx=8);ttk.Button(row,text="NEW + SEND",command=self.public_new,style="Accent.TButton").pack(side="right");ttk.Button(row,text="DRY RUN",command=self.dry_run).pack(side="right",padx=(0,6))
-  quick=ttk.Frame(right);quick.pack(fill="x")
-  for v in ("/auto","Tiếp tục","Kiểm tra tiến độ"):ttk.Button(quick,text=v,command=lambda x=v:self.command.set(x)).pack(side="left",padx=(0,6))
-  ttk.Button(quick,text="Copy CID",command=self.copy_cid).pack(side="right");ttk.Button(quick,text="Hướng dẫn",command=self.show_help).pack(side="right",padx=6);ttk.Button(quick,text="Health",command=self.health).pack(side="right")
-  qh=ttk.Frame(right);qh.pack(fill="x",pady=(14,4));ttk.Label(qh,text="Queue",font=("Segoe UI",12,"bold")).pack(side="left");ttk.Combobox(qh,textvariable=self.queue_filter,values=("ALL","READY","RETRY","RUNNING","PASS","FAILED","CANCELLED"),width=11,state="readonly").pack(side="right");ttk.Button(qh,text="Filter",command=self.refresh).pack(side="right",padx=4);self.qtree=ttk.Treeview(right,columns=("alias","state","text"),show="headings",height=6);self.qtree.heading("alias",text="Alias");self.qtree.heading("state",text="State");self.qtree.heading("text",text="Command");self.qtree.pack(fill="x");qbar=ttk.Frame(right);qbar.pack(fill="x",pady=(4,0));ttk.Button(qbar,text="Retry",command=self.retry_queue).pack(side="left");ttk.Button(qbar,text="Cancel",command=self.cancel_queue).pack(side="left",padx=4);ttk.Button(qbar,text="Clear Completed",command=self.clear_completed).pack(side="left")
-  ttk.Label(right,text="ACTIVITY",style="Section.TLabel").pack(anchor="w",pady=(12,6));self.log=tk.Text(right,height=14,state="disabled");self.log.pack(fill="both",expand=True)
+  bar=ttk.Frame(left);bar.pack(fill="x")
+  ttk.Button(bar,text="Refresh / Watch",command=self.refresh).pack(side="left")
+  ttk.Button(bar,text="Bind Alias",command=self.bind_selected).pack(side="left",padx=4)
+  ttk.Button(bar,text="Open Chat",command=self.open_chat).pack(side="left",padx=4)
+  ttk.Button(bar,text="Pause",command=self.toggle_pause).pack(side="left",padx=4)
+
+  ttk.Label(right,text="SEND COMMAND",style="Section.TLabel").pack(anchor="w")
+  ttk.Label(right,text="Chọn alias → nhập lệnh → gửi → verify.",style="Hint.TLabel").pack(anchor="w",pady=(0,10))
+  row=ttk.Frame(right);row.pack(fill="x",pady=8)
+  ttk.Combobox(row,textvariable=self.alias,values=("MASTER","GSC","VISUAL","VIDEO","WORKER-01"),width=16,state="readonly").pack(side="left")
+  ttk.Entry(row,textvariable=self.command).pack(side="left",fill="x",expand=True,padx=8)
+  ttk.Button(row,text="SEND",command=self.public_new,style="Accent.TButton").pack(side="right")
+
+  quick=ttk.LabelFrame(right,text="Quick commands",padding=10);quick.pack(fill="x",pady=(10,8))
+  for v in ("iMaster next","/auto","Tiếp tục","Kiểm tra tiến độ"):
+   ttk.Button(quick,text=v,command=lambda x=v:self.command.set(x)).pack(side="left",padx=(0,6))
+
+  auto=ttk.LabelFrame(right,text="Auto Control",padding=10);auto.pack(fill="x",pady=(10,8))
+  ttk.Button(auto,text="Dry Run",command=self.dry_run).pack(side="left")
+  ttk.Button(auto,text="Resume All",command=self.resume_all).pack(side="left",padx=6)
+  ttk.Button(auto,text="STOP ALL",command=self.stop_all,style="Danger.TButton").pack(side="right")
+
+  tools=ttk.Frame(right);tools.pack(fill="x",pady=(8,0))
+  ttk.Button(tools,text="Health",command=self.health).pack(side="left")
+  ttk.Button(tools,text="Copy CID",command=self.copy_cid).pack(side="left",padx=6)
+  ttk.Button(tools,text="Help",command=self.show_help).pack(side="left")
+  ttk.Button(tools,text="Unbind",command=self.unbind).pack(side="right")
+
+  qh=ttk.Frame(queue_tab);qh.pack(fill="x",pady=(0,8))
+  ttk.Label(qh,text="QUEUE",style="Section.TLabel").pack(side="left")
+  ttk.Combobox(qh,textvariable=self.queue_filter,values=("ALL","READY","RETRY","RUNNING","PASS","FAILED","CANCELLED"),width=11,state="readonly").pack(side="right")
+  ttk.Button(qh,text="Filter",command=self.refresh).pack(side="right",padx=4)
+  self.qtree=ttk.Treeview(queue_tab,columns=("alias","state","text"),show="headings",height=14)
+  self.qtree.heading("alias",text="Alias");self.qtree.heading("state",text="State");self.qtree.heading("text",text="Command")
+  self.qtree.pack(fill="both",expand=True)
+  qbar=ttk.Frame(queue_tab);qbar.pack(fill="x",pady=8)
+  ttk.Button(qbar,text="Retry",command=self.retry_queue).pack(side="left")
+  ttk.Button(qbar,text="Cancel",command=self.cancel_queue).pack(side="left",padx=4)
+  ttk.Button(qbar,text="Clear Completed",command=self.clear_completed).pack(side="left")
+
+  ttk.Label(activity_tab,text="ACTIVITY",style="Section.TLabel").pack(anchor="w")
+  ttk.Label(activity_tab,text="Runtime log được tách riêng để giao diện chính luôn sạch.",style="Hint.TLabel").pack(anchor="w",pady=(0,8))
+  self.log=tk.Text(activity_tab,height=14,state="disabled");self.log.pack(fill="both",expand=True)
+
+  ttk.Label(settings_tab,text="SETTINGS",style="Section.TLabel").pack(anchor="w")
+  ttk.Label(settings_tab,text="Giao diện chỉ giữ chức năng cần thiết; Send vẫn fail-closed.",style="Hint.TLabel").pack(anchor="w",pady=(0,16))
+  th=ttk.Frame(settings_tab);th.pack(anchor="w")
+  ttk.Label(th,text="Theme").pack(side="left")
+  ttk.Combobox(th,textvariable=self.theme,values=("system","dark","light"),width=12,state="readonly").pack(side="left",padx=8)
+  ttk.Button(th,text="Apply Theme",command=self.apply_theme).pack(side="left")
+
  def health(self):
   try:
    pages=self.discovery.pages();self.write_log("HEALTH OK");messagebox.showinfo("HC AutoChat Health","AutoChat READY\nCDP ONLINE\nPages: "+str(len(pages))+"\nSafety: FAIL-CLOSED")
@@ -79,7 +137,37 @@ class AutoChatApp(tk.Tk):
   self.settings.set("window_geometry",self.geometry());self.instance.release();self.destroy()
  def write_log(self,s):self.log.configure(state="normal");self.log.insert("end",datetime.datetime.now().strftime("%H:%M:%S")+"  "+s+"\n");self.log.see("end");self.log.configure(state="disabled")
  def apply_theme(self):
-  name,p=resolve_theme(self.theme.get(),system_dark=True);self.settings.set("theme",self.theme.get());self.configure(bg=p["bg"]);self.option_add("*TCombobox*Listbox.background",p["bg"]);self.option_add("*TCombobox*Listbox.foreground",p["fg"]);st=ttk.Style(self);st.theme_use("clam");panel="#151c25" if name=="dark" else "#ffffff";muted="#94a3b8" if name=="dark" else "#475569";accent="#d5a84b";danger="#b91c1c";st.configure(".",background=p["bg"],foreground=p["fg"],font=("Segoe UI",10));st.configure("TFrame",background=p["bg"]);st.configure("TLabel",background=p["bg"],foreground=p["fg"]);st.configure("Hero.TLabel",font=("Segoe UI Semibold",22),foreground=accent);st.configure("Section.TLabel",font=("Segoe UI Semibold",11),foreground=muted);st.configure("TButton",padding=(10,7),background=panel,foreground=p["fg"],borderwidth=0);st.map("TButton",background=[("active","#243041" if name=="dark" else "#e8edf3")]);st.configure("Accent.TButton",background=accent,foreground="#111318",font=("Segoe UI Semibold",10));st.configure("Danger.TButton",background=danger,foreground="#ffffff",font=("Segoe UI Semibold",10));st.configure("Treeview",background=panel,fieldbackground=panel,foreground=p["fg"],rowheight=30,borderwidth=0);st.configure("Treeview.Heading",background=p["bg"],foreground=muted,font=("Segoe UI Semibold",9),borderwidth=0);st.configure("TEntry",fieldbackground=panel,foreground=p["fg"]);st.configure("TCombobox",fieldbackground=panel,background=panel,foreground=p["fg"]);self.log.configure(bg=panel,fg=p["fg"],insertbackground=p["fg"],relief="flat",padx=10,pady=8);self.write_log("THEME "+name) if hasattr(self,"log") else None
+  name,p=resolve_theme(self.theme.get(),system_dark=True);self.settings.set("theme",self.theme.get())
+  self.configure(bg=p["bg"]);self.option_add("*TCombobox*Listbox.background",p["bg"]);self.option_add("*TCombobox*Listbox.foreground",p["fg"])
+  st=ttk.Style(self);st.theme_use("clam")
+  panel="#151c25" if name=="dark" else "#ffffff"
+  muted="#94a3b8" if name=="dark" else "#475569"
+  hover="#243041" if name=="dark" else "#e8edf3"
+  brand="#e53935";accent="#e53935";danger="#b91c1c"
+  st.configure(".",background=p["bg"],foreground=p["fg"],font=("Segoe UI",10))
+  st.configure("TFrame",background=p["bg"]);st.configure("TLabel",background=p["bg"],foreground=p["fg"])
+  st.configure("Brand.TLabel",font=("Segoe UI Semibold",22),foreground=brand)
+  st.configure("Hero.TLabel",font=("Segoe UI Semibold",22),foreground=p["fg"])
+  st.configure("Section.TLabel",font=("Segoe UI Semibold",11),foreground=muted)
+  st.configure("Hint.TLabel",font=("Segoe UI",9),foreground=muted)
+  st.configure("Status.TLabel",font=("Segoe UI Semibold",9),foreground=muted)
+  st.configure("TNotebook",background=p["bg"],borderwidth=0)
+  st.configure("TNotebook.Tab",padding=(16,9),background=panel,foreground=muted,borderwidth=0)
+  st.map("TNotebook.Tab",background=[("selected",hover)],foreground=[("selected",p["fg"])])
+  st.configure("TLabelframe",background=p["bg"],foreground=muted)
+  st.configure("TLabelframe.Label",background=p["bg"],foreground=muted,font=("Segoe UI Semibold",9))
+  st.configure("TButton",padding=(10,7),background=panel,foreground=p["fg"],borderwidth=0)
+  st.map("TButton",background=[("active",hover)])
+  st.configure("Accent.TButton",background=accent,foreground="#ffffff",font=("Segoe UI Semibold",10))
+  st.map("Accent.TButton",background=[("active","#c62828")])
+  st.configure("Danger.TButton",background=danger,foreground="#ffffff",font=("Segoe UI Semibold",10))
+  st.configure("Treeview",background=panel,fieldbackground=panel,foreground=p["fg"],rowheight=30,borderwidth=0)
+  st.configure("Treeview.Heading",background=p["bg"],foreground=muted,font=("Segoe UI Semibold",9),borderwidth=0)
+  st.configure("TEntry",fieldbackground=panel,foreground=p["fg"]);st.configure("TCombobox",fieldbackground=panel,background=panel,foreground=p["fg"])
+  if hasattr(self,"log"):
+   self.log.configure(bg=panel,fg=p["fg"],insertbackground=p["fg"],relief="flat",padx=10,pady=8)
+   self.write_log("THEME "+name)
+
  def refresh(self):
   self.tree.delete(*self.tree.get_children());self.qtree.delete(*self.qtree.get_children())
   items=self.queue.items if self.queue_filter.get()=="ALL" else [x for x in self.queue.items if x.get("state")==self.queue_filter.get()]

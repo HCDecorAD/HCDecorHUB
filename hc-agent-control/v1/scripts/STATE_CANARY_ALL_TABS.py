@@ -1,3 +1,6 @@
+import pathlib,sys
+_ROOT=pathlib.Path(__file__).resolve().parents[1]
+if str(_ROOT) not in sys.path: sys.path.insert(0,str(_ROOT))
 import json,time,pathlib,uiautomation as a
 from src.adapters.uia_tab_inspector import clean_title
 from src.adapters.live_identity import CID
