@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "skill_id": "imaster.advisor-research",
+  "name": "Advisor Research / Quân sư",
+  "owner": "iMaster",
+  "scope": "global",
+  "autoload": true,
+  "activation": {
+    "mode": "automatic",
+    "conditions": [
+      "task is difficult, blocked, unfamiliar, high-impact, or external/current knowledge materially improves the result",
+      "before declaring TOOL_MISSING or HARD_BLOCKED"
+    ]
+  },
+  "strategy": {
+    "first": "reuse installed plugin/connector/capability matching the need",
+    "second": "official documentation and authoritative web sources",
+    "third": "trusted open-source/reference implementations",
+    "pattern": "7x7 advisor matrix, up to 49 useful independent evidence/advisor slots; stop early when evidence converges and more sources add no material value",
+    "acquire": "reuse -> install/connect with owner action when required -> adapt -> isolated verify -> execute"
+  },
+  "safety": [
+    "NEVER_LOWER_SECURITY_TO_GET_DONE",
+    "VERIFY_AUTHORITY_LICENSE_AND_PROVENANCE",
+    "NO_UNVERIFIED_CODE_TO_PRODUCTION",
+    "PRODUCTION_WRITES_FAIL_CLOSED"
+  ],
+  "outputs": [
+    "research_brief",
+    "candidate_capabilities",
+    "recommended_route",
+    "evidence_refs"
+  ],
+  "evidence_gate": "scripts/imaster-skills.test.mjs"
+}
