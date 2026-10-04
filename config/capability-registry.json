@@ -404,6 +404,30 @@
       "cost_class": "low",
       "production_write": false,
       "fail_closed": true
+    },
+    {
+      "capability_id": "imaster.local-first-execution",
+      "provider_tool": "hcdr",
+      "inputs": [
+        "task",
+        "workspace",
+        "local_context"
+      ],
+      "outputs": [
+        "local_result",
+        "evidence",
+        "git_handoff"
+      ],
+      "risk_class": "local-execution",
+      "gate": "iMaster local-first skill gate",
+      "cost_class": "low",
+      "production_write": false,
+      "fail_closed": true,
+      "activation": "DEFAULT_FOR_CODE_DEBUG_BUILD_TEST",
+      "transport_priority": [
+        "HCDR",
+        "RDC_RESCUE_ONLY"
+      ]
     }
   ]
 }
