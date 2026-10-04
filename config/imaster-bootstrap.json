@@ -11,6 +11,7 @@
     "config/site-registry.json",
     "config/imaster-all-phase-freeze.json",
     "config/imaster-capability-acquisition.json",
+    "config/imaster-skills/parallel-execution.json",
     "docs/HC-GROUP-MASTER-REGISTRY.md"
   ],
   "identity": {
@@ -26,7 +27,8 @@
     "TOOL_MISSING_IS_NOT_TERMINAL",
     "DISCOVER_BEFORE_CREATE",
     "PRODUCTION_WRITES_FAIL_CLOSED",
-    "NEVER_MIX_WORKSPACES"
+    "NEVER_MIX_WORKSPACES",
+    "PARALLEL_READY_WORK_BY_DEFAULT"
   ],
   "startup_checks": [
     "load portfolio and repositories",
@@ -55,5 +57,9 @@
       "real visual diff Reference vs HC runtime"
     ]
   },
-  "new_chat_rule": "A new chat must bootstrap from this contract before declaring a capability/project missing or starting replacement work."
+  "new_chat_rule": "A new chat must bootstrap from this contract before declaring a capability/project missing or starting replacement work.",
+  "skill_autoload": [
+    "config/imaster-skills/parallel-execution.json"
+  ],
+  "parallel_execution_rule": "When >=2 independent tasks are READY and safe capacity exists, Capability Router MUST prefer imaster.parallel-execution over serial execution."
 }
