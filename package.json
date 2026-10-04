@@ -67,7 +67,8 @@
     "test:imaster-local-first": "node scripts/imaster-local-first-skill.test.mjs",
     "test:imaster-global-authority": "node scripts/imaster-global-authority.test.mjs",
     "test:trend-opportunity": "node scripts/trend-opportunity.test.mjs",
-    "test:trend-outlier": "node scripts/trend-outlier-scanner.test.mjs"
+    "test:trend-outlier": "node scripts/trend-outlier-scanner.test.mjs",
+    "test:content-factory": "node scripts/content-factory.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
