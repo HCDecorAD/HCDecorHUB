@@ -5,67 +5,124 @@
 <title>HC Sentinel</title><link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-<div class="app">
-  <aside class="sidebar">
-    <div class="brand"><div class="logo">◆</div><div><h1>HC Sentinel</h1><small>Autonomous Visual Operations</small></div></div>
-    <nav>
-      <button class="nav active">⌂ <span>Command Center</span></button>
-      <button class="nav">▣ <span>Projects</span></button>
-      <button class="nav">▦ <span>Baselines</span></button>
-      <button class="nav">⌁ <span>Repair Bridge</span></button>
-      <button class="nav">▤ <span>Evidence</span></button>
-      <button class="nav">⚠ <span>Findings</span></button>
-      <button class="nav">♙ <span>Workers</span></button>
-      <button class="nav">☷ <span>Logs</span></button>\n      <button class="nav">⚙ <span>Settings</span></button>
-    </nav>
-    <div class="system-card"><b>● System Operational</b><div>Runtime <strong>LOCAL</strong></div><div>Mode <strong>APP_READY</strong></div></div>
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="logo">◆</div><div><h1>HC Sentinel</h1><small>Command Control</small></div></div>
+    <button class="nav active">⌂ Command Center</button>
+    <button class="nav" id="openProjects">▣ Projects</button>
+    <button class="nav" data-tab="evidence">▤ Evidence</button>
+    <button class="nav" data-tab="findings">⚠ Findings</button>
+    <button class="nav" data-tab="logs">☷ Logs</button>
+    <div class="sidebar-spacer"></div>
+    <div class="system-mini"><span>● SENTINEL_READY</span><small>LOCAL · v1.2.0</small></div>
   </aside>
-  <main>
+
+  <main class="workspace">
     <header class="topbar">
-      <input class="search" placeholder="Search projects, baselines, evidence...">
-      <div class="status">● SENTINEL_READY</div>
-      <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">☀ / ◐</button>
+      <button id="toggleSidebar" class="icon-btn">☰</button>
+      <div>
+        <h2>Command Center</h2>
+        <p>Ra lệnh → chạy → xem kết quả → xử lý.</p>
+      </div>
+      <div class="top-actions">
+        <span id="missionStatus" class="status-pill">READY</span>
+        <button id="themeToggle" class="icon-btn">☀ / ◐</button>
+        <button id="toggleOps" class="icon-btn">☷</button>
+      </div>
     </header>
-    <section class="hero"><div><h2>Command Center</h2><p>Ra lệnh, quan sát, phát hiện, định tuyến, xác minh.</p></div></section>
-    <section class="command-card">
-      <input id="commandInput" placeholder="Ví dụ: Sentinel kiểm tra GSC mobile">
-      <div class="actions"><button class="primary" id="runNow">▶ Run Now</button><button id="compareNow">⇄ Compare</button><button id="verifyNow">◈ Verify</button><button id="repairNow">⌘ Route Repair</button><button id="toggleAddProject">＋ Add Project</button></div>
+
+    <section class="console">
+      <div class="command-row">
+        <select id="projectSelect" aria-label="Project">
+          <option value="gsc">GSC</option>
+          <option value="amo">AMO</option>
+        </select>
+        <select id="viewportSelect" aria-label="Viewport">
+          <option value="desktop">Desktop</option>
+          <option value="mobile">Mobile</option>
+        </select>
+        <input id="commandInput" value="Sentinel kiem tra GSC desktop" aria-label="Command">
+      </div>
+      <div class="action-row">
+        <button class="primary" id="runNow">▶ Run Now</button>
+        <button id="compareNow">⇄ Compare</button>
+        <button id="verifyNow">◇ Verify</button>
+        <button id="repairNow">⌘ Repair</button>
+        <button id="toggleAddProject">＋ Add Project</button>
+      </div>
     </section>
-    <section id="addProjectPanel" class="panel add-project" hidden>
-  <div class="panel-head"><h3>Add Project / Target</h3><span id="addProjectStatus" class="muted">Persistent local target</span></div>
-  <div class="project-form">
-    <input id="projectIdInput" placeholder="Project ID, e.g. demo">
-    <input id="projectNameInput" placeholder="Project name">
-    <input id="projectUrlInput" placeholder="https://example.com">
-    <button id="saveProject">Save Project</button>
-  </div>
-</section>
-<section class="project-grid">
-      <article><h3>GSC</h3><span class="chip ok">HEALTHY</span><p>Public project target</p><div class="meter"><i style="width:98%"></i></div></article>
-      <article><h3>AMO</h3><span class="chip ok">HEALTHY</span><p>Commerce project target</p><div class="meter"><i style="width:96%"></i></div></article>
-      <article><h3>Creative Factory</h3><span class="chip ready">READY</span><p>Content & Creative</p><div class="meter"><i style="width:94%"></i></div></article>
-      <article><h3>Design AI Studio</h3><span class="chip ok">HEALTHY</span><p>AI Visual Design</p><div class="meter"><i style="width:97%"></i></div></article>
+
+    <section class="result-card">
+      <div class="result-head">
+        <div>
+          <small>LAST RESULT</small>
+          <h3 id="resultTitle">Ready for command</h3>
+        </div>
+        <span id="resultBadge" class="status-pill">READY</span>
+      </div>
+      <div class="result-grid">
+        <div><span>Project</span><b id="resultProject">—</b></div>
+        <div><span>Action</span><b id="resultAction">—</b></div>
+        <div><span>Viewport</span><b id="resultViewport">—</b></div>
+        <div><span>Evidence</span><b id="resultEvidence">—</b></div>
+      </div>
+      <div id="resultMessage" class="result-message">Chọn Project / Viewport hoặc nhập lệnh trực tiếp rồi chạy.</div>
     </section>
-    <section class="panel"><div class="panel-head"><h3>Milestones</h3><small><b class="blue">P15–P19</b> <b class="green">DONE</b> · <b class="blue">P20–P34</b> <b class="green">DONE</b> · <b class="blue">P35–P39</b> <b class="green">DONE</b> · <b class="blue">P40–P44</b> ACTIVE</small></div></section>
-    <section class="panel runtime">
-      <div class="panel-head"><h3>Mission Runtime</h3><span id="missionStatus" class="chip ready">READY</span></div>
-      <div class="flow"><span>◉ Observe</span><i>→</i><span>⌕ Detect</span><i>→</i><span>⌘ Route</span><i>→</i><span>◇ Verify</span><i>→</i><span class="green">⚑ DONE</span></div>
+
+    <section class="project-strip">
+      <button class="project-chip active" data-project="gsc">GSC <span>HEALTHY</span></button>
+      <button class="project-chip" data-project="amo">AMO <span>HEALTHY</span></button>
+      <button class="project-chip" id="addProjectQuick">＋</button>
     </section>
-    <section class="panel">
-      <div class="panel-head"><h3>Evidence Viewer</h3><button id="refreshEvidence">Refresh</button></div>
-      <div id="evidenceList" class="listbox"><span class="muted">No evidence loaded</span></div>
+
+    <section class="tabs">
+      <div class="tab-head">
+        <button class="tab-btn active" data-tab="evidence">Evidence</button>
+        <button class="tab-btn" data-tab="findings">Findings</button>
+        <button class="tab-btn" data-tab="logs">Logs</button>
+        <button class="tab-btn" data-tab="repairs">Repair Queue</button>
+      </div>
+      <div class="tab-body active" id="tab-evidence">
+        <div class="panel-head"><span>Latest evidence</span><button id="refreshEvidence">Refresh</button></div>
+        <div id="evidenceList" class="listbox"><span class="muted">No evidence loaded</span></div>
+      </div>
+      <div class="tab-body" id="tab-findings">
+        <div class="panel-head"><span>Current findings</span><button id="refreshFindings">Refresh</button></div>
+        <div id="findingList" class="listbox"><span class="muted">No findings</span></div>
+      </div>
+      <div class="tab-body" id="tab-logs">
+        <div class="panel-head"><span>Runtime logs</span><button id="refreshLogs">Refresh</button></div>
+        <div id="logList" class="listbox"><span class="muted">No logs</span></div>
+      </div>
+      <div class="tab-body" id="tab-repairs">
+        <div class="panel-head"><span>Repair queue</span><button id="refreshRepairs">Refresh</button></div>
+        <div id="repairList" class="listbox"><span class="muted">No repair jobs</span></div>
+      </div>
     </section>
-    <section class="panel">
-      <div class="panel-head"><h3>Finding Inbox</h3><button id="refreshFindings">Refresh</button></div>
-      <div id="findingList" class="listbox"><span class="muted">No findings loaded</span></div>
-    </section>
-    <section class="panel">\n      <div class="panel-head"><h3>Log Viewer</h3><button id="refreshLogs">Refresh</button></div>\n      <div id="logList" class="listbox"><span class="muted">No logs loaded</span></div>\n    </section>\n    <footer class="donebar"><b>✓ Full Regression</b><span>PASS — 0 FAIL</span><button>DONE</button></footer>
   </main>
-  <aside class="rightbar">
-    <section class="panel"><h3>Workers <small>3/3 Online</small></h3><p>● autodebug-ui <b>RUNNING</b></p><p>● visual-checker <b>RUNNING</b></p><p>● baseline-keeper <b>RUNNING</b></p></section>
-    <section class="panel"><h3>Repair Queue</h3><div id="repairList" class="listbox"><span class="muted">No repair jobs</span></div></section>
-    <section class="panel"><h3>Recent Activity</h3><p>✓ Mission completed</p><p>✓ Visual check passed</p><p>✓ Baseline approved</p></section>
+
+  <aside class="ops-drawer" id="opsDrawer">
+    <div class="drawer-head"><b>Operations</b><button id="closeOps">×</button></div>
+    <div class="ops-card"><span>Runtime</span><b>LOCAL</b></div>
+    <div class="ops-card"><span>Workers</span><b>3/3 Online</b></div>
+    <div class="ops-card"><span>Watchdog</span><b>ACTIVE</b></div>
+    <div class="ops-card"><span>Tray</span><b>ACTIVE</b></div>
+    <div class="ops-card"><span>Regression</span><b>102/102 PASS</b></div>
   </aside>
 </div>
+
+<div class="modal-backdrop" id="projectModal" hidden>
+  <div class="modal">
+    <div class="drawer-head"><b>Add Project / Target</b><button id="closeProjectModal">×</button></div>
+    <label>Project ID<input id="projectIdInput" placeholder="demo"></label>
+    <label>Project name<input id="projectNameInput" placeholder="Demo Project"></label>
+    <label>URL<input id="projectUrlInput" placeholder="https://example.com"></label>
+    <div class="modal-actions">
+      <span id="addProjectStatus" class="muted">Saved locally and available immediately.</span>
+      <button class="primary" id="saveProject">Save Project</button>
+    </div>
+  </div>
+</div>
+
 <script src="./app.js"></script>
 </body></html>
