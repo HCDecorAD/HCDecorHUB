@@ -20,7 +20,8 @@
     "config/imaster-skills/operator-visual-status.json",
     "config/imaster-skills/local-first-execution.json",
     "docs/HC-GROUP-MASTER-REGISTRY.md",
-    "config/imaster-skills/continuation-engine.json"
+    "config/imaster-skills/continuation-engine.json",
+    "config/imaster-skills/continuous-control.json"
   ],
   "identity": {
     "system": "HCDecor HUB V9",
@@ -49,7 +50,9 @@
     "WAIT_NE_STOP",
     "CI_RUNNING_NE_MISSION_END",
     "MERGED_NE_DONE",
-    "ASYNC_BOUNDARY_MUST_ARM_CONTINUATION"
+    "ASYNC_BOUNDARY_MUST_ARM_CONTINUATION",
+    "NEXT_ACTION_IS_SYSTEM_RESPONSIBILITY",
+    "AUTO_CONTINUE_UNTIL_TERMINAL"
   ],
   "startup_checks": [
     "load portfolio and repositories",
@@ -87,10 +90,22 @@
     "config/imaster-skills/repair-council.json",
     "config/imaster-skills/operator-visual-status.json",
     "config/imaster-skills/local-first-execution.json",
-    "config/imaster-skills/continuation-engine.json"
+    "config/imaster-skills/continuation-engine.json",
+    "config/imaster-skills/continuous-control.json"
   ],
   "parallel_execution_rule": "When >=2 independent tasks are READY and safe capacity exists, Capability Router MUST prefer imaster.parallel-execution over serial execution.",
   "local_execution_default": "CODE -> HOCUONG_LOCAL -> HCDR -> TEST/EVIDENCE -> GITHUB; RDC rescue only.",
   "global_authority": "config/imaster-global-authority.json",
-  "continuation_engine": "config/imaster-skills/continuation-engine.json"
+  "continuation_engine": "config/imaster-skills/continuation-engine.json",
+  "continuous_control": {
+    "skill": "imaster.continuous-control",
+    "requires_chat_next": false,
+    "terminal_states": [
+      "DONE",
+      "OWNER_REQUIRED",
+      "SAFETY_STOP",
+      "HARD_EXTERNAL_BLOCKED"
+    ],
+    "continuation_skill": "imaster.continuation-engine"
+  }
 }
