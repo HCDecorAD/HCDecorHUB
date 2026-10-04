@@ -169,7 +169,7 @@
       "id": "PKG-02",
       "phase": "P2_CORE_CONTROL",
       "name": "IMASTER_CORE",
-      "state": "LOCAL_PASS",
+      "state": "DONE",
       "depends_on": [
         "PKG-01"
       ],
@@ -193,9 +193,12 @@
         "continuation-pass"
       ],
       "evidence": {
-        "source_contract": "PASS",
-        "master_e2e_quality": 714,
-        "continuation_reused": "verified baseline"
+        "quality_run": 723,
+        "production_run": 578,
+        "runtime_run": 15,
+        "soak_run": 13,
+        "continuation_run": 66,
+        "verified_main_sha": "59829f8f3c9a72158de7cc60ee119555b09f84b3"
       }
     },
     {
@@ -222,13 +225,19 @@
         "worker-binding-pass",
         "output-pass"
       ],
-      "blocker": "full project CRUD/workflow contract not yet complete"
+      "blocker": "Full update/delete lifecycle, worker binding and output workflow are not yet complete.",
+      "foundation_evidence": {
+        "project_authority_read": "PASS",
+        "list_api": "PASS",
+        "write_guards": "same-origin+token+fresh-approval+rate-limit",
+        "production_build": "PASS"
+      }
     },
     {
       "id": "PKG-04",
       "phase": "P2_CORE_CONTROL",
       "name": "SYSTEM_CENTER",
-      "state": "LOCAL_PASS",
+      "state": "DONE",
       "depends_on": [
         "PKG-01"
       ],
@@ -249,9 +258,11 @@
         "connection-state-pass"
       ],
       "evidence": {
-        "source_contract": "PASS",
-        "runtime_capabilities": "PASS",
-        "diagnostics_routes": "PASS"
+        "quality_run": 723,
+        "production_run": 578,
+        "runtime_run": 15,
+        "soak_run": 13,
+        "verified_main_sha": "59829f8f3c9a72158de7cc60ee119555b09f84b3"
       }
     },
     {
@@ -294,7 +305,13 @@
         "secret-server-only-pass",
         "binding-pass"
       ],
-      "blocker": "AI Keys/OAuth/Router/Binding real UI contract incomplete"
+      "blocker": "Live provider credential test and verified model bindings are not yet evidenced.",
+      "foundation_evidence": {
+        "modules": 10,
+        "server_only_secret_policy": "PASS",
+        "live_probe_endpoint": "PASS",
+        "production_build": "PASS"
+      }
     },
     {
       "id": "PKG-06",
@@ -444,7 +461,14 @@
         "business-crud-pass",
         "workflow-pass"
       ],
-      "blocker": "V9 Business scope still lacks complete Lead -> Customer -> Quotation -> Order/Project -> Payment workflow; existing Commerce Center is not treated as equivalent."
+      "blocker": "Customer, Quotation and Payment authorities/workflows are not yet configured and verified.",
+      "foundation_evidence": {
+        "win_business_route": "PASS",
+        "crm_stage": "PASS",
+        "project_stage": "PASS",
+        "unconfigured_authorities_fail_visible": "PASS",
+        "production_build": "PASS"
+      }
     },
     {
       "id": "PKG-11",
@@ -516,7 +540,7 @@
       "id": "PKG-13",
       "phase": "P7_OPERATIONS",
       "name": "SENTINEL_AUTODEBUG",
-      "state": "LOCAL_PASS",
+      "state": "DONE",
       "depends_on": [
         "PKG-01"
       ],
@@ -539,12 +563,14 @@
         "verify-after-repair-pass"
       ],
       "evidence": {
-        "visual_compare": "3/3 PASS",
-        "verify": "2/2 PASS",
-        "repair_bridge": "3/3 PASS",
-        "notification": "1/1 PASS",
-        "autodebug_implementation": "PASS",
-        "autodebug_repair_verification": "PASS"
+        "pr": 92,
+        "pr_quality_run": 724,
+        "post_merge_quality_run": 725,
+        "production_run": 579,
+        "runtime_run": 16,
+        "soak_run": 14,
+        "merge_sha": "77b6fd5646a983ee0c67e8590bc999ec19c68194",
+        "sentinel_gate": "PASS"
       }
     },
     {
