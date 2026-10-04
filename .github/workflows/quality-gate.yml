@@ -92,6 +92,8 @@ jobs:
         run: npm run test:evidence-store
       - name: Evidence archive index gate
         run: npm run test:evidence-archive-index
+      - name: Repo decomposition parity gate
+        run: npm run test:repo-decomposition
       - name: Corporate catalog gate
         run: npm run test:corporate-catalog
       - name: HCDR relay implementation contract
