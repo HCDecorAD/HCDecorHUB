@@ -11,7 +11,7 @@ export const hubNav=[
   ["WIN_SOCIAL","Social Center","Trung Tâm MXH","/hub/social"],
   ["WIN_PROJECTS","Project Center","Trung Tâm Dự Án","/hub/projects"],
   ["WIN_IMASTER","iMaster Center","Trung Tâm iMaster","/hub/agents"],
-  ["WIN_BUSINESS","Business Center","Trung Tâm Kinh Doanh","/hub/commerce"],
+  ["WIN_BUSINESS","Business Center","Trung Tâm Kinh Doanh","/hub/business"],
   ["WIN_SYSTEM","System Center","Trung Tâm Hệ Thống","/admin"]
 ];
 

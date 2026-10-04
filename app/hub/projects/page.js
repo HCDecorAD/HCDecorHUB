@@ -1,2 +1,19 @@
-import {HubShell,PageCards} from "../../../components/HubShell";
-export default function Projects(){return <HubShell title="Projects" eyebrow="MASTER AGENT / PROJECT ASSISTANT"><div className="notice">Project creation is capability-gated. This view does not claim Drive or Sheets writes until runtime configuration confirms them.</div><PageCards items={[["PROJECT ID","HC-YYYY-XXXX","Canonical project identifier pattern."],["PROJECT STATUS","Runtime API","Inspect project provisioning capability.","/api/projects/status"],["CRM STATUS","Runtime API","Inspect CRM storage/write capability.","/api/crm/status"],["MEDIA","Project context","Continue to project-linked media workflow.","/hub/media"]]}/></HubShell>}
+import {HubShell} from "../../../components/HubShell";
+import {crmRuntime} from "../../../lib/crm/config";
+import {listProjects} from "../../../lib/crm/google";
+
+export default async function Projects(){
+ const runtime=crmRuntime(); let items=[],readError=null;
+ if(runtime.configured){try{items=await listProjects(100)}catch{readError="Project authority is configured but current server credentials could not read it."}}
+ return <HubShell title="Project Center" eyebrow="WIN_PROJECTS / PROJECT CENTER">
+   <div className="notice">Project authority: Google Sheets + Drive. Reads are server-side; project creation remains token + fresh approval guarded.</div>
+   <section className="masterArchitecture">
+    <div><span>PROJECTS</span><h3>{items.length}</h3><p>{readError|| (runtime.configured?"Verified authority read path":"Project authority not configured in this runtime.")}</p></div>
+    <div><span>PROVISION</span><h3>{runtime.projectProvisionEnabled?"AVAILABLE":"GUARDED"}</h3><p>Qualified Lead → Project ID → Drive Folder → Projects row. No browser secret is exposed.</p></div>
+    <div><span>STATUS</span><h3>Real APIs</h3><p>/api/projects · /api/projects/status · /api/crm/status</p></div>
+   </section>
+   <section className="opsPanel"><div className="panelHead"><div><small>PROJECT AUTHORITY</small><h2>Recent Projects</h2></div></div>
+    {items.length?<div className="commerceTable">{items.map(x=><article className="commerceRow projectRow" key={x.project_id}><span><b>{x.project_id}</b><small>{x.client||"No client"}</small></span><span>{x.service||"-"}</span><span>{x.status||"-"}</span><span>{x.created_at||"-"}</span>{x.folder_url?<a href={x.folder_url} target="_blank" rel="noreferrer">Drive ↗</a>:<span>-</span>}</article>)}</div>:<p className="muted">{readError||"No verified project rows available in this runtime."}</p>}
+   </section>
+ </HubShell>
+}

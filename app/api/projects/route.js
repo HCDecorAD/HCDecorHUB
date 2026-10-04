@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import {crmRuntime} from "../../../lib/crm/config";
-import {appendProject,createProjectFolder,deleteDriveFile,newProjectId} from "../../../lib/crm/google";
+import {appendProject,createProjectFolder,deleteDriveFile,newProjectId,listProjects} from "../../../lib/crm/google";
 import {requireSameOriginMutation} from "../../../lib/request-guard";
 const clean=v=>typeof v==="string"?v.trim():"";
 const buckets=new Map();
@@ -8,6 +8,7 @@ function clientKey(request){const raw=(request.headers.get("x-forwarded-for")||r
 function rateLimited(request){const now=Date.now(),key=clientKey(request),windowMs=10*60*1000,limit=10;for(const [k,v] of buckets){if(v.reset<=now)buckets.delete(k)}const row=buckets.get(key);if(!row&&buckets.size>=5000)return true;if(!row||row.reset<=now){buckets.set(key,{count:1,reset:now+windowMs});return false}row.count++;return row.count>limit}
 function freshApproval(d){if(d.confirmExternalWrite!==true)return false;const by=clean(d.approvedBy),source=clean(d.approvalSource),raw=clean(d.approvedAt);if(!by||by.length>200||raw.length>64||!["wp_user","service_bridge"].includes(source))return false;const at=Date.parse(raw);return Number.isFinite(at)&&at>=Date.now()-15*60*1000&&at<=Date.now()+5*60*1000}
 function authorized(req){const expected=(process.env.HCDECOR_PROJECT_API_TOKEN||"").trim(),header=req.headers.get("authorization")||"";if(expected.length<32||expected.length>512||!header.startsWith("Bearer "))return false;const supplied=header.slice(7);if(supplied.length!==expected.length)return false;return crypto.timingSafeEqual(Buffer.from(supplied),Buffer.from(expected))}
+export async function GET(req){const r=crmRuntime(),u=new URL(req.url),limit=Math.max(1,Math.min(Number(u.searchParams.get("limit"))||100,500));if(!r.configured)return Response.json({service:"ok",configured:false,items:[],production_write:false});try{const items=await listProjects(limit);return Response.json({service:"ok",configured:true,items,count:items.length,production_write:false})}catch{return Response.json({service:"ok",configured:true,items:[],count:0,liveHealth:"degraded",production_write:false},{status:503})}}
 export async function POST(req){
  const blocked=requireSameOriginMutation(req);if(blocked)return blocked;
  const r=crmRuntime();if(!r.projectProvisionEnabled)return Response.json({ok:false,error:"project_runtime_not_configured"},{status:503});
