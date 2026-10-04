@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "skill_id": "imaster.operator-visual-status",
+  "name": "Compact Visual Operator Status",
+  "owner": "iMaster",
+  "scope": "operator-ui",
+  "autoload": true,
+  "activation": {
+    "mode": "default",
+    "condition": "operator-facing status/update responses"
+  },
+  "vocabulary": {
+    "blue": "🔵 INFO / RUNNING",
+    "green": "🟢 GREEN / HEALTHY",
+    "red": "🔴 RED / BLOCKED / FAILED",
+    "pass": "✅ PASS",
+    "done": "🏁 DONE",
+    "warning": "🟡 WAIT / REVIEW"
+  },
+  "style": [
+    "short",
+    "direct",
+    "visual",
+    "checkpoint-first",
+    "avoid verbose implementation detail unless requested"
+  ],
+  "truth_rule": "Status icon MUST reflect evidence; never display PASS/GREEN/DONE without supporting verification.",
+  "evidence_gate": "scripts/imaster-skills.test.mjs"
+}
