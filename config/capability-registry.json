@@ -319,6 +319,91 @@
         "FENCING_REQUIRED",
         "SINGLE_WORKER_FAILURE_NE_COMPANY_STALL"
       ]
+    },
+    {
+      "capability_id": "imaster.advisor-research",
+      "provider_tool": "group-governor",
+      "inputs": [
+        "mission",
+        "context"
+      ],
+      "outputs": [
+        "decision",
+        "evidence"
+      ],
+      "risk_class": "control-plane",
+      "gate": "iMaster skills gate",
+      "cost_class": "low",
+      "production_write": false,
+      "fail_closed": true
+    },
+    {
+      "capability_id": "imaster.learning-memory",
+      "provider_tool": "hc-autodebug",
+      "inputs": [
+        "mission",
+        "context"
+      ],
+      "outputs": [
+        "decision",
+        "evidence"
+      ],
+      "risk_class": "control-plane",
+      "gate": "iMaster skills gate",
+      "cost_class": "low",
+      "production_write": false,
+      "fail_closed": true
+    },
+    {
+      "capability_id": "imaster.proactive-improvement",
+      "provider_tool": "group-governor",
+      "inputs": [
+        "mission",
+        "context"
+      ],
+      "outputs": [
+        "decision",
+        "evidence"
+      ],
+      "risk_class": "control-plane",
+      "gate": "iMaster skills gate",
+      "cost_class": "low",
+      "production_write": false,
+      "fail_closed": true
+    },
+    {
+      "capability_id": "imaster.repair-council-7x7",
+      "provider_tool": "hc-autodebug",
+      "inputs": [
+        "mission",
+        "context"
+      ],
+      "outputs": [
+        "decision",
+        "evidence"
+      ],
+      "risk_class": "control-plane",
+      "gate": "iMaster skills gate",
+      "cost_class": "low",
+      "production_write": false,
+      "fail_closed": true
+    },
+    {
+      "capability_id": "imaster.operator-visual-status",
+      "provider_tool": "hc-autochat",
+      "inputs": [
+        "mission",
+        "context"
+      ],
+      "outputs": [
+        "decision",
+        "evidence"
+      ],
+      "risk_class": "control-plane",
+      "gate": "iMaster skills gate",
+      "cost_class": "low",
+      "production_write": false,
+      "fail_closed": true
     }
   ]
 }
