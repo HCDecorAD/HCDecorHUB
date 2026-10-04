@@ -165,7 +165,7 @@
       "id": "PKG-02",
       "phase": "P2_CORE_CONTROL",
       "name": "IMASTER_CORE",
-      "state": "LOCAL_PASS",
+      "state": "DONE",
       "depends_on": [
         "PKG-01"
       ],
@@ -193,14 +193,22 @@
         "wave2_gate": "PASS",
         "architecture": "18/18 PASS",
         "production_build": "PASS",
-        "master_e2e": "PASS"
+        "master_e2e": "PASS",
+        "pr": 94,
+        "pr_quality_run": 728,
+        "post_merge_quality_run": 729,
+        "production_run": 581,
+        "runtime_run": 18,
+        "soak_run": 16,
+        "continuation_run": 73,
+        "merge_sha": "f95ec4923a874672c09210eec314182fa83b3fea"
       }
     },
     {
       "id": "PKG-03",
       "phase": "P2_CORE_CONTROL",
       "name": "PROJECT_CENTER",
-      "state": "LOCAL_PASS",
+      "state": "BUILDING",
       "depends_on": [
         "PKG-01"
       ],
@@ -220,7 +228,7 @@
         "worker-binding-pass",
         "output-pass"
       ],
-      "blocker": "Full update/delete lifecycle, worker binding and output workflow are not yet complete.",
+      "blocker": "Worker binding and output workflow still need dedicated verified persistence/contract. Project read/update/delete lifecycle is now implemented and locally testable.",
       "foundation_evidence": {
         "project_authority_read": "PASS",
         "list_api": "PASS",
@@ -239,7 +247,7 @@
       "id": "PKG-04",
       "phase": "P2_CORE_CONTROL",
       "name": "SYSTEM_CENTER",
-      "state": "LOCAL_PASS",
+      "state": "DONE",
       "depends_on": [
         "PKG-01"
       ],
@@ -264,7 +272,15 @@
         "wave2_gate": "PASS",
         "architecture": "18/18 PASS",
         "production_build": "PASS",
-        "master_e2e": "PASS"
+        "master_e2e": "PASS",
+        "pr": 94,
+        "pr_quality_run": 728,
+        "post_merge_quality_run": 729,
+        "production_run": 581,
+        "runtime_run": 18,
+        "soak_run": 16,
+        "continuation_run": 73,
+        "merge_sha": "f95ec4923a874672c09210eec314182fa83b3fea"
       }
     },
     {
