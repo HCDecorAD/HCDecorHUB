@@ -9,7 +9,7 @@ assert.equal(r.total,17);
 assert.equal(finalGate(r).pass,false);
 assert.equal(finalGate(r).status,'BLOCKED');
 assert.ok(r.integration_blockers.includes('PKG-05'));
-assert.ok(r.integration_blockers.includes('PKG-10'));
+assert.ok(!r.integration_blockers.includes('PKG-10'));
 const expected={
  WIN_HOME:'app/hub/page.js',
  WIN_TREND:'app/hub/trend/page.js',
