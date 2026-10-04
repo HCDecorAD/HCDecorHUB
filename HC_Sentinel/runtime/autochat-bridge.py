@@ -65,7 +65,7 @@ try:
     elif op=="snapshot":out=snapshot(sys.argv[2])
     elif op=="send":out=send(sys.argv[2],sys.argv[3])
     else:raise RuntimeError("UNKNOWN_OPERATION")
-    print(json.dumps(out,ensure_ascii=False))
+    print(json.dumps(out,ensure_ascii=True))
 except Exception as e:
-    print(json.dumps({"status":"BLOCKED","error":str(e)},ensure_ascii=False))
+    print(json.dumps({"status":"BLOCKED","error":str(e)},ensure_ascii=True))
     raise SystemExit(2)
