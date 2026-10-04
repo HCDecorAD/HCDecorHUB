@@ -208,7 +208,7 @@
       "id": "PKG-03",
       "phase": "P2_CORE_CONTROL",
       "name": "PROJECT_CENTER",
-      "state": "BUILDING",
+      "state": "DONE",
       "depends_on": [
         "PKG-01"
       ],
@@ -228,7 +228,6 @@
         "worker-binding-pass",
         "output-pass"
       ],
-      "blocker": "Worker binding and output workflow still need dedicated verified persistence/contract. Project read/update/delete lifecycle is now implemented and locally testable.",
       "foundation_evidence": {
         "project_authority_read": "PASS",
         "list_api": "PASS",
@@ -240,7 +239,17 @@
         "wave2_gate": "PASS",
         "architecture": "18/18 PASS",
         "production_build": "PASS",
-        "master_e2e": "PASS"
+        "master_e2e": "PASS",
+        "pr": 95,
+        "pr_quality_run": 731,
+        "post_merge_quality_run": 732,
+        "production_run": 582,
+        "runtime_run": 19,
+        "soak_run": 17,
+        "merge_sha": "56c9a068fcca30db16f8d6f339f0f0ef510bfe5d",
+        "project_lifecycle_gate": "PASS",
+        "worker_binding": "capability-router",
+        "output_workflow": "project-scoped-preview-artifacts"
       }
     },
     {
