@@ -105,3 +105,5 @@ html[data-theme="dark"] .v9Shell{background:#090c11;color:#e8edf5}html[data-them
 @media(max-width:600px){.v9Top{padding:0 10px}.v9Search{width:44vw}.v9Top .themeToggle{display:none}.v9TopActions{gap:4px}.v9ActionBtn{padding:0 7px}.v9PageHead h1{font-size:23px}.v9WorkspaceTabs{display:none}}
 
 .projectRow{grid-template-columns:1.5fr 1fr .7fr 1fr .6fr;align-items:center}.projectRow small{display:block;text-transform:none;letter-spacing:0}.businessFlow{grid-template-columns:repeat(5,1fr);margin:14px 0}@media(max-width:800px){.projectRow{grid-template-columns:1fr 1fr}.businessFlow{grid-template-columns:1fr 1fr}}
+
+.aiPreviewImage{display:block;width:min(100%,720px);max-height:520px;object-fit:contain;margin:14px 0;border:1px solid #dce3eb;border-radius:12px;background:#f9fafb}

@@ -110,6 +110,8 @@ jobs:
         run: npm run test:hcdecor-v9-centers-foundation
       - name: HCDecor HUB V9 AI Connections gate
         run: npm run test:hcdecor-v9-ai-connections
+      - name: HCDecor HUB V9 AI activation gate
+        run: npm run test:hcdecor-v9-ai-activation
       - name: HCDecor HUB V9 Business Center gate
         run: npm run test:hcdecor-v9-business
       - name: HCDecor HUB V9 Business schema gate

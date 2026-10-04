@@ -8,7 +8,7 @@ assert.equal(r.program,'HCDECOR_HUB_V9_APP');
 assert.equal(r.total,17);
 assert.equal(finalGate(r).pass,false);
 assert.equal(finalGate(r).status,'BLOCKED');
-assert.ok(r.integration_blockers.includes('PKG-05'));
+const p5=m.packages.find(x=>x.id==='PKG-05'); if(p5?.state==='DONE')assert.ok(!r.integration_blockers.includes('PKG-05'));else assert.ok(r.integration_blockers.includes('PKG-05'));
 assert.ok(!r.integration_blockers.includes('PKG-10'));
 const expected={
  WIN_HOME:'app/hub/page.js',

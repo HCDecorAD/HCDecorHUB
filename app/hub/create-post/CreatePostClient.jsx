@@ -20,7 +20,7 @@ export default function CreatePostClient(){
   }
 
   return <>
-    <section className="opsCards">{modules.map(id=><article key={id} data-module={id}><small>{id}</small><strong>{id==="SOC_AI"||id==="SOC_VARIANTS"?"WAITING FOR AI CONNECTION":"READY CONTRACT"}</strong><p>{id==="SOC_AI"||id==="SOC_VARIANTS"?"Provider-dependent; no fake generation until PKG-05 is DONE.":"V9 Create Post workflow module."}</p></article>)}</section>
+    <section className="opsCards">{modules.map(id=><article key={id} data-module={id}><small>{id}</small><strong>{id==="SOC_AI"||id==="SOC_VARIANTS"?"AI LIVE":"READY CONTRACT"}</strong><p>{id==="SOC_AI"||id==="SOC_VARIANTS"?"Cloudflare Workers AI server binding; no browser secret.":"V9 Create Post workflow module."}</p></article>)}</section>
     <section className="opsPanel">
       <div className="panelHead"><div><small>CREATE POST</small><h2>Content Pack Preview</h2></div></div>
       <form onSubmit={preview}>
@@ -29,7 +29,8 @@ export default function CreatePostClient(){
         <textarea value={hooks} onChange={e=>setHooks(e.target.value)} rows={5}/>
         <button className="primary" disabled={busy}>{busy?"Building…":"Build Preview"}</button>
       </form>
-      {result&&<pre>{JSON.stringify(result,null,2)}</pre>}
+      {result?.result?.ai?.image_data_url&&<img className="aiPreviewImage" src={result.result.ai.image_data_url} alt="AI generated preview"/>}
+      {result&&<pre>{JSON.stringify({...result,result:result.result?{...result.result,ai:result.result.ai?{...result.result.ai,image_data_url:result.result.ai.image_data_url?"[generated image]":null}:null}:result.result},null,2)}</pre>}
     </section>
   </>;
 }
