@@ -1,0 +1,3 @@
+import test from "node:test";import assert from "node:assert/strict";import {MaintenanceRunner} from "../core/maintenance-runner.js";
+test("maintenance runner reports mixed results without throwing",async()=>{const m=new MaintenanceRunner({jobs:[{id:"a",run:async()=>1},{id:"b",run:async()=>{throw new Error("x")}}]});const r=await m.run();assert.equal(r.ok,false);assert.equal(r.results.length,2);assert.equal(r.results[1].status,"FAIL");});
+test("maintenance runner passes when all jobs pass",async()=>{const m=new MaintenanceRunner({jobs:[{id:"a",run:async()=>1}]});assert.equal((await m.run()).ok,true);});
