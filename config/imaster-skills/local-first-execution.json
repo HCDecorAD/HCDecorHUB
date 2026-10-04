@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0.0",
+  "skill_id": "imaster.local-first-execution",
+  "name": "iMaster Local-First Execution",
+  "owner": "iMaster",
+  "scope": "global",
+  "autoload": true,
+  "activation": {
+    "mode": "default",
+    "condition": "coding, debugging, build, test, or machine execution is required"
+  },
+  "route": [
+    "CODE",
+    "HOCUONG_LOCAL",
+    "HCDR",
+    "LOCAL_TEST_AND_EVIDENCE",
+    "GITHUB_COMMIT_PUSH",
+    "CI_VERIFY"
+  ],
+  "transport_priority": [
+    {
+      "priority": 1,
+      "transport": "HCDR",
+      "role": "PRIMARY_LOCAL_EXECUTION"
+    },
+    {
+      "priority": 2,
+      "transport": "RDC",
+      "role": "RESCUE_FALLBACK_ONLY",
+      "when": "HCDR unavailable, failed, missing required capability, or GUI-only operation is required"
+    }
+  ],
+  "laws": [
+    "LOCAL_FIRST",
+    "HCDR_BEFORE_RDC",
+    "TEST_BEFORE_GITHUB",
+    "NO_EVIDENCE_NO_GREEN",
+    "RDC_IS_RESCUE_NOT_DEFAULT",
+    "PRODUCTION_WRITES_FAIL_CLOSED"
+  ],
+  "fallback": {
+    "on_hcdr_failure": "record evidence -> attempt safe HCDR recovery -> use RDC only when necessary -> verify result -> record route used"
+  },
+  "evidence_gate": "scripts/imaster-local-first-skill.test.mjs"
+}
