@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "skill_id": "imaster.regression-hunter",
+  "name": "Regression Hunter",
+  "owner": "iMaster",
+  "scope": "global",
+  "autoload": false,
+  "activation": {
+    "mode": "automatic",
+    "condition": "a code/config/runtime change has been made and affected behavior must be checked"
+  },
+  "pipeline": [
+    "map changed scope",
+    "identify directly affected feature/dependencies",
+    "select minimum sufficient regression checks",
+    "run targeted checks",
+    "escalate breadth only on anomaly or high-risk change"
+  ],
+  "laws": [
+    "TARGETED_REGRESSION_FIRST",
+    "DO_NOT_REPLAY_PASS",
+    "MINIMUM_SUFFICIENT_PROOF",
+    "EXPAND_ONLY_ON_RISK_OR_ANOMALY"
+  ],
+  "output": [
+    "affected_scope",
+    "selected_tests",
+    "result",
+    "expanded_reason"
+  ]
+}
