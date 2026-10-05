@@ -30,7 +30,6 @@
   },
   "mandatory_laws": [
     "GOAL_MUST_OUTLIVE_CHAT",
-    "NO_EVIDENCE_NO_GREEN",
     "DO_NOT_REDO_PASS",
     "WAITING_ONE_MISSION_NE_WAITING_COMPANY",
     "TOOL_MISSING_IS_NOT_TERMINAL",
@@ -54,12 +53,12 @@
     "NEXT_ACTION_IS_SYSTEM_RESPONSIBILITY",
     "AUTO_CONTINUE_UNTIL_TERMINAL",
     "LOCAL_FIRST_OPERATING_LAW",
-    "HCDR_MANDATORY_DEFAULT",
-    "MACHINE_CONTROL_MUST_ATTEMPT_HCDR_FIRST",
-    "RDC_RESCUE_ONLY_AFTER_HCDR_FAILURE_EVIDENCE",
     "LOCAL_PASS_AUTHORITATIVE",
     "GITHUB_MINIMAL_VERIFY",
-    "GITHUB_MUST_NOT_REPLAY_PASSED_LOCAL_GATES"
+    "GITHUB_MUST_NOT_REPLAY_PASSED_LOCAL_GATES",
+    "MINIMUM_SUFFICIENT_PROOF_THEN_SHIP",
+    "WORKS_ONE_REAL_TEST_PASS_USE_DONE",
+    "LOCAL_DIRECT_BEFORE_REMOTE_TRANSPORT"
   ],
   "startup_checks": [
     "load portfolio and repositories",
@@ -101,7 +100,7 @@
     "config/imaster-skills/continuous-control.json"
   ],
   "parallel_execution_rule": "When >=2 independent tasks are READY and safe capacity exists, Capability Router MUST prefer imaster.parallel-execution over serial execution.",
-  "local_execution_default": "CODE -> HOCUONG_LOCAL -> HCDR_PRIMARY -> LOCAL_FULL_GATE/EVIDENCE -> LOCAL_GREEN -> GITHUB_ONE_PUSH -> GITHUB_MINIMAL_VERIFY(hash + pass_manifest + integrity + smoke) -> DONE; LOCAL PASS is authoritative; GitHub MUST NOT replay passed Local gates unless DEEP_VERIFY is triggered by core/security/data-migration/production-critical change or Local anomaly; RDC remains rescue-only after recorded HCDR failure evidence.",
+  "local_execution_default": "CODE -> HOCUONG LOCAL DIRECT/LOCAL EXECUTOR -> HCDR only as fallback/recovery -> ONE REAL TARGETED TEST -> PASS -> GITHUB source/version sync when needed -> USE/DONE; RDC rescue-only.",
   "global_authority": "config/imaster-global-authority.json",
   "continuation_engine": "config/imaster-skills/continuation-engine.json",
   "continuous_control": {
@@ -261,5 +260,15 @@
       "config/imaster-skills/browser-ui-operator.json",
       "config/imaster-skills/regression-hunter.json"
     ]
-  }
+  },
+  "acceptance_default": {
+    "path": [
+      "WORKS",
+      "ONE_REAL_TEST",
+      "PASS",
+      "USE_OR_DONE"
+    ],
+    "extra_validation": "Only for owner request, high-risk/destructive/security/data/production-critical change, or observed instability/anomaly."
+  },
+  "full_skill_catalog": "docs/IMASTER-FULL-SKILL-CATALOG.md"
 }
