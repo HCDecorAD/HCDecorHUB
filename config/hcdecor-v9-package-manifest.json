@@ -369,7 +369,7 @@
       "id": "PKG-06",
       "phase": "P4_SOCIAL_FACTORY",
       "name": "CREATE_POST",
-      "state": "LOCAL_PASS",
+      "state": "DONE",
       "depends_on": [
         "PKG-01",
         "PKG-05"
@@ -419,14 +419,22 @@
         "content_ai_draft": "PASS",
         "text_generation": "PASS",
         "image_generation": "PASS",
-        "preview": "PASS"
+        "preview": "PASS",
+        "pr": 103,
+        "pr_quality_run": 748,
+        "post_merge_quality_run": 749,
+        "production_run": 590,
+        "runtime_run": 27,
+        "soak_run": 25,
+        "continuation_run": 104,
+        "merge_sha": "bfa9aba4ce992c3fca86886178c08f13f81be972"
       }
     },
     {
       "id": "PKG-07",
       "phase": "P4_SOCIAL_FACTORY",
       "name": "PUBLISH_ENGINE",
-      "state": "WAITING_DEP",
+      "state": "DONE",
       "depends_on": [
         "PKG-06"
       ],
@@ -462,13 +470,36 @@
         "verify_plan": "PASS",
         "analytics_authority": "metricool-configured",
         "production_publish": "BLOCKED_UNTIL_EXPLICIT_APPROVAL_AND_VERIFIED_EXECUTION"
+      },
+      "evidence": {
+        "provider": "metricool",
+        "brand_id": "7127887",
+        "timezone": "Asia/Bangkok",
+        "brand_settings_live": "PASS",
+        "connected_networks": [
+          "facebook",
+          "instagram",
+          "tiktok",
+          "youtube"
+        ],
+        "analytics_schema_read": "PASS",
+        "analytics_query": "PASS_ZERO_ROWS_IN_RANGE",
+        "schedule_plan": "PASS",
+        "verify_plan": "PASS",
+        "analytics_authority": "LIVE",
+        "provider_write_mode": "DRAFT_NON_PUBLIC",
+        "provider_write_id": 388244538,
+        "provider_write_uuid": "-3832042265525010429",
+        "provider_write_verified_in_queue": true,
+        "real_publish_pass": "PASS_PROVIDER_DRAFT_WRITE_NO_PUBLIC",
+        "public_publish_performed": false
       }
     },
     {
       "id": "PKG-08",
       "phase": "P4_SOCIAL_FACTORY",
       "name": "MULTI_PUBLISH",
-      "state": "WAITING_DEP",
+      "state": "DONE",
       "depends_on": [
         "PKG-06",
         "PKG-07"
@@ -499,13 +530,34 @@
         "idempotency": "PASS",
         "partial_unknown_result_policy": "RECONCILE_NO_BLIND_RETRY",
         "runtime_smoke": "4 jobs verified publish=false"
+      },
+      "evidence": {
+        "provider": "metricool",
+        "brand_id": "7127887",
+        "timezone": "Asia/Bangkok",
+        "batch_plan": "PASS",
+        "idempotency": "PASS",
+        "partial_failure_policy": "RECONCILE_NO_BLIND_RETRY",
+        "provider_write_mode": "DRAFT_NON_PUBLIC",
+        "batch_publish_pass": "PASS_2_PROVIDER_DRAFT_WRITES_NO_PUBLIC",
+        "batch_size": 2,
+        "provider_write_ids": [
+          388245259,
+          388245281
+        ],
+        "provider_write_uuids": [
+          "-516699390968443576",
+          "4271800422519358121"
+        ],
+        "queue_verified": "2/2",
+        "public_publish_performed": false
       }
     },
     {
       "id": "PKG-09",
       "phase": "P5_TREND_BUSINESS",
       "name": "TREND_ENGINE",
-      "state": "LOCAL_PASS",
+      "state": "DONE",
       "depends_on": [
         "PKG-01",
         "PKG-05"
@@ -542,7 +594,15 @@
         "remote_preview": "PASS",
         "workers_ai_provider": "cloudflare-workers-ai",
         "trend_score": "82 DO_NOW",
-        "ai_recommendation": "PASS"
+        "ai_recommendation": "PASS",
+        "pr": 103,
+        "pr_quality_run": 748,
+        "post_merge_quality_run": 749,
+        "production_run": 590,
+        "runtime_run": 27,
+        "soak_run": 25,
+        "continuation_run": 104,
+        "merge_sha": "bfa9aba4ce992c3fca86886178c08f13f81be972"
       }
     },
     {
@@ -597,7 +657,7 @@
       "id": "PKG-11",
       "phase": "P6_UI_BUILDER",
       "name": "UI_DESIGNER",
-      "state": "LOCAL_PASS",
+      "state": "DONE",
       "depends_on": [
         "PKG-01",
         "PKG-05"
@@ -646,7 +706,15 @@
         "workers_ai_provider": "cloudflare-workers-ai",
         "ai_patch": "PASS",
         "validate_apply_undo": "PASS",
-        "production_write": false
+        "production_write": false,
+        "pr": 103,
+        "pr_quality_run": 748,
+        "post_merge_quality_run": 749,
+        "production_run": 590,
+        "runtime_run": 27,
+        "soak_run": 25,
+        "continuation_run": 104,
+        "merge_sha": "bfa9aba4ce992c3fca86886178c08f13f81be972"
       }
     },
     {
@@ -750,7 +818,7 @@
       "id": "PKG-15",
       "phase": "P8_FINAL",
       "name": "INTEGRATION",
-      "state": "WAITING_DEP",
+      "state": "LOCAL_PASS",
       "depends_on": [
         "PKG-02",
         "PKG-03",
@@ -807,6 +875,14 @@
           "PKG-11"
         ],
         "final_green": false
+      },
+      "evidence": {
+        "dependency_graph": "ALL_REQUIRED_PACKAGES_DONE",
+        "windows": "11/11 PASS",
+        "cross_window_state": "CONTRACT_PASS",
+        "responsive": "V9_SHELL_PASS",
+        "full_e2e": "CI_PENDING",
+        "public_side_effects": "NONE"
       }
     },
     {
@@ -836,7 +912,8 @@
         "final_gate": "PASS_BLOCKED_CORRECTLY",
         "no_evidence_no_green": true,
         "release_ready": false
-      }
+      },
+      "blocker": "PKG-15_CI_PENDING"
     }
   ],
   "scheduler": {
