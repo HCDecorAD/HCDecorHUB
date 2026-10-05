@@ -98,7 +98,51 @@
     "A skill may activate another skill when its escalation condition is met.",
     "Do not run every skill merely because iMaster FULL was loaded.",
     "After code/config/runtime mutation, prefer targeted Regression Hunter plus one representative real runtime/UI test.",
-    "Unknown technical blocker must invoke research before HARD_EXTERNAL_BLOCKED."
+    "Unknown technical blocker must invoke research before HARD_EXTERNAL_BLOCKED.",
+    "Before any machine action, enforce machine_action_transport_enforcement; transport selection is executable policy, not advisory prose."
   ],
-  "done_rule": "WORKS -> ONE REAL TEST -> PASS -> USE / DONE"
+  "done_rule": "WORKS -> ONE REAL TEST -> PASS -> USE / DONE",
+  "machine_action_transport_enforcement": {
+    "mode": "HARD_PRE_ACTION",
+    "applies_when": [
+      "machine action",
+      "local filesystem action",
+      "local process/service action",
+      "local build/test",
+      "bootstrap local gateway"
+    ],
+    "resolver_order": [
+      {
+        "route": "LOCAL_DIRECT_OR_LOCAL_EXECUTOR",
+        "on_unavailable": "CONTINUE"
+      },
+      {
+        "route": "HCDR",
+        "on_unavailable_or_failed": "RECOVER_OR_CONTINUE"
+      },
+      {
+        "route": "RDC_OR_AUTHORIZED_RESCUE",
+        "on_unavailable_or_failed": "CONTINUE"
+      },
+      {
+        "route": "OWNER_REQUIRED",
+        "allowed_only_when": "all safe applicable transport discovery/acquisition/recovery routes have actual attempt results or a real authorization/manual-presence boundary is proven"
+      }
+    ],
+    "invariants": [
+      "MISSING_CHAT_LOCAL_TOOL_NE_OWNER_REQUIRED",
+      "HCDR_MUST_BE_CONSIDERED_AND_ATTEMPTED_WHEN_LOCAL_DIRECT_IS_UNAVAILABLE_AND_HCDR_IS_APPLICABLE",
+      "OWNER_REQUIRED_WITHOUT_TRANSPORT_ATTEMPT_LEDGER_IS_INVALID",
+      "DO_NOT_ASK_OWNER_TO_RUN_A_COMMAND_THAT_AN_AVAILABLE_AUTHORIZED_TRANSPORT_CAN_RUN",
+      "ONE_FAILED_TRANSPORT_NE_HARD_BLOCKED"
+    ],
+    "required_decision_record": [
+      "requested_action",
+      "routes_available",
+      "routes_attempted",
+      "result",
+      "next_route"
+    ],
+    "owner_required_guard": "Reject OWNER_REQUIRED unless transport attempt ledger proves exhaustion or explicit manual authorization/presence is necessary."
+  }
 }
