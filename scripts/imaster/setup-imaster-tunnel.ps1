@@ -17,6 +17,13 @@ if(-not $exe){
 if(-not $exe){throw 'FULL_TUNNEL_CLIENT_EXE_NOT_FOUND'}
 & $exe.FullName --version
 if(-not $env:CONTROL_PLANE_API_KEY){$env:CONTROL_PLANE_API_KEY=[Environment]::GetEnvironmentVariable('CONTROL_PLANE_API_KEY','User')}
+if(-not $env:CONTROL_PLANE_API_KEY){
+  $keyFile='D:\HCDecorHUB\API KEY\API KEY OPEN AI.txt'
+  if(Test-Path $keyFile){
+    $candidate=(Get-Content -Raw $keyFile).Trim()
+    if($candidate){$env:CONTROL_PLANE_API_KEY=$candidate}
+  }
+}
 if(-not $env:CONTROL_PLANE_API_KEY){throw 'CONTROL_PLANE_API_KEY_NOT_AVAILABLE'}
 $health=Invoke-RestMethod 'http://127.0.0.1:8772/health'
 if(-not $health.ok){throw 'MCP_8772_NOT_HEALTHY'}
