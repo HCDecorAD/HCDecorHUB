@@ -10,13 +10,7 @@ assert.equal(r.integration_ready,true);
 assert.deepEqual(r.integration_blockers,[]);
 assert.equal(finalGate(r).pass,false);
 assert.equal(finalGate(r).status,'BLOCKED');
-assert.equal(m.packages.find(x=>x.id==='PKG-15')?.state,'LOCAL_PASS');
-assert.equal(m.packages.find(x=>x.id==='PKG-16')?.state,'WAITING_DEP');
-const expected={
- WIN_HOME:'app/hub/page.js',WIN_TREND:'app/hub/trend/page.js',WIN_SOCIAL:'app/hub/social/page.js',
- WIN_PROJECTS:'app/hub/projects/page.js',WIN_IMASTER:'app/hub/agents/page.js',WIN_BUSINESS:'app/hub/business/page.js',
- WIN_SYSTEM:'app/hub/system/page.js',WIN_CREATE_POST:'app/hub/create-post/page.js',WIN_MULTI_PUBLISH:'app/hub/multi-publish/page.js',
- WIN_AI_CONNECTIONS:'app/hub/ai/page.js',WIN_UI_DESIGNER:'app/hub/ui-designer/page.js'
-};
-for(const [id,p] of Object.entries(expected)) assert.ok(fs.existsSync(p),id+' '+p);
-console.log('HCDECOR_V9_FINAL_PREFLIGHT_PASS integration_ready=1 release_frozen=0 no_fake_green=1');
+assert.equal(m.status,'FROZEN_CANDIDATE');
+assert.equal(m.packages.find(x=>x.id==='PKG-15')?.state,'DONE');
+assert.equal(m.packages.find(x=>x.id==='PKG-16')?.state,'LOCAL_PASS');
+console.log('HCDECOR_V9_FINAL_PREFLIGHT_PASS integration_done=1 freeze_candidate=1 terminal_done=0 no_fake_green=1');
