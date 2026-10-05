@@ -1,0 +1,42 @@
+{
+  "schema": "imaster-transport-adapter/v1",
+  "required": [
+    "id",
+    "probe",
+    "execute"
+  ],
+  "semantics": {
+    "probe": {
+      "returns": [
+        "healthy",
+        "down",
+        "unavailable",
+        "quarantined"
+      ]
+    },
+    "execute": {
+      "input": [
+        "action",
+        "payload",
+        "mission_id",
+        "checkpoint"
+      ],
+      "output": [
+        "ok",
+        "evidence",
+        "checkpoint"
+      ]
+    },
+    "failure": "MUST_RETURN_CONTROL_TO_MESH; MUST_NOT_TERMINATE_MISSION",
+    "security": "REMOTE_MUTATION_REQUIRES_AUTHORIZATION; NO_RAW_PUBLIC_SHELL"
+  },
+  "lifecycle": [
+    "REGISTER",
+    "PROBE",
+    "SELECT",
+    "EXECUTE",
+    "EVIDENCE",
+    "FAILOVER_OR_PASS"
+  ],
+  "compatibility": "Adapters may be local modules or chat-runtime connectors; core must not import provider-specific SDKs."
+}
