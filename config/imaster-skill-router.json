@@ -113,20 +113,12 @@
     ],
     "resolver_order": [
       {
-        "route": "LOCAL_DIRECT_OR_LOCAL_EXECUTOR",
-        "on_unavailable": "CONTINUE"
-      },
-      {
-        "route": "HCDR",
-        "on_unavailable_or_failed": "RECOVER_OR_CONTINUE"
-      },
-      {
-        "route": "RDC_OR_AUTHORIZED_RESCUE",
-        "on_unavailable_or_failed": "CONTINUE"
+        "route": "IMASTER_TRANSPORT_MESH",
+        "on_failure": "FAILOVER_INSIDE_MESH"
       },
       {
         "route": "OWNER_REQUIRED",
-        "allowed_only_when": "all safe applicable transport discovery/acquisition/recovery routes have actual attempt results or a real authorization/manual-presence boundary is proven"
+        "allowed_only_when": "mesh exhausted or real manual authorization/presence boundary is proven"
       }
     ],
     "invariants": [
@@ -143,6 +135,17 @@
       "result",
       "next_route"
     ],
-    "owner_required_guard": "Reject OWNER_REQUIRED unless transport attempt ledger proves exhaustion or explicit manual authorization/presence is necessary."
+    "owner_required_guard": "Reject OWNER_REQUIRED unless Transport Mesh exhaustion is recorded or explicit manual authorization/presence is necessary."
+  },
+  "transport_mesh": {
+    "mode": "HARD_PRE_ACTION",
+    "config": "config/imaster-transport-mesh.json",
+    "router": "tools/imaster-transport-mesh/router.mjs",
+    "decision": "SELECT_HEALTHY_ADAPTER -> EXECUTE -> ON_FAIL_FAILOVER -> PRESERVE_CHECKPOINT -> CONTINUE",
+    "laws": [
+      "NO_SINGLE_TRANSPORT_DEPENDENCY",
+      "ONE_FAILED_TRANSPORT_NE_HARD_BLOCKED",
+      "OWNER_REQUIRED_WITHOUT_MESH_EXHAUSTION_IS_INVALID"
+    ]
   }
 }
