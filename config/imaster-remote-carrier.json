@@ -1,0 +1,36 @@
+{
+  "schema": "imaster-carrier/v1",
+  "id": "IMASTER_REMOTE_CARRIER",
+  "principle": "CARRIER_MOVES_ENVELOPES_ONLY; IT NEVER BECOMES CORE",
+  "topology": "HOCUONG_OUTBOUND_PULL",
+  "security": [
+    "NO_PUBLIC_INBOUND_PORT",
+    "NO_RAW_SHELL",
+    "ALLOWLISTED_ACTIONS_ONLY",
+    "REMOTE_MUTATION_AUTH_REQUIRED"
+  ],
+  "carrier_contract": {
+    "publish_request": "envelope -> carrier receipt",
+    "poll_requests": "cursor -> envelopes",
+    "publish_result": "result envelope -> carrier receipt",
+    "poll_results": "cursor -> results",
+    "ack": "id -> acknowledged"
+  },
+  "implementations": [
+    {
+      "id": "github-issues",
+      "role": "bootstrap/reference carrier",
+      "required": false,
+      "cost": "0",
+      "status": "adapter-source"
+    },
+    {
+      "id": "filesystem",
+      "role": "local/test carrier",
+      "required": false,
+      "cost": "0",
+      "status": "available"
+    }
+  ],
+  "failover": "carrier failure returns control to Transport Mesh"
+}
