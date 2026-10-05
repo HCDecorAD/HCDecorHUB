@@ -272,5 +272,25 @@
     ],
     "extra_validation": "Only for owner request, high-risk/destructive/security/data/production-critical change, or observed instability/anomaly."
   },
-  "full_skill_catalog": "docs/IMASTER-FULL-SKILL-CATALOG.md"
+  "full_skill_catalog": "docs/IMASTER-FULL-SKILL-CATALOG.md",
+  "hot_sync": {
+    "mode": "HARD_GLOBAL",
+    "scope": "ALL_ACTIVE_AND_FUTURE_CHATS",
+    "source_of_truth": [
+      "HC_BOOTSTRAP.md",
+      "config/imaster-bootstrap.json",
+      "config/imaster-skill-router.json",
+      "docs/IMASTER-FULL-SKILL-CATALOG.md"
+    ],
+    "laws": [
+      "IMASTER_UPDATE_MUST_PROPAGATE_TO_EXISTING_ACTIVE_CHATS",
+      "CHAT_AGE_DOES_NOT_EXEMPT_HOT_SYNC",
+      "RELOAD_SKILLS_BEFORE_NEXT_MUTATING_ACTION_WHEN_VERSION_CHANGES",
+      "PRESERVE_MISSION_CHECKPOINT_AND_PASS_STATE",
+      "DO_NOT_REDO_PASS_AFTER_SYNC",
+      "NEW_CHAT_LOADS_CURRENT_VERSION_AT_BOOTSTRAP"
+    ],
+    "worker_action": "On HOT_SYNC, reload current bootstrap/router/catalog, preserve mission/checkpoint/PASS, acknowledge sync, then continue next valid action.",
+    "terminal_rule": "A skill update is fleet-current only after active reachable chats are synced or explicitly marked unreachable/stale."
+  }
 }
