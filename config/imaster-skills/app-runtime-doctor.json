@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "skill_id": "imaster.app-runtime-doctor",
+  "name": "App Runtime Doctor",
+  "owner": "iMaster",
+  "scope": "global",
+  "autoload": false,
+  "activation": {
+    "mode": "automatic",
+    "condition": "app/service does not start, crashes, hangs, feature is dead, or runtime behavior must be verified"
+  },
+  "pipeline": [
+    "inspect process and startup",
+    "inspect port/service/API health",
+    "inspect runtime logs and environment",
+    "inspect frontend/backend integration when applicable",
+    "repair or route root cause",
+    "restart cleanly",
+    "perform one practical runtime test"
+  ],
+  "laws": [
+    "RUNTIME_TRUTH_BEATS_STATIC_ASSUMPTION",
+    "APP_RUNNING_NE_FEATURE_WORKING",
+    "RESTART_AFTER_REPAIR_WHEN_REQUIRED",
+    "ONE_REAL_TEST_AFTER_FIX"
+  ],
+  "output": [
+    "runtime_state",
+    "fault_layer",
+    "repair",
+    "real_test_result"
+  ]
+}
