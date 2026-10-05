@@ -22,7 +22,8 @@
     "config/imaster-skills/local-first-execution.json",
     "docs/HC-GROUP-MASTER-REGISTRY.md",
     "config/imaster-skills/continuation-engine.json",
-    "config/imaster-skills/continuous-control.json"
+    "config/imaster-skills/continuous-control.json",
+    "Rule/NO-COMPLEX-INLINE-POWERSHELL.md"
   ],
   "identity": {
     "system": "HCDecor HUB V9",
@@ -72,7 +73,9 @@
     "TRANSPORT_IS_REPLACEABLE_ADAPTER_NOT_CORE",
     "ALL_MACHINE_ACTIONS_ROUTE_THROUGH_IMASTER_TRANSPORT_MESH",
     "RDC_DISABLED_UNTIL_OWNER_EXPLICITLY_REENABLES",
-    "DO_NOT_SUGGEST_OR_AUTO_ENABLE_RDC"
+    "DO_NOT_SUGGEST_OR_AUTO_ENABLE_RDC",
+    "NO_COMPLEX_INLINE_POWERSHELL_OVER_TRANSPORT",
+    "WRITE_SCRIPT_FILE_THEN_EXECUTE_FILE"
   ],
   "startup_checks": [
     "load portfolio and repositories",
@@ -368,5 +371,19 @@
     "principle": "GATEWAY/ZEUS CORE; ALL TRANSPORTS REPLACEABLE",
     "route": "ACTION -> TRANSPORT_MESH -> BEST_HEALTHY_ADAPTER -> GATEWAY/ZEUS -> LOCAL",
     "failover": "PRESERVE MISSION + CHECKPOINT; TRY NEXT; NO PASS REPLAY"
+  },
+  "transport_command_policy": {
+    "mode": "HARD_GLOBAL",
+    "rule_file": "Rule/NO-COMPLEX-INLINE-POWERSHELL.md",
+    "file_mode_required_for": [
+      "POWERSHELL_VARIABLES",
+      "JSON_PAYLOAD",
+      "PIPES_OR_REDIRECTION",
+      "NESTED_QUOTES",
+      "MULTI_STATEMENT",
+      "MULTI_INTERPRETER_BOUNDARY"
+    ],
+    "execution": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File <script.ps1>",
+    "inline_complex_command": "FORBIDDEN"
   }
 }
