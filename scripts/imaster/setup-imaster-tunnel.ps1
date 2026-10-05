@@ -27,7 +27,7 @@ if(-not $env:CONTROL_PLANE_API_KEY){
 if(-not $env:CONTROL_PLANE_API_KEY){throw 'CONTROL_PLANE_API_KEY_NOT_AVAILABLE'}
 $health=Invoke-RestMethod 'http://127.0.0.1:8772/health'
 if(-not $health.ok){throw 'MCP_8772_NOT_HEALTHY'}
-& $exe.FullName init --sample hc-imaster-mesh --profile $profile --tunnel-id $tunnel --mcp-server-url $mcp
+& $exe.FullName init --sample sample_mcp_remote_no_auth --profile $profile --tunnel-id $tunnel --mcp-server-url $mcp
 if($LASTEXITCODE -ne 0){throw "INIT_FAILED_$LASTEXITCODE"}
 & $exe.FullName doctor --profile $profile --explain
 if($LASTEXITCODE -ne 0){throw "DOCTOR_FAILED_$LASTEXITCODE"}
