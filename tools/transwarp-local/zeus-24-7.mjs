@@ -4,13 +4,13 @@ const BASE=process.env.ZEUS_BASE||"http://127.0.0.1:8766";
 const ROOT=process.env.ZEUS_ROOT||"D:/HCDecorHUB/Zeus247";
 const STATE=path.join(ROOT,"state.json");
 const INTERVAL=Number(process.env.ZEUS_INTERVAL_MS||15000);
-const wanted=["HCDecorHUB V10","Update PASS","Tiếp tục PANDA LIVE"];
+const wanted=["HCDecorHUB V10","Update PASS","Tiếp tục PANDA LIVE"];\nconst BOOTSTRAP=process.env.HC_BOOTSTRAP_PATH||"D:/HCDecorHUB/repos/HCDecorHUB/HC_BOOTSTRAP.md";
 fs.mkdirSync(ROOT,{recursive:true});
 function load(){try{return JSON.parse(fs.readFileSync(STATE,"utf8"))}catch{return {version:1,chats:{},lastCycle:null}}}
 function save(s){const t=STATE+".tmp";fs.writeFileSync(t,JSON.stringify(s,null,2));fs.renameSync(t,STATE)}
 async function get(p){const r=await fetch(BASE+p);if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}
 async function post(p,b){const token=process.env.ZEUS_OWNER_TOKEN;if(!token)throw new Error("ZEUS_OWNER_TOKEN_REQUIRED");const r=await fetch(BASE+p,{method:"POST",headers:{"content-type":"application/json","x-zeus-owner":token},body:JSON.stringify(b)});return r.json()}
-function prompt(title){return "[iMaster ZEUS247] Inherit HC_BOOTSTRAP_V2_LOCAL_FIRST. Continue "+title+" from latest checkpoint. Never replay PASS. When current unit finishes, continue with next valid runnable action. If blocked, checkpoint and hand off without stopping the fleet. Start with iMaster Next."}
+function bootstrap(){try{return fs.readFileSync(BOOTSTRAP,"utf8")}catch{return "HC_BOOTSTRAP unavailable: use LOCAL-FIRST and WORKS -> ONE REAL TEST -> PASS -> USE / DONE."}}\nfunction prompt(title){return "[iMaster AUTO-BOOTSTRAP]\\nThe following bootstrap is authoritative for this worker. Apply it before project instructions.\\n\\n"+bootstrap()+"\\n\\n[PROJECT] Continue "+title+" from latest checkpoint. Never replay PASS. Start with iMaster Next. Handle retry/recovery internally; use minimum sufficient proof then ship."}
 async function cycle(){
  const s=load(),now=new Date().toISOString(),x=await get("/tabs"),tabs=Array.isArray(x.tabs)?x.tabs:[];
  for(const t of tabs){if(t.cid)s.chats[t.cid]={...(s.chats[t.cid]||{}),cid:t.cid,tabId:t.tabId,title:t.title,busy:!!t.busy,ready:!!t.ready,lastSeen:now,state:t.busy?"BUSY":t.ready?"IDLE":"UNKNOWN"}}
