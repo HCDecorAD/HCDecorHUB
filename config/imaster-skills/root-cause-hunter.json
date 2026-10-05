@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "skill_id": "imaster.root-cause-hunter",
+  "name": "Root Cause Hunter",
+  "owner": "iMaster",
+  "scope": "global",
+  "autoload": false,
+  "activation": {
+    "mode": "automatic",
+    "condition": "error, crash, repeated failure, unknown cause, or repair attempt fails"
+  },
+  "pipeline": [
+    "capture exact symptom/error/log/version/environment",
+    "check Fix Memory and local evidence",
+    "reproduce when practical",
+    "isolate failing layer and smallest causal boundary",
+    "fingerprint root cause",
+    "invoke advisor-research when evidence is insufficient or external/current knowledge helps",
+    "hand verified root cause to repair/code skill"
+  ],
+  "laws": [
+    "ROOT_CAUSE_BEFORE_RANDOM_PATCHING",
+    "EXACT_ERROR_BEFORE_GUESSING",
+    "ONE_FAILED_HYPOTHESIS_NE_HARD_BLOCKED",
+    "DO_NOT_REPLAY_KNOWN_FAILED_FIX"
+  ],
+  "output": [
+    "root_cause",
+    "evidence",
+    "affected_scope",
+    "recommended_repair"
+  ]
+}
