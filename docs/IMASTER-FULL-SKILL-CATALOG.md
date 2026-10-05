@@ -43,7 +43,7 @@ Architecture/context -> **Code Surgeon** -> Local execution -> **Regression Hunt
 Capability Acquisition -> existing capability/plugin -> official CLI/API/SDK -> trusted OSS -> adapt/install with authority boundary -> isolated test -> execute mission.
 
 ### Long-running / multi-worker mission
-**Parallel Execution + Continuous Control + Continuation Engine/PANDA + Local-First Execution**. A blocked lane yields; one failed worker never stalls independent READY work.
+**Parallel Execution + TransWarp Execution Fabric + Continuous Control + Continuation Engine/PANDA + Local-First Execution**. Group Governor schedules dependencies/resources; TransWarp executes and recovers parallel local lanes. A blocked lane yields; one failed worker never stalls independent READY work; unrelated GitHub job IDs never serialize independent workers.
 
 ## Full-call contract
 `iMaster FULL` = load bootstrap + this catalog + current mission/checkpoint; route any listed skill as needed. FULL does **not** mean run every test, every skill, or every verification gate. Minimum sufficient proof remains authoritative.
@@ -71,9 +71,11 @@ Capability Acquisition -> existing capability/plugin -> official CLI/API/SDK -> 
 - Zeus 24/7 chat control
 - HC Sentinel Desktop Watch
 - HC AutoDebug
-- HC TransWarp local execution
+- HC TransWarp parallel local execution + checkpoint/recovery fabric
 - HCDR recovery transport
 - GitHub source/version/CI ledger
 
 ## Anti-amnesia
 New chats/workers should load the iMaster bootstrap first. When full-system knowledge is required, load this catalog. Never declare a skill/capability missing before checking the bootstrap, this catalog, and the capability registry.
+
+<!-- TransWarp verify trigger: PR #108 head synchronization; no runtime behavior change. -->

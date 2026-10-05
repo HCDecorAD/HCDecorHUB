@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "skill_id": "imaster.parallel-execution",
   "name": "iMaster Parallel Execution",
   "owner": "iMaster",
@@ -14,17 +14,31 @@
     "scheduler": "group-governor/resource-scheduler",
     "worker_factory": "autonomous-worker-factory",
     "durability": "durable-queue",
-    "recovery": "lease-expire-requeue",
+    "recovery": "transwarp checkpoint-resume + lease-expire-requeue",
     "isolation": "blocked lane yields without stalling independent work",
-    "concurrency": "bounded by worker/resource/budget capacity"
+    "concurrency": "bounded by worker/resource/budget capacity",
+    "execution_fabric": "transwarp",
+    "transport": "HOCUONG_LOCAL_DIRECT_FIRST; HCDR_FALLBACK_RECOVERY; RDC_RESCUE_ONLY",
+    "resource_locking": "lock only declared dependency/shared-resource; independent READY lanes never wait on unrelated worker/job"
   },
   "laws": [
     "DO_NOT_REDO_PASS",
     "READY_WORK + SAFE_CAPACITY -> EXECUTE",
     "WAITING_ONE_MISSION != WAITING_THE_COMPANY",
-    "SINGLE_WORKER_FAILURE != COMPANY_STALL"
+    "SINGLE_WORKER_FAILURE != COMPANY_STALL",
+    "TRANSWARP_EXECUTION_FABRIC",
+    "INDEPENDENT_READY_WORKERS_MUST_NOT_WAIT_ON_UNRELATED_JOB_IDS",
+    "LOCK_ONLY_TRUE_DEPENDENCY_OR_SHARED_RESOURCE"
   ],
   "evidence_gate": "scripts/imaster-parallel-skill.test.mjs",
   "runtime": "lib/imaster-next-moon.mjs",
-  "claim_policy": "Skill is available to every iMaster bootstrap consumer; LIVE claims still require runtime evidence in the active environment."
+  "claim_policy": "Skill is available to every iMaster bootstrap consumer; LIVE claims still require runtime evidence in the active environment.",
+  "transwarp": {
+    "role": "PARALLEL_EXECUTION_AND_RECOVERY_FABRIC",
+    "scheduler_authority": "group-governor/resource-scheduler",
+    "dispatch_policy": "PARALLEL_INDEPENDENT_READY",
+    "checkpoint_resume": true,
+    "worker_failure_isolation": true,
+    "github_job_ids_are_not_worker_dependencies": true
+  }
 }
