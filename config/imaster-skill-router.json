@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0.0",
+  "id": "IMASTER_SKILL_ROUTER",
+  "mode": "ON_DEMAND_DEFAULT",
+  "full_command": "iMaster FULL",
+  "full_catalog": "docs/IMASTER-FULL-SKILL-CATALOG.md",
+  "routes": [
+    {
+      "when": [
+        "implement code",
+        "add feature",
+        "bug fix",
+        "refactor",
+        "integration"
+      ],
+      "skills": [
+        "imaster.code-surgeon",
+        "imaster.local-first-execution",
+        "imaster.regression-hunter"
+      ]
+    },
+    {
+      "when": [
+        "app will not start",
+        "runtime crash",
+        "dead feature",
+        "service/port/API failure"
+      ],
+      "skills": [
+        "imaster.app-runtime-doctor",
+        "imaster.root-cause-hunter",
+        "imaster.code-surgeon",
+        "imaster.regression-hunter"
+      ]
+    },
+    {
+      "when": [
+        "web UI",
+        "button",
+        "form",
+        "navigation",
+        "render",
+        "upload",
+        "save flow"
+      ],
+      "skills": [
+        "imaster.browser-ui-operator",
+        "imaster.app-runtime-doctor",
+        "imaster.regression-hunter"
+      ]
+    },
+    {
+      "when": [
+        "unknown error",
+        "repeated failure",
+        "cause unclear"
+      ],
+      "skills": [
+        "imaster.root-cause-hunter",
+        "imaster.advisor-research",
+        "imaster.repair-council-7x7",
+        "imaster.learning-memory"
+      ]
+    },
+    {
+      "when": [
+        "missing tool",
+        "missing capability",
+        "current route unavailable"
+      ],
+      "skills": [
+        "IMASTER_CAPABILITY_ACQUISITION",
+        "imaster.advisor-research"
+      ]
+    },
+    {
+      "when": [
+        "multiple independent READY tasks"
+      ],
+      "skills": [
+        "imaster.parallel-execution",
+        "imaster.continuous-control"
+      ]
+    },
+    {
+      "when": [
+        "CI/queue/deploy/external wait",
+        "mission must survive chat boundary"
+      ],
+      "skills": [
+        "imaster.continuation-engine",
+        "imaster.continuous-control"
+      ]
+    }
+  ],
+  "composition_rules": [
+    "Choose the smallest sufficient skill set.",
+    "A skill may activate another skill when its escalation condition is met.",
+    "Do not run every skill merely because iMaster FULL was loaded.",
+    "After code/config/runtime mutation, prefer targeted Regression Hunter plus one representative real runtime/UI test.",
+    "Unknown technical blocker must invoke research before HARD_EXTERNAL_BLOCKED."
+  ],
+  "done_rule": "WORKS -> ONE REAL TEST -> PASS -> USE / DONE"
+}
