@@ -12,11 +12,11 @@
   "route": [
     "CODE",
     "HOCUONG_LOCAL_DIRECT_OR_LOCAL_EXECUTOR",
-    "HCDR_FALLBACK_IF_LOCAL_ROUTE_UNAVAILABLE",
+    "LOCAL_BUILD_OR_RUN",
     "ONE_REAL_TARGETED_TEST",
     "LOCAL_PASS",
-    "GITHUB_SYNC_OR_MINIMAL_VERIFY_WHEN_NEEDED",
-    "USE_OR_DONE"
+    "USE_OR_DONE",
+    "GITHUB_SYNC_OR_CI_ONLY_WHEN_NEEDED"
   ],
   "authority_rule": "LOCAL_REAL_TEST_PASS_IS_AUTHORITATIVE",
   "github_role": "SOURCE_VERSION_RELEASE_LEDGER_AND_MINIMAL_VERIFIER_NOT_EXECUTION_FACTORY",
@@ -65,7 +65,10 @@
     "TEST_BEFORE_GITHUB",
     "HCDR_IS_FALLBACK_NOT_DEFAULT",
     "RDC_IS_RESCUE_NOT_DEFAULT",
-    "PRODUCTION_WRITES_FAIL_CLOSED"
+    "PRODUCTION_WRITES_FAIL_CLOSED",
+    "NO_OPTIONAL_GATE_BETWEEN_CODE_AND_LOCAL_TEST",
+    "LOCAL_PASS_CAN_FINISH_NORMAL_DEV",
+    "GITHUB_CI_AFTER_LOCAL_PASS_ONLY_WHEN_NEEDED"
   ],
   "fallback": {
     "on_local_failure": "try safe local recovery -> HCDR fallback when useful -> RDC only if blocker remains -> verify one real targeted result",
@@ -80,6 +83,25 @@
       "transport_used",
       "fallback_reason_if_any",
       "real_test_result"
+    ],
+    "inner_loop": "CODE -> LOCAL BUILD/RUN -> ONE REAL TEST -> PASS",
+    "external_services": "must not block local-owned development unless required for requested outcome",
+    "protection_location": "BOUNDARY_NOT_INNER_LOOP"
+  },
+  "development_loop": {
+    "principle": "BUILD_FAST_INSIDE_PROTECT_AT_BOUNDARY",
+    "no_default_dependency_on": [
+      "HCDR",
+      "GitHub CI",
+      "remote approval",
+      "full regression suite",
+      "release gate"
+    ],
+    "boundary_only": [
+      "auth/credentials",
+      "security/sensitive data",
+      "destructive/irreversible action",
+      "production deploy/release"
     ]
   }
 }
