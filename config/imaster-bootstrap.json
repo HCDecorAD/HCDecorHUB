@@ -43,7 +43,6 @@
     "PROACTIVE_SAFE_IMPROVEMENT",
     "VISUAL_STATUS_MUST_MATCH_EVIDENCE",
     "LOCAL_FIRST",
-    "HCDR_BEFORE_RDC",
     "TEST_BEFORE_GITHUB",
     "OWNER_OVERRIDES_IMASTER",
     "IMASTER_IS_HIGHEST_SYSTEM_AUTHORITY_BELOW_OWNER",
@@ -70,7 +69,10 @@
     "DO_NOT_ASK_OWNER_WHEN_AUTHORIZED_FALLBACK_CAN_EXECUTE",
     "IMASTER_TRANSPORT_MESH_BEFORE_OWNER_REQUIRED",
     "NO_SINGLE_TRANSPORT_DEPENDENCY",
-    "TRANSPORT_IS_REPLACEABLE_ADAPTER_NOT_CORE"
+    "TRANSPORT_IS_REPLACEABLE_ADAPTER_NOT_CORE",
+    "ALL_MACHINE_ACTIONS_ROUTE_THROUGH_IMASTER_TRANSPORT_MESH",
+    "RDC_DISABLED_UNTIL_OWNER_EXPLICITLY_REENABLES",
+    "DO_NOT_SUGGEST_OR_AUTO_ENABLE_RDC"
   ],
   "startup_checks": [
     "load portfolio and repositories",
@@ -112,7 +114,7 @@
     "config/imaster-skills/continuous-control.json"
   ],
   "parallel_execution_rule": "When >=2 independent tasks are READY and safe capacity exists, Capability Router MUST prefer imaster.parallel-execution over serial execution.",
-  "local_execution_default": "CODE -> HOCUONG LOCAL DIRECT/LOCAL EXECUTOR -> LOCAL BUILD/RUN -> ONE REAL TARGETED TEST -> PASS/USE/DONE -> GitHub/CI only when needed; HCDR fallback for transport/recovery; RDC rescue-only; mandatory auth/security/destructive/production boundaries remain enforced.",
+  "local_execution_default": "CODE -> HOCUONG LOCAL -> IMASTER TRANSPORT MESH -> HC GATEWAY/ZEUS -> ONE REAL TARGETED TEST -> PASS/USE/DONE; Mesh owns transport failover; RDC is disabled until Owner explicitly re-enables it.",
   "global_authority": "config/imaster-global-authority.json",
   "continuation_engine": "config/imaster-skills/continuation-engine.json",
   "continuous_control": {
@@ -203,18 +205,12 @@
     "done_at": "2026-10-04"
   },
   "machine_control_policy": {
-    "default_transport": "HCDR",
+    "default_transport": "IMASTER_TRANSPORT_MESH",
     "target": "HOCUONG",
     "mandatory_first_attempt": true,
-    "rdc_role": "RESCUE_ONLY",
-    "rdc_allowed_when": [
-      "HCDR_UNAVAILABLE",
-      "HCDR_FAILED",
-      "HCDR_NO_CLAIM",
-      "HCDR_TIMEOUT",
-      "HCDR_MISSING_REQUIRED_CAPABILITY"
-    ],
-    "evidence_required_before_rdc": true,
+    "rdc_role": "DISABLED",
+    "rdc_allowed_when": [],
+    "rdc_reenable": "OWNER_EXPLICIT_ONLY",
     "route_evidence_required": true
   },
   "hcdr_final_acceptance": {
@@ -317,10 +313,10 @@
     ],
     "route": [
       "CHAT_OR_AGENT",
+      "IMASTER_TRANSPORT_MESH",
       "UNIVERSAL_OPERATOR_GATEWAY",
       "ZEUS_OR_LOCAL_EXECUTOR",
-      "HCDR_FALLBACK_RECOVERY",
-      "RDC_RESCUE_ONLY"
+      "MESH_FAILOVER_EXCLUDING_RDC"
     ],
     "missing_connector_behavior": "Invoke Capability Acquisition + Advisor Research to discover/reconnect/install/adapt a reachable gateway. Do not ask Owner merely because a per-chat connector is absent.",
     "owner_required_only_when": "All safe gateway discovery/acquisition/recovery routes have been attempted and a genuine manual authorization/connection action is required."
