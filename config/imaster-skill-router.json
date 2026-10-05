@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "id": "IMASTER_SKILL_ROUTER",
   "mode": "ON_DEMAND_DEFAULT",
   "full_command": "iMaster FULL",
@@ -79,6 +79,7 @@
       ],
       "skills": [
         "imaster.parallel-execution",
+        "imaster.local-first-execution",
         "imaster.continuous-control"
       ]
     },
@@ -99,56 +100,7 @@
     "Do not run every skill merely because iMaster FULL was loaded.",
     "After code/config/runtime mutation, prefer targeted Regression Hunter plus one representative real runtime/UI test.",
     "Unknown technical blocker must invoke research before HARD_EXTERNAL_BLOCKED.",
-    "Before any machine action, enforce machine_action_transport_enforcement; transport selection is executable policy, not advisory prose."
+    "For >=2 independent READY local tasks, schedule with group-governor and execute/recover through TransWarp; unrelated GitHub job IDs MUST NOT serialize workers."
   ],
-  "done_rule": "WORKS -> ONE REAL TEST -> PASS -> USE / DONE",
-  "machine_action_transport_enforcement": {
-    "mode": "HARD_PRE_ACTION",
-    "applies_when": [
-      "machine action",
-      "local filesystem action",
-      "local process/service action",
-      "local build/test",
-      "bootstrap local gateway"
-    ],
-    "resolver_order": [
-      {
-        "route": "IMASTER_TRANSPORT_MESH",
-        "on_failure": "FAILOVER_INSIDE_MESH"
-      },
-      {
-        "route": "OWNER_REQUIRED",
-        "allowed_only_when": "mesh exhausted or real manual authorization/presence boundary is proven"
-      }
-    ],
-    "invariants": [
-      "MISSING_CHAT_LOCAL_TOOL_NE_OWNER_REQUIRED",
-      "OWNER_REQUIRED_WITHOUT_TRANSPORT_ATTEMPT_LEDGER_IS_INVALID",
-      "DO_NOT_ASK_OWNER_TO_RUN_A_COMMAND_THAT_AN_AVAILABLE_AUTHORIZED_TRANSPORT_CAN_RUN",
-      "ONE_FAILED_TRANSPORT_NE_HARD_BLOCKED",
-      "ALL_MACHINE_ACTIONS_MUST_ENTER_IMASTER_TRANSPORT_MESH",
-      "RDC_IS_NOT_AN_ELIGIBLE_ROUTE_WHILE_OWNER_DISABLE_IS_ACTIVE"
-    ],
-    "required_decision_record": [
-      "requested_action",
-      "routes_available",
-      "routes_attempted",
-      "result",
-      "next_route"
-    ],
-    "owner_required_guard": "Reject OWNER_REQUIRED unless Transport Mesh exhaustion is recorded or explicit manual authorization/presence is necessary."
-  },
-  "transport_mesh": {
-    "mode": "HARD_GLOBAL_PRE_ACTION",
-    "config": "config/imaster-transport-mesh.json",
-    "router": "tools/imaster-transport-mesh/router.mjs",
-    "decision": "SELECT_HEALTHY_ADAPTER -> EXECUTE -> ON_FAIL_FAILOVER -> PRESERVE_CHECKPOINT -> CONTINUE",
-    "laws": [
-      "NO_SINGLE_TRANSPORT_DEPENDENCY",
-      "ONE_FAILED_TRANSPORT_NE_HARD_BLOCKED",
-      "OWNER_REQUIRED_WITHOUT_MESH_EXHAUSTION_IS_INVALID",
-      "RDC_DISABLED_UNTIL_OWNER_EXPLICITLY_REENABLES",
-      "DO_NOT_SUGGEST_OR_AUTO_ENABLE_RDC"
-    ]
-  }
+  "done_rule": "WORKS -> ONE REAL TEST -> PASS -> USE / DONE"
 }
