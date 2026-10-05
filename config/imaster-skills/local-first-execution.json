@@ -5,27 +5,81 @@
   "owner": "iMaster",
   "scope": "global",
   "autoload": true,
-  "activation": {"mode":"default","condition":"coding, debugging, build, test, or machine execution is required"},
-  "route": ["CODE","HOCUONG_LOCAL","HCDR","LOCAL_FULL_GATE_AND_EVIDENCE","LOCAL_GREEN","GITHUB_ONE_PUSH","GITHUB_MINIMAL_VERIFY","DONE"],
-  "authority_rule": "LOCAL_PASS_IS_AUTHORITATIVE",
+  "activation": {
+    "mode": "default",
+    "condition": "coding, debugging, build, test, or machine execution is required"
+  },
+  "route": [
+    "CODE",
+    "HOCUONG_LOCAL_DIRECT_OR_LOCAL_EXECUTOR",
+    "HCDR_FALLBACK_IF_LOCAL_ROUTE_UNAVAILABLE",
+    "ONE_REAL_TARGETED_TEST",
+    "LOCAL_PASS",
+    "GITHUB_SYNC_OR_MINIMAL_VERIFY_WHEN_NEEDED",
+    "USE_OR_DONE"
+  ],
+  "authority_rule": "LOCAL_REAL_TEST_PASS_IS_AUTHORITATIVE",
   "github_role": "SOURCE_VERSION_RELEASE_LEDGER_AND_MINIMAL_VERIFIER_NOT_EXECUTION_FACTORY",
-  "github_minimal_verify": ["COMMIT_HASH","PASS_MANIFEST","INTEGRITY","SMOKE"],
+  "github_minimal_verify": [
+    "COMMIT_HASH",
+    "PASS_MANIFEST",
+    "INTEGRITY",
+    "SMOKE"
+  ],
   "deep_verify": {
     "default": false,
-    "allowed_when": ["CORE_CHANGE","SECURITY_CHANGE","DATA_MIGRATION","PRODUCTION_CRITICAL_CHANGE","LOCAL_ANOMALY"],
+    "allowed_when": [
+      "CORE_CHANGE",
+      "SECURITY_CHANGE",
+      "DATA_MIGRATION",
+      "PRODUCTION_CRITICAL_CHANGE",
+      "LOCAL_ANOMALY"
+    ],
     "rule": "Never replay a passed local gate unless risk requires it."
   },
   "transport_priority": [
-    {"priority":1,"transport":"HCDR","role":"MANDATORY_DEFAULT_MACHINE_CONTROL","when":"all normal machine-control, code, build, test, debug, file, health, deploy and local execution operations"},
-    {"priority":2,"transport":"RDC","role":"RESCUE_FALLBACK_ONLY","when":"only after HCDR first-attempt evidence shows UNAVAILABLE, FAILED, NO_CLAIM, TIMEOUT, or MISSING_REQUIRED_CAPABILITY"}
+    {
+      "priority": 1,
+      "transport": "LOCAL_DIRECT_OR_LOCAL_EXECUTOR",
+      "role": "DEFAULT_MACHINE_CONTROL",
+      "when": "healthy local execution route exists"
+    },
+    {
+      "priority": 2,
+      "transport": "HCDR",
+      "role": "FALLBACK_AND_RECOVERY",
+      "when": "direct/local executor cannot reach the required action or transport recovery is needed"
+    },
+    {
+      "priority": 3,
+      "transport": "RDC",
+      "role": "RESCUE_ONLY",
+      "when": "local and HCDR routes cannot complete the required action"
+    }
   ],
-  "laws": ["LOCAL_FIRST","LOCAL_PASS_AUTHORITATIVE","GITHUB_MINIMAL_VERIFY","DO_NOT_REDO_PASS","HCDR_BEFORE_RDC","TEST_BEFORE_GITHUB","NO_EVIDENCE_NO_GREEN","RDC_IS_RESCUE_NOT_DEFAULT","PRODUCTION_WRITES_FAIL_CLOSED","HCDR_MANDATORY_DEFAULT","MACHINE_CONTROL_MUST_ATTEMPT_HCDR_FIRST","RDC_RESCUE_ONLY_AFTER_HCDR_FAILURE_EVIDENCE"],
-  "fallback": {"on_hcdr_failure":"record HCDR failure evidence -> attempt safe HCDR recovery -> use RDC only if blocker remains -> verify result -> record transport used","rdc_precondition":"HCDR first-attempt evidence is mandatory","direct_rdc_normal_path":"FORBIDDEN"},
+  "laws": [
+    "LOCAL_FIRST",
+    "LOCAL_REAL_TEST_PASS_AUTHORITATIVE",
+    "DO_NOT_REDO_PASS",
+    "MINIMUM_SUFFICIENT_PROOF",
+    "TEST_BEFORE_GITHUB",
+    "HCDR_IS_FALLBACK_NOT_DEFAULT",
+    "RDC_IS_RESCUE_NOT_DEFAULT",
+    "PRODUCTION_WRITES_FAIL_CLOSED"
+  ],
+  "fallback": {
+    "on_local_failure": "try safe local recovery -> HCDR fallback when useful -> RDC only if blocker remains -> verify one real targeted result",
+    "direct_rdc_normal_path": "FORBIDDEN"
+  },
   "evidence_gate": "scripts/imaster-local-first-skill.test.mjs",
   "enforcement": {
-    "normal_machine_control_default":"HCDR",
-    "rdc_without_hcdr_attempt":"POLICY_VIOLATION",
-    "github_replay_after_local_pass":"FORBIDDEN_UNLESS_DEEP_VERIFY_TRIGGERED",
-    "evidence_fields":["transport_attempted","hcdr_status","fallback_reason","transport_used","verification_result","local_pass_manifest","github_minimal_verify_result","deep_verify_reason"]
+    "normal_machine_control_default": "LOCAL_DIRECT_OR_LOCAL_EXECUTOR",
+    "hdcr_typo_note": "HCDR is fallback/recovery, not a mandatory first hop",
+    "github_replay_after_local_pass": "FORBIDDEN_UNLESS_RISK_OR_ANOMALY_REQUIRES_IT",
+    "evidence_fields": [
+      "transport_used",
+      "fallback_reason_if_any",
+      "real_test_result"
+    ]
   }
 }
