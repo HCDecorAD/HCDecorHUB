@@ -88,7 +88,7 @@
       "real visual diff Reference vs HC runtime"
     ]
   },
-  "new_chat_rule": "A new chat must bootstrap from this contract before declaring a capability/project missing or starting replacement work.",
+  "new_chat_rule": "A new chat must bootstrap from this contract before declaring a capability/project missing or starting replacement work. Skill Router is ON_DEMAND by default; iMaster FULL references the complete skill catalog.",
   "skill_autoload": [
     "config/imaster-skills/parallel-execution.json",
     "config/imaster-skills/advisor-research.json",
@@ -241,6 +241,25 @@
       "DATA_MIGRATION",
       "PRODUCTION_CRITICAL_CHANGE",
       "LOCAL_ANOMALY"
+    ]
+  },
+  "skill_router": {
+    "mode": "ON_DEMAND_DEFAULT",
+    "full_catalog": "docs/IMASTER-FULL-SKILL-CATALOG.md",
+    "full_command": "iMaster FULL",
+    "rules": [
+      "Load only skills materially relevant to the current task by default.",
+      "For code/app implementation prefer code-surgeon; add app-runtime-doctor and browser-ui-operator for real runtime/UI acceptance.",
+      "On errors activate root-cause-hunter; escalate to advisor-research and repair-council when uncertainty remains.",
+      "After a change activate regression-hunter for minimum sufficient proof.",
+      "iMaster FULL loads/references the complete catalog when full-system capability context is required."
+    ],
+    "on_demand_skills": [
+      "config/imaster-skills/root-cause-hunter.json",
+      "config/imaster-skills/code-surgeon.json",
+      "config/imaster-skills/app-runtime-doctor.json",
+      "config/imaster-skills/browser-ui-operator.json",
+      "config/imaster-skills/regression-hunter.json"
     ]
   }
 }
