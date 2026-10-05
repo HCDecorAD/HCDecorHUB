@@ -49,3 +49,28 @@ RDC = rescue-only.
 ## Worker startup contract
 Every newly created Zeus/AutoChat/iMaster worker must receive this bootstrap (or a newer version) before project instructions.
 Worker should record/echo the bootstrap version in machine state, not require the user to explain LOCAL-FIRST or HCDR again.
+
+
+## HARD RULE — MINIMUM ACCEPTANCE / DONE FAST
+
+This rule is mandatory for iMaster, Zeus, AutoChat, workers, and all child workflows.
+
+Default acceptance path:
+
+`WORKS -> ONE REAL TEST -> PASS -> USE / DONE`
+
+A mission is DONE as soon as all three are true:
+1. The primary function works in the real target environment.
+2. One practical end-to-end test passes.
+3. No critical error blocks normal use.
+
+Do NOT require extra checkpoints, repeated verification, soak, freeze, evidence rounds, CI gates, acceptance layers, or redundant retests by default.
+
+Extra validation is OPTIONAL and may be added only when:
+- the owner explicitly requests it;
+- the change is destructive, security-sensitive, financial, production-critical, or otherwise high-risk; or
+- the first real test exposes instability that reasonably requires more testing.
+
+Internal recovery states such as WAITING, STALE, RETRY, RECOVER, or transport fallback must be handled inside iMaster whenever possible. Do not turn them into repeated owner-facing NEXT steps.
+
+Hard principle: `MINIMUM SUFFICIENT PROOF, THEN SHIP.`
