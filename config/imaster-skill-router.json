@@ -123,10 +123,11 @@
     ],
     "invariants": [
       "MISSING_CHAT_LOCAL_TOOL_NE_OWNER_REQUIRED",
-      "HCDR_MUST_BE_CONSIDERED_AND_ATTEMPTED_WHEN_LOCAL_DIRECT_IS_UNAVAILABLE_AND_HCDR_IS_APPLICABLE",
       "OWNER_REQUIRED_WITHOUT_TRANSPORT_ATTEMPT_LEDGER_IS_INVALID",
       "DO_NOT_ASK_OWNER_TO_RUN_A_COMMAND_THAT_AN_AVAILABLE_AUTHORIZED_TRANSPORT_CAN_RUN",
-      "ONE_FAILED_TRANSPORT_NE_HARD_BLOCKED"
+      "ONE_FAILED_TRANSPORT_NE_HARD_BLOCKED",
+      "ALL_MACHINE_ACTIONS_MUST_ENTER_IMASTER_TRANSPORT_MESH",
+      "RDC_IS_NOT_AN_ELIGIBLE_ROUTE_WHILE_OWNER_DISABLE_IS_ACTIVE"
     ],
     "required_decision_record": [
       "requested_action",
@@ -138,14 +139,16 @@
     "owner_required_guard": "Reject OWNER_REQUIRED unless Transport Mesh exhaustion is recorded or explicit manual authorization/presence is necessary."
   },
   "transport_mesh": {
-    "mode": "HARD_PRE_ACTION",
+    "mode": "HARD_GLOBAL_PRE_ACTION",
     "config": "config/imaster-transport-mesh.json",
     "router": "tools/imaster-transport-mesh/router.mjs",
     "decision": "SELECT_HEALTHY_ADAPTER -> EXECUTE -> ON_FAIL_FAILOVER -> PRESERVE_CHECKPOINT -> CONTINUE",
     "laws": [
       "NO_SINGLE_TRANSPORT_DEPENDENCY",
       "ONE_FAILED_TRANSPORT_NE_HARD_BLOCKED",
-      "OWNER_REQUIRED_WITHOUT_MESH_EXHAUSTION_IS_INVALID"
+      "OWNER_REQUIRED_WITHOUT_MESH_EXHAUSTION_IS_INVALID",
+      "RDC_DISABLED_UNTIL_OWNER_EXPLICITLY_REENABLES",
+      "DO_NOT_SUGGEST_OR_AUTO_ENABLE_RDC"
     ]
   }
 }
