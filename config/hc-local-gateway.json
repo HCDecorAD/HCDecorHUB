@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "id": "HC_LOCAL_GATEWAY",
+  "cost": "0",
+  "mode": "LOCAL_FIRST_SELF_HOSTED",
+  "purpose": "Stable authorized entrypoint from iMaster-compatible operators to HOCUONG local services without making RDC a normal dependency.",
+  "route": ["AUTHORIZED_OPERATOR","HC_LOCAL_GATEWAY","ZEUS_LOCAL_127.0.0.1_8766","LOCAL_EXECUTOR","HCDR_FALLBACK","RDC_OR_MESHCENTRAL_RESCUE"],
+  "defaults": {
+    "listen": "127.0.0.1",
+    "public_shell": false,
+    "direct_internet_exposure": false,
+    "authentication_required": true,
+    "allowlist_required_for_mutations": true
+  },
+  "endpoints": ["GET /health","GET /status","POST /zeus/send","POST /zeus/create","POST /zeus/rename"],
+  "laws": [
+    "LOCALHOST_ONLY_BY_DEFAULT",
+    "NO_UNAUTHENTICATED_MUTATION",
+    "NO_RAW_PUBLIC_SHELL",
+    "ZEUS_REMAINS_CHAT_CONTROL_PLANE",
+    "HCDR_IS_FALLBACK_NOT_DEFAULT",
+    "REMOTE_DESKTOP_IS_RESCUE_NOT_DEFAULT",
+    "BUILD_FAST_INSIDE_PROTECT_AT_BOUNDARY"
+  ],
+  "acceptance": ["gateway health works","authorized Zeus proxy works","one real targeted action passes"]
+}
