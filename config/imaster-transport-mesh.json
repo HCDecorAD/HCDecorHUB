@@ -58,7 +58,9 @@
     "DO_NOT_PUBLICLY_EXPOSE_RAW_SHELL",
     "AUTH_REQUIRED_FOR_REMOTE_MUTATION",
     "OWNER_REQUIRED_WITHOUT_MESH_EXHAUSTION_IS_INVALID",
-    "RDC_DISABLED_UNTIL_OWNER_EXPLICITLY_REENABLES"
+    "RDC_DISABLED_UNTIL_OWNER_EXPLICITLY_REENABLES",
+    "CHATGPT_IMASTER_CONTROL_MUST_USE_ALLOWLIST_ENDPOINT",
+    "CONTROL_ENDPOINT_MUST_NOT_EXPOSE_RAW_SHELL"
   ],
   "status_colors": {
     "running": "BLUE",
@@ -71,5 +73,22 @@
     "failed adapter yields to next adapter",
     "core mission/checkpoint survives failover",
     "one real targeted transport action passes"
-  ]
+  ],
+  "control_endpoint": {
+    "listen_default": "127.0.0.1:8771",
+    "public_raw_shell": false,
+    "read": [
+      "GET /health",
+      "GET /status",
+      "GET /control/status",
+      "GET /control/tabs"
+    ],
+    "mutations": [
+      "POST /control/send",
+      "POST /control/create",
+      "POST /control/rename"
+    ],
+    "mutation_auth": "x-imaster-mesh",
+    "contract": "CHATGPT_IMASTER_CONTROL_ALLOWLIST_ONLY"
+  }
 }
