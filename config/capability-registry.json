@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.2.0",
+  "schema_version": "1.3.0",
   "capabilities": [
     {
       "capability_id": "durable-queue",
@@ -37,7 +37,9 @@
       "capability_id": "durable-recovery-acceptance",
       "provider_tool": "transwarp",
       "inputs": [
-        "mission"
+        "mission",
+        "checkpoint",
+        "failure_injection?"
       ],
       "outputs": [
         "state",
@@ -47,7 +49,31 @@
       "gate": "TransWarp durable recovery acceptance",
       "cost_class": "medium",
       "production_write": false,
-      "fail_closed": true
+      "fail_closed": true,
+      "contract_state": "backward-compatible-recovery-acceptance"
+    },
+    {
+      "capability_id": "transwarp-execution-fabric",
+      "provider_tool": "transwarp",
+      "inputs": [
+        "task_dag",
+        "dispatch_plan",
+        "worker_leases",
+        "checkpoints",
+        "local_route"
+      ],
+      "outputs": [
+        "parallel_execution_state",
+        "recovery_state",
+        "checkpoint_evidence"
+      ],
+      "risk_class": "control-plane-transport",
+      "gate": "TransWarp durable recovery acceptance + iMaster parallel execution skill gate",
+      "cost_class": "medium",
+      "production_write": false,
+      "fail_closed": true,
+      "activation": "AUTO_FOR_PARALLEL_LOCAL_EXECUTION",
+      "contract_state": "integrated-with-imaster-parallel-execution"
     },
     {
       "capability_id": "mission-correlation",
