@@ -1,0 +1,15 @@
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import assert from "node:assert/strict";
+import {FileQueueAdapter} from "./adapters/file-queue.mjs";
+import {envelope} from "./envelope.mjs";
+const root=fs.mkdtempSync(path.join(os.tmpdir(),"imaster-mesh-"));
+const q=new FileQueueAdapter(root);
+assert.equal((await q.probe()).health,"healthy");
+const req=envelope({missionId:"SMOKE",checkpoint:"CP1",action:"gateway.health",payload:{}});
+q.enqueue(req);const c=q.claim();assert.equal(c.request.id,req.id);assert.equal(c.request.checkpoint,"CP1");
+const out=q.complete(c,{ok:true,evidence:{http:200},checkpoint:"CP2"});
+assert.equal(out.ok,true);assert.equal(out.checkpoint,"CP2");assert.equal(out.missionId,"SMOKE");
+assert.ok(fs.existsSync(path.join(root,"outbox",req.id+".json")));
+console.log("IMASTER_TRANSPORT_FILE_QUEUE_PASS");
