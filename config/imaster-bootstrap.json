@@ -12,6 +12,7 @@
     "config/site-registry.json",
     "config/imaster-all-phase-freeze.json",
     "config/imaster-capability-acquisition.json",
+    "config/imaster-skill-router.json",
     "config/imaster-skills/parallel-execution.json",
     "config/imaster-skills/advisor-research.json",
     "config/imaster-skills/learning-memory.json",
@@ -259,7 +260,8 @@
       "config/imaster-skills/app-runtime-doctor.json",
       "config/imaster-skills/browser-ui-operator.json",
       "config/imaster-skills/regression-hunter.json"
-    ]
+    ],
+    "manifest": "config/imaster-skill-router.json"
   },
   "acceptance_default": {
     "path": [
