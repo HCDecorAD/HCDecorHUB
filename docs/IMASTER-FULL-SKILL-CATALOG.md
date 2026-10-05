@@ -77,3 +77,5 @@ Capability Acquisition -> existing capability/plugin -> official CLI/API/SDK -> 
 
 ## Anti-amnesia
 New chats/workers should load the iMaster bootstrap first. When full-system knowledge is required, load this catalog. Never declare a skill/capability missing before checking the bootstrap, this catalog, and the capability registry.
+
+<!-- TransWarp verify trigger: PR #108 head synchronization; no runtime behavior change. -->
