@@ -59,7 +59,9 @@
     "GITHUB_MUST_NOT_REPLAY_PASSED_LOCAL_GATES",
     "MINIMUM_SUFFICIENT_PROOF_THEN_SHIP",
     "WORKS_ONE_REAL_TEST_PASS_USE_DONE",
-    "LOCAL_DIRECT_BEFORE_REMOTE_TRANSPORT"
+    "LOCAL_DIRECT_BEFORE_REMOTE_TRANSPORT",
+    "CHAT_CONNECTOR_NOT_EXPOSED_NE_MACHINE_CONTROL_UNAVAILABLE",
+    "DISCOVER_GATEWAY_BEFORE_OWNER_REQUIRED"
   ],
   "startup_checks": [
     "load portfolio and repositories",
@@ -292,5 +294,26 @@
     ],
     "worker_action": "On HOT_SYNC, reload current bootstrap/router/catalog, preserve mission/checkpoint/PASS, acknowledge sync, then continue next valid action.",
     "terminal_rule": "A skill update is fleet-current only after active reachable chats are synced or explicitly marked unreachable/stale."
+  },
+  "universal_operator_gateway": {
+    "mode": "HARD_REQUIRED",
+    "purpose": "Decouple chat-exposed tools from HOCUONG machine-control capability.",
+    "laws": [
+      "CHAT_CONNECTOR_NOT_EXPOSED_NE_MACHINE_CONTROL_UNAVAILABLE",
+      "DO_NOT_STOP_AT_TOOLSET_BOUNDARY",
+      "DISCOVER_OR_ACQUIRE_OPERATOR_GATEWAY_BEFORE_OWNER_REQUIRED",
+      "GATEWAY_MUST_ROUTE_TO_LOCAL_ZEUS_FIRST_AND_HCDR_AS_FALLBACK",
+      "ONE_FAILED_TRANSPORT_NE_HARD_BLOCKED",
+      "MOBILE_NEW_CHAT_OLD_CHAT_SHARE_THE_SAME_OPERATOR_GATEWAY_CONTRACT"
+    ],
+    "route": [
+      "CHAT_OR_AGENT",
+      "UNIVERSAL_OPERATOR_GATEWAY",
+      "ZEUS_OR_LOCAL_EXECUTOR",
+      "HCDR_FALLBACK_RECOVERY",
+      "RDC_RESCUE_ONLY"
+    ],
+    "missing_connector_behavior": "Invoke Capability Acquisition + Advisor Research to discover/reconnect/install/adapt a reachable gateway. Do not ask Owner merely because a per-chat connector is absent.",
+    "owner_required_only_when": "All safe gateway discovery/acquisition/recovery routes have been attempted and a genuine manual authorization/connection action is required."
   }
 }
