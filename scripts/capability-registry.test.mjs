@@ -16,6 +16,10 @@ for(const id of ['local-execution-transport','failure-diagnosis','repair-verific
   if(['local-execution-transport','failure-diagnosis','repair-verification'].includes(id)) assert.equal(c.contract_state,'source-implementation-gated');
   else assert.equal(c.contract_state,'source-contract-only');
 }
+const legacyTw=r.capabilities.find(x=>x.capability_id==='durable-recovery-acceptance');
+assert.ok(legacyTw,'durable-recovery-acceptance');
+assert.equal(legacyTw.provider_tool,'transwarp');
+assert.equal(legacyTw.contract_state,'backward-compatible-recovery-acceptance');
 const tw=r.capabilities.find(x=>x.capability_id==='transwarp-execution-fabric');
 assert.ok(tw,'transwarp-execution-fabric');
 assert.equal(tw.provider_tool,'transwarp');
