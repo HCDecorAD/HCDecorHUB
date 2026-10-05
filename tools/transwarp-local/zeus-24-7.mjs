@@ -4,7 +4,7 @@ const BASE=process.env.ZEUS_BASE||"http://127.0.0.1:8766";
 const ROOT=process.env.ZEUS_ROOT||"D:/HCDecorHUB/Zeus247";
 const STATE=path.join(ROOT,"state.json");
 const INTERVAL=Number(process.env.ZEUS_INTERVAL_MS||15000);
-const wanted=["HCDecorHUB V10","Update PASS","Tiếp tục PANDA LIVE"];\nconst BOOTSTRAP=process.env.HC_BOOTSTRAP_PATH||"D:/HCDecorHUB/repos/HCDecorHUB/HC_BOOTSTRAP.md";\nconst FULL_CATALOG=process.env.IMASTER_FULL_CATALOG||"D:/HCDecorHUB/repos/HCDecorHUB/docs/IMASTER-FULL-SKILL-CATALOG.md";\nconst IMASTER_SKILL_ROUTER=process.env.IMASTER_SKILL_ROUTER||"D:/HCDecorHUB/repos/HCDecorHUB/config/imaster-skill-router.json";
+const wanted=["HCDecorHUB V10","Update PASS","Tiếp tục PANDA LIVE"];\nconst BOOTSTRAP=process.env.HC_BOOTSTRAP_PATH||"D:/HCDecorHUB/repos/HCDecorHUB/HC_BOOTSTRAP.md";\nconst FULL_CATALOG=process.env.IMASTER_FULL_CATALOG||"D:/HCDecorHUB/repos/HCDecorHUB/docs/IMASTER-FULL-SKILL-CATALOG.md";\nconst IMASTER_SKILL_ROUTER=process.env.IMASTER_SKILL_ROUTER||"D:/HCDecorHUB/repos/HCDecorHUB/config/imaster-skill-router.json";\nconst IMASTER_HOT_SYNC_STATE=process.env.IMASTER_HOT_SYNC_STATE||"D:/HCDecorHUB/Zeus247/imaster-hot-sync.json";
 fs.mkdirSync(ROOT,{recursive:true});
 function load(){try{return JSON.parse(fs.readFileSync(STATE,"utf8"))}catch{return {version:1,chats:{},lastCycle:null}}}
 function save(s){const t=STATE+".tmp";fs.writeFileSync(t,JSON.stringify(s,null,2));fs.renameSync(t,STATE)}
@@ -29,3 +29,28 @@ async function cycle(){
 let running=false;
 async function tick(){if(running)return;running=true;try{console.log(JSON.stringify(await cycle()))}catch(e){console.error(JSON.stringify({ok:false,error:String(e.message||e)}))}finally{running=false}}
 await tick();setInterval(tick,INTERVAL);
+
+function iMasterFingerprint(){
+  const crypto=require("node:crypto");
+  const parts=[BOOTSTRAP,FULL_CATALOG,IMASTER_SKILL_ROUTER].map(p=>{try{return fs.readFileSync(p)}catch{return Buffer.from("")}});
+  return crypto.createHash("sha256").update(Buffer.concat(parts)).digest("hex").slice(0,16);
+}
+function iMasterHotSyncPrompt(){
+  const fp=iMasterFingerprint();
+  return `[iMaster HOT_SYNC ${fp}] HARD GLOBAL UPDATE.
+Reload current iMaster Bootstrap + Skill Router + FULL Catalog before the next mutating action.
+Preserve this chat's Mission, CID, Checkpoint and every PASS/DONE fact. DO NOT redo PASS.
+Continue from the next valid action after reload. Reply IMASTER_SYNCED_${fp} only when reload is accepted.`;
+}
+async function hotSyncActiveChats(){
+  const fp=iMasterFingerprint();
+  let prev={}; try{prev=JSON.parse(fs.readFileSync(IMASTER_HOT_SYNC_STATE,"utf8"))}catch{}
+  if(prev.fingerprint===fp)return {changed:false,fingerprint:fp};
+  const tabs=await allTabs();
+  const active=(tabs||[]).filter(t=>t&&t.cid&&!["DONE","CLOSED","STALE"].includes(String(t.status||"").toUpperCase()));
+  const results=[];
+  for(const t of active){try{await sendExact(t.cid,iMasterHotSyncPrompt());results.push({cid:t.cid,ok:true})}catch(e){results.push({cid:t.cid,ok:false,error:String(e?.message||e)})}}
+  fs.mkdirSync(require("node:path").dirname(IMASTER_HOT_SYNC_STATE),{recursive:true});
+  fs.writeFileSync(IMASTER_HOT_SYNC_STATE,JSON.stringify({fingerprint:fp,updatedAt:new Date().toISOString(),results},null,2));
+  return {changed:true,fingerprint:fp,results};
+}
