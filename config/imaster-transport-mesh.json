@@ -1,0 +1,70 @@
+{
+  "schema": "imaster-transport-mesh/v1",
+  "id": "IMASTER_TRANSPORT_MESH",
+  "mode": "HARD_GLOBAL_TRANSPORT_AGNOSTIC",
+  "core": {
+    "control_plane": "HC_LOCAL_GATEWAY",
+    "local_executor": "ZEUS",
+    "rule": "CORE_MUST_NOT_DEPEND_ON_ANY_SINGLE_TRANSPORT"
+  },
+  "adapters": [
+    {
+      "id": "local-direct",
+      "class": "direct",
+      "priority": 10,
+      "required": false
+    },
+    {
+      "id": "native-connector",
+      "class": "connector",
+      "priority": 20,
+      "required": false
+    },
+    {
+      "id": "hcdr",
+      "class": "relay",
+      "priority": 30,
+      "required": false
+    },
+    {
+      "id": "rdc",
+      "class": "rescue",
+      "priority": 90,
+      "required": false
+    },
+    {
+      "id": "authenticated-tunnel",
+      "class": "optional-tunnel",
+      "priority": 100,
+      "required": false
+    }
+  ],
+  "router": {
+    "algorithm": "HEALTHY_LOWEST_PRIORITY_FIRST",
+    "on_failure": "RECORD -> QUARANTINE_TEMPORARILY -> TRY_NEXT_HEALTHY_ADAPTER",
+    "on_recovery": "RETURN_TO_BETTER_ROUTE_WITHOUT_REPLAYING_PASS",
+    "owner_required_guard": "ONLY_AFTER_ALL_SAFE_APPLICABLE_ADAPTERS_ARE_EXHAUSTED_OR_MANUAL_AUTH_IS_PROVEN"
+  },
+  "laws": [
+    "NO_SINGLE_TRANSPORT_DEPENDENCY",
+    "TRANSPORT_IS_REPLACEABLE_ADAPTER_NOT_CORE",
+    "GATEWAY_AND_ZEUS_REMAIN_CORE",
+    "ONE_FAILED_TRANSPORT_NE_HARD_BLOCKED",
+    "DO_NOT_REPLAY_PASS_DURING_FAILOVER",
+    "DO_NOT_PUBLICLY_EXPOSE_RAW_SHELL",
+    "AUTH_REQUIRED_FOR_REMOTE_MUTATION",
+    "OWNER_REQUIRED_WITHOUT_MESH_EXHAUSTION_IS_INVALID"
+  ],
+  "status_colors": {
+    "running": "BLUE",
+    "pass": "GREEN",
+    "wait": "YELLOW",
+    "error": "RED"
+  },
+  "acceptance": [
+    "router selects a healthy adapter",
+    "failed adapter yields to next adapter",
+    "core mission/checkpoint survives failover",
+    "one real targeted transport action passes"
+  ]
+}
