@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "program_id": "HCDECOR_HUB_V9_APP",
-  "status": "ACTIVE",
+  "status": "FROZEN_CANDIDATE",
   "source_blueprint": "HCDecor HUB Blueprint + Module & Window Naming Guide V3",
   "laws": [
     "ONE_GOAL_REAL_WORKFLOW_REAL_ACTION_VERIFY_DONE",
@@ -818,7 +818,7 @@
       "id": "PKG-15",
       "phase": "P8_FINAL",
       "name": "INTEGRATION",
-      "state": "LOCAL_PASS",
+      "state": "DONE",
       "depends_on": [
         "PKG-02",
         "PKG-03",
@@ -882,14 +882,21 @@
         "cross_window_state": "CONTRACT_PASS",
         "responsive": "V9_SHELL_PASS",
         "full_e2e": "CI_PENDING",
-        "public_side_effects": "NONE"
+        "public_side_effects": "NONE",
+        "pr": 104,
+        "pr_quality_run": 750,
+        "integration_gate": "PASS",
+        "production_build": "PASS",
+        "master_e2e": "PASS",
+        "cloudflare_build": "PASS",
+        "merge_sha": "b82e124ed48192a4d3fa82b761b7c3905eae0b1f"
       }
     },
     {
       "id": "PKG-16",
       "phase": "P8_FINAL",
       "name": "RELEASE_FREEZE",
-      "state": "WAITING_DEP",
+      "state": "LOCAL_PASS",
       "depends_on": [
         "PKG-15"
       ],
@@ -913,7 +920,17 @@
         "no_evidence_no_green": true,
         "release_ready": false
       },
-      "blocker": "PKG-15_CI_PENDING"
+      "evidence": {
+        "candidate_from_pr": 104,
+        "candidate_quality_run": 750,
+        "regression_suite": "PASS",
+        "production_build": "PASS",
+        "master_e2e": "PASS",
+        "cloudflare_build": "PASS",
+        "evidence_complete": "CANDIDATE_PASS",
+        "public_publish_performed": false,
+        "terminal_freeze": "CI_PENDING"
+      }
     }
   ],
   "scheduler": {
