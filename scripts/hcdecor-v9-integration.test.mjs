@@ -8,7 +8,7 @@ for(const id of ['PKG-02','PKG-03','PKG-04','PKG-05','PKG-06','PKG-07','PKG-08',
   assert.equal(byId.get(id)?.state,'DONE',id+' dependency');
 }
 assert.equal(byId.get('PKG-15')?.state,'DONE');
-assert.equal(byId.get('PKG-16')?.state,'LOCAL_PASS');
+assert.equal(byId.get('PKG-16')?.state,'DONE');
 const expected={
  WIN_HOME:'app/hub/page.js',WIN_TREND:'app/hub/trend/page.js',WIN_SOCIAL:'app/hub/social/page.js',
  WIN_PROJECTS:'app/hub/projects/page.js',WIN_IMASTER:'app/hub/agents/page.js',WIN_BUSINESS:'app/hub/business/page.js',
