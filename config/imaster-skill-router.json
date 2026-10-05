@@ -79,7 +79,6 @@
       ],
       "skills": [
         "imaster.parallel-execution",
-        "transwarp-execution-fabric",
         "imaster.local-first-execution",
         "imaster.continuous-control"
       ]
