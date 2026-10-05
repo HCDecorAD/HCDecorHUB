@@ -30,7 +30,10 @@
       "id": "rdc",
       "class": "rescue",
       "priority": 90,
-      "required": false
+      "required": false,
+      "enabled": false,
+      "status": "TEMPORARILY_DISABLED_BY_OWNER",
+      "eligible": false
     },
     {
       "id": "authenticated-tunnel",
@@ -43,7 +46,8 @@
     "algorithm": "HEALTHY_LOWEST_PRIORITY_FIRST",
     "on_failure": "RECORD -> QUARANTINE_TEMPORARILY -> TRY_NEXT_HEALTHY_ADAPTER",
     "on_recovery": "RETURN_TO_BETTER_ROUTE_WITHOUT_REPLAYING_PASS",
-    "owner_required_guard": "ONLY_AFTER_ALL_SAFE_APPLICABLE_ADAPTERS_ARE_EXHAUSTED_OR_MANUAL_AUTH_IS_PROVEN"
+    "owner_required_guard": "ONLY_AFTER_ALL_SAFE_APPLICABLE_ADAPTERS_ARE_EXHAUSTED_OR_MANUAL_AUTH_IS_PROVEN",
+    "rdc_policy": "EXCLUDE_FROM_SELECTION_AND_FAILOVER"
   },
   "laws": [
     "NO_SINGLE_TRANSPORT_DEPENDENCY",
@@ -53,7 +57,8 @@
     "DO_NOT_REPLAY_PASS_DURING_FAILOVER",
     "DO_NOT_PUBLICLY_EXPOSE_RAW_SHELL",
     "AUTH_REQUIRED_FOR_REMOTE_MUTATION",
-    "OWNER_REQUIRED_WITHOUT_MESH_EXHAUSTION_IS_INVALID"
+    "OWNER_REQUIRED_WITHOUT_MESH_EXHAUSTION_IS_INVALID",
+    "RDC_DISABLED_UNTIL_OWNER_EXPLICITLY_REENABLES"
   ],
   "status_colors": {
     "running": "BLUE",
