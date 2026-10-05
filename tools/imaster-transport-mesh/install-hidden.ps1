@@ -3,6 +3,7 @@ $ErrorActionPreference="Stop"
 New-Item -ItemType Directory -Force -Path $Root | Out-Null
 Copy-Item (Join-Path $Repo "tools\imaster-transport-mesh\runtime.mjs") (Join-Path $Root "runtime.mjs") -Force
 Copy-Item (Join-Path $Repo "tools\imaster-transport-mesh\router.mjs") (Join-Path $Root "router.mjs") -Force
+Copy-Item (Join-Path $Repo "tools\imaster-transport-mesh\mcp-server.mjs") (Join-Path $Root "mcp-server.mjs") -Force
 New-Item -ItemType Directory -Force -Path (Join-Path $Root "config") | Out-Null
 Copy-Item (Join-Path $Repo "config\imaster-transport-mesh.json") (Join-Path $Root "config\imaster-transport-mesh.json") -Force
 @"
@@ -19,8 +20,9 @@ WshShell.Run """$Root\run.cmd""", 0, False
 "@ | Set-Content -Encoding ASCII (Join-Path $Root "run-hidden.vbs")
 $startup=[Environment]::GetFolderPath("Startup")
 Copy-Item (Join-Path $Root "run-hidden.vbs") (Join-Path $startup "iMaster-Transport-Mesh.vbs") -Force
-Get-CimInstance Win32_Process -Filter "Name = 'node.exe'" | Where-Object { $_.CommandLine -match 'runtime\.mjs' -and $_.CommandLine -match 'TransportMesh|imaster-transport-mesh' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
-Start-Sleep -Milliseconds 500
+$old = Get-NetTCPConnection -LocalPort 8771 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
+if($old){ taskkill /PID $old.OwningProcess /F | Out-Null }
+Start-Sleep -Milliseconds 800
 Start-Process wscript.exe -ArgumentList ('"'+(Join-Path $Root "run-hidden.vbs")+'"') -WindowStyle Hidden
 Write-Output "IMASTER_TRANSPORT_MESH_INSTALLED $Root"
 
@@ -38,3 +40,17 @@ Copy-Item (Join-Path $Root "run-carrier-hidden.vbs") (Join-Path $startup "iMaste
 if ($env:IMASTER_CARRIER_GITHUB_REPO -and ($env:IMASTER_CARRIER_GITHUB_TOKEN -or $env:GITHUB_TOKEN)) {
  Start-Process wscript.exe -ArgumentList ('"'+(Join-Path $Root "run-carrier-hidden.vbs")+'"') -WindowStyle Hidden
 }
+
+@"
+@echo off
+cd /d "$Root"
+node mcp-server.mjs >> mcp.log 2>&1
+"@ | Set-Content -Encoding ASCII (Join-Path $Root "run-mcp.cmd")
+@"
+Set WshShell = CreateObject("WScript.Shell")
+WshShell.Run """$Root\run-mcp.cmd""", 0, False
+"@ | Set-Content -Encoding ASCII (Join-Path $Root "run-mcp-hidden.vbs")
+Copy-Item (Join-Path $Root "run-mcp-hidden.vbs") (Join-Path $startup "iMaster-Mesh-MCP.vbs") -Force
+$mcpOld = Get-NetTCPConnection -LocalPort 8772 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
+if($mcpOld){ taskkill /PID $mcpOld.OwningProcess /F | Out-Null }
+Start-Process wscript.exe -ArgumentList ('"'+(Join-Path $Root "run-mcp-hidden.vbs")+'"') -WindowStyle Hidden
