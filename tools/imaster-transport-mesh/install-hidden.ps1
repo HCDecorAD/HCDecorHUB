@@ -19,6 +19,8 @@ WshShell.Run """$Root\run.cmd""", 0, False
 "@ | Set-Content -Encoding ASCII (Join-Path $Root "run-hidden.vbs")
 $startup=[Environment]::GetFolderPath("Startup")
 Copy-Item (Join-Path $Root "run-hidden.vbs") (Join-Path $startup "iMaster-Transport-Mesh.vbs") -Force
+Get-CimInstance Win32_Process -Filter "Name = 'node.exe'" | Where-Object { $_.CommandLine -match 'runtime\.mjs' -and $_.CommandLine -match 'TransportMesh|imaster-transport-mesh' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+Start-Sleep -Milliseconds 500
 Start-Process wscript.exe -ArgumentList ('"'+(Join-Path $Root "run-hidden.vbs")+'"') -WindowStyle Hidden
 Write-Output "IMASTER_TRANSPORT_MESH_INSTALLED $Root"
 
