@@ -61,7 +61,10 @@
     "WORKS_ONE_REAL_TEST_PASS_USE_DONE",
     "LOCAL_DIRECT_BEFORE_REMOTE_TRANSPORT",
     "CHAT_CONNECTOR_NOT_EXPOSED_NE_MACHINE_CONTROL_UNAVAILABLE",
-    "DISCOVER_GATEWAY_BEFORE_OWNER_REQUIRED"
+    "DISCOVER_GATEWAY_BEFORE_OWNER_REQUIRED",
+    "BUILD_FAST_INSIDE_PROTECT_AT_BOUNDARY",
+    "NO_OPTIONAL_GATE_BETWEEN_CODE_AND_LOCAL_TEST",
+    "HCDR_IS_TRANSPORT_NOT_BUILD_GATE"
   ],
   "startup_checks": [
     "load portfolio and repositories",
@@ -103,7 +106,7 @@
     "config/imaster-skills/continuous-control.json"
   ],
   "parallel_execution_rule": "When >=2 independent tasks are READY and safe capacity exists, Capability Router MUST prefer imaster.parallel-execution over serial execution.",
-  "local_execution_default": "CODE -> HOCUONG LOCAL DIRECT/LOCAL EXECUTOR -> HCDR only as fallback/recovery -> ONE REAL TARGETED TEST -> PASS -> GITHUB source/version sync when needed -> USE/DONE; RDC rescue-only.",
+  "local_execution_default": "CODE -> HOCUONG LOCAL DIRECT/LOCAL EXECUTOR -> LOCAL BUILD/RUN -> ONE REAL TARGETED TEST -> PASS/USE/DONE -> GitHub/CI only when needed; HCDR fallback for transport/recovery; RDC rescue-only; mandatory auth/security/destructive/production boundaries remain enforced.",
   "global_authority": "config/imaster-global-authority.json",
   "continuation_engine": "config/imaster-skills/continuation-engine.json",
   "continuous_control": {
@@ -315,5 +318,40 @@
     ],
     "missing_connector_behavior": "Invoke Capability Acquisition + Advisor Research to discover/reconnect/install/adapt a reachable gateway. Do not ask Owner merely because a per-chat connector is absent.",
     "owner_required_only_when": "All safe gateway discovery/acquisition/recovery routes have been attempted and a genuine manual authorization/connection action is required."
+  },
+  "build_fast_inside_protect_at_boundary": {
+    "mode": "HARD_GLOBAL",
+    "principle": "BUILD FAST INSIDE — PROTECT AT BOUNDARY",
+    "inner_loop": [
+      "CODE",
+      "HOCUONG_LOCAL_BUILD",
+      "HOCUONG_LOCAL_RUN",
+      "ONE_REAL_TARGETED_TEST",
+      "LOCAL_PASS"
+    ],
+    "inner_loop_laws": [
+      "LOCAL_OWNED_CODE_MUST_NOT_REQUIRE_GITHUB_CI_HCDR_OR_REMOTE_GATE_BEFORE_LOCAL_TEST",
+      "DO_NOT_INSERT_INTERNAL_APPROVAL_GATES_BETWEEN_CODE_AND_LOCAL_TEST",
+      "HCDR_IS_TRANSPORT_NOT_A_BUILD_GATE",
+      "GITHUB_IS_SOURCE_VERSION_SYNC_NOT_DEFAULT_EXECUTION_GATE",
+      "CI_IS_OPTIONAL_UNLESS_RISK_OR_RELEASE_POLICY_REQUIRES_IT",
+      "LOCAL_PASS_MAY_COMPLETE_NORMAL_DEVELOPMENT_WORK"
+    ],
+    "boundary_loop": [
+      "GITHUB_SYNC_WHEN_NEEDED",
+      "CI_WHEN_NEEDED",
+      "AUTH_PERMISSION_SECURITY_GATE",
+      "DESTRUCTIVE_DATA_GATE",
+      "PRODUCTION_DEPLOY_GATE"
+    ],
+    "mandatory_boundary_exceptions": [
+      "platform-enforced safety/permission",
+      "credentials/authentication",
+      "destructive or irreversible operations",
+      "sensitive data/security boundary",
+      "production release/deployment when policy requires approval"
+    ],
+    "failure_behavior": "If an optional external gate/connector is unavailable, keep local development runnable and defer that boundary step unless it is necessary for the requested outcome.",
+    "done_rule": "CODE -> LOCAL BUILD -> ONE REAL TEST -> PASS -> USE/DONE; protect at external/production boundary."
   }
 }
