@@ -34,6 +34,25 @@
       "fail_closed": true
     },
     {
+      "capability_id": "durable-recovery-acceptance",
+      "provider_tool": "transwarp",
+      "inputs": [
+        "mission",
+        "checkpoint",
+        "failure_injection?"
+      ],
+      "outputs": [
+        "state",
+        "evidence"
+      ],
+      "risk_class": "transport",
+      "gate": "TransWarp durable recovery acceptance",
+      "cost_class": "medium",
+      "production_write": false,
+      "fail_closed": true,
+      "contract_state": "backward-compatible-recovery-acceptance"
+    },
+    {
       "capability_id": "transwarp-execution-fabric",
       "provider_tool": "transwarp",
       "inputs": [
