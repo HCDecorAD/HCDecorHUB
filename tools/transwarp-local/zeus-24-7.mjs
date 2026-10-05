@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 const BASE=process.env.ZEUS_BASE||"http://127.0.0.1:8766";
 const ROOT=process.env.ZEUS_ROOT||"D:/HCDecorHUB/Zeus247";
 const STATE=path.join(ROOT,"state.json");
@@ -62,7 +63,6 @@ async function tick(){if(running)return;running=true;try{console.log(JSON.string
 await tick();setInterval(tick,INTERVAL);
 
 function iMasterFingerprint(){
-  const crypto=require("node:crypto");
   const parts=[BOOTSTRAP,FULL_CATALOG,IMASTER_SKILL_ROUTER].map(p=>{try{return fs.readFileSync(p)}catch{return Buffer.from("")}});
   return crypto.createHash("sha256").update(Buffer.concat(parts)).digest("hex").slice(0,16);
 }
@@ -81,7 +81,7 @@ async function hotSyncActiveChats(knownTabs=null){
   const active=(tabs||[]).filter(t=>t&&t.cid&&!["DONE","CLOSED","STALE"].includes(String(t.status||"").toUpperCase()));
   const results=[];
   for(const t of active){try{await post("/send",{cid:t.cid,prompt:iMasterHotSyncPrompt()});results.push({cid:t.cid,ok:true})}catch(e){results.push({cid:t.cid,ok:false,error:String(e?.message||e)})}}
-  fs.mkdirSync(require("node:path").dirname(IMASTER_HOT_SYNC_STATE),{recursive:true});
+  fs.mkdirSync(path.dirname(IMASTER_HOT_SYNC_STATE),{recursive:true});
   fs.writeFileSync(IMASTER_HOT_SYNC_STATE,JSON.stringify({fingerprint:fp,updatedAt:new Date().toISOString(),results},null,2));
   return {changed:true,fingerprint:fp,results};
 }
