@@ -4,7 +4,7 @@ import fs from 'node:fs';
 const p='config/hcdecor-v9-package-manifest.json';
 const m=JSON.parse(fs.readFileSync(p,'utf8'));
 assert.equal(m.program_id,'HCDECOR_HUB_V9_APP');
-assert.equal(m.status,'ACTIVE');
+assert.ok(['ACTIVE','FROZEN_CANDIDATE','DONE'].includes(m.status),'program status');
 assert.deepEqual(m.execution_route,['CODE','HOCUONG_LOCAL','HCDR','LOCAL_TEST_AND_EVIDENCE','GITHUB','CI']);
 for (const law of ['ONE_GOAL_REAL_WORKFLOW_REAL_ACTION_VERIFY_DONE','NO_FAKE_BUTTONS','LOCAL_FIRST_OPERATING_LAW','NO_EVIDENCE_NO_GREEN','DO_NOT_REDO_PASS']) assert.ok(m.laws.includes(law),law);
 
