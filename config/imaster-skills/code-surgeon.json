@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "skill_id": "imaster.code-surgeon",
+  "name": "Code Surgeon",
+  "owner": "iMaster",
+  "scope": "global",
+  "autoload": false,
+  "activation": {
+    "mode": "automatic",
+    "condition": "code implementation, bug fix, refactor, integration, or source change is required"
+  },
+  "pipeline": [
+    "read relevant code and architecture context",
+    "identify smallest safe change",
+    "preserve passed/working areas",
+    "patch root cause or requested feature",
+    "build/run locally",
+    "hand off to targeted real test"
+  ],
+  "laws": [
+    "READ_BEFORE_EDIT",
+    "SMALLEST_SAFE_PATCH_FIRST",
+    "DO_NOT_REWRITE_WORKING_CODE",
+    "DO_NOT_TOUCH_PASS_AREA_WITHOUT_REASON",
+    "FIX_ROOT_CAUSE_NOT_SYMPTOM"
+  ],
+  "output": [
+    "patch",
+    "changed_scope",
+    "run_command",
+    "test_target"
+  ]
+}
