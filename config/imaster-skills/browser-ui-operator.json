@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "skill_id": "imaster.browser-ui-operator",
+  "name": "Browser / UI Operator",
+  "owner": "iMaster",
+  "scope": "global",
+  "autoload": false,
+  "activation": {
+    "mode": "automatic",
+    "condition": "web/app UI behavior, navigation, form, button, render, upload, save, or user flow must be exercised"
+  },
+  "pipeline": [
+    "open target UI",
+    "perform the shortest representative user flow",
+    "observe UI/runtime result",
+    "capture blocking console/network evidence only when needed",
+    "return practical PASS/FAIL"
+  ],
+  "laws": [
+    "TEST_WHAT_USER_ACTUALLY_USES",
+    "HTTP_200_NE_UI_PASS",
+    "MINIMUM_REPRESENTATIVE_FLOW",
+    "NO_REDUNDANT_FULL_SUITE_BY_DEFAULT"
+  ],
+  "output": [
+    "user_flow",
+    "observed_result",
+    "blocking_error",
+    "pass"
+  ]
+}
