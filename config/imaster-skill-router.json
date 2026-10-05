@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "id": "IMASTER_SKILL_ROUTER",
   "mode": "ON_DEMAND_DEFAULT",
   "full_command": "iMaster FULL",
@@ -79,6 +79,8 @@
       ],
       "skills": [
         "imaster.parallel-execution",
+        "transwarp-execution-fabric",
+        "imaster.local-first-execution",
         "imaster.continuous-control"
       ]
     },
@@ -98,7 +100,8 @@
     "A skill may activate another skill when its escalation condition is met.",
     "Do not run every skill merely because iMaster FULL was loaded.",
     "After code/config/runtime mutation, prefer targeted Regression Hunter plus one representative real runtime/UI test.",
-    "Unknown technical blocker must invoke research before HARD_EXTERNAL_BLOCKED."
+    "Unknown technical blocker must invoke research before HARD_EXTERNAL_BLOCKED.",
+    "For >=2 independent READY local tasks, schedule with group-governor and execute/recover through TransWarp; unrelated GitHub job IDs MUST NOT serialize workers."
   ],
   "done_rule": "WORKS -> ONE REAL TEST -> PASS -> USE / DONE"
 }
