@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "program_id": "HCDECOR_HUB_V9_APP",
-  "status": "FROZEN_CANDIDATE",
+  "status": "DONE",
   "source_blueprint": "HCDecor HUB Blueprint + Module & Window Naming Guide V3",
   "laws": [
     "ONE_GOAL_REAL_WORKFLOW_REAL_ACTION_VERIFY_DONE",
@@ -896,7 +896,7 @@
       "id": "PKG-16",
       "phase": "P8_FINAL",
       "name": "RELEASE_FREEZE",
-      "state": "LOCAL_PASS",
+      "state": "DONE",
       "depends_on": [
         "PKG-15"
       ],
@@ -927,9 +927,13 @@
         "production_build": "PASS",
         "master_e2e": "PASS",
         "cloudflare_build": "PASS",
-        "evidence_complete": "CANDIDATE_PASS",
+        "evidence_complete": true,
         "public_publish_performed": false,
-        "terminal_freeze": "CI_PENDING"
+        "terminal_freeze": "PASS",
+        "pr": 105,
+        "pr_quality_run": 753,
+        "merge_sha": "030ed2b12dc95a41c0c2c25c7db9ab0560288a36",
+        "v9_frozen_done": true
       }
     }
   ],
@@ -939,5 +943,12 @@
     "do_not_block_independent_packages": true,
     "max_state_transition_without_evidence": "BUILDING",
     "terminal_state": "DONE"
-  }
+  },
+  "lifecycle": [
+    "HCDECOR_HUB_V9",
+    "FROZEN",
+    "DONE"
+  ],
+  "frozen_at": "2026-10-05",
+  "done_at": "2026-10-05"
 }
