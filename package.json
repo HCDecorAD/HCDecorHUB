@@ -94,7 +94,8 @@
     "test:hcdecor-v9-ai-connections": "node scripts/hcdecor-v9-ai-connections.test.mjs",
     "test:hcdecor-v9-ai-activation": "node scripts/hcdecor-v9-ai-activation.test.mjs",
     "test:hcdecor-v9-publishing-activation": "node scripts/hcdecor-v9-publishing-activation.test.mjs",
-    "test:hcdecor-v9-integration": "node scripts/hcdecor-v9-integration.test.mjs"
+    "test:hcdecor-v9-integration": "node scripts/hcdecor-v9-integration.test.mjs",
+    "test:hcdecor-v9-release-freeze": "node scripts/hcdecor-v9-release-freeze.test.mjs"
   },
   "dependencies": {
     "next": "16.3.6",
