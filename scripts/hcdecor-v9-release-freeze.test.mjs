@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {v9Readiness,finalGate} from '../lib/v9-final-preflight.mjs';
+
+const m=JSON.parse(fs.readFileSync('config/hcdecor-v9-package-manifest.json','utf8'));
+const byId=new Map(m.packages.map(x=>[x.id,x]));
+for(const x of m.packages.filter(x=>x.id!=='PKG-16')) assert.equal(x.state,'DONE',x.id);
+const p16=byId.get('PKG-16');
+assert.equal(m.status,'FROZEN_CANDIDATE');
+assert.equal(p16.state,'LOCAL_PASS');
+assert.equal(p16.evidence?.regression_suite,'PASS');
+assert.equal(p16.evidence?.production_build,'PASS');
+assert.equal(p16.evidence?.master_e2e,'PASS');
+assert.equal(p16.evidence?.cloudflare_build,'PASS');
+assert.equal(p16.evidence?.terminal_freeze,'CI_PENDING');
+const r=v9Readiness();
+assert.equal(r.done,16);
+assert.equal(r.release_ready,false);
+assert.equal(finalGate(r).pass,false);
+console.log('HCDECOR_V9_RELEASE_FREEZE_CANDIDATE_PASS done=16/17 regression=1 production=1 e2e=1 cloudflare=1');
