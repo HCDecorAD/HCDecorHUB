@@ -1,62 +1,31 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "skill_id": "imaster.local-first-execution",
   "name": "iMaster Local-First Execution",
   "owner": "iMaster",
   "scope": "global",
   "autoload": true,
-  "activation": {
-    "mode": "default",
-    "condition": "coding, debugging, build, test, or machine execution is required"
+  "activation": {"mode":"default","condition":"coding, debugging, build, test, or machine execution is required"},
+  "route": ["CODE","HOCUONG_LOCAL","HCDR","LOCAL_FULL_GATE_AND_EVIDENCE","LOCAL_GREEN","GITHUB_ONE_PUSH","GITHUB_MINIMAL_VERIFY","DONE"],
+  "authority_rule": "LOCAL_PASS_IS_AUTHORITATIVE",
+  "github_role": "SOURCE_VERSION_RELEASE_LEDGER_AND_MINIMAL_VERIFIER_NOT_EXECUTION_FACTORY",
+  "github_minimal_verify": ["COMMIT_HASH","PASS_MANIFEST","INTEGRITY","SMOKE"],
+  "deep_verify": {
+    "default": false,
+    "allowed_when": ["CORE_CHANGE","SECURITY_CHANGE","DATA_MIGRATION","PRODUCTION_CRITICAL_CHANGE","LOCAL_ANOMALY"],
+    "rule": "Never replay a passed local gate unless risk requires it."
   },
-  "route": [
-    "CODE",
-    "HOCUONG_LOCAL",
-    "HCDR",
-    "LOCAL_TEST_AND_EVIDENCE",
-    "GITHUB_COMMIT_PUSH",
-    "CI_VERIFY"
-  ],
   "transport_priority": [
-    {
-      "priority": 1,
-      "transport": "HCDR",
-      "role": "MANDATORY_DEFAULT_MACHINE_CONTROL",
-      "when": "all normal machine-control, code, build, test, debug, file, health, deploy and local execution operations"
-    },
-    {
-      "priority": 2,
-      "transport": "RDC",
-      "role": "RESCUE_FALLBACK_ONLY",
-      "when": "only after HCDR first-attempt evidence shows UNAVAILABLE, FAILED, NO_CLAIM, TIMEOUT, or MISSING_REQUIRED_CAPABILITY"
-    }
+    {"priority":1,"transport":"HCDR","role":"MANDATORY_DEFAULT_MACHINE_CONTROL","when":"all normal machine-control, code, build, test, debug, file, health, deploy and local execution operations"},
+    {"priority":2,"transport":"RDC","role":"RESCUE_FALLBACK_ONLY","when":"only after HCDR first-attempt evidence shows UNAVAILABLE, FAILED, NO_CLAIM, TIMEOUT, or MISSING_REQUIRED_CAPABILITY"}
   ],
-  "laws": [
-    "LOCAL_FIRST",
-    "HCDR_BEFORE_RDC",
-    "TEST_BEFORE_GITHUB",
-    "NO_EVIDENCE_NO_GREEN",
-    "RDC_IS_RESCUE_NOT_DEFAULT",
-    "PRODUCTION_WRITES_FAIL_CLOSED",
-    "HCDR_MANDATORY_DEFAULT",
-    "MACHINE_CONTROL_MUST_ATTEMPT_HCDR_FIRST",
-    "RDC_RESCUE_ONLY_AFTER_HCDR_FAILURE_EVIDENCE"
-  ],
-  "fallback": {
-    "on_hcdr_failure": "record HCDR failure evidence -> attempt safe HCDR recovery -> use RDC only if blocker remains -> verify result -> record transport used",
-    "rdc_precondition": "HCDR first-attempt evidence is mandatory",
-    "direct_rdc_normal_path": "FORBIDDEN"
-  },
+  "laws": ["LOCAL_FIRST","LOCAL_PASS_AUTHORITATIVE","GITHUB_MINIMAL_VERIFY","DO_NOT_REDO_PASS","HCDR_BEFORE_RDC","TEST_BEFORE_GITHUB","NO_EVIDENCE_NO_GREEN","RDC_IS_RESCUE_NOT_DEFAULT","PRODUCTION_WRITES_FAIL_CLOSED","HCDR_MANDATORY_DEFAULT","MACHINE_CONTROL_MUST_ATTEMPT_HCDR_FIRST","RDC_RESCUE_ONLY_AFTER_HCDR_FAILURE_EVIDENCE"],
+  "fallback": {"on_hcdr_failure":"record HCDR failure evidence -> attempt safe HCDR recovery -> use RDC only if blocker remains -> verify result -> record transport used","rdc_precondition":"HCDR first-attempt evidence is mandatory","direct_rdc_normal_path":"FORBIDDEN"},
   "evidence_gate": "scripts/imaster-local-first-skill.test.mjs",
   "enforcement": {
-    "normal_machine_control_default": "HCDR",
-    "rdc_without_hcdr_attempt": "POLICY_VIOLATION",
-    "evidence_fields": [
-      "transport_attempted",
-      "hcdr_status",
-      "fallback_reason",
-      "transport_used",
-      "verification_result"
-    ]
+    "normal_machine_control_default":"HCDR",
+    "rdc_without_hcdr_attempt":"POLICY_VIOLATION",
+    "github_replay_after_local_pass":"FORBIDDEN_UNLESS_DEEP_VERIFY_TRIGGERED",
+    "evidence_fields":["transport_attempted","hcdr_status","fallback_reason","transport_used","verification_result","local_pass_manifest","github_minimal_verify_result","deep_verify_reason"]
   }
 }

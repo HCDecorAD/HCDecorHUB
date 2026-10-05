@@ -1,5 +1,5 @@
 {
-  "schema_version": "2.0.0",
+  "schema_version": "2.1.0",
   "id": "IMASTER_BOOTSTRAP",
   "purpose": "Single anti-amnesia entrypoint for every new chat/session/operator.",
   "load_order": [
@@ -56,7 +56,10 @@
     "LOCAL_FIRST_OPERATING_LAW",
     "HCDR_MANDATORY_DEFAULT",
     "MACHINE_CONTROL_MUST_ATTEMPT_HCDR_FIRST",
-    "RDC_RESCUE_ONLY_AFTER_HCDR_FAILURE_EVIDENCE"
+    "RDC_RESCUE_ONLY_AFTER_HCDR_FAILURE_EVIDENCE",
+    "LOCAL_PASS_AUTHORITATIVE",
+    "GITHUB_MINIMAL_VERIFY",
+    "GITHUB_MUST_NOT_REPLAY_PASSED_LOCAL_GATES"
   ],
   "startup_checks": [
     "load portfolio and repositories",
@@ -98,7 +101,7 @@
     "config/imaster-skills/continuous-control.json"
   ],
   "parallel_execution_rule": "When >=2 independent tasks are READY and safe capacity exists, Capability Router MUST prefer imaster.parallel-execution over serial execution.",
-  "local_execution_default": "CODE -> HOCUONG_LOCAL -> HCDR_PRIMARY -> LOCAL_TEST/EVIDENCE -> GITHUB -> CI; every normal machine-control action MUST attempt HCDR first; RDC is rescue-only after recorded HCDR UNAVAILABLE/FAILED/NO_CLAIM/TIMEOUT.",
+  "local_execution_default": "CODE -> HOCUONG_LOCAL -> HCDR_PRIMARY -> LOCAL_FULL_GATE/EVIDENCE -> LOCAL_GREEN -> GITHUB_ONE_PUSH -> GITHUB_MINIMAL_VERIFY(hash + pass_manifest + integrity + smoke) -> DONE; LOCAL PASS is authoritative; GitHub MUST NOT replay passed Local gates unless DEEP_VERIFY is triggered by core/security/data-migration/production-critical change or Local anomaly; RDC remains rescue-only after recorded HCDR failure evidence.",
   "global_authority": "config/imaster-global-authority.json",
   "continuation_engine": "config/imaster-skills/continuation-engine.json",
   "continuous_control": {
@@ -221,5 +224,23 @@
     },
     "policy_state": "HCDR_DEFAULT_VERIFIED",
     "rdc_state": "RESCUE_ONLY"
+  },
+  "github_verification_policy": {
+    "mode": "MINIMAL_BY_DEFAULT",
+    "local_pass": "AUTHORITATIVE",
+    "checks": [
+      "COMMIT_HASH",
+      "PASS_MANIFEST",
+      "INTEGRITY",
+      "SMOKE"
+    ],
+    "replay_passed_local_gates": "FORBIDDEN",
+    "deep_verify_triggers": [
+      "CORE_CHANGE",
+      "SECURITY_CHANGE",
+      "DATA_MIGRATION",
+      "PRODUCTION_CRITICAL_CHANGE",
+      "LOCAL_ANOMALY"
+    ]
   }
 }
