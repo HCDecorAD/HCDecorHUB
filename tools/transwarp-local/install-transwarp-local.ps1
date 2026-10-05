@@ -12,7 +12,7 @@ Copy-Item $src $runner -Force
 Copy-Item $zeusSrc $zeus -Force
 @("inbox","running","done","failed","logs","evidence")|ForEach-Object{New-Item -ItemType Directory -Force -Path (Join-Path $DataRoot $_)|Out-Null}
 $startup=Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\Startup\HC-TransWarp-Local.cmd"
-$cmd="@echo off`r`nstart `"`" powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$runner`" -DataRoot `"$DataRoot`"`r`nstart `"`" /min node `"$zeus`"`r`n"
+$fix=Join-Path $RepoRoot "FIX-ZEUS-24-7.ps1"`n$cmd="@echo off`r`nstart `"`" powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$runner`" -DataRoot `"$DataRoot`"`r`nstart `"`" /min node `"$zeus`"`r`nif exist `"$fix`" start `"`" powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$fix`" -RepoRoot `"$RepoRoot`"`r`n"
 Set-Content $startup -Value $cmd -Encoding ASCII
 $launch="-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$runner`" -DataRoot `"$DataRoot`""
 Start-Process powershell.exe -ArgumentList $launch -WindowStyle Hidden
