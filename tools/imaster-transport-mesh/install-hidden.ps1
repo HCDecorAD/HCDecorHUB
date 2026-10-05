@@ -21,3 +21,18 @@ $startup=[Environment]::GetFolderPath("Startup")
 Copy-Item (Join-Path $Root "run-hidden.vbs") (Join-Path $startup "iMaster-Transport-Mesh.vbs") -Force
 Start-Process wscript.exe -ArgumentList ('"'+(Join-Path $Root "run-hidden.vbs")+'"') -WindowStyle Hidden
 Write-Output "IMASTER_TRANSPORT_MESH_INSTALLED $Root"
+
+@"
+@echo off
+cd /d "$Root"
+start "" /b node worker.mjs >> worker.log 2>&1
+node carrier-pump.mjs >> carrier.log 2>&1
+"@ | Set-Content -Encoding ASCII (Join-Path $Root "run-carrier.cmd")
+@"
+Set WshShell = CreateObject("WScript.Shell")
+WshShell.Run """$Root\run-carrier.cmd""", 0, False
+"@ | Set-Content -Encoding ASCII (Join-Path $Root "run-carrier-hidden.vbs")
+Copy-Item (Join-Path $Root "run-carrier-hidden.vbs") (Join-Path $startup "iMaster-Transport-Carrier.vbs") -Force
+if ($env:IMASTER_CARRIER_GITHUB_REPO -and ($env:IMASTER_CARRIER_GITHUB_TOKEN -or $env:GITHUB_TOKEN)) {
+ Start-Process wscript.exe -ArgumentList ('"'+(Join-Path $Root "run-carrier-hidden.vbs")+'"') -WindowStyle Hidden
+}
