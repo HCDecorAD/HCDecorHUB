@@ -1,0 +1,19 @@
+{
+  "schema": "imaster-mcp/v1",
+  "id": "HC_IMASTER_MCP",
+  "mode": "LOCAL_PRIVATE_SECURE_TUNNEL",
+  "listen": "127.0.0.1:8772",
+  "endpoint": "/mcp",
+  "upstream": "http://127.0.0.1:8771",
+  "exposure": "OPENAI_SECURE_MCP_TUNNEL",
+  "raw_shell": false,
+  "tools": [
+    "mesh_health",
+    "mesh_status",
+    "list_chat_tabs",
+    "send_chat_command",
+    "create_chat",
+    "rename_chat"
+  ],
+  "acceptance": "CHATGPT_TOOL_CALL -> SECURE_MCP_TUNNEL -> MCP -> MESH -> GATEWAY -> ZEUS -> HOCUONG -> RESULT"
+}
