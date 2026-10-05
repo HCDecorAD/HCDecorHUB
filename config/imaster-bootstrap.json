@@ -64,7 +64,13 @@
     "DISCOVER_GATEWAY_BEFORE_OWNER_REQUIRED",
     "BUILD_FAST_INSIDE_PROTECT_AT_BOUNDARY",
     "NO_OPTIONAL_GATE_BETWEEN_CODE_AND_LOCAL_TEST",
-    "HCDR_IS_TRANSPORT_NOT_BUILD_GATE"
+    "HCDR_IS_TRANSPORT_NOT_BUILD_GATE",
+    "TRANSPORT_RESOLVER_BEFORE_OWNER_REQUIRED",
+    "OWNER_REQUIRED_WITHOUT_TRANSPORT_ATTEMPT_LEDGER_IS_INVALID",
+    "DO_NOT_ASK_OWNER_WHEN_AUTHORIZED_FALLBACK_CAN_EXECUTE",
+    "IMASTER_TRANSPORT_MESH_BEFORE_OWNER_REQUIRED",
+    "NO_SINGLE_TRANSPORT_DEPENDENCY",
+    "TRANSPORT_IS_REPLACEABLE_ADAPTER_NOT_CORE"
   ],
   "startup_checks": [
     "load portfolio and repositories",
@@ -353,5 +359,18 @@
     ],
     "failure_behavior": "If an optional external gate/connector is unavailable, keep local development runnable and defer that boundary step unless it is necessary for the requested outcome.",
     "done_rule": "CODE -> LOCAL BUILD -> ONE REAL TEST -> PASS -> USE/DONE; protect at external/production boundary."
+  },
+  "transport_enforcement": {
+    "source": "config/imaster-skill-router.json#machine_action_transport_enforcement",
+    "route": "LOCAL_DIRECT_OR_LOCAL_EXECUTOR -> HCDR -> RDC_OR_AUTHORIZED_RESCUE -> OWNER_REQUIRED",
+    "owner_required": "LAST_RESORT_ONLY_AFTER_ACTUAL_ROUTE_ATTEMPTS_OR_PROVEN_MANUAL_AUTH_BOUNDARY"
+  },
+  "transport_mesh": {
+    "mode": "HARD_GLOBAL",
+    "source": "config/imaster-transport-mesh.json",
+    "router": "tools/imaster-transport-mesh/router.mjs",
+    "principle": "GATEWAY/ZEUS CORE; ALL TRANSPORTS REPLACEABLE",
+    "route": "ACTION -> TRANSPORT_MESH -> BEST_HEALTHY_ADAPTER -> GATEWAY/ZEUS -> LOCAL",
+    "failover": "PRESERVE MISSION + CHECKPOINT; TRY NEXT; NO PASS REPLAY"
   }
 }
