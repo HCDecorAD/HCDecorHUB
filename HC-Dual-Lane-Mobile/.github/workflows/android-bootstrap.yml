@@ -1,0 +1,18 @@
+name: Android Bootstrap
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "HC-Dual-Lane-Mobile/mobile-agent/**"
+      - "HC-Dual-Lane-Mobile/.github/workflows/android-bootstrap.yml"
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bootstrap status
+        run: |
+          echo "HC Dual-Lane Mobile repository structure is ready."
+          echo "Android Gradle project will be enabled in P1."
