@@ -3,7 +3,7 @@
 Status: ACTIVE / HARD / GLOBAL
 Priority: P0
 Rule ID: RULE_BOOTSTRAP
-Version: 1.1
+Version: 1.2
 Scope: ALL CHATS / WORKERS / AGENTS / EXECUTION LANES
 
 ## Purpose
@@ -13,7 +13,7 @@ Rules in GitHub are executable operating policy, not passive documentation. Ever
 On NEW CHAT / NEW WORKER / NEW AGENT / NEW EXECUTION LANE:
 1. AUTO-RESOLVE source-of-truth: HCDecorAD/HCDecorHUB@main/Rule/RULES-MANIFEST.json.
 2. AUTO-FETCH the manifest. Do not wait for the Owner to say "load Rule".
-3. AUTO-LOAD every ACTIVE rule applicable to the requested scope.
+3. AUTO-LOAD the minimal CORE set declared by the manifest, then only ACTIVE scoped rules applicable to the requested mission. For normal build/fix missions also load manifest defaultMission. Do not bulk-load unrelated rules.
 4. AUTO-APPLY RULE_GUARD conflict, priority, supersedes and override resolution.
 5. Build an in-session RuleContext containing at minimum: source, manifest hash/version evidence, loaded rule IDs/versions, resolved priority order, and RuleGate status.
 6. Only after RuleGate = PASS may execution/mutation proceed.
@@ -28,6 +28,12 @@ Re-run RuleGate automatically when:
 - a requested action enters a scope not covered by the already-loaded RuleContext.
 
 If the manifest SHA/version is unchanged, an already verified in-session RuleContext may be reused to avoid unnecessary repeated downloads.
+
+## Context discipline
+- CORE is intentionally minimal: governance/bootstrap only.
+- Mission rules are loaded by scope; unrelated rules stay out of context.
+- PASS never implies STOP when the manifest declares passStopsExecution=false.
+- Internal implementation checks must not be promoted to PASS when internalChecksReportedAsPass=false.
 
 ## Fail closed for mutation
 If the manifest/rules cannot be loaded, RuleContext cannot be verified, or RULE_GUARD reports an unresolved conflict:
