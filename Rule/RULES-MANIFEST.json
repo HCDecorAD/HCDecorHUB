@@ -11,6 +11,14 @@
       "scope": "GLOBAL"
     },
     {
+      "id": "RULE_BOOTSTRAP",
+      "file": "Rule/RULE-BOOTSTRAP.md",
+      "version": "1.0",
+      "status": "ACTIVE",
+      "priority": "P0",
+      "scope": "GLOBAL_EXECUTION"
+    },
+    {
       "id": "NO_COMPLEX_INLINE_POWERSHELL",
       "file": "Rule/NO-COMPLEX-INLINE-POWERSHELL.md",
       "version": "existing",
@@ -65,6 +73,14 @@
       "status": "ACTIVE",
       "priority": "P5",
       "scope": "ORCHESTRATION"
+    },
+    {
+      "id": "UI_STATUS_COLOR",
+      "file": "Rule/UI-STATUS-COLOR.md",
+      "version": "1.0",
+      "status": "ACTIVE",
+      "priority": "P2",
+      "scope": "UI_STATUS"
     }
   ]
 }
