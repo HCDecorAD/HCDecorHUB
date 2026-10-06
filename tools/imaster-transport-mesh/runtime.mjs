@@ -1,4 +1,4 @@
-import http from "node:http";
+﻿import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import {loadJson,saveJson,selectTransport,markHealthy,failover,DEFAULT_STATE} from "./router.mjs";
@@ -55,3 +55,4 @@ const server=http.createServer(async(req,res)=>{
 });
 await scan();
 server.listen(PORT,HOST,()=>console.log(JSON.stringify({ok:true,id:"IMASTER_TRANSPORT_MESH",listen:`${HOST}:${PORT}`,active:state.active})));
+
