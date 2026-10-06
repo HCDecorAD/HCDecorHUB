@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "sourceOfTruth": "github:HCDecorAD/HCDecorHUB@main/Rule",
+  "rules": [
+    {
+      "id": "RULE_GUARD",
+      "file": "Rule/RULE-GUARD.md",
+      "version": "1.0",
+      "status": "ACTIVE",
+      "priority": "P0",
+      "scope": "GLOBAL"
+    },
+    {
+      "id": "NO_COMPLEX_INLINE_POWERSHELL",
+      "file": "Rule/NO-COMPLEX-INLINE-POWERSHELL.md",
+      "version": "existing",
+      "status": "ACTIVE",
+      "priority": "P1",
+      "scope": "TRANSPORT"
+    },
+    {
+      "id": "TEST_DONE",
+      "file": "Rule/TestDONE.md",
+      "version": "1.0",
+      "status": "ACTIVE",
+      "priority": "P2",
+      "scope": "GLOBAL"
+    },
+    {
+      "id": "LOCAL_FIRST",
+      "file": "Rule/LOCAL-FIRST.md",
+      "version": "1.0",
+      "status": "ACTIVE",
+      "priority": "P3",
+      "scope": "EXECUTION"
+    },
+    {
+      "id": "DUAL_LANE",
+      "file": "Rule/DUAL-LANE.md",
+      "version": "1.0",
+      "status": "ACTIVE",
+      "priority": "P4",
+      "scope": "ROUTING"
+    },
+    {
+      "id": "ORCHESTRATION",
+      "file": "Rule/ORCHESTRATION.md",
+      "version": "1.0",
+      "status": "ACTIVE",
+      "priority": "P5",
+      "scope": "ORCHESTRATION"
+    }
+  ]
+}
