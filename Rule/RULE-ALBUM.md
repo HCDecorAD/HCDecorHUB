@@ -8,6 +8,7 @@ This is the human-readable map. Runtime authority remains RULES-MANIFEST.json.
 
 ## 10 — SPEED / DELIVERY
 - FAST_DELIVERY [P1] — Goal -> autonomous execution -> minimum meaningful gates -> DONE.
+- CONTINUATION_WATCH [P1] — dispatch is not completion; watch every in-flight/async job through terminal state and acceptance.
 - TEST_DONE [P2] — real capability acceptance and usable release contract.
 
 ## 20 — WRITE / TRANSPORT
@@ -30,6 +31,7 @@ NEW CHAT/WORKER
   -> resolve conflicts
   -> GOAL
   -> autonomous Build/Fix/Test loop
+  -> in-flight work stays RUNNING and is watched to terminal state
   -> internal CHECKs stay internal
   -> real targeted acceptance = PASS
   -> continue automatically while scope remains
