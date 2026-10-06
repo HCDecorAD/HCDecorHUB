@@ -19,6 +19,14 @@
       "scope": "TRANSPORT"
     },
     {
+      "id": "CONTINUE_AVAILABLE_TRANSPORT",
+      "file": "Rule/CONTINUE-ON-AVAILABLE-TRANSPORT.md",
+      "version": "1.0",
+      "status": "ACTIVE",
+      "priority": "P1",
+      "scope": "ROUTING_EXECUTION"
+    },
+    {
       "id": "TEST_DONE",
       "file": "Rule/TestDONE.md",
       "version": "1.0",
