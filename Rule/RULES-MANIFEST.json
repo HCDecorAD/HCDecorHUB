@@ -27,6 +27,14 @@
       "scope": "ROUTING_EXECUTION"
     },
     {
+      "id": "WRITE_SAFETY_RDC",
+      "file": "Rule/WRITE-SAFETY-RDC.md",
+      "version": "1.0",
+      "status": "ACTIVE",
+      "priority": "P1",
+      "scope": "HOCUONG_WRITE"
+    },
+    {
       "id": "TEST_DONE",
       "file": "Rule/TestDONE.md",
       "version": "1.0",
