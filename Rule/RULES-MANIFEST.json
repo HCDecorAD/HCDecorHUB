@@ -2,85 +2,15 @@
   "schemaVersion": 1,
   "sourceOfTruth": "github:HCDecorAD/HCDecorHUB@main/Rule",
   "rules": [
-    {
-      "id": "RULE_GUARD",
-      "file": "Rule/RULE-GUARD.md",
-      "version": "1.0",
-      "status": "ACTIVE",
-      "priority": "P0",
-      "scope": "GLOBAL"
-    },
-    {
-      "id": "RULE_BOOTSTRAP",
-      "file": "Rule/RULE-BOOTSTRAP.md",
-      "version": "1.0",
-      "status": "ACTIVE",
-      "priority": "P0",
-      "scope": "GLOBAL_EXECUTION"
-    },
-    {
-      "id": "NO_COMPLEX_INLINE_POWERSHELL",
-      "file": "Rule/NO-COMPLEX-INLINE-POWERSHELL.md",
-      "version": "existing",
-      "status": "ACTIVE",
-      "priority": "P1",
-      "scope": "TRANSPORT"
-    },
-    {
-      "id": "CONTINUE_AVAILABLE_TRANSPORT",
-      "file": "Rule/CONTINUE-ON-AVAILABLE-TRANSPORT.md",
-      "version": "1.0",
-      "status": "ACTIVE",
-      "priority": "P1",
-      "scope": "ROUTING_EXECUTION"
-    },
-    {
-      "id": "WRITE_SAFETY_RDC",
-      "file": "Rule/WRITE-SAFETY-RDC.md",
-      "version": "1.0",
-      "status": "ACTIVE",
-      "priority": "P1",
-      "scope": "HOCUONG_WRITE"
-    },
-    {
-      "id": "TEST_DONE",
-      "file": "Rule/TestDONE.md",
-      "version": "1.0",
-      "status": "ACTIVE",
-      "priority": "P2",
-      "scope": "GLOBAL"
-    },
-    {
-      "id": "LOCAL_FIRST",
-      "file": "Rule/LOCAL-FIRST.md",
-      "version": "1.0",
-      "status": "ACTIVE",
-      "priority": "P3",
-      "scope": "EXECUTION"
-    },
-    {
-      "id": "DUAL_LANE",
-      "file": "Rule/DUAL-LANE.md",
-      "version": "1.0",
-      "status": "ACTIVE",
-      "priority": "P4",
-      "scope": "ROUTING"
-    },
-    {
-      "id": "ORCHESTRATION",
-      "file": "Rule/ORCHESTRATION.md",
-      "version": "1.0",
-      "status": "ACTIVE",
-      "priority": "P5",
-      "scope": "ORCHESTRATION"
-    },
-    {
-      "id": "UI_STATUS_COLOR",
-      "file": "Rule/UI-STATUS-COLOR.md",
-      "version": "1.0",
-      "status": "ACTIVE",
-      "priority": "P2",
-      "scope": "UI_STATUS"
-    }
+    {"id":"RULE_GUARD","file":"Rule/RULE-GUARD.md","version":"1.0","status":"ACTIVE","priority":"P0","scope":"GLOBAL"},
+    {"id":"RULE_BOOTSTRAP","file":"Rule/RULE-BOOTSTRAP.md","version":"1.1","status":"ACTIVE","priority":"P0","scope":"GLOBAL_EXECUTION"},
+    {"id":"NO_COMPLEX_INLINE_POWERSHELL","file":"Rule/NO-COMPLEX-INLINE-POWERSHELL.md","version":"existing","status":"ACTIVE","priority":"P1","scope":"TRANSPORT"},
+    {"id":"CONTINUE_AVAILABLE_TRANSPORT","file":"Rule/CONTINUE-ON-AVAILABLE-TRANSPORT.md","version":"1.0","status":"ACTIVE","priority":"P1","scope":"ROUTING_EXECUTION"},
+    {"id":"WRITE_SAFETY_RDC","file":"Rule/WRITE-SAFETY-RDC.md","version":"1.0","status":"ACTIVE","priority":"P1","scope":"HOCUONG_WRITE"},
+    {"id":"TEST_DONE","file":"Rule/TestDONE.md","version":"1.0","status":"ACTIVE","priority":"P2","scope":"GLOBAL"},
+    {"id":"LOCAL_FIRST","file":"Rule/LOCAL-FIRST.md","version":"1.0","status":"ACTIVE","priority":"P3","scope":"EXECUTION"},
+    {"id":"DUAL_LANE","file":"Rule/DUAL-LANE.md","version":"1.0","status":"ACTIVE","priority":"P4","scope":"ROUTING"},
+    {"id":"ORCHESTRATION","file":"Rule/ORCHESTRATION.md","version":"1.0","status":"ACTIVE","priority":"P5","scope":"ORCHESTRATION"},
+    {"id":"UI_STATUS_COLOR","file":"Rule/UI-STATUS-COLOR.md","version":"1.0","status":"ACTIVE","priority":"P2","scope":"UI_STATUS"}
   ]
 }
