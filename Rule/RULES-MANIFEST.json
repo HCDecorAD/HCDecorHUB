@@ -13,7 +13,7 @@
     {
       "id": "RULE_BOOTSTRAP",
       "file": "Rule/RULE-BOOTSTRAP.md",
-      "version": "1.1",
+      "version": "1.2",
       "status": "ACTIVE",
       "priority": "P0",
       "scope": "GLOBAL_EXECUTION"
