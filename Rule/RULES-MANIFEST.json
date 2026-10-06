@@ -27,6 +27,14 @@
       "scope": "DELIVERY_CODING"
     },
     {
+      "id": "CONTINUATION_WATCH",
+      "file": "Rule/CONTINUATION-WATCH.md",
+      "version": "1.0",
+      "status": "ACTIVE",
+      "priority": "P1",
+      "scope": "GLOBAL_EXECUTION"
+    },
+    {
       "id": "NO_COMPLEX_INLINE_POWERSHELL",
       "file": "Rule/NO-COMPLEX-INLINE-POWERSHELL.md",
       "version": "existing",
@@ -100,6 +108,7 @@
     ],
     "defaultMission": [
       "FAST_DELIVERY",
+      "CONTINUATION_WATCH",
       "TEST_DONE"
     ],
     "reportStates": [
