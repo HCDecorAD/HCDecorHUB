@@ -1,0 +1,9 @@
+{
+  "version": "1.0",
+  "jobId": "example",
+  "target": "MOBILE",
+  "action": "media.list",
+  "args": {},
+  "safety": {"mutation": false, "requireConfirm": false},
+  "verify": true
+}
