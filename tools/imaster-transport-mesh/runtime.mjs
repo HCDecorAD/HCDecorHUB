@@ -49,7 +49,7 @@ const server=http.createServer(async(req,res)=>{
  if(req.method==="GET"&&req.url==="/control/tabs"){const r=await gateway("/tabs");return json(res,r.status,{ok:r.ok,data:r.data});}
  if(req.method==="POST"&&MUTATIONS.has(req.url)){
    if(!TOKEN||req.headers["x-imaster-mesh"]!==TOKEN)return json(res,401,{ok:false,error:"UNAUTHORIZED"});
-   const r=await gateway(MUTATIONS.get(req.url),"POST",await body(req));return json(res,r.status,{ok:r.ok,data:r.data});
+   const p=await body(req); if(req.url==="/control/send"){ const cid=String(p.cid||"").trim(), sourceCid=String(p.sourceCid||cid).trim(), ownerCid=String(p.ownerCid||cid).trim(), targetCid=String(p.targetCid||cid).trim(); if(!cid||!sourceCid||!ownerCid||!targetCid)return json(res,400,{ok:false,error:"CID_REQUIRED"}); if(sourceCid!==ownerCid||targetCid!==ownerCid||cid!==targetCid)return json(res,409,{ok:false,error:"OWNER_LOCK_CID_MISMATCH",sourceCid,ownerCid,targetCid,cid}); } const r=await gateway(MUTATIONS.get(req.url),"POST",p);return json(res,r.status,{ok:r.ok,data:r.data});
  }
  return json(res,404,{ok:false,error:"not_found"});
 });
