@@ -1,0 +1,7 @@
+{
+ "version":"1.0",
+ "pairing":{"required":true,"tokenStorage":"platform-secure-storage"},
+ "queue":{"resume":true,"idempotencyKey":"jobId"},
+ "transportPriority":["LOCAL_DIRECT","SECURE_GATEWAY","MESH_FALLBACK"],
+ "verifyEveryMutation":true
+}
