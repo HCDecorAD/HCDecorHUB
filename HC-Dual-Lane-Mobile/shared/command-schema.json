@@ -1,0 +1,14 @@
+{
+ "$schema":"https://json-schema.org/draft/2020-12/schema",
+ "title":"HC Mobile Command",
+ "type":"object",
+ "required":["jobId","target","action"],
+ "properties":{
+  "jobId":{"type":"string","minLength":1},
+  "target":{"enum":["MOBILE","PC","AUTO"]},
+  "action":{"type":"string","minLength":1},
+  "args":{"type":"object"},
+  "mutation":{"type":"boolean","default":false},
+  "verify":{"type":"boolean","default":true}
+ }
+}
