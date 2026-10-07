@@ -17,10 +17,20 @@ class GitHubCommandPoller(private val context:Context, private val status:(Strin
  fun stop(){ running=false; status("REMOTE GITHUB · STOPPED") }
  private fun tick(){ if(!running)return; worker.execute{
   try{
-   val c=URL("https://api.github.com/repos/HCDecorAD/HCDecorHUB/issues/112").openConnection() as HttpURLConnection
-   c.setRequestProperty("Accept","application/vnd.github+json")
-   val raw=c.inputStream.bufferedReader().use{it.readText()}
-   val body=JSONObject(raw).optString("body")
+   fun get(url:String):String {
+    val h=URL(url).openConnection() as HttpURLConnection
+    h.setRequestProperty("Accept","application/vnd.github+json")
+    h.setRequestProperty("User-Agent","HC-Mobile-Agent")
+    return h.inputStream.bufferedReader().use{it.readText()}
+   }
+   val issueRaw=get("https://api.github.com/repos/HCDecorAD/HCDecorHUB/issues/112")
+   val issueBody=JSONObject(issueRaw).optString("body")
+   val comments=org.json.JSONArray(get("https://api.github.com/repos/HCDecorAD/HCDecorHUB/issues/112/comments?per_page=100"))
+   var body=issueBody
+   if(comments.length()>0){
+    val latest=comments.getJSONObject(comments.length()-1).optString("body")
+    if(latest.contains("{")&&latest.contains("}")) body=latest
+   }
    val a=body.indexOf("{"); val b=body.lastIndexOf("}")
    if(a>=0&&b>a){
     val cmd=JSONObject(body.substring(a,b+1)); val id=cmd.optString("jobId"); val action=cmd.optString("action")
