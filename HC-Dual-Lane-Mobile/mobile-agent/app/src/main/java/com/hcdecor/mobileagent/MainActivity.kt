@@ -71,7 +71,7 @@ class MainActivity : Activity() {
   })
   root.addView(Button(this).apply {
    text="P10 · FINAL PRECHECK"
-   setOnClickListener { val r=P7P10Acceptance.p10(); status.text=(if(r.passed)"P10 PRECHECK PASS" else "P10 PRECHECK FAIL")+" · "+r.detail+"\n"+statusText() }
+   setOnClickListener { val r=P7P10Acceptance.p10(); status.text=(if(r.passed)"P10 FINAL E2E PASS" else "P10 FINAL E2E FAIL")+" · "+r.detail+"\n"+statusText() }
   })
   root.addView(TextView(this).apply {
    text="Jobs · Devices · Logs\nMode: ECO\nDirect Mobile: READY"
