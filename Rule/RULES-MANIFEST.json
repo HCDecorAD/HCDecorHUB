@@ -97,6 +97,14 @@
       "status": "ACTIVE",
       "priority": "P2",
       "scope": "UI_STATUS"
+    },
+    {
+      "id": "LOCAL_SETUP_BUILD_RELEASE",
+      "file": "Rule/LOCAL-SETUP-BUILD-RELEASE.md",
+      "version": "1.0",
+      "status": "ACTIVE",
+      "priority": "P0",
+      "scope": "HOCUONG_SETUP_BUILD_RELEASE"
     }
   ],
   "engine": {
@@ -109,7 +117,8 @@
     "defaultMission": [
       "FAST_DELIVERY",
       "CONTINUATION_WATCH",
-      "TEST_DONE"
+      "TEST_DONE",
+      "LOCAL_SETUP_BUILD_RELEASE"
     ],
     "reportStates": [
       "RUNNING",
