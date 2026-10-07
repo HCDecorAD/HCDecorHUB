@@ -34,7 +34,7 @@ class GitHubCommandPoller(private val context:Context, private val status:(Strin
   try{
    val issueRaw=get("https://api.github.com/repos/HCDecorAD/HCDecorHUB/issues/112")
    val issueBody=JSONObject(issueRaw).optString("body")
-   val comments=org.json.JSONArray(get("https://api.github.com/repos/HCDecorAD/HCDecorHUB/issues/112/comments?per_page=100&page=999999"))
+   val comments=org.json.JSONArray(get("https://api.github.com/repos/HCDecorAD/HCDecorHUB/issues/112/comments?per_page=100&page=1000000"))
    var cmd:JSONObject?=null
    for(i in comments.length()-1 downTo 0){
     val body=comments.getJSONObject(i).optString("body")
