@@ -26,6 +26,8 @@ class MainActivity : Activity() {
   status=TextView(this).apply { text=statusText(); textSize=17f; setPadding(0,30,0,30) }
   root.addView(status)
   githubPoller.start()
+  val serviceIntent=android.content.Intent(this,MobileAgentService::class.java)
+  if(Build.VERSION.SDK_INT>=26) startForegroundService(serviceIntent) else startService(serviceIntent)
   root.addView(Button(this).apply {
    text="P2 · CẤP QUYỀN MEDIA"
    setOnClickListener { requestMedia() }
