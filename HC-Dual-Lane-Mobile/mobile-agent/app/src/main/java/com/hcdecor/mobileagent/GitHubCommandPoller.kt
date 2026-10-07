@@ -35,7 +35,8 @@ class GitHubCommandPoller(private val context:Context, private val status:(Strin
    if(a>=0&&b>a){
     val cmd=JSONObject(body.substring(a,b+1)); val id=cmd.optString("jobId"); val action=cmd.optString("action")
     if(id.isNotBlank()&&id!=lastJob&&action in setOf("device.info","media.list")){
-     val result=RuntimeMvp.execute(context,cmd.toString()); lastJob=id; prefs.edit().putString("last_job",id).apply()
+     val result=RuntimeMvp.execute(context,cmd.toString()); lastJob=id
+     prefs.edit().putString("last_job",id).putString("last_result",result).apply()
      main.post{status("REMOTE EXEC PASS · "+result)}
     }
    }
