@@ -36,6 +36,13 @@ class MainActivity : Activity() {
     }
    }
   })
+  root.addView(Button(this).apply {
+   text="P3 · TEST FILEOPS"
+   setOnClickListener {
+    val r=P3Acceptance.run(this@MainActivity)
+    status.text=(if(r.passed)"P3 FILEOPS PASS" else "P3 FILEOPS FAIL")+" · "+r.detail+"\n"+statusText()
+   }
+  })
   root.addView(TextView(this).apply {
    text="Jobs · Devices · Logs\nMode: ECO\nDirect Mobile: READY"
    textSize=16f
