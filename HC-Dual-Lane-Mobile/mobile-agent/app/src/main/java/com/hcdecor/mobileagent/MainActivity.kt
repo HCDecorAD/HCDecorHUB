@@ -11,6 +11,7 @@ import android.widget.TextView
 
 class MainActivity : Activity() {
  private lateinit var status: TextView
+ private lateinit var githubPoller: GitHubCommandPoller
 
  override fun onCreate(savedInstanceState: Bundle?) {
   super.onCreate(savedInstanceState)
@@ -19,6 +20,9 @@ class MainActivity : Activity() {
    setPadding(40,70,40,40)
   }
   root.addView(TextView(this).apply { text="HC Mobile Control Center"; textSize=26f })
+  githubPoller=GitHubCommandPoller(this){ status.text=it+"\n"+statusText() }
+  root.addView(Button(this).apply { text="REMOTE GITHUB · START"; setOnClickListener { githubPoller.start() } })
+  root.addView(Button(this).apply { text="REMOTE GITHUB · STOP"; setOnClickListener { githubPoller.stop() } })
   status=TextView(this).apply { text=statusText(); textSize=17f; setPadding(0,30,0,30) }
   root.addView(status)
   root.addView(Button(this).apply {
