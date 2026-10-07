@@ -11,7 +11,8 @@ class GitHubCommandPoller(private val context:Context, private val status:(Strin
  private val worker=Executors.newSingleThreadExecutor()
  private val main=Handler(Looper.getMainLooper())
  @Volatile private var running=false
- private var lastJob=""
+ private val prefs=context.getSharedPreferences("hc_remote",Context.MODE_PRIVATE)
+ private var lastJob=prefs.getString("last_job","") ?: ""
  fun start(){ if(running)return; running=true; status("REMOTE GITHUB · STARTED"); tick() }
  fun stop(){ running=false; status("REMOTE GITHUB · STOPPED") }
  private fun tick(){ if(!running)return; worker.execute{
@@ -24,7 +25,7 @@ class GitHubCommandPoller(private val context:Context, private val status:(Strin
    if(a>=0&&b>a){
     val cmd=JSONObject(body.substring(a,b+1)); val id=cmd.optString("jobId"); val action=cmd.optString("action")
     if(id.isNotBlank()&&id!=lastJob&&action in setOf("device.info","media.list")){
-     val result=RuntimeMvp.execute(context,cmd.toString()); lastJob=id
+     val result=RuntimeMvp.execute(context,cmd.toString()); lastJob=id; prefs.edit().putString("last_job",id).apply()
      main.post{status("REMOTE EXEC PASS · "+result)}
     }
    }
