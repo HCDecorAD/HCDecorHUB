@@ -18,6 +18,10 @@ object RuntimeMvp {
     .put("sdk",Build.VERSION.SDK_INT)
    "media.list" -> {
     val limit=req.optJSONObject("args")?.optInt("limit",20)?.coerceIn(1,100) ?: 20
+    val granted=if(Build.VERSION.SDK_INT>=33)
+     context.checkSelfPermission(android.Manifest.permission.READ_MEDIA_IMAGES)==android.content.pm.PackageManager.PERMISSION_GRANTED
+    else context.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)==android.content.pm.PackageManager.PERMISSION_GRANTED
+    if(!granted) throw SecurityException("MEDIA_PERMISSION_REQUIRED")
     val items=MediaRepository(context).listImages(limit)
     JSONObject().put("count",items.size).put("limit",limit)
    }
