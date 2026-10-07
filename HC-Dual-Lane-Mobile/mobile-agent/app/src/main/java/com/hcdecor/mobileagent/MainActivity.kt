@@ -50,6 +50,13 @@ class MainActivity : Activity() {
     status.text=(if(r.passed)"P4 TRASH GUARD PASS" else "P4 TRASH GUARD FAIL")+" · "+r.detail+"\n"+statusText()
    }
   })
+  root.addView(Button(this).apply {
+   text="P5 · TEST DEVICE & MODES"
+   setOnClickListener {
+    val r=P5Acceptance.run(this@MainActivity)
+    status.text=(if(r.passed)"P5 DEVICE MODE PASS" else "P5 DEVICE MODE FAIL")+" · "+r.detail+"\n"+statusText()
+   }
+  })
   root.addView(TextView(this).apply {
    text="Jobs · Devices · Logs\nMode: ECO\nDirect Mobile: READY"
    textSize=16f
