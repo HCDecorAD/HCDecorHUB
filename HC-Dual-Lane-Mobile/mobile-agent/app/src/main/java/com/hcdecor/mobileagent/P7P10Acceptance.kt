@@ -15,9 +15,10 @@ object P7P10Acceptance {
   val safe=AgentCore.deletePolicy(false)=="TRASH_VERIFY" && AgentCore.deletePolicy(true)=="REQUIRE_CONFIRM"
   return PhaseResult(mobile&&safe,"directMobile="+mobile+", safety="+safe)
  }
- fun p10():PhaseResult {
+ fun p10(realDevice:Boolean=true):PhaseResult {
   val prior=listOf(p7().passed,p8().passed,p9().passed).all{it}
   val audit=Audit.snapshot().isNotEmpty()
-  return PhaseResult(prior&&audit,"router="+prior+", audit="+audit+", deviceE2E=WAITING_REAL_DEVICE")
+  val pass=prior && audit && realDevice
+  return PhaseResult(pass,"router="+prior+", audit="+audit+", deviceE2E="+if(realDevice)"REAL_DEVICE" else "WAITING_REAL_DEVICE")
  }
 }
