@@ -76,14 +76,14 @@ class MainActivity : Activity() {
   root.addView(Button(this).apply {
    text="RUNTIME · DEVICE.INFO"
    setOnClickListener {
-    try { status.text="RUNTIME REAL EXEC · "+RuntimeMvp.execute(this@MainActivity,"{\\\"jobId\\\":\\\"LIVE-DEVICE-1\\\",\\\"action\\\":\\\"device.info\\\"}") }
+    try { status.text="RUNTIME REAL EXEC · "+RuntimeMvp.execute(this@MainActivity,"{\"jobId\":\"LIVE-DEVICE-1\",\"action\":\"device.info\"}") }
     catch(e:Exception){ status.text="RUNTIME FAIL · "+(e.message ?: e.javaClass.simpleName) }
    }
   })
   root.addView(Button(this).apply {
    text="RUNTIME · MEDIA.LIST"
    setOnClickListener {
-    try { status.text="RUNTIME REAL EXEC · "+RuntimeMvp.execute(this@MainActivity,"{\\\"jobId\\\":\\\"LIVE-MEDIA-1\\\",\\\"action\\\":\\\"media.list\\\",\\\"args\\\":{\\\"limit\\\":10}}") }
+    try { status.text="RUNTIME REAL EXEC · "+RuntimeMvp.execute(this@MainActivity,"{\"jobId\":\"LIVE-MEDIA-1\",\"action\":\"media.list\",\"args\":{\"limit\":10}}") }
     catch(e:Exception){ status.text="RUNTIME FAIL · "+(e.message ?: e.javaClass.simpleName) }
    }
   })
