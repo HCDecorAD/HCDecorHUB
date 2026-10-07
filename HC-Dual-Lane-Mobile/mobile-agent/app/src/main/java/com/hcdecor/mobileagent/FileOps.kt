@@ -18,6 +18,12 @@ class FileOps(private val context:Context){
   if(!a.exists()) return FileOpResult(false,b.absolutePath,false,"source missing")
   a.copyTo(b,true); return FileOpResult(b.exists(),b.absolutePath,b.exists()&&a.readBytes().contentEquals(b.readBytes()))
  }
+ fun restore(name:String):FileOpResult{
+  val t=File(root,".trash"); val a=File(t,name); val b=File(root,name)
+  if(!a.exists()) return FileOpResult(false,b.absolutePath,false,"trash source missing")
+  if(b.exists()) return FileOpResult(false,b.absolutePath,false,"restore target exists")
+  val ok=a.renameTo(b); return FileOpResult(ok,b.absolutePath,ok&&b.exists()&&!a.exists())
+ }
  fun trash(name:String):FileOpResult{
   val a=File(root,name); val t=File(root,".trash").apply{mkdirs()}; val b=File(t,name)
   val ok=a.exists()&&a.renameTo(b); return FileOpResult(ok,b.absolutePath,ok&&b.exists()&&!a.exists())
