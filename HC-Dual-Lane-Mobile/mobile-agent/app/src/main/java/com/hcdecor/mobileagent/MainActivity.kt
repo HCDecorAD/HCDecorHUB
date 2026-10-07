@@ -73,6 +73,20 @@ class MainActivity : Activity() {
    text="P10 · FINAL PRECHECK"
    setOnClickListener { val r=P7P10Acceptance.p10(); status.text=(if(r.passed)"P10 FINAL E2E PASS" else "P10 FINAL E2E FAIL")+" · "+r.detail+"\n"+statusText() }
   })
+  root.addView(Button(this).apply {
+   text="RUNTIME · DEVICE.INFO"
+   setOnClickListener {
+    try { status.text="RUNTIME REAL EXEC · "+RuntimeMvp.execute(this@MainActivity,"{\\\"jobId\\\":\\\"LIVE-DEVICE-1\\\",\\\"action\\\":\\\"device.info\\\"}") }
+    catch(e:Exception){ status.text="RUNTIME FAIL · "+(e.message ?: e.javaClass.simpleName) }
+   }
+  })
+  root.addView(Button(this).apply {
+   text="RUNTIME · MEDIA.LIST"
+   setOnClickListener {
+    try { status.text="RUNTIME REAL EXEC · "+RuntimeMvp.execute(this@MainActivity,"{\\\"jobId\\\":\\\"LIVE-MEDIA-1\\\",\\\"action\\\":\\\"media.list\\\",\\\"args\\\":{\\\"limit\\\":10}}") }
+    catch(e:Exception){ status.text="RUNTIME FAIL · "+(e.message ?: e.javaClass.simpleName) }
+   }
+  })
   root.addView(TextView(this).apply {
    text="Jobs · Devices · Logs\nMode: ECO\nDirect Mobile: READY"
    textSize=16f
