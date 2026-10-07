@@ -57,6 +57,22 @@ class MainActivity : Activity() {
     status.text=(if(r.passed)"P5 DEVICE MODE PASS" else "P5 DEVICE MODE FAIL")+" · "+r.detail+"\n"+statusText()
    }
   })
+  root.addView(Button(this).apply {
+   text="P6 · TEST SECURE JOB"
+   setOnClickListener { val r=P6Acceptance.run(this@MainActivity); status.text=(if(r.passed)"P6 SECURE JOB PASS" else "P6 SECURE JOB FAIL")+" · "+r.detail+"\n"+statusText() }
+  })
+  root.addView(Button(this).apply {
+   text="P7-P9 · TEST ROUTER"
+   setOnClickListener {
+    val a=P7P10Acceptance.p7(); val b=P7P10Acceptance.p8(); val c=P7P10Acceptance.p9()
+    val ok=a.passed&&b.passed&&c.passed
+    status.text=(if(ok)"P7-P9 ROUTER PASS" else "P7-P9 ROUTER FAIL")+" · "+a.detail+" · "+b.detail+" · "+c.detail+"\n"+statusText()
+   }
+  })
+  root.addView(Button(this).apply {
+   text="P10 · FINAL PRECHECK"
+   setOnClickListener { val r=P7P10Acceptance.p10(); status.text=(if(r.passed)"P10 PRECHECK PASS" else "P10 PRECHECK FAIL")+" · "+r.detail+"\n"+statusText() }
+  })
   root.addView(TextView(this).apply {
    text="Jobs · Devices · Logs\nMode: ECO\nDirect Mobile: READY"
    textSize=16f
