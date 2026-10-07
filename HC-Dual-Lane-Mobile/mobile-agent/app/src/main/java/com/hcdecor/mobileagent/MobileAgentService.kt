@@ -16,7 +16,10 @@ class MobileAgentService: Service() {
    .setContentText("Remote poller đang chạy").setSmallIcon(android.R.drawable.stat_notify_sync)
    .setContentIntent(pi).setOngoing(true).build()
   startForeground(2407,n)
-  poller=GitHubCommandPoller(applicationContext){}
+  val prefs=getSharedPreferences("hc_service",MODE_PRIVATE)
+  poller=GitHubCommandPoller(applicationContext){ s ->
+   prefs.edit().putString("status",s).putLong("status_at",System.currentTimeMillis()).apply()
+  }
   poller.start()
  }
  override fun onStartCommand(intent:Intent?,flags:Int,startId:Int):Int = START_STICKY
