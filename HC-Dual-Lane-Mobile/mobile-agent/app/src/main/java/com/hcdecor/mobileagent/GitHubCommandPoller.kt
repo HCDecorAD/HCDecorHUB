@@ -24,7 +24,7 @@ class GitHubCommandPoller(private val context:Context, private val status:(Strin
   return h.inputStream.bufferedReader().use{it.readText()}
  }
  private fun report(result:String):Boolean {
-  val h=URL("http://127.0.0.1:8770/mobile/ack").openConnection() as HttpURLConnection
+  val h=URL("http://172.21.113.18:8770/mobile/ack").openConnection() as HttpURLConnection
   h.requestMethod="POST"; h.doOutput=true; h.connectTimeout=3000; h.readTimeout=3000
   h.setRequestProperty("Content-Type","application/json"); h.setRequestProperty("Connection","close")
   h.outputStream.use{it.write(result.toByteArray(Charsets.UTF_8))}
@@ -33,8 +33,11 @@ class GitHubCommandPoller(private val context:Context, private val status:(Strin
  private fun tick(){ if(!running)return; worker.execute{
   try{
    val issueRaw=get("https://api.github.com/repos/HCDecorAD/HCDecorHUB/issues/113")
-   val issueBody=JSONObject(issueRaw).optString("body")
-   val comments=org.json.JSONArray(get("https://api.github.com/repos/HCDecorAD/HCDecorHUB/issues/113/comments?per_page=100"))
+   val issue=JSONObject(issueRaw)
+   val issueBody=issue.optString("body")
+   val commentCount=issue.optInt("comments",0)
+   val lastPage=if(commentCount<=0) 1 else ((commentCount-1)/100)+1
+   val comments=org.json.JSONArray(get("https://api.github.com/repos/HCDecorAD/HCDecorHUB/issues/113/comments?per_page=100&page="+lastPage))
    var cmd:JSONObject?=null
    for(i in comments.length()-1 downTo 0){
     val body=comments.getJSONObject(i).optString("body")
