@@ -24,7 +24,7 @@ class GitHubCommandPoller(private val context:Context, private val status:(Strin
   return h.inputStream.bufferedReader().use{it.readText()}
  }
  private fun report(result:String):Boolean {
-  val h=URL("http://172.21.113.18:8770/mobile/ack").openConnection() as HttpURLConnection
+  val h=URL("http://127.0.0.1:8770/mobile/ack").openConnection() as HttpURLConnection
   h.requestMethod="POST"; h.doOutput=true; h.connectTimeout=3000; h.readTimeout=3000
   h.setRequestProperty("Content-Type","application/json"); h.setRequestProperty("Connection","close")
   h.outputStream.use{it.write(result.toByteArray(Charsets.UTF_8))}
