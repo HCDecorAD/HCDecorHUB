@@ -35,7 +35,11 @@ if errorlevel 1 (
  popd
 )
 
-echo [B5] READY FOR GITHUB CI / REAL DEVICE
-echo BATCH_SOURCE_PASS> "%LOG%\PASS.txt"
-echo [%date% %time%] BATCH_SOURCE_PASS>> "%LOG%\run.log"
+echo [B5] REAL DEVICE AUTO-REMOTE GATE
+findstr /c:"githubPoller.start()" "mobile-agent\app\src\main\java\com\hcdecor\mobileagent\MainActivity.kt" >nul || exit /b 51
+findstr /c:"MEDIA_PERMISSION_REQUIRED" "mobile-agent\app\src\main\java\com\hcdecor\mobileagent\RuntimeMvp.kt" >nul || exit /b 52
+
+echo [B6] DONE ALL SOURCE GATES
+echo DONE_ALL_SOURCE_GATES> "%LOG%\PASS.txt"
+echo [%date% %time%] DONE_ALL_SOURCE_GATES>> "%LOG%\run.log"
 exit /b 0
