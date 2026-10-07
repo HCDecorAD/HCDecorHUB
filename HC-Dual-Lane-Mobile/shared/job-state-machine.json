@@ -1,0 +1,6 @@
+{
+ "states":["QUEUED","RUNNING","WAITING_USER","PASS","FAIL","STOPPED"],
+ "retryFrom":["FAIL","STOPPED"],
+ "terminal":["PASS"],
+ "mutationFlow":["PREVIEW","CONFIRM","EXECUTE","VERIFY"]
+}
