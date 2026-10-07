@@ -43,6 +43,13 @@ class MainActivity : Activity() {
     status.text=(if(r.passed)"P3 FILEOPS PASS" else "P3 FILEOPS FAIL")+" · "+r.detail+"\n"+statusText()
    }
   })
+  root.addView(Button(this).apply {
+   text="P4 · TEST TRASH GUARD"
+   setOnClickListener {
+    val r=P4Acceptance.run(this@MainActivity)
+    status.text=(if(r.passed)"P4 TRASH GUARD PASS" else "P4 TRASH GUARD FAIL")+" · "+r.detail+"\n"+statusText()
+   }
+  })
   root.addView(TextView(this).apply {
    text="Jobs · Devices · Logs\nMode: ECO\nDirect Mobile: READY"
    textSize=16f
