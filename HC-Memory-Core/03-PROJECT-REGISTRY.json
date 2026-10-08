@@ -1,0 +1,88 @@
+{
+  "schema": "hc-memory-core/project-registry/v1",
+  "observed_at": "2026-10-08",
+  "note": "Repository and commit existence checked; local builds and tests NOT verified",
+  "projects": [
+    {
+      "name": "GSC",
+      "repo": "HCDecorAD/GSC",
+      "branch": "main",
+      "observed_commit": "82b155bf804ee006418b475739598b1e7cb64354",
+      "commit_url": "https://github.com/HCDecorAD/GSC/commit/82b155bf804ee006418b475739598b1e7cb64354",
+      "test_status": "UNVERIFIED",
+      "local_status": "UNVERIFIED"
+    },
+    {
+      "name": "HCDecorHUB",
+      "repo": "HCDecorAD/HCDecorHUB",
+      "branch": "main",
+      "observed_commit": "41a06b297705ae6f25b4c1868d3c03fa8a8532ac",
+      "commit_url": "https://github.com/HCDecorAD/HCDecorHUB/commit/41a06b297705ae6f25b4c1868d3c03fa8a8532ac",
+      "test_status": "UNVERIFIED",
+      "local_status": "UNVERIFIED"
+    },
+    {
+      "name": "AMONguyen",
+      "repo": "HCDecorAD/AMONguyen",
+      "branch": "main",
+      "observed_commit": "10acdbfaec34970f4d576813c34905e4d8b9614c",
+      "commit_url": "https://github.com/HCDecorAD/AMONguyen/commit/10acdbfaec34970f4d576813c34905e4d8b9614c",
+      "test_status": "UNVERIFIED",
+      "local_status": "UNVERIFIED"
+    },
+    {
+      "name": "HCDecor-HCDR-Relay",
+      "repo": "HCDecorAD/HCDecor-HCDR-Relay",
+      "branch": "main",
+      "observed_commit": "0291aee16d0178a663f1dcbbb9f704c062ebb7ed",
+      "commit_url": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/commit/0291aee16d0178a663f1dcbbb9f704c062ebb7ed",
+      "test_status": "UNVERIFIED",
+      "local_status": "UNVERIFIED"
+    },
+    {
+      "name": "HC-TransWarp-Infrastructure",
+      "repo": "HCDecorAD/HC-TransWarp-Infrastructure",
+      "branch": "main",
+      "observed_commit": "249bfeea77043af61ba3958784aaf5223d652108",
+      "commit_url": "https://github.com/HCDecorAD/HC-TransWarp-Infrastructure/commit/249bfeea77043af61ba3958784aaf5223d652108",
+      "test_status": "UNVERIFIED",
+      "local_status": "UNVERIFIED"
+    },
+    {
+      "name": "HC-Design-AI-Studio",
+      "repo": "HCDecorAD/HC-Design-AI-Studio",
+      "branch": "main",
+      "observed_commit": "4f26c156b39489093f55b7c88ba9a36191802b94",
+      "commit_url": "https://github.com/HCDecorAD/HC-Design-AI-Studio/commit/4f26c156b39489093f55b7c88ba9a36191802b94",
+      "test_status": "UNVERIFIED",
+      "local_status": "UNVERIFIED"
+    },
+    {
+      "name": "HC-English-World",
+      "repo": "HCDecorAD/HC-English-World",
+      "branch": "main",
+      "observed_commit": "7a3df12f6221f529e3988752d825ab59ef708651",
+      "commit_url": "https://github.com/HCDecorAD/HC-English-World/commit/7a3df12f6221f529e3988752d825ab59ef708651",
+      "test_status": "UNVERIFIED",
+      "local_status": "UNVERIFIED"
+    },
+    {
+      "name": "HC-Creative-Factory",
+      "repo": "HCDecorAD/HC-Creative-Factory",
+      "branch": "main",
+      "observed_commit": "36f60d2a74d2c44c15f5cc270bfd72a9dbaa54ad",
+      "commit_url": "https://github.com/HCDecorAD/HC-Creative-Factory/commit/36f60d2a74d2c44c15f5cc270bfd72a9dbaa54ad",
+      "test_status": "UNVERIFIED",
+      "local_status": "UNVERIFIED"
+    },
+    {
+      "name": "HC-Future",
+      "repo": "HCDecorAD/HC-Future",
+      "branch": "main",
+      "observed_commit": "e5a2b55167029315499762f3314890b90253dd46",
+      "commit_url": "https://github.com/HCDecorAD/HC-Future/commit/e5a2b55167029315499762f3314890b90253dd46",
+      "test_status": "UNVERIFIED",
+      "local_status": "UNVERIFIED"
+    }
+  ]
+}
