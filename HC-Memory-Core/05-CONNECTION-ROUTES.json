@@ -1,26 +1,29 @@
 {
   "schema": "hc-memory-core/routes/v1",
+  "production_policy": "LANE A — INTERNAL PRODUCTION ACTIVE",
+  "production_lane": "A",
+  "locked": true,
+  "change_requires": "explicit_user_authorization",
   "primary": [
     {
       "lane": "A",
       "path": "Gateway > TransWarp/Local Executor > HOCUONG",
-      "status": "UNVERIFIED"
+      "designation": "INTERNAL PRODUCTION ACTIVE",
+      "role": "default production",
+      "control_plane_last_checked": "UP",
+      "job_execution_acceptance": "UNVERIFIED"
     },
     {
       "lane": "B",
       "path": "MeshCentral > Mesh Agent > HOCUONG",
-      "status": "UNVERIFIED"
+      "designation": "SECONDARY / PARALLEL",
+      "job_execution_acceptance": "UNVERIFIED"
     }
   ],
   "rescue": [
     "RDC",
     "HCDR"
   ],
-  "last_probe": {
-    "component": "iMaster Mesh",
-    "health": "INTERNAL_ERROR",
-    "status": "INTERNAL_ERROR",
-    "date": "2026-10-08"
-  },
-  "automatic_periodic_execution": false
+  "automatic_periodic_execution": false,
+  "notes": "Gateway UP and Mesh selftest/write requests ENQUEUED do not prove local completion."
 }
