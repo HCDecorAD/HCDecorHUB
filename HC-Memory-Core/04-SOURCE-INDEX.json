@@ -1,0 +1,80 @@
+{
+  "schema": "hc-memory-core/source-index/v1",
+  "observed_at": "2026-10-08",
+  "source_level": "repository-commit",
+  "file_level_index_status": "PENDING",
+  "repositories": [
+    {
+      "project": "GSC",
+      "repository": "HCDecorAD/GSC",
+      "commit": "82b155bf804ee006418b475739598b1e7cb64354",
+      "url": "https://github.com/HCDecorAD/GSC/commit/82b155bf804ee006418b475739598b1e7cb64354",
+      "verified_files": [],
+      "status": "FILE_INDEX_PENDING"
+    },
+    {
+      "project": "HCDecorHUB",
+      "repository": "HCDecorAD/HCDecorHUB",
+      "commit": "41a06b297705ae6f25b4c1868d3c03fa8a8532ac",
+      "url": "https://github.com/HCDecorAD/HCDecorHUB/commit/41a06b297705ae6f25b4c1868d3c03fa8a8532ac",
+      "verified_files": [],
+      "status": "FILE_INDEX_PENDING"
+    },
+    {
+      "project": "AMONguyen",
+      "repository": "HCDecorAD/AMONguyen",
+      "commit": "10acdbfaec34970f4d576813c34905e4d8b9614c",
+      "url": "https://github.com/HCDecorAD/AMONguyen/commit/10acdbfaec34970f4d576813c34905e4d8b9614c",
+      "verified_files": [],
+      "status": "FILE_INDEX_PENDING"
+    },
+    {
+      "project": "HCDecor-HCDR-Relay",
+      "repository": "HCDecorAD/HCDecor-HCDR-Relay",
+      "commit": "0291aee16d0178a663f1dcbbb9f704c062ebb7ed",
+      "url": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/commit/0291aee16d0178a663f1dcbbb9f704c062ebb7ed",
+      "verified_files": [],
+      "status": "FILE_INDEX_PENDING"
+    },
+    {
+      "project": "HC-TransWarp-Infrastructure",
+      "repository": "HCDecorAD/HC-TransWarp-Infrastructure",
+      "commit": "249bfeea77043af61ba3958784aaf5223d652108",
+      "url": "https://github.com/HCDecorAD/HC-TransWarp-Infrastructure/commit/249bfeea77043af61ba3958784aaf5223d652108",
+      "verified_files": [],
+      "status": "FILE_INDEX_PENDING"
+    },
+    {
+      "project": "HC-Design-AI-Studio",
+      "repository": "HCDecorAD/HC-Design-AI-Studio",
+      "commit": "4f26c156b39489093f55b7c88ba9a36191802b94",
+      "url": "https://github.com/HCDecorAD/HC-Design-AI-Studio/commit/4f26c156b39489093f55b7c88ba9a36191802b94",
+      "verified_files": [],
+      "status": "FILE_INDEX_PENDING"
+    },
+    {
+      "project": "HC-English-World",
+      "repository": "HCDecorAD/HC-English-World",
+      "commit": "7a3df12f6221f529e3988752d825ab59ef708651",
+      "url": "https://github.com/HCDecorAD/HC-English-World/commit/7a3df12f6221f529e3988752d825ab59ef708651",
+      "verified_files": [],
+      "status": "FILE_INDEX_PENDING"
+    },
+    {
+      "project": "HC-Creative-Factory",
+      "repository": "HCDecorAD/HC-Creative-Factory",
+      "commit": "36f60d2a74d2c44c15f5cc270bfd72a9dbaa54ad",
+      "url": "https://github.com/HCDecorAD/HC-Creative-Factory/commit/36f60d2a74d2c44c15f5cc270bfd72a9dbaa54ad",
+      "verified_files": [],
+      "status": "FILE_INDEX_PENDING"
+    },
+    {
+      "project": "HC-Future",
+      "repository": "HCDecorAD/HC-Future",
+      "commit": "e5a2b55167029315499762f3314890b90253dd46",
+      "url": "https://github.com/HCDecorAD/HC-Future/commit/e5a2b55167029315499762f3314890b90253dd46",
+      "verified_files": [],
+      "status": "FILE_INDEX_PENDING"
+    }
+  ]
+}
