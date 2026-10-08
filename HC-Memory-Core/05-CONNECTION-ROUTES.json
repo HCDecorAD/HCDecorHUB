@@ -1,0 +1,26 @@
+{
+  "schema": "hc-memory-core/routes/v1",
+  "primary": [
+    {
+      "lane": "A",
+      "path": "Gateway > TransWarp/Local Executor > HOCUONG",
+      "status": "UNVERIFIED"
+    },
+    {
+      "lane": "B",
+      "path": "MeshCentral > Mesh Agent > HOCUONG",
+      "status": "UNVERIFIED"
+    }
+  ],
+  "rescue": [
+    "RDC",
+    "HCDR"
+  ],
+  "last_probe": {
+    "component": "iMaster Mesh",
+    "health": "INTERNAL_ERROR",
+    "status": "INTERNAL_ERROR",
+    "date": "2026-10-08"
+  },
+  "automatic_periodic_execution": false
+}
