@@ -1,0 +1,7 @@
+*.zip
+*.sql
+*.sqlite
+.env
+wp-config.php
+backups/
+secrets/
