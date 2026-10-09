@@ -7,6 +7,9 @@ if(-not $s.Contains($old)){throw 'PATCH_ANCHOR_NOT_FOUND'}
 $bak="$p.pre-real-publish-guard.bak"
 if(-not(Test-Path $bak)){[IO.File]::Copy($p,$bak)}
 $s=$s.Replace($old,$new)
+$legacy="localStorage.getItem(PKEY)?'published':'draft'"
+if(-not $s.Contains($legacy)){throw 'LEGACY_STATUS_ANCHOR_NOT_FOUND'}
+$s=$s.Replace($legacy,"'draft'")
 [IO.File]::WriteAllText($p,$s,(New-Object System.Text.UTF8Encoding($false)))
 Write-Output 'PATCH=APPLIED'
 Write-Output 'GUARD=NO_FALSE_PUBLISH_SUCCESS'
