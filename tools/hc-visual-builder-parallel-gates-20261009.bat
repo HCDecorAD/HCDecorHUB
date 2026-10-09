@@ -1,5 +1,5 @@
 @echo off
-setlocal EnableExtensions
+setlocal EnableExtensions EnableDelayedExpansion
 set "ROOT=%~1"
 if not defined ROOT set "ROOT=D:\HCDecorHUB\HC_Visual_Builder"
 if not exist "%ROOT%\package.json" (
@@ -18,9 +18,9 @@ set /a tries=0
 :wait
 set /a count=0
 for %%G in (build lint wb04 wb05) do if exist "evidence\gate-%%G.exit" set /a count+=1
-if %count% GEQ 4 goto report
+if !count! GEQ 4 goto report
 set /a tries+=1
-if %tries% GEQ 90 (
+if !tries! GEQ 90 (
  echo TIMEOUT: inspect evidence logs. PUBLIC NOT CERTIFIED.
  exit /b 124
 )
@@ -30,8 +30,8 @@ goto wait
 set "failed=0"
 for %%G in (build lint wb04 wb05) do (
  set /p result=<"evidence\gate-%%G.exit"
- echo %%G exit=%%result%%
- if not "%%result%%"=="0" set "failed=1"
+ echo %%G exit=!result!
+ if not "!result!"=="0" set "failed=1"
 )
 echo Local gates finished. Live publish verification is a separate mandatory gate.
-exit /b %failed%
+exit /b !failed!
