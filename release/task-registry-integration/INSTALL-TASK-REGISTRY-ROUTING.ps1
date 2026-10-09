@@ -29,9 +29,9 @@ try {
  [IO.File]::WriteAllText($mTemp,$m,[Text.UTF8Encoding]::new($false))
  & node --check $gTemp; if($LASTEXITCODE -ne 0){throw 'GATEWAY_SYNTAX_FAILED'}
  & node --check $mTemp; if($LASTEXITCODE -ne 0){throw 'MCP_SYNTAX_FAILED'}
+ $result.changed=$true
  Copy-Item $gTemp $gateway -Force
  Copy-Item $mTemp $mcp -Force
- $result.changed=$true
  $result.status='STAGED_RESTART_REQUIRED'
 }catch{
  $result.error=$_.Exception.Message
