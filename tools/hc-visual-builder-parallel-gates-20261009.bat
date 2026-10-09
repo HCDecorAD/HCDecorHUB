@@ -24,7 +24,7 @@ if !tries! GEQ 90 (
  echo TIMEOUT: inspect evidence logs. PUBLIC NOT CERTIFIED.
  exit /b 124
 )
-timeout /t 2 /nobreak >nul
+ping -n 3 127.0.0.1 >nul
 goto wait
 :report
 set "failed=0"
