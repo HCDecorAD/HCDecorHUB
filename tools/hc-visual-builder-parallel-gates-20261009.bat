@@ -29,6 +29,7 @@ goto wait
 :report
 set "failed=0"
 for %%G in (build lint wb04 wb05) do (
+ set "result=" 
  set /p result=<"evidence\gate-%%G.exit"
  echo %%G exit=!result!
  if not "!result!"=="0" set "failed=1"
