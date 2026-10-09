@@ -30,7 +30,7 @@ goto wait
 set "failed=0"
 for %%G in (build lint wb04 wb05) do (
  set "result=" 
- set /p result=<"evidence\gate-%%G.exit"
+ for /f "tokens=1" %%R in (evidence\gate-%%G.exit) do set "result=%%R"
  echo %%G exit=!result!
  if not "!result!"=="0" set "failed=1"
 )
