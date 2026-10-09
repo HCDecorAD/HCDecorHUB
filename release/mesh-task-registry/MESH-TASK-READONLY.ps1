@@ -13,6 +13,6 @@ try {
  }
  $result.status='PASS'
 }catch{$result.error=$_.Exception.Message}
-$result | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $root 'MESH-TASK-READONLY-RESULT.json') -Encoding UTF8
+$result | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $root ('MESH-TASK-READONLY-'+$Task+'-RESULT.json')) -Encoding UTF8
 Write-Output ('TASK='+$Task+' STATUS='+$result.status)
 if($result.status -ne 'PASS'){exit 1}
