@@ -3,6 +3,7 @@ import {promisify} from "node:util";
 import fs from "node:fs/promises";
 import {pathToFileURL} from "node:url";
 import {resultEnvelope} from "./correlation.mjs";
+import {loadHcdrSkill} from "./skill-loader.mjs";
 
 const execFileAsync=promisify(execFile);
 const ROOT=process.env.HCDR_ROOT||"D:/HCDecorHUB";
@@ -13,6 +14,7 @@ const MAX_WORKERS=Math.max(1,Math.min(8,Number(process.env.HCDR_MAX_WORKERS||4))
 const JOB_TIMEOUT_MS=Math.max(30000,Number(process.env.HCDR_JOB_TIMEOUT_MS||15*60*1000));
 const SELF_UPDATE=process.env.HCDR_RELAY_SELF_UPDATE==="1";
 const REPO_ROOT=ROOT+"/repos/HCDecorHUB";
+const SKILL_BINDING=await loadHcdrSkill(REPO_ROOT);
 if(!RELAY) throw new Error("HCDR_RELAY_REPO is required");
 
 const runtime=ROOT+"/runtime";
@@ -124,7 +126,8 @@ async function heartbeat(){
       quarantined_lanes:[...quarantinedLanes]
     },
     workers,
-    source_refresh:sourceRefresh
+    source_refresh:sourceRefresh,
+    skill_binding:SKILL_BINDING
   },null,2));
 }
 
