@@ -11,9 +11,10 @@ $failed = $false
 foreach($job in $jobs){
   Wait-Job $job -Timeout 45 | Out-Null
   if($job.State -ne 'Completed'){ Stop-Job $job; $failed=$true }
+  $jobFailed = $job.ChildJobs[0].JobStateInfo.State -ne 'Completed' -or $job.ChildJobs[0].Error.Count -gt 0
   $result = Receive-Job $job 2>&1 | Out-String
   Set-Content -Path (Join-Path $out ('amo-'+$job.Name+'.log')) -Value $result
-  if($job.State -ne 'Completed' -or $job.ChildJobs[0].JobStateInfo.State -ne 'Completed' -or $job.ChildJobs[0].Error.Count -gt 0){ $failed=$true }
+  if($jobFailed){ $failed=$true }
   Write-Host ($job.Name+': '+$job.State+' '+$result.Trim())
   Remove-Job $job -Force
 }
