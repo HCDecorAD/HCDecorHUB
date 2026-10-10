@@ -73,5 +73,22 @@
     "preserve_original_media": true,
     "declare_ai_content_when_required": true
   },
-  "status_contract": "Configuration does not assert live provider health."
+  "status_contract": "Configuration does not assert live provider health.",
+  "website_targets": {
+    "policy": "all_websites_on_wordpress",
+    "targets": {
+      "amonguyen": {
+        "url": "https://amonguyen.hcdecorhub.com",
+        "platform": "wordpress",
+        "state": "pending-migration-from-github-pages",
+        "publish_enabled": false
+      },
+      "hcdecorhub": {
+        "url": "https://hcdecorhub.com",
+        "platform": "wordpress-com",
+        "state": "live",
+        "publish_enabled": false
+      }
+    }
+  }
 }

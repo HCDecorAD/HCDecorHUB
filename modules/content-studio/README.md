@@ -43,6 +43,9 @@ Chưa xác minh (không được coi là đã có): gói Metricool hiện tại,
 - AI: cấu hình theo kiểu cắm được (pluggable), mặc định Ollama local, không gửi dữ liệu ra ngoài.
 - Page Facebook đích: quangcaohocuong. Trạng thái: chờ xác minh trong Metricool.
 
+- Tất cả website đích đều chạy trên WordPress. AMO (`amonguyen.hcdecorhub.com`) đang ở GitHub Pages và sẽ chuyển sang WordPress trước khi nhận bài từ module. Cho đến khi chuyển xong, publish cho AMO vẫn tắt.
+- Website hcdecorhub.com (WordPress.com) là site chính, publish tắt mặc định.
+
 ## Giới hạn hiện có cần quyết định
 
 - `social-manager.php` chỉ cho lên lịch trong vòng 10 phút sau khi duyệt. Cần nới nếu muốn đặt lịch nhiều ngày. Module này KHÔNG sửa file đó trong bản này.
