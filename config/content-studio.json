@@ -1,0 +1,39 @@
+{
+  "schema_version": "0.1.0",
+  "module": "content-studio",
+  "status": "design",
+  "publish_enabled": false,
+  "require_human_approval": true,
+  "provider": {
+    "publishing": "metricool",
+    "brand_id": "7127887",
+    "timezone": "Asia/Bangkok"
+  },
+  "ai": {
+    "primary": "ollama-local",
+    "fallback": null,
+    "allow_external_api": false
+  },
+  "channels": {
+    "facebook": { "enabled": false, "state": "pending-verification" },
+    "instagram": { "enabled": false, "state": "configured-in-metricool" },
+    "tiktok": { "enabled": false, "state": "verified-via-metricool-private-only" },
+    "youtube": { "enabled": false, "state": "verified-via-metricool" },
+    "zalo": { "enabled": false, "state": "unverified" }
+  },
+  "approval": {
+    "approver": "owner",
+    "channel": "telegram",
+    "records": ["approved_by", "approved_at", "batch_id"]
+  },
+  "retry": {
+    "auto_retry_publish": false,
+    "requires_reconciliation": true
+  },
+  "rules": {
+    "no_fabricated_claims": true,
+    "preserve_original_media": true,
+    "declare_ai_content_when_required": true
+  },
+  "status_contract": "Configuration does not assert live provider health."
+}
