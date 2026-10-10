@@ -34,7 +34,9 @@
       "enabled": false,
       "page_url": "https://www.facebook.com/quangcaohocuong",
       "page_name": "quangcaohocuong",
-      "state": "pending-metricool-verification"
+      "state": "connected-in-metricool",
+      "metricool_facebook_id": "223079764519203",
+      "publish_permission": "unverified"
     },
     "instagram": {
       "enabled": false,
