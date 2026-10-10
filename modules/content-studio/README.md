@@ -28,7 +28,7 @@ Lệnh → Phân tích (AI) → Tạo bài + media → Duyệt → Lịch (Metri
 
 | Việc | Công cụ | Ghi chú |
 |---|---|---|
-| AI viết bài | Ollama local (ưu tiên) hoặc Gemini free tier | Kiểm tra hạn mức trước khi chốt |
+| AI viết bài | Ollama local (mặc định); nhà cung cấp khác (Gemini free tier, API khác) cắm thêm qua cấu hình `ai.providers` | Kiểm tra hạn mức trước khi bật |
 | Ảnh | Drive (ảnh thật) + Pexels API (free) | Kiểm tra giấy phép từng file |
 | Video | FFmpeg (slideshow + chữ + nhạc có giấy phép) | Không dùng video AI sinh tự động |
 | Điều phối | Task Scheduler hoặc n8n Community | Chạy khi máy bật |
@@ -36,6 +36,12 @@ Lệnh → Phân tích (AI) → Tạo bài + media → Duyệt → Lịch (Metri
 | Lên lịch & đăng | Metricool | Gói free: kiểm tra giới hạn số bài/kênh |
 
 Chưa xác minh (không được coi là đã có): gói Metricool hiện tại, Zalo OA (chưa xác minh trên Metricool), Creative Factory, Review Center, hàm `hcdecor_auto_enqueue`.
+
+## Quyết định đã chốt
+
+- Đường đăng chính: Metricool (đã duyệt).
+- AI: cấu hình theo kiểu cắm được (pluggable), mặc định Ollama local, không gửi dữ liệu ra ngoài.
+- Page Facebook đích: quangcaohocuong. Trạng thái: chờ xác minh trong Metricool.
 
 ## Giới hạn hiện có cần quyết định
 
@@ -48,7 +54,7 @@ Chưa xác minh (không được coi là đã có): gói Metricool hiện tại,
 2. Telegram: tạo bot qua @BotFather, nhắn `/start`, gửi chat ID.
 3. AI: cài Ollama và tải model nhỏ, hoặc tạo khóa Gemini.
 4. Pexels: tạo khóa API.
-5. Chọn Page Facebook đích và kênh ưu tiên.
+5. Xác nhận Page Facebook đích: `facebook.com/quangcaohocuong` (đã chọn), kiểm tra trong Metricool xem Page này đã kết nối và có quyền đăng chưa.
 6. Xác nhận quyền ghi vào repo (branch mới) để đưa module vào mã nguồn.
 
 ## Bước tiếp theo

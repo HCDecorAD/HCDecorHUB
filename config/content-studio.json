@@ -7,24 +7,60 @@
   "provider": {
     "publishing": "metricool",
     "brand_id": "7127887",
-    "timezone": "Asia/Bangkok"
+    "timezone": "Asia/Bangkok",
+    "publishing_path": "metricool-primary"
   },
   "ai": {
-    "primary": "ollama-local",
-    "fallback": null,
+    "mode": "pluggable",
+    "default": "ollama-local",
+    "providers": {
+      "ollama-local": {
+        "enabled": true,
+        "external": false
+      },
+      "gemini-free": {
+        "enabled": false,
+        "external": true
+      },
+      "other-api": {
+        "enabled": false,
+        "external": true
+      }
+    },
     "allow_external_api": false
   },
   "channels": {
-    "facebook": { "enabled": false, "state": "pending-verification" },
-    "instagram": { "enabled": false, "state": "configured-in-metricool" },
-    "tiktok": { "enabled": false, "state": "verified-via-metricool-private-only" },
-    "youtube": { "enabled": false, "state": "verified-via-metricool" },
-    "zalo": { "enabled": false, "state": "unverified" }
+    "facebook": {
+      "enabled": false,
+      "page_url": "https://www.facebook.com/quangcaohocuong",
+      "page_name": "quangcaohocuong",
+      "state": "pending-metricool-verification"
+    },
+    "instagram": {
+      "enabled": false,
+      "state": "configured-in-metricool"
+    },
+    "tiktok": {
+      "enabled": false,
+      "state": "verified-via-metricool-private-only"
+    },
+    "youtube": {
+      "enabled": false,
+      "state": "verified-via-metricool"
+    },
+    "zalo": {
+      "enabled": false,
+      "state": "unverified"
+    }
   },
   "approval": {
     "approver": "owner",
     "channel": "telegram",
-    "records": ["approved_by", "approved_at", "batch_id"]
+    "records": [
+      "approved_by",
+      "approved_at",
+      "batch_id"
+    ]
   },
   "retry": {
     "auto_retry_publish": false,
