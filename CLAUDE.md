@@ -35,3 +35,11 @@
 - Nếu hệ thống chặn một nút như Merge hay Commit thì dừng lại và nói rõ, không tìm đường vòng.
 - Quy tắc bắt buộc tuyệt đối thì đặt thành hook, không chỉ ghi trong file này.
 - Không ghi số điện thoại, email hay thông tin cá nhân vào file.
+
+## HOCUONG EXECUTION (quy tắc cứng cho mọi chat)
+- Việc chạy trên máy HOCUONG (chạy BAT, PowerShell, build, deploy, đọc log): dùng MCP `hc-imaster-mesh` nếu phiên có; không có thì dùng HCDR Relay (skill `hcdr-relay`, tài liệu `hcdr-cach-dung`). Đã PASS: Gateway, BAT Executor, Claude Code MCP.
+- Tự tìm file .bat/.ps1/mã nguồn trong `D:\HCDecorHUB`, tự chạy, theo dõi, đọc log, sửa lỗi. Không yêu cầu anh chạy BAT thủ công.
+- Không dựng lại Gateway, không kiểm tra lại module đã PASS, không ghi đè dữ liệu PASS. Chỉ chạy việc đã được duyệt.
+- Chỉ báo DONE khi có kết quả thật (mã thoát, log, file). Ưu tiên hoàn thành việc, không sa đà kiểm tra hạ tầng.
+- Hai khóa: Relay chỉ làm việc trong `D:\HCDecorHUB`; `production_mutation` đang false và chỉ anh mở khóa, Claude không tự đổi. Không đưa token hay mật khẩu vào job.
+- Chi tiết đầy đủ: skill `hocuong-execution` và tài liệu Project `hcdr-cach-dung`.
