@@ -74,7 +74,23 @@ const SAFE_TOOLS=new Set(["health","list_directory","read_file","process_output"
 const MUTATING_TOOLS=new Set(["write_file","edit_file","run_command","start_process","git_commit","build"]);
 const ALLOWED=new Set([...SAFE_TOOLS,...MUTATING_TOOLS]);
 function parseBody(issue){
-  const body=JSON.parse(issue.body||"{}");
+  const raw=String(issue.body||"{}");
+  // Ignore Markdown/tool footers without weakening schema or tool validation.
+  const start=raw.indexOf("{");
+  if(start<0) throw Error("missing_json_object");
+  let depth=0, quoted=false, escaped=false, end=-1;
+  for(let i=start;i<raw.length;i++){
+    const ch=raw[i];
+    if(quoted){
+      if(escaped) escaped=false;
+      else if(ch==="\\") escaped=true;
+      else if(ch==='"') quoted=false;
+    }else if(ch==='"') quoted=true;
+    else if(ch==="{") depth++;
+    else if(ch==="}" && --depth===0){end=i+1;break;}
+  }
+  if(end<0) throw Error("incomplete_json_object");
+  const body=JSON.parse(raw.slice(start,end));
   const schemas=new Set(["hcdr-relay/v1","hcdr-relay/v1.1","hcdr-relay/v1.2"]);
   if(!schemas.has(body.schema)) throw Error("bad_schema");
   if(!ALLOWED.has(body.tool)) throw Error("tool_not_allowed");
