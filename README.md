@@ -2,6 +2,8 @@
 
 HCDecor HUB is the Multi-Business AI Command Center and Agent/API control plane for the HCDecor ecosystem.
 
+> Ghi chú: Dự án này là trung tâm điều khiển AI đa ngành và là lớp điều phối Agent/API cho hệ sinh thái HCDecor.
+
 ## Production authorities
 - HCDecor public website — https://hcdecorhub.com — WordPress
 - HCDecor Agent/API — https://hcdecor-hub.huycuongonline.workers.dev — Cloudflare Worker
