@@ -20,3 +20,4 @@ Production mutation execution remains fail-closed until durable state and authen
 Read `docs/MASTER-IMPLEMENTATION.md`, `docs/PRODUCTION-OPERATIONS.md`, and `config/site-registry.json` before changing deployment or automation targets. Do not move frontend authorities or change DNS as a release workaround.
 
 Test tự động
+Auto 24/7 test OK
