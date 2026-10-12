@@ -57,4 +57,8 @@ assert.equal((await cb("a","a","intruder")).status,403);
 assert.equal((await cb("a","a",undefined)).status,403);
 // logout
 assert.ok(/Max-Age=0/.test(handleLogout().headers.get("set-cookie")));
+// getAuthEnv: falls back to process.env when no Cloudflare context is available
+const {getAuthEnv}=await import("../lib/auth-env.js");
+process.env.SESSION_SECRET="from-process-env";
+assert.equal((await getAuthEnv()).SESSION_SECRET,"from-process-env");
 console.log("github-auth: all tests passed");
