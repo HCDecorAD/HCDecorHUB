@@ -7,5 +7,6 @@
   "assets": {"directory": ".open-next/assets","binding":"ASSETS"},
   "ai": {"binding":"AI"},
   "services": [{"binding":"HC_SHOP_ENGINE","service":"hc-shop-engine"},{"binding":"GSC_SERVICE","service":"gsc-senior"},{"binding":"AMO_SERVICE","service":"amo-nguyen"}],
+  "vars": {"GITHUB_CLIENT_ID":"Ov23lirkBHap98JTTFdE","GITHUB_OWNER_LOGIN":"HCDecorAD","HUB_PUBLIC_URL":"https://hcdecor-hub.huycuongonline.workers.dev"},
   "observability": {"enabled": true}
 }
