@@ -8,7 +8,7 @@ export const dynamic="force-dynamic";
 const label=h=>h.state==="ok"?"OK "+h.status:h.state==="error"?"lỗi"+(h.status?" "+h.status:h.error?" ("+h.error+")":""):"chưa kiểm tra";
 
 export default async function Sites(){
-  if(!canViewSuperAdmin(getPrincipal()))notFound();
+  if(!canViewSuperAdmin(await getPrincipal()))notFound();
   const rows=getSiteRows();
   const health=await checkAllSites(rows.map(r=>r.healthUrl));
   return <HubShell title="SuperAdmin · Sites" eyebrow="HCDECOR HUB / SUPERADMIN (READ-ONLY)">
