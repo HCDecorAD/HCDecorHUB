@@ -6,6 +6,7 @@
   "compatibility_flags": ["nodejs_compat"],
   "assets": {"directory": ".open-next/assets","binding":"ASSETS"},
   "ai": {"binding":"AI"},
+  "kv_namespaces": [{"binding":"HC_USERS","id":"bb9bfaef1f0d419386ae9b14898e9419"}],
   "services": [{"binding":"HC_SHOP_ENGINE","service":"hc-shop-engine"},{"binding":"GSC_SERVICE","service":"gsc-senior"},{"binding":"AMO_SERVICE","service":"amo-nguyen"}],
   "vars": {"GITHUB_CLIENT_ID":"Ov23lirkBHap98JTTFdE","GITHUB_OWNER_LOGIN":"HCDecorAD","HUB_PUBLIC_URL":"https://hcdecor-hub.huycuongonline.workers.dev"},
   "vars": {"GITHUB_CLIENT_ID": "Ov23lirkBHap98JTTFdE", "GITHUB_OWNER_LOGIN": "HCDecorAD", "HUB_PUBLIC_URL": "https://hcdecor-hub.huycuongonline.workers.dev"}, "observability": {"enabled": true}
