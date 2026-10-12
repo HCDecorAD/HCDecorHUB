@@ -41,7 +41,7 @@
 - HCDecor public website: WordPress.com at `hcdecorhub.com`.
 - HCDecor HUB Agent/API/control plane: Cloudflare Worker.
 - GSC frontend: GitHub Pages at `gscsenior.hcdecorhub.com`.
-- AMO frontend: GitHub Pages at `amonguyen.hcdecorhub.com`.
+- AMO frontend: GitHub Pages at `amonguyen.com`.
 - GitHub `main`: source/version/release checkpoint/rollback authority.
 - Shop Engine: commerce/live-data backend authority for AMO.
 - Local HOCUONG machine: development/test/tooling only; never production authority.

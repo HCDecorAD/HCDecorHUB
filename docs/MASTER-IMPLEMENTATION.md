@@ -4,7 +4,7 @@
 - HCDecor public website: https://hcdecorhub.com — WordPress.
 - HCDecor Agent/API control plane: Cloudflare Worker `hcdecor-hub`.
 - GSC: https://gscsenior.hcdecorhub.com — GitHub Pages.
-- AMO: https://amonguyen.hcdecorhub.com — GitHub Pages.
+- AMO: https://amonguyen.com — GitHub Pages.
 - GitHub `main`: source/version/rollback authority.
 - Commerce live-data authority: HC Shop Engine.
 
