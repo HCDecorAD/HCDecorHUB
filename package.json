@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test:site-health": "node scripts/site-health.test.mjs",
     "test:master": "node scripts/master-e2e.mjs",
     "test:google-write": "node scripts/google-write-smoke.mjs",
     "test:architecture": "node scripts/architecture-check.mjs",
