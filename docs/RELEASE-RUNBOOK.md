@@ -4,7 +4,7 @@
 - HCDecor public website: WordPress at https://hcdecorhub.com
 - HCDecor Agent/API control plane: Cloudflare Worker `hcdecor-hub`
 - GSC public frontend: GitHub Pages at https://gscsenior.hcdecorhub.com
-- AMO public frontend: GitHub Pages at https://amonguyen.hcdecorhub.com
+- AMO public frontend: GitHub Pages at https://amonguyen.com
 - GitHub `main`: source/version/rollback authority
 
 ## Release gate
@@ -28,4 +28,4 @@ WordPress remains public website authority. The Next.js/Cloudflare Worker is the
 Repository `HCDecorAD/GSC`; GitHub Pages is production frontend authority. Preserve the 11 hotspot contract; hotspots 1–10 use configured videos and hotspot 11 has no video.
 
 ### AMO
-Repository `HCDecorAD/AMONguyen`; GitHub Pages is production frontend authority at https://amonguyen.hcdecorhub.com. Never fabricate products, prices, stock, brands, reviews, or order history. Commerce data authority is the verified Shop Engine.
+Repository `HCDecorAD/AMONguyen`; GitHub Pages is production frontend authority at https://amonguyen.com. Never fabricate products, prices, stock, brands, reviews, or order history. Commerce data authority is the verified Shop Engine.

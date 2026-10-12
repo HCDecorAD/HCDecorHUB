@@ -8,7 +8,7 @@ HCDecor HUB is the Multi-Business AI Command Center and Agent/API control plane 
 - HCDecor public website — https://hcdecorhub.com — WordPress
 - HCDecor Agent/API — https://hcdecor-hub.huycuongonline.workers.dev — Cloudflare Worker
 - GSC Senior — https://gscsenior.hcdecorhub.com — GitHub Pages
-- AMO Nguyen — https://amonguyen.hcdecorhub.com — GitHub Pages
+- AMO Nguyen — https://amonguyen.com — GitHub Pages
 - GitHub `main` — source/version/rollback authority
 
 ## Release
