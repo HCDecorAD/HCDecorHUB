@@ -1,12 +1,14 @@
 "use client";
 import {useEffect,useState} from "react";
-// Tab "Quản lý" trên SuperAdmin: tạo ID/Pass, đặt lại Pass, khóa, đổi site. API tự kiểm tra owner.
-// Mật khẩu vừa tạo chỉ giữ trong state của component, hiện một lần.
-const SITES=["amo","gsc"];
+// Tab "Quản lý" trên SuperAdmin: tạo ID/Pass, chọn ID, đặt lại Pass (mở box ngay trong trang), khóa, sửa site.
+// API tự kiểm tra owner. Mật khẩu chỉ giữ trong state của component, hiện một lần.
+const SITES=["amo","gsc"],MIN=8;
 export default function UserManager(){
  const [users,setUsers]=useState(null),[once,setOnce]=useState(null),[err,setErr]=useState("");
  const [form,setForm]=useState({username:"",role:"staff",sites:["amo"]});
+ const [selected,setSelected]=useState(null);
  const [editing,setEditing]=useState(null);
+ const [resetBox,setResetBox]=useState(null); // {id, pass}
  async function load(){
   const r=await fetch("/api/admin/users");
   if(!r.ok){setUsers([]);setErr("Chỉ SuperAdmin được truy cập.");return}
@@ -16,7 +18,7 @@ export default function UserManager(){
   setErr("");
   const r=await fetch("/api/admin/users",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});
   const d=await r.json().catch(()=>({}));
-  if(!r.ok){setErr("Không thực hiện được: "+(d.error||r.status));return false}
+  if(!r.ok){setErr("Không thực hiện được: "+(d.error==="weak_password"?"Pass tối thiểu "+MIN+" ký tự":d.error||r.status));return false}
   if(d.password)setOnce({id:d.user.id,password:d.password});
   await load();
   return true;
@@ -29,9 +31,15 @@ export default function UserManager(){
   if(ok)setForm({...form,username:""});
  }
  async function saveSites(u){
-  await call({action:"update",username:u.id,site_ids:editing.sites});
-  setEditing(null);
+  if(await call({action:"update",username:u.id,site_ids:editing.sites}))setEditing(null);
  }
+ function openReset(u){setSelected(u.id);setResetBox({id:u.id,pass:""})}
+ async function resetWith(random){
+  const id=resetBox.id;
+  const ok=await call(random?{action:"reset",username:id}:{action:"reset",username:id,password:resetBox.pass});
+  if(ok)setResetBox(null);
+ }
+ const sel=users?.find(u=>u.id===selected);
  return <section className="userManager">
   {err&&<p role="alert">{err}</p>}
   {once&&<p role="status">Mật khẩu của <b>{once.id}</b> (chỉ hiện một lần): <code>{once.password}</code> <button onClick={()=>setOnce(null)}>Ẩn</button></p>}
@@ -42,15 +50,26 @@ export default function UserManager(){
    {SITES.map(sid=><label key={sid}><input type="checkbox" checked={form.sites.includes(sid)} onChange={()=>setForm({...form,sites:toggleSite(form.sites,sid)})}/> {sid.toUpperCase()}</label>)}
    <button className="btn primary" type="submit">Tạo</button>
   </form>
+
   <h2>Danh sách tài khoản</h2>
+  <p className="notice">Bấm vào một dòng để chọn ID. {sel?<>Đang chọn: <b>{sel.id}</b>.</>:"Chưa chọn ID nào."}</p>
   <table><thead><tr><th>ID</th><th>Vai trò</th><th>Site</th><th>Trạng thái</th><th/></tr></thead><tbody>
-  {(users||[]).map(u=><tr key={u.id}>
+  {(users||[]).map(u=><tr key={u.id} onClick={()=>setSelected(u.id)} aria-selected={selected===u.id} style={{cursor:"pointer",background:selected===u.id?"rgba(96,165,250,.18)":undefined}}>
    <td>{u.id}</td><td>{u.role==="staff"?"NV":"Khách"}</td>
    <td>{editing?.id===u.id?SITES.map(sid=><label key={sid}><input type="checkbox" checked={editing.sites.includes(sid)} onChange={()=>setEditing({...editing,sites:toggleSite(editing.sites,sid)})}/> {sid.toUpperCase()} </label>):u.site_ids.join(", ")}</td>
    <td>{u.disabled?"Khóa":u.must_change_password?"Chờ đổi Pass":"Hoạt động"}</td>
-   <td>{editing?.id===u.id?<><button onClick={()=>saveSites(u)}>Lưu site</button> <button onClick={()=>setEditing(null)}>Hủy</button></>:
-    <><button onClick={()=>call({action:"reset",username:u.id})}>Đặt lại Pass</button> <button onClick={()=>call({action:"update",username:u.id,disabled:!u.disabled})}>{u.disabled?"Mở khóa":"Khóa"}</button> <button onClick={()=>setEditing({id:u.id,sites:[...u.site_ids]})}>Sửa site</button></>}</td>
+   <td onClick={e=>e.stopPropagation()}>{editing?.id===u.id?<><button onClick={()=>saveSites(u)}>Lưu site</button> <button onClick={()=>setEditing(null)}>Hủy</button></>:
+    <><button onClick={()=>openReset(u)}>Đặt lại Pass</button> <button onClick={()=>call({action:"update",username:u.id,disabled:!u.disabled})}>{u.disabled?"Mở khóa":"Khóa"}</button> <button onClick={()=>setEditing({id:u.id,sites:[...u.site_ids]})}>Sửa site</button></>}</td>
   </tr>)}
   </tbody></table>
+
+  {resetBox&&<div className="resetBox" role="dialog" aria-label="Đặt lại Pass" style={{marginTop:16,padding:16,border:"1px solid #334155",borderRadius:12}}>
+   <h3>Đặt lại Pass cho {resetBox.id}</h3>
+   <p className="notice">Nhập Pass mới (tối thiểu {MIN} ký tự), hoặc để hệ thống tạo ngẫu nhiên. Người này sẽ phải đổi Pass ở lần đăng nhập kế tiếp.</p>
+   <input type="text" autoComplete="off" placeholder={"Pass mới (tối thiểu "+MIN+" ký tự)"} value={resetBox.pass} onChange={e=>setResetBox({...resetBox,pass:e.target.value})} style={{minWidth:280}}/>
+   {" "}<button className="btn primary" disabled={resetBox.pass.length<MIN} onClick={()=>resetWith(false)}>Lưu Pass</button>
+   {" "}<button onClick={()=>resetWith(true)}>Tạo ngẫu nhiên</button>
+   {" "}<button onClick={()=>setResetBox(null)}>Hủy</button>
+  </div>}
  </section>;
 }

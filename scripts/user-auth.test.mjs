@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {hashPassword,verifyPassword,createUser,resetPassword,updateUser,login,changePassword,createUserSession,resolveUserPrincipal,canEnter,normalizeUsername,LOCK_SECONDS} from "../lib/user-auth.js";
+import {hashPassword,verifyPassword,createUser,resetPassword,setPassword,updateUser,login,changePassword,createUserSession,resolveUserPrincipal,canEnter,normalizeUsername,LOCK_SECONDS} from "../lib/user-auth.js";
 import {handleUserLogin,handleChangePassword,handleAdminUsers} from "../lib/user-routes.js";
 import {resolveGithubSessionPrincipal,SESSION_COOKIE} from "../lib/github-auth.js";
 
@@ -111,3 +111,12 @@ assert.ok(list.users.length>=2&&!JSON.stringify(list).match(/password_hash|salt/
 res=await handleAdminUsers({request:req("/a","POST",{action:"create",username:"dave",role:"guest"}),kv,canAdmin:true});
 assert.ok((await res.json()).password);
 console.log("user-auth: OK");
+// SuperAdmin đặt Pass do chọn: đủ MIN_PASSWORD thì được và buộc đổi lại; ngắn hơn thì bị từ chối
+{
+ const r=await setPassword(kv,"alice","Mat-khau-moi-1",clock);
+ assert.equal(r.ok,true);
+ assert.equal(r.user.must_change_password,true);
+ assert.equal((await setPassword(kv,"alice","1234567",clock)).error,"weak_password");
+ assert.equal((await setPassword(kv,"nobody","12345678",clock)).error,"not_found");
+ assert.equal((await login(kv,"alice","Mat-khau-moi-1")).ok,true);
+}
