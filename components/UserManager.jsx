@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 // Tab "Quản lý" trên SuperAdmin: tạo ID/Pass, chọn ID, đặt lại Pass (mở box ngay trong trang), khóa, sửa site.
 // API tự kiểm tra owner. Mật khẩu chỉ giữ trong state của component, hiện một lần.
 const SITES=["amo","gsc"],MIN=8;
@@ -9,6 +9,7 @@ export default function UserManager(){
  const [selected,setSelected]=useState(null);
  const [editing,setEditing]=useState(null);
  const [resetBox,setResetBox]=useState(null); // {id, pass}
+ const resetRef=useRef(null);
  async function load(){
   const r=await fetch("/api/admin/users");
   if(!r.ok){setUsers([]);setErr("Chỉ SuperAdmin được truy cập.");return}
@@ -33,7 +34,9 @@ export default function UserManager(){
  async function saveSites(u){
   if(await call({action:"update",username:u.id,site_ids:editing.sites}))setEditing(null);
  }
- function openReset(u){setSelected(u.id);setResetBox({id:u.id,pass:""})}
+ function openReset(u){setSelected(u.id);setResetBox({id:u.id,pass:"",t:Date.now()})}
+ // Bấm Đặt lại Pass thì cuộn tới box, không để anh tự kéo tìm
+ useEffect(()=>{if(resetBox)resetRef.current?.scrollIntoView({behavior:"smooth",block:"center"})},[resetBox?.t]);
  async function resetWith(random){
   const id=resetBox.id;
   const ok=await call(random?{action:"reset",username:id}:{action:"reset",username:id,password:resetBox.pass});
@@ -63,7 +66,7 @@ export default function UserManager(){
   </tr>)}
   </tbody></table>
 
-  {resetBox&&<div className="resetBox" role="dialog" aria-label="Đặt lại Pass" style={{marginTop:16,padding:16,border:"1px solid #334155",borderRadius:12}}>
+  {resetBox&&<div ref={resetRef} className="resetBox" role="dialog" aria-label="Đặt lại Pass" style={{marginTop:16,padding:16,border:"1px solid #334155",borderRadius:12}}>
    <h3>Đặt lại Pass cho {resetBox.id}</h3>
    <p className="notice">Nhập Pass mới (tối thiểu {MIN} ký tự), hoặc để hệ thống tạo ngẫu nhiên. Người này sẽ phải đổi Pass ở lần đăng nhập kế tiếp.</p>
    <input type="text" autoComplete="off" placeholder={"Pass mới (tối thiểu "+MIN+" ký tự)"} value={resetBox.pass} onChange={e=>setResetBox({...resetBox,pass:e.target.value})} style={{minWidth:280}}/>
