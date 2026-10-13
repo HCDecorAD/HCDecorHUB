@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {hashPassword,verifyPassword,createUser,resetPassword,setPassword,updateUser,login,changePassword,createUserSession,resolveUserPrincipal,canEnter,normalizeUsername,LOCK_SECONDS} from "../lib/user-auth.js";
+import {hashPassword,verifyPassword,createUser,resetPassword,setPassword,updateUser,deleteUser,login,changePassword,createUserSession,resolveUserPrincipal,canEnter,normalizeUsername,LOCK_SECONDS} from "../lib/user-auth.js";
 import {handleUserLogin,handleChangePassword,handleAdminUsers} from "../lib/user-routes.js";
 import {resolveGithubSessionPrincipal,SESSION_COOKIE} from "../lib/github-auth.js";
 
@@ -119,4 +119,13 @@ console.log("user-auth: OK");
  assert.equal((await setPassword(kv,"alice","1234567",clock)).error,"weak_password");
  assert.equal((await setPassword(kv,"nobody","12345678",clock)).error,"not_found");
  assert.equal((await login(kv,"alice","Mat-khau-moi-1")).ok,true);
+}
+// Xóa hẳn: chỉ khi đã khóa; sau khi xóa không đăng nhập được và không còn trong danh sách
+{
+ const c=await createUser(kv,{username:"tempdel",role:"staff",site_ids:["amo"]},clock);
+ assert.equal((await deleteUser(kv,"tempdel")).error,"not_disabled");
+ await updateUser(kv,"tempdel",{disabled:true},clock);
+ assert.equal((await deleteUser(kv,"tempdel")).ok,true);
+ assert.equal((await deleteUser(kv,"tempdel")).error,"not_found");
+ assert.equal((await login(kv,"tempdel",c.password)).ok,false);
 }

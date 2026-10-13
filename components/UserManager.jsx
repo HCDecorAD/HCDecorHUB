@@ -42,6 +42,14 @@ export default function UserManager(){
   const ok=await call(random?{action:"reset",username:id}:{action:"reset",username:id,password:resetBox.pass});
   if(ok)setResetBox(null);
  }
+ // Xóa hẳn không khôi phục được: chỉ cho ID đã khóa, phải gõ đúng tên để xác nhận.
+ async function removeUser(u){
+  const typed=window.prompt("Xóa hẳn ID "+u.id+". Không khôi phục được.\nGõ đúng tên ID để xác nhận:");
+  if(typed===null)return;
+  if(typed.trim()!==u.id){setErr("Tên xác nhận không khớp, chưa xóa.");return}
+  if(selected===u.id)setSelected(null);
+  await call({action:"delete",username:u.id});
+ }
  const sel=users?.find(u=>u.id===selected);
  return <section className="userManager">
   {err&&<p role="alert">{err}</p>}
@@ -62,7 +70,7 @@ export default function UserManager(){
    <td>{editing?.id===u.id?SITES.map(sid=><label key={sid}><input type="checkbox" checked={editing.sites.includes(sid)} onChange={()=>setEditing({...editing,sites:toggleSite(editing.sites,sid)})}/> {sid.toUpperCase()} </label>):u.site_ids.join(", ")}</td>
    <td>{u.disabled?"Khóa":u.must_change_password?"Chờ đổi Pass":"Hoạt động"}</td>
    <td onClick={e=>e.stopPropagation()}>{editing?.id===u.id?<><button onClick={()=>saveSites(u)}>Lưu site</button> <button onClick={()=>setEditing(null)}>Hủy</button></>:
-    <><button onClick={()=>openReset(u)}>Đặt lại Pass</button> <button onClick={()=>call({action:"update",username:u.id,disabled:!u.disabled})}>{u.disabled?"Mở khóa":"Khóa"}</button> <button onClick={()=>setEditing({id:u.id,sites:[...u.site_ids]})}>Sửa site</button></>}</td>
+    <><button onClick={()=>openReset(u)}>Đặt lại Pass</button> <button onClick={()=>call({action:"update",username:u.id,disabled:!u.disabled})}>{u.disabled?"Mở khóa":"Khóa"}</button> <button onClick={()=>setEditing({id:u.id,sites:[...u.site_ids]})}>Sửa site</button>{u.disabled&&<> <button onClick={()=>removeUser(u)} style={{color:"#f87171"}}>Xóa hẳn</button></>}</>}</td>
   </tr>)}
   </tbody></table>
 
