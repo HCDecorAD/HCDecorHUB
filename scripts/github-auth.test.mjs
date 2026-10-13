@@ -18,8 +18,8 @@ const forged=Buffer.from(JSON.stringify({login:"OwnerLogin",exp:NOW+99999})).toS
 assert.equal(await verifySessionValue(forged+"."+s,env.SESSION_SECRET,NOW),null);
 assert.equal(await verifySessionValue("garbage",env.SESSION_SECRET,NOW),null);
 // expiry
-assert.equal(await verifySessionValue(v,env.SESSION_SECRET,NOW+8*3600),null);
-assert.ok(await verifySessionValue(v,env.SESSION_SECRET,NOW+8*3600-1));
+assert.equal(await verifySessionValue(v,env.SESSION_SECRET,NOW+30*86400),null);
+assert.ok(await verifySessionValue(v,env.SESSION_SECRET,NOW+30*86400-1));
 // constant-time helper
 assert.ok(timingSafeEqual("abc","abc"));
 assert.ok(!timingSafeEqual("abc","abd"));
@@ -49,7 +49,7 @@ const r=await cb("a","a","ownerlogin");
 assert.equal(r.status,302);
 const cookies=r.headers.getSetCookie();
 const sess=cookies.find(c=>c.startsWith(SESSION_COOKIE+"="));
-assert.ok(/HttpOnly/.test(sess)&&/Secure/.test(sess)&&/SameSite=Lax/.test(sess)&&/Max-Age=28800/.test(sess));
+assert.ok(/HttpOnly/.test(sess)&&/Secure/.test(sess)&&/SameSite=Lax/.test(sess)&&/Max-Age=2592000/.test(sess));
 assert.ok(cookies.some(c=>c.startsWith(STATE_COOKIE+"=;")&&/Max-Age=0/.test(c)));
 assert.equal((await cb("a","b","OwnerLogin")).status,400);
 assert.equal((await cb("a",null,"OwnerLogin")).status,400);
