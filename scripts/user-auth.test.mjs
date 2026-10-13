@@ -16,7 +16,7 @@ const env={SESSION_SECRET:"fixture-secret",GITHUB_CLIENT_ID:"c",GITHUB_CLIENT_SE
 
 // hash: right/wrong password, distinct salts
 const h1=await hashPassword("correct horse"),h2=await hashPassword("correct horse");
-assert.ok(h1.iterations>=210000&&h1.salt.length===32);
+assert.ok(h1.iterations===100000&&h1.salt.length===32);
 assert.ok(await verifyPassword("correct horse",h1));
 assert.ok(!await verifyPassword("wrong",h1));
 assert.notEqual(h1.salt,h2.salt);
@@ -43,6 +43,7 @@ let p=await resolveUserPrincipal({cookieValue:sess,env,kv,now:clock});
 assert.ok(p.authenticated&&p.must_change_password&&!canEnter(p)); // guest forced to change pass
 assert.deepEqual([(await login(kv,"nobody","x")).error,(await login(kv,"alice","bad")).error],["invalid_credentials","invalid_credentials"]);
 assert.equal((await changePassword(kv,"alice",a.password,"short")).error,"weak_password");
+assert.equal((await changePassword(kv,"alice",a.password,"1234567")).error,"weak_password"); // 7 chars < MIN_PASSWORD=8
 assert.equal((await changePassword(kv,"alice","bad","a-new-long-pass")).ok,false);
 assert.ok((await changePassword(kv,"alice",a.password,"a-new-long-pass",clock)).ok);
 p=await resolveUserPrincipal({cookieValue:sess,env,kv,now:clock});
