@@ -33,7 +33,7 @@ jobs:
           $targets=@(
             'https://hcdecorhub.com',
             'https://gscsenior.hcdecorhub.com',
-            'https://amonguyen.hcdecorhub.com',
+            'https://amonguyen.com',
             'https://hc-shop-engine.huycuongonline.workers.dev/api/health'
           )
           foreach($url in $targets){
