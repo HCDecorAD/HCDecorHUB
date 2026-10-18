@@ -13,6 +13,8 @@ assert.deepEqual(await verifyShopToken(t,SECRET,NOW+10),{sub:"user:nv_test",role
 const g=await signShopToken({login:"user:kh1",role:"guest"},SECRET,NOW);
 assert.equal((await verifyShopToken(g,SECRET,NOW)).role,"viewer");
 assert.equal(shopRoleOf("guest"),"viewer");
+assert.equal(shopRoleOf("manager"),"manager");
+assert.equal(shopRoleOf("staff"),"staff");
 // Hết hạn sau SHOP_TOKEN_TTL
 assert.equal(await verifyShopToken(t,SECRET,NOW+SHOP_TOKEN_TTL),null);
 // Sai secret, sửa payload, sai định dạng
