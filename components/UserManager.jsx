@@ -3,6 +3,7 @@ import {useEffect,useRef,useState} from "react";
 // Tab "Quản lý" trên SuperAdmin: tạo ID/Pass, chọn ID, đặt lại Pass (mở box ngay trong trang), khóa, sửa site.
 // API tự kiểm tra owner. Mật khẩu chỉ giữ trong state của component, hiện một lần.
 const SITES=["amo","gsc"],MIN=8;
+const ROLE_LABEL={staff:"NV",manager:"Quản lý",guest:"Khách"};
 export default function UserManager(){
  const [users,setUsers]=useState(null),[once,setOnce]=useState(null),[err,setErr]=useState("");
  const [form,setForm]=useState({username:"",role:"staff",sites:["amo"]});
@@ -32,7 +33,7 @@ export default function UserManager(){
   if(ok)setForm({...form,username:""});
  }
  async function saveSites(u){
-  if(await call({action:"update",username:u.id,site_ids:editing.sites}))setEditing(null);
+  if(await call({action:"update",username:u.id,site_ids:editing.sites,role:editing.role}))setEditing(null);
  }
  function openReset(u){setSelected(u.id);setResetBox({id:u.id,pass:"",t:Date.now()})}
  // Bấm Đặt lại Pass thì cuộn tới box, không để anh tự kéo tìm
@@ -57,7 +58,7 @@ export default function UserManager(){
   <h2>Tạo ID / Pass</h2>
   <form onSubmit={create} className="userForm">
    <input name="username" placeholder="Tên đăng nhập" required value={form.username} onChange={e=>setForm({...form,username:e.target.value})}/>
-   <select name="role" value={form.role} onChange={e=>setForm({...form,role:e.target.value})}><option value="staff">NV</option><option value="guest">Khách</option></select>
+   <select name="role" value={form.role} onChange={e=>setForm({...form,role:e.target.value})}><option value="staff">NV</option><option value="manager">Quản lý</option><option value="guest">Khách</option></select>
    {SITES.map(sid=><label key={sid}><input type="checkbox" checked={form.sites.includes(sid)} onChange={()=>setForm({...form,sites:toggleSite(form.sites,sid)})}/> {sid.toUpperCase()}</label>)}
    <button className="btn primary" type="submit">Tạo</button>
   </form>
@@ -66,11 +67,11 @@ export default function UserManager(){
   <p className="notice">Bấm vào một dòng để chọn ID. {sel?<>Đang chọn: <b>{sel.id}</b>.</>:"Chưa chọn ID nào."}</p>
   <table><thead><tr><th>ID</th><th>Vai trò</th><th>Site</th><th>Trạng thái</th><th/></tr></thead><tbody>
   {(users||[]).map(u=><tr key={u.id} onClick={()=>setSelected(u.id)} aria-selected={selected===u.id} style={{cursor:"pointer",background:selected===u.id?"rgba(96,165,250,.18)":undefined}}>
-   <td>{u.id}</td><td>{u.role==="staff"?"NV":"Khách"}</td>
+   <td>{u.id}</td><td>{editing?.id===u.id?<select value={editing.role} onChange={e=>setEditing({...editing,role:e.target.value})}><option value="staff">NV</option><option value="manager">Quản lý</option><option value="guest">Khách</option></select>:ROLE_LABEL[u.role]||u.role}</td>
    <td>{editing?.id===u.id?SITES.map(sid=><label key={sid}><input type="checkbox" checked={editing.sites.includes(sid)} onChange={()=>setEditing({...editing,sites:toggleSite(editing.sites,sid)})}/> {sid.toUpperCase()} </label>):u.site_ids.join(", ")}</td>
    <td>{u.disabled?"Khóa":u.must_change_password?"Chờ đổi Pass":"Hoạt động"}</td>
    <td onClick={e=>e.stopPropagation()}>{editing?.id===u.id?<><button onClick={()=>saveSites(u)}>Lưu site</button> <button onClick={()=>setEditing(null)}>Hủy</button></>:
-    <><button onClick={()=>openReset(u)}>Đặt lại Pass</button> <button onClick={()=>call({action:"update",username:u.id,disabled:!u.disabled})}>{u.disabled?"Mở khóa":"Khóa"}</button> <button onClick={()=>setEditing({id:u.id,sites:[...u.site_ids]})}>Sửa site</button>{u.disabled&&<> <button onClick={()=>removeUser(u)} style={{color:"#f87171"}}>Xóa hẳn</button></>}</>}</td>
+    <><button onClick={()=>openReset(u)}>Đặt lại Pass</button> <button onClick={()=>call({action:"update",username:u.id,disabled:!u.disabled})}>{u.disabled?"Mở khóa":"Khóa"}</button> <button onClick={()=>setEditing({id:u.id,sites:[...u.site_ids],role:u.role})}>Sửa site</button>{u.disabled&&<> <button onClick={()=>removeUser(u)} style={{color:"#f87171"}}>Xóa hẳn</button></>}</>}</td>
   </tr>)}
   </tbody></table>
 
