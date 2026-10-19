@@ -1,0 +1,1 @@
+window.HC_WEBOPS_BASE="https://webops.hcdecorhub.com";
