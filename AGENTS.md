@@ -15,3 +15,14 @@ This repository's authoritative workflow for HOCUONG relay stalls, failed BAT, b
 - Consult HCDR Relay evidence and existing Desktop V2 Universal Control (18 registered tools, screenshot verified); distinguish REGISTERED, LISTED, PASS and UNKNOWN.
 - Canonical HCDR transport: `HCDecorAD/HCDecor-HCDR-Relay` (GitHub issues `hcdr-job`, results `hcdr-result/v2`).
 - This repository instruction applies only when the agent loads it; it does not auto-inject TCHC into unrelated ChatGPT chats. Verify local startup loading separately.
+
+## HARD RULE — Execute assigned product work first (owner directive 2026-10-25)
+- Focus on the actual assigned deliverable and completed product, not repeated discovery, circular checks, or rebuilding infrastructure.
+- Reuse existing downloaded source code, previously developed UI, components, assets and working modules. EDIT/EXTEND the existing implementation; do not create a new app, project, UI or replacement implementation without explicit owner approval.
+- Deliver the full requested feature set and preserve working PASS functionality. Do not silently reduce scope to a demo, stub or placeholder.
+- Execution sequence: identify the minimum necessary changes → reuse an existing BAT (create a targeted BAT only if needed) → implement in parallel across independent workstreams when safe → integrate into the existing system → run end-to-end flow tests → FIX → RETEST until DONE or a concrete blocker is evidenced.
+- Avoid redundant prechecks. Do not repeatedly retest historical PASS items unless required by changed dependencies or the end-to-end acceptance flow.
+- Prefer implementation and integration before broad system-wide audits; verify the actual user journey after integration.
+- Parallel workers must avoid conflicting writes, share one canonical source, and merge/review results before marking DONE.
+- Do not delete/reset/overwrite PASS modules or existing owner work. Never fabricate PASS, claim an integration completed without evidence, or bypass security gates, owner approvals, production-release restrictions, or access controls. Where a release gate requires approval, prepare the complete deliverable and report the exact blocker rather than silently publishing.
+- Status reporting must distinguish IMPLEMENTED, INTEGRATED, TESTED, DONE and BLOCKED, with concrete evidence.
