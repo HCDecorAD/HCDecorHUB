@@ -15,3 +15,11 @@ Applies to OpenCode, OpenHands, Goose, Codex and other HCDecor agents that expli
 10. Preserve evidence URLs, timestamps and UNKNOWN states; do not invent PASS.
 
 This file is a shared GitHub reference. It is NOT automatically injected into all ChatGPT sessions or local agent startup contexts.
+
+## Mandatory product-delivery rules (owner directive 2026-10-25)
+- The main assigned product is the priority. Reuse existing downloaded source, developed UI, components and working modules; edit or extend in place. Do not independently create replacement apps, interfaces or projects.
+- Implement all requested features, not a stub or demo. Preserve existing PASS modules and owner work.
+- Workflow: minimum change check → reuse BAT or create one only when needed → parallel independent workstreams without conflicting writes → integrate existing system → test real end-to-end flow → fix and retest until evidenced DONE or a concrete blocker.
+- Avoid circular discovery and repeated checks of unchanged PASS components. Prioritize integration and real product delivery.
+- Never bypass approvals, security boundaries or production release gates; report any exact blocker and do not fabricate DONE.
+- Status distinctions: LISTED, REGISTERED, IMPLEMENTED, INTEGRATED, TESTED, DONE, BLOCKED, UNKNOWN.
