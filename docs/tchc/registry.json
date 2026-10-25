@@ -1,0 +1,130 @@
+{
+  "schema": "tchc.discovery/v1",
+  "snapshot_date": "2026-10-23",
+  "host": "HOCUONG",
+  "root": "D:\\HCDecorHUB",
+  "scope": "Level-1 discovery only; not a full recursive scan",
+  "root_inventory": {
+    "items": 174,
+    "dirs": 107,
+    "files": 67,
+    "evidence": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1849"
+  },
+  "modules": [
+    {
+      "name": "Agents",
+      "path": "D:\\HCDecorHUB\\Agents",
+      "level_1_items": 14,
+      "verification": "LISTED",
+      "runtime": "UNKNOWN",
+      "evidence": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1850"
+    },
+    {
+      "name": "tools",
+      "path": "D:\\HCDecorHUB\\tools",
+      "level_1_items": 73,
+      "verification": "LISTED",
+      "runtime": "UNKNOWN",
+      "evidence": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1851"
+    },
+    {
+      "name": "Skill iMaster",
+      "path": "D:\\HCDecorHUB\\Skill iMaster",
+      "level_1_items": 12,
+      "verification": "LISTED",
+      "runtime": "UNKNOWN",
+      "evidence": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1852"
+    },
+    {
+      "name": "HC-Local-Codex99",
+      "path": "D:\\HCDecorHUB\\HC-Local-Codex99",
+      "level_1_items": 36,
+      "verification": "LISTED",
+      "runtime": "UNKNOWN",
+      "evidence": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1853"
+    },
+    {
+      "name": "HC TransWarp Infrastructure",
+      "path": "D:\\HCDecorHUB\\HC TransWarp Infrastructure",
+      "level_1_items": 29,
+      "verification": "LISTED",
+      "runtime": "UNKNOWN",
+      "evidence": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1854"
+    },
+    {
+      "name": "HC Creative Factory",
+      "path": "D:\\HCDecorHUB\\HC Creative Factory",
+      "level_1_items": 35,
+      "verification": "LISTED",
+      "runtime": "UNKNOWN",
+      "evidence": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1855"
+    },
+    {
+      "name": "HC Website Factory",
+      "path": "D:\\HCDecorHUB\\HC Website Factory",
+      "level_1_items": 13,
+      "verification": "LISTED",
+      "runtime": "UNKNOWN",
+      "evidence": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1856"
+    },
+    {
+      "name": "HC-App-Replicator",
+      "path": "D:\\HCDecorHUB\\HC-App-Replicator",
+      "level_1_items": 13,
+      "verification": "LISTED",
+      "runtime": "UNKNOWN",
+      "evidence": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1857"
+    },
+    {
+      "name": "HC AutoDebug",
+      "path": "D:\\HCDecorHUB\\HC AutoDebug",
+      "level_1_items": 21,
+      "verification": "LISTED",
+      "runtime": "UNKNOWN",
+      "evidence": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1858"
+    },
+    {
+      "name": "HCDecor-HCDR",
+      "path": "D:\\HCDecorHUB\\HCDecor-HCDR",
+      "level_1_items": 61,
+      "verification": "LISTED",
+      "runtime": "UNKNOWN",
+      "evidence": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1859"
+    },
+    {
+      "name": "Gateway",
+      "path": "D:\\HCDecorHUB\\Gateway",
+      "level_1_items": 22,
+      "verification": "LISTED",
+      "runtime": "UNKNOWN",
+      "evidence": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1860"
+    },
+    {
+      "name": "FreeLLMAPI",
+      "path": "D:\\HCDecorHUB\\FreeLLMAPI",
+      "level_1_items": 39,
+      "verification": "LISTED",
+      "runtime": "UNKNOWN",
+      "evidence": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1861"
+    },
+    {
+      "name": "HC Chat Command Center",
+      "path": "D:\\HCDecorHUB\\HC Chat Command Center",
+      "level_1_items": 19,
+      "verification": "LISTED",
+      "runtime": "UNKNOWN",
+      "evidence": "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1862"
+    }
+  ],
+  "desktop_v2": {
+    "name": "Universal Control Desktop V2",
+    "registry_tools": 18,
+    "registry_status": "PASS_HISTORICAL",
+    "screenshot_status": "PASS_HISTORICAL",
+    "runtime_now": "UNKNOWN",
+    "evidence": [
+      "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1600",
+      "https://github.com/HCDecorAD/HCDecor-HCDR-Relay/issues/1608"
+    ]
+  }
+}
