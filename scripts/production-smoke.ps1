@@ -37,4 +37,10 @@ foreach($path in $checks){
 }
 $result=@{ok=(@($rows|Where-Object{-not $_.ok}).Count -eq 0);base=$Base;checks=$rows;checked_at=(Get-Date).ToUniversalTime().ToString('o')}
 $result|ConvertTo-Json -Depth 6
-if(-not $result.ok){exit 1}
+if(-not $result.ok){
+ foreach($failed in @($rows | Where-Object { -not $_.ok })){
+  $detail = if($failed.ContainsKey('error')) { $failed.error } else { 'HTTP 200 but production contract/readiness assertions failed' }
+  Write-Output "::error title=Production smoke failed::$($failed.path) (HTTP $($failed.status)): $detail"
+ }
+ exit 1
+}
