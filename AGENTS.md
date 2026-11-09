@@ -16,6 +16,11 @@ This repository's authoritative workflow for HOCUONG relay stalls, failed BAT, b
 - Canonical HCDR transport: `HCDecorAD/HCDecor-HCDR-Relay` (GitHub issues `hcdr-job`, results `hcdr-result/v2`).
 - This repository instruction applies only when the agent loads it; it does not auto-inject TCHC into unrelated ChatGPT chats. Verify local startup loading separately.
 
+## TCHC — Capability catalog rule
+- Trước khi tạo công cụ/thư mục mới, tra `docs/tchc/capabilities.json`. Đã có chức năng thì mở rộng công cụ đó.
+- Công cụ mới phải thêm một dòng vào file này trong cùng PR.
+- Không tạo file .bak, dùng git commit.
+
 ## HARD RULE — Execute assigned product work first (owner directive 2026-10-25)
 - Focus on the actual assigned deliverable and completed product, not repeated discovery, circular checks, or rebuilding infrastructure.
 - Reuse existing downloaded source code, previously developed UI, components, assets and working modules. EDIT/EXTEND the existing implementation; do not create a new app, project, UI or replacement implementation without explicit owner approval.
