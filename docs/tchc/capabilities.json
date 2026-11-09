@@ -5,7 +5,15 @@
     {
       "id": "code-auto247",
       "viec": "Sửa code / web / app qua issue @claude (HCDecorHUB, GSC, AMONguyen)",
-      "tu_khoa": ["code", "sửa lỗi", "web", "app", "pr", "issue", "auto247"],
+      "tu_khoa": [
+        "code",
+        "sửa lỗi",
+        "web",
+        "app",
+        "pr",
+        "issue",
+        "auto247"
+      ],
       "nhom": null,
       "cong_cu": "Auto 24/7 (HCDecorAD/auto-247)",
       "duong_dan": null,
@@ -20,14 +28,26 @@
     {
       "id": "hocuong-exec",
       "viec": "Chạy BAT / PS1 / build / deploy / đọc log trên máy HOCUONG",
-      "tu_khoa": ["bat", "ps1", "powershell", "chạy", "log", "build", "deploy", "hocuong"],
+      "tu_khoa": [
+        "bat",
+        "ps1",
+        "powershell",
+        "chạy",
+        "log",
+        "build",
+        "deploy",
+        "hocuong"
+      ],
       "nhom": null,
-      "cong_cu": "MCP hc-imaster-mesh",
+      "cong_cu": "Claude Code trên HOCUONG (MCP hc-imaster-mesh)",
       "duong_dan": null,
       "tuyen": "mcp",
       "lenh_chay": null,
       "lenh_test": null,
-      "du_phong": ["HCDR Relay (issue label hcdr-job)"],
+      "du_phong": [
+        "HCDR Relay (nhãn hcdr-job + hc-direct-readonly)",
+        "file .bat bấm đúp trong _inventory"
+      ],
       "duyet": "none",
       "trang_thai": "active",
       "thay_the": []
@@ -35,22 +55,44 @@
     {
       "id": "video-doc",
       "viec": "Làm video Simply Why / Nét Hiểu / phim tài liệu",
-      "tu_khoa": ["video", "phim", "documentary", "simply why", "nét hiểu", "kịch bản"],
+      "tu_khoa": [
+        "video",
+        "phim",
+        "documentary",
+        "simply why",
+        "nét hiểu",
+        "kịch bản"
+      ],
       "nhom": "20_ENGINE/video",
       "cong_cu": "HC-DOC",
       "duong_dan": "D:\\HCDecorHUB\\HC-Video-Skill-Extractor\\HC-DOC",
       "tuyen": "relay",
       "lenh_chay": "HC-DOC.bat <slug> all",
       "lenh_test": "HC-DOC.bat <slug> qc",
-      "du_phong": ["video-studio dashboard :8800"],
+      "du_phong": [
+        "video-studio dashboard :8800"
+      ],
       "duyet": "creative",
       "trang_thai": "active",
-      "thay_the": ["AI-Script-Factory", "HC AI Video Editor Pro", "HC-Video-AI", "HC YouTube Factory"]
+      "thay_the": [
+        "HC AI Video Editor Pro",
+        "HC-Video-AI",
+        "HC YouTube Factory",
+        "HC Video Intelligence",
+        "HC Video Downloader",
+        "SimplyWhy"
+      ]
     },
     {
       "id": "anh-flow",
       "viec": "Tạo ảnh minh họa AI",
-      "tu_khoa": ["ảnh", "minh họa", "flow", "image", "illustration"],
+      "tu_khoa": [
+        "ảnh",
+        "minh họa",
+        "flow",
+        "image",
+        "illustration"
+      ],
       "nhom": null,
       "cong_cu": "buoc_flow.py + extension flow-studio-auto (Chrome Profile 3)",
       "duong_dan": "Extension\\flow-studio-auto",
@@ -60,27 +102,54 @@
       "du_phong": [],
       "duyet": "none",
       "trang_thai": "active",
-      "thay_the": ["HC Flow Studio", "HC-Flow-Automation", "GoogleFlowTool", "HC_Google_Flow_Sources", "flow-studio-auto_1", "flow-studio-auto_2"]
+      "thay_the": [
+        "HC Flow Studio",
+        "HC-Flow-Automation",
+        "GoogleFlowTool",
+        "HC_Google_Flow_Sources",
+        "flow-studio-auto_1",
+        "flow-studio-auto_2"
+      ]
     },
     {
       "id": "dang-bai",
       "viec": "Đăng bài mạng xã hội (bài chờ duyệt)",
-      "tu_khoa": ["đăng bài", "social", "facebook", "instagram", "tiktok", "metricool", "mạng xã hội"],
+      "tu_khoa": [
+        "đăng bài",
+        "social",
+        "facebook",
+        "instagram",
+        "tiktok",
+        "metricool",
+        "mạng xã hội"
+      ],
       "nhom": null,
       "cong_cu": "Connector Metricool",
       "duong_dan": null,
       "tuyen": "connector",
       "lenh_chay": null,
       "lenh_test": null,
-      "du_phong": ["Extension HC Social HUB"],
+      "du_phong": [
+        "Extension HC Social HUB"
+      ],
       "duyet": "review",
       "trang_thai": "active",
-      "thay_the": ["HC-Social-Postiz", "HC-Social-Postiz-Deploy", "HC_SOCIAL_INTELLIGENCE_HUB"]
+      "thay_the": [
+        "HC-Social-Postiz",
+        "HC-Social-Postiz-Deploy",
+        "HC_SOCIAL_INTELLIGENCE_HUB"
+      ]
     },
     {
       "id": "seo-hcdecor",
       "viec": "Viết bài SEO cho hcdecorhub.com (nháp)",
-      "tu_khoa": ["seo", "bài viết", "hcdecorhub.com", "wordpress", "blog"],
+      "tu_khoa": [
+        "seo",
+        "bài viết",
+        "hcdecorhub.com",
+        "wordpress",
+        "blog"
+      ],
       "nhom": null,
       "cong_cu": "Skill seo-writing-hcdecor + connector WordPress.com",
       "duong_dan": null,
@@ -95,7 +164,11 @@
     {
       "id": "seo-amo",
       "viec": "Viết bài SEO cho AMO",
-      "tu_khoa": ["seo", "amo", "bài viết"],
+      "tu_khoa": [
+        "seo",
+        "amo",
+        "bài viết"
+      ],
       "nhom": null,
       "cong_cu": "Skill seo-chuan",
       "duong_dan": null,
@@ -110,7 +183,13 @@
     {
       "id": "bao-gia",
       "viec": "Lập và gửi báo giá (Invoice Ninja, autostart)",
-      "tu_khoa": ["báo giá", "quote", "invoice", "estimator", "hóa đơn"],
+      "tu_khoa": [
+        "báo giá",
+        "quote",
+        "invoice",
+        "estimator",
+        "hóa đơn"
+      ],
       "nhom": null,
       "cong_cu": "HC-Estimator (Invoice Ninja)",
       "duong_dan": "D:\\HCDecorHUB\\HC-Estimator",
@@ -125,7 +204,13 @@
     {
       "id": "boc-vat-tu",
       "viec": "Bóc vật tư / xử lý CorelDRAW",
-      "tu_khoa": ["coreldraw", "bóc vật tư", "xoavung", "printvector", "vector"],
+      "tu_khoa": [
+        "coreldraw",
+        "bóc vật tư",
+        "xoavung",
+        "printvector",
+        "vector"
+      ],
       "nhom": null,
       "cong_cu": "hc-boc-vat-tu, XoaVung, PrintVector",
       "duong_dan": "D:\\HCDecorHUB\\tools\\hc-boc-vat-tu",
@@ -140,14 +225,23 @@
     {
       "id": "thiet-ke",
       "viec": "Thiết kế poster / mockup / giao diện",
-      "tu_khoa": ["poster", "mockup", "thiết kế", "giao diện", "design", "ui"],
+      "tu_khoa": [
+        "poster",
+        "mockup",
+        "thiết kế",
+        "giao diện",
+        "design",
+        "ui"
+      ],
       "nhom": null,
       "cong_cu": "Artifact Design",
       "duong_dan": null,
       "tuyen": "artifact",
       "lenh_chay": null,
       "lenh_test": null,
-      "du_phong": ["Canva"],
+      "du_phong": [
+        "Canva"
+      ],
       "duyet": "none",
       "trang_thai": "active",
       "thay_the": []
@@ -155,7 +249,13 @@
     {
       "id": "chat-khach",
       "viec": "Chat với khách hàng (Chatwoot)",
-      "tu_khoa": ["chatwoot", "chat khách", "tin nhắn", "khách hàng", "inbox"],
+      "tu_khoa": [
+        "chatwoot",
+        "chat khách",
+        "tin nhắn",
+        "khách hàng",
+        "inbox"
+      ],
       "nhom": null,
       "cong_cu": "Chatwoot (HC Social Hub)",
       "duong_dan": "HC Social Hub",
@@ -170,22 +270,43 @@
     {
       "id": "browser",
       "viec": "Thao tác web cần đăng nhập",
-      "tu_khoa": ["trình duyệt", "browser", "đăng nhập", "web", "chrome"],
+      "tu_khoa": [
+        "trình duyệt",
+        "browser",
+        "đăng nhập",
+        "web",
+        "chrome"
+      ],
       "nhom": null,
       "cong_cu": "Claude in Chrome",
       "duong_dan": null,
       "tuyen": "chrome",
       "lenh_chay": null,
       "lenh_test": null,
-      "du_phong": ["BrowserUse-MCP (protected)"],
+      "du_phong": [
+        "BrowserUse-MCP (protected)"
+      ],
       "duyet": "none",
       "trang_thai": "active",
-      "thay_the": ["HC Browser Agent", "HC Mobile Agent", "auto-mcp-text", "AutoText_Windows_v3", "HC_AutoChat", "HC Chat Command Center"]
+      "thay_the": [
+        "HC Browser Agent",
+        "HC Mobile Agent",
+        "auto-mcp-text",
+        "AutoText_Windows_v3",
+        "HC_AutoChat",
+        "HC Chat Command Center"
+      ]
     },
     {
       "id": "agent-ai",
       "viec": "Agent AI chạy trên máy",
-      "tu_khoa": ["agent", "codex", "claude code", "tác tử", "local agent"],
+      "tu_khoa": [
+        "agent",
+        "codex",
+        "claude code",
+        "tác tử",
+        "local agent"
+      ],
       "nhom": null,
       "cong_cu": "Claude Code + MCP hc-imaster-mesh (registry HC-Codex-2)",
       "duong_dan": null,
@@ -195,12 +316,28 @@
       "du_phong": [],
       "duyet": "none",
       "trang_thai": "active",
-      "thay_the": ["Agents", "Codex-HUB", "HC-Local-Codex99", "HC HOCUONG Agent", "HC Dots Agent", "HC-General", "HC Future", "HCvsOPENAI", "FreeLLMAPI"]
+      "thay_the": [
+        "Agents",
+        "Codex-HUB",
+        "HC-Local-Codex99",
+        "HC HOCUONG Agent",
+        "HC Dots Agent",
+        "HC-General",
+        "HC Future",
+        "HCvsOPENAI",
+        "FreeLLMAPI"
+      ]
     },
     {
       "id": "ha-tang",
       "viec": "Điều khiển máy: Gateway, Tunnel, HCDecor-HCDR",
-      "tu_khoa": ["gateway", "tunnel", "hcdr", "hạ tầng", "điều khiển máy"],
+      "tu_khoa": [
+        "gateway",
+        "tunnel",
+        "hcdr",
+        "hạ tầng",
+        "điều khiển máy"
+      ],
       "nhom": null,
       "cong_cu": "Gateway, Tunnel, HCDecor-HCDR",
       "duong_dan": null,
@@ -215,7 +352,13 @@
     {
       "id": "don-dep",
       "viec": "Dọn máy (chạy thử → PLAN → -Apply, có UNDO)",
-      "tu_khoa": ["dọn dẹp", "dọn máy", "cleanup", "inventory", "undo"],
+      "tu_khoa": [
+        "dọn dẹp",
+        "dọn máy",
+        "cleanup",
+        "inventory",
+        "undo"
+      ],
       "nhom": null,
       "cong_cu": "HC-DON-DEP-PHASE1",
       "duong_dan": "D:\\HCDecorHUB\\_inventory\\HC-DON-DEP-PHASE1.bat",
@@ -224,6 +367,87 @@
       "lenh_test": null,
       "du_phong": [],
       "duyet": "review",
+      "trang_thai": "active",
+      "thay_the": []
+    },
+    {
+      "id": "kich-ban",
+      "viec": "Viết kịch bản, hàng đề tài Nét Hiểu / Simply Why",
+      "tu_khoa": [
+        "kịch bản",
+        "đề tài",
+        "script",
+        "series bible"
+      ],
+      "nhom": "20_ENGINE/video",
+      "cong_cu": "AI-Script-Factory",
+      "duong_dan": "D:\\HCDecorHUB\\AI-Script-Factory",
+      "tuyen": "relay",
+      "lenh_chay": "HC_SCRIPT_AI_RUN.bat",
+      "lenh_test": "HC_SCRIPT_ALL_QA.bat",
+      "du_phong": [],
+      "duyet": "review",
+      "trang_thai": "active",
+      "thay_the": []
+    },
+    {
+      "id": "dang-youtube",
+      "viec": "Đăng và quản lý video YouTube nhiều kênh (playlist, branding, lịch)",
+      "tu_khoa": [
+        "youtube",
+        "upload",
+        "playlist",
+        "kênh"
+      ],
+      "nhom": "20_ENGINE/video",
+      "cong_cu": "HC-YouTube-Manager",
+      "duong_dan": "D:\\HCDecorHUB\\HC-YouTube-Manager",
+      "tuyen": "relay",
+      "lenh_chay": "HC_YOUTUBE_START.bat",
+      "lenh_test": "HC_YOUTUBE_NETWORK_UPLOAD.bat",
+      "du_phong": [
+        "Metricool"
+      ],
+      "duyet": "review",
+      "trang_thai": "active",
+      "thay_the": []
+    },
+    {
+      "id": "trend",
+      "viec": "Săn đề tài và clip xu hướng",
+      "tu_khoa": [
+        "trend",
+        "xu hướng",
+        "đề tài hot"
+      ],
+      "nhom": "20_ENGINE/video",
+      "cong_cu": "HC-Trend-Clip-Hunter",
+      "duong_dan": "D:\\HCDecorHUB\\HC-Trend-Clip-Hunter",
+      "tuyen": "relay",
+      "lenh_chay": "HC_TREND_START.bat",
+      "lenh_test": null,
+      "du_phong": [],
+      "duyet": "none",
+      "trang_thai": "active",
+      "thay_the": []
+    },
+    {
+      "id": "nhac",
+      "viec": "Thư viện nhạc, playlist, karaoke cho video",
+      "tu_khoa": [
+        "nhạc",
+        "music",
+        "karaoke",
+        "playlist nhạc"
+      ],
+      "nhom": "20_ENGINE/video",
+      "cong_cu": "HC Media Hub",
+      "duong_dan": "D:\\HCDecorHUB\\HC Media Hub",
+      "tuyen": "relay",
+      "lenh_chay": "HC_MEDIA_START.bat",
+      "lenh_test": "HC_MEDIA_HEALTH.bat",
+      "du_phong": [],
+      "duyet": "none",
       "trang_thai": "active",
       "thay_the": []
     }
